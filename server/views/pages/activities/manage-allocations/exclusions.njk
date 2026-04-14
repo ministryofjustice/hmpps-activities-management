@@ -4,6 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% set pageTitle = "Change when prisoner attends - Activities - DPS" %}
 {% set pageId = 'exclusions-page' %}
@@ -13,7 +14,12 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">{{ allocateJourney.activity.name | safe }}</span>
-            <h1 class="govuk-heading-l">Change when {{ prisonerName | safe }} should attend this activity</h1>
+
+            {% if sameDayScheduleModificationsEnabled %}
+                <h1 class="govuk-heading-l">Change {{ prisonerName | safe }}'s scheduled sessions for this activity</h1>
+            {% else %}
+                <h1 class="govuk-heading-l">Change when {{ prisonerName | safe }} should attend this activity</h1>
+            {% endif %}
 
             {% if session.req.routeContext.mode == 'create' %}
                 <p class='govuk-body'>Unselect a session to modify {{ prisonerName | safe }} out.</p>
@@ -27,6 +33,15 @@
                     text: "Sessions that run in both weeks cannot be edited."
                 }) }}
             {% endif %}
+
+          {% if sameDayScheduleModificationsEnabled %}
+          {{ govukDetails({
+            summaryText: "Adding sessions for people to attend today",
+            html: "If you add a session for today, you can choose if you want the prisoner to attend today or from next week. </br></br>
+You cannot modify people of sessions already scheduled for today. You’ll need to mark that the prisoner did not attend instead."
+          }) }}
+          {% endif %}
+
         </div>
         <div class="govuk-grid-column-full">
             <form method="POST">
