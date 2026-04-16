@@ -252,14 +252,11 @@ context('Create external activity', () => {
     capacityPage.enterCapacity('6')
     capacityPage.continue()
 
-    Page.verifyOnPage(CheckAnswersPage)
-    // TODO: For EA submission isn't possible. Location has no viable option.
-    // To be updated once a solution is reached.
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.createActivity()
 
-    // checkAnswersPage.createActivity()
-
-    // const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    // confirmationPage.payReviewLink().should('exist')
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.payReviewLink().should('not.exist')
   })
 
   it('should allow external activity journey with internal payer and custom times', () => {
@@ -348,13 +345,13 @@ context('Create external activity', () => {
     sessionTimesPage.continue()
 
     const capacityPage = Page.verifyOnPage(CapacityPage)
-    capacityPage.enterCapacity('6')
+    capacityPage.enterCapacity('5')
     capacityPage.continue()
 
-    Page.verifyOnPage(CheckAnswersPage)
-    // checkAnswersPage.createActivity()
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.createActivity()
 
-    // const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    // confirmationPage.payReviewLink().should('exist')
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.payReviewLink().should('exist')
   })
 })
