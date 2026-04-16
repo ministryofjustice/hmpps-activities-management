@@ -345,7 +345,7 @@ context('Create external activity', () => {
     sessionTimesPage.continue()
 
     const capacityPage = Page.verifyOnPage(CapacityPage)
-    capacityPage.enterCapacity('6')
+    capacityPage.enterCapacity('5')
     capacityPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
