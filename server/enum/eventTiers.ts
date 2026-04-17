@@ -10,4 +10,9 @@ export const eventTierDescriptions = {
   [EventTier.FOUNDATION]: 'Routine activities also called "Foundation"',
 }
 
+export const eventTierRadioOptionDescriptions = {
+  [EventTier.TIER_1]: 'Tier 1',
+  [EventTier.TIER_2]: 'Tier 2',
+}
+
 export default EventTier

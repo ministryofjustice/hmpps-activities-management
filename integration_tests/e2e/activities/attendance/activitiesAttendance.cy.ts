@@ -2,7 +2,7 @@ import { format, startOfToday } from 'date-fns'
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import getAllAttendances from '../../../fixtures/activitiesApi/getAllAttendances.json'
-import getActivityCategories from '../../../fixtures/activitiesApi/getActivityCategories.json'
+import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
 import ActivitiesIndexPage from '../../../pages/activities'
 import SelectPeriodPage from '../../../pages/activities/attendanceSummary/selectPeriod'
 import DailySummaryPage from '../../../pages/activities/attendanceSummary/dailySummary'
@@ -43,7 +43,7 @@ context('Daily Attendance', () => {
       `/prisons/MDI/scheduled-instances\\?startDate=${today}&endDate=${today}&cancelled=true`,
       JSON.parse('[]'),
     )
-    cy.stubEndpoint('GET', `/activity-categories`, getActivityCategories)
+    cy.stubEndpoint('GET', `/activity-categories`, getCategories)
     cy.stubEndpoint(
       'GET',
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,

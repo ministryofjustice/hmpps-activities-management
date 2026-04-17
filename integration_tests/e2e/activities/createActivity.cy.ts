@@ -70,7 +70,7 @@ context('Create activity', () => {
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.caption().should('contain.text', 'Create an activity')
-    categoryPage.selectCategory('Gym, sport and fitness')
+    categoryPage.selectCategory('Gym, sport, fitness')
     categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
