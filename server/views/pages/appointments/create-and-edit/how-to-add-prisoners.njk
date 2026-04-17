@@ -49,7 +49,10 @@
                 }) }}
 
                 <div class='govuk-button-group'>
-                    {{ govukButton({ text: "Continue" }) }}
+                    {{ govukButton({ 
+                        text: "Continue",
+                        preventDoubleClick: true 
+                        }) }}
 
                     {% if appointmentJourney.mode == AppointmentJourneyMode.COPY %}
                         <a class="govuk-link govuk-link--no-visited-state" href="/appointments/{{ appointmentJourney.originalAppointmentId }}">Cancel and return to appointment</a>
