@@ -3,6 +3,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 
 type Filters = {
   stateFilter: string
+  isOutsideWorkFilter: string
 }
 
 export default class ActivitiesRoutes {
@@ -12,11 +13,14 @@ export default class ActivitiesRoutes {
     const { user } = res.locals
     const filters = req.query as Filters
     filters.stateFilter ??= 'live'
+    filters.isOutsideWorkFilter ??= 'false'
 
     const activities = await this.activitiesService
       .getActivities(false, user)
       .then(act =>
-        act.filter(a => filters.stateFilter === 'all' || a.activityState.toLowerCase() === filters.stateFilter),
+        act
+          .filter(a => filters.stateFilter === 'all' || a.activityState.toLowerCase() === filters.stateFilter)
+          .filter(a => a.outsideWork === (filters.isOutsideWorkFilter === 'true')),
       )
 
     res.render('pages/activities/manage-activities/activities-dashboard', {
