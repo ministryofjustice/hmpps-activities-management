@@ -17,6 +17,7 @@ import DeallocationCaseNoteQuestionRoutes, {
   DeallocationCaseNoteQuestion,
 } from './handlers/deallocationCaseNoteQuestion'
 import CancelRoutes, { ConfirmCancelOptions } from './handlers/cancel'
+import AddToSessionsToday from './handlers/AddToSessionsToday'
 
 export default function Index({ activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -38,6 +39,7 @@ export default function Index({ activitiesService }: Services): Router {
   const caseNoteQuestionHandler = new DeallocationCaseNoteQuestionRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const cancelHandler = new CancelRoutes()
+  const addToSessionsTodayHandler = new AddToSessionsToday()
 
   get('/start-date', startDateHandler.GET, true)
   post('/start-date', startDateHandler.POST, StartDate)
@@ -65,5 +67,7 @@ export default function Index({ activitiesService }: Services): Router {
   post('/check-answers', checkAnswersHandler.POST)
   get('/cancel', cancelHandler.GET, true)
   post('/cancel', cancelHandler.POST, ConfirmCancelOptions)
+  get('/addToToday', addToSessionsTodayHandler.GET, true)
+  post('/addToToday', addToSessionsTodayHandler.POST)
   return router
 }
