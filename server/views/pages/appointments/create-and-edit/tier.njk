@@ -15,7 +15,7 @@
 {% set jsBackLink = true %}
 
 {% set activityTierOptions = [] %}
-{% for tierKey, tierText in eventTierDescriptions %}
+{% for tierKey, tierText in eventTierRadioOptionDescriptions %}
     {% set activityTierOptions = (activityTierOptions.push({
         value: tierKey,
         text: tierText,

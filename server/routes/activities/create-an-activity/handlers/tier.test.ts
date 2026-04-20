@@ -4,7 +4,7 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import TierRoutes, { TierForm } from './tier'
 import ActivitiesService from '../../../../services/activitiesService'
-import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
+import EventTier, { eventTierRadioOptionDescriptions } from '../../../../enum/eventTiers'
 import Organiser from '../../../../enum/eventOrganisers'
 
 jest.mock('../../../../services/activitiesService')
@@ -50,7 +50,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/tier', {
-        eventTierDescriptions,
+        eventTierRadioOptionDescriptions,
       })
     })
   })
