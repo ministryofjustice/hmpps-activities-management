@@ -70,7 +70,7 @@ context('Create activity with custom times', () => {
     manageActivitiesPage.cardActivityCard().click()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.selectCategory('Gym, sport and fitness')
+    categoryPage.selectCategory('Gym, sport, fitness')
     categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
