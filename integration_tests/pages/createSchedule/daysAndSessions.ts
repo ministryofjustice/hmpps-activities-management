@@ -9,6 +9,8 @@ export default class DaysAndSessionsPage extends Page {
 
   caption = (): Cypress.Chainable => cy.get('[data-qa=caption]')
 
+  modParagraph = (): Cypress.Chainable => cy.get('[data-qa=modification-time]')
+
   checkboxes = () => cy.get('[data-qa="day-session-checkboxes"]')
 
   selectDayTimeCheckboxes = (checkboxes: [string, string[]][]) =>

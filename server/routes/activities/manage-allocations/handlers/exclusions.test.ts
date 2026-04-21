@@ -5,6 +5,7 @@ import ExclusionRoutes from './exclusions'
 import atLeast from '../../../../../jest.setup'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -357,6 +358,77 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       ])
 
       expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
+    })
+
+    it.each([
+      {
+        description: 'NOT redirect to addToToday when feature flag is disabled and future same day slots exist',
+        systemTime: '2024-08-28 08:00:00',
+        featureFlagEnabled: false,
+        expectedRedirect: 'confirm-exclusions',
+        shouldNotRedirectTo: 'addToToday',
+      },
+      {
+        description: 'redirect to addToToday when feature flag is enabled as slot is in future',
+        systemTime: '2024-08-28 07:00:00',
+        featureFlagEnabled: true,
+        expectedRedirect: 'addToToday',
+        shouldNotRedirectTo: null,
+      },
+      {
+        description: 'NOT redirect to addToToday when feature flag is enabled but slot start time has passed',
+        systemTime: '2024-08-28 12:30:00',
+        featureFlagEnabled: true,
+        expectedRedirect: 'confirm-exclusions',
+        shouldNotRedirectTo: 'addToToday',
+      },
+    ])('should $description', async ({ systemTime, featureFlagEnabled, expectedRedirect, shouldNotRedirectTo }) => {
+      jest.useFakeTimers().setSystemTime(new Date(systemTime))
+
+      const originalValue = config.sameDayScheduleModificationsEnabled
+      config.sameDayScheduleModificationsEnabled = featureFlagEnabled
+
+      try {
+        req.journeyData.allocateJourney.exclusions = [
+          {
+            weekNumber: 1,
+            timeSlot: 'AM',
+            monday: false,
+            tuesday: false,
+            wednesday: true,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
+            daysOfWeek: ['WEDNESDAY'],
+          },
+        ]
+
+        req.routeContext = { mode: 'edit' }
+        req.params.allocationId = '1'
+
+        req.body = {
+          week1: {
+            monday: [],
+            tuesday: [],
+            wednesday: ['AM'],
+            thursday: [],
+            friday: [],
+            saturday: [],
+            sunday: [],
+          },
+        }
+
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith(expectedRedirect)
+        if (shouldNotRedirectTo) {
+          expect(res.redirect).not.toHaveBeenCalledWith(shouldNotRedirectTo)
+        }
+      } finally {
+        config.sameDayScheduleModificationsEnabled = originalValue
+        jest.useRealTimers()
+      }
     })
   })
 })

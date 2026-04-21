@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
-import { parseDate, getTodayAsDayOfTheWeek } from '../../../../utils/utils'
+import { parseDate, getTodayAsDayOfTheWeek, isSlotTimeInFuture } from '../../../../utils/utils'
 import config from '../../../../config'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import TimeSlot from '../../../../enum/timeSlot'
@@ -169,18 +169,14 @@ export default class ExclusionRoutes {
     const updatedSlots = this.mapBodyToSlots(req.body)
 
     const updatedExclusions = calculateUniqueSlots(slots, updatedSlots)
-
-    const addedSlots = calculateExclusionSlots(exclusions, updatedExclusions)
-    const todayAsDayOfTheWeek = getTodayAsDayOfTheWeek()
-
+    const changedExclusionSlots = calculateExclusionSlots(exclusions, updatedExclusions)
     req.journeyData.allocateJourney.updatedExclusions = updatedExclusions
 
-    const addedSlotsIncludeToday = addedSlots.some(slot => slot.daysOfWeek.includes(todayAsDayOfTheWeek))
+    const futureSameDaySlots = this.getFutureSameDaySlots(changedExclusionSlots, schedule.slots)
 
-    if (config.sameDayScheduleModificationsEnabled) {
-      if (addedSlotsIncludeToday) {
-        // TODO: REROUTE to the conditional 'do you want to add x to today's y session' page
-      }
+    if (config.sameDayScheduleModificationsEnabled && futureSameDaySlots.length > 0) {
+      req.journeyData.allocateJourney.futureSameDaySlots = futureSameDaySlots
+      return res.redirect('addToToday')
     }
 
     if (req.routeContext.mode === 'create') {
@@ -221,5 +217,23 @@ export default class ExclusionRoutes {
           : undefined
       })
       .filter(s => s?.daysOfWeek?.length > 0)
+  }
+  /**
+   * Filters added slots to return only those scheduled for today that haven't started yet.
+   * Checks if the slot day matches today and if the slot's start time is in the future.
+   * @param addedSlots The slots that were added by the user
+   * @param scheduleSlots The activity's schedule slots containing start times
+   * @returns Array of slots occurring today that are scheduled for later
+   */
+
+  private getFutureSameDaySlots(addedSlots: Slot[], scheduleSlots: { timeSlot: string; startTime: string }[]): Slot[] {
+    const todayAsDayOfTheWeek = getTodayAsDayOfTheWeek()
+    return addedSlots.filter(slot => {
+      const occursToday = slot.daysOfWeek.includes(todayAsDayOfTheWeek)
+      if (!occursToday) return false
+      const slotStartTime = scheduleSlots.find(s => s.timeSlot === slot.timeSlot)?.startTime
+      if (!slotStartTime) return false
+      return isSlotTimeInFuture(slotStartTime)
+    })
   }
 }
