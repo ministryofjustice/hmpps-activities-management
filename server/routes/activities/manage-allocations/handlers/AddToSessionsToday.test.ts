@@ -2,8 +2,10 @@ import { Request, Response } from 'express'
 import AddToSessionsToday from './AddToSessionsToday'
 import { FormValidationError } from '../../../../middleware/formValidationErrorHandler'
 import { Slot } from '../../../../@types/activitiesAPI/types'
+import config from '../../../../config'
 
 describe('Route Handlers - Allocation - Add To Sessions Today', () => {
+  config.sameDayScheduleModificationsEnabled = true
   const handler = new AddToSessionsToday()
   let req: Request
   let res: Response
@@ -169,6 +171,15 @@ describe('Route Handlers - Allocation - Add To Sessions Today', () => {
         )
       },
     )
+
+    it('should redirect to exclusions when feature flag is disabled', async () => {
+      config.sameDayScheduleModificationsEnabled = false
+
+      await handler.GET(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('exclusions')
+      expect(res.render).not.toHaveBeenCalled()
+    })
   })
 
   describe('POST', () => {
