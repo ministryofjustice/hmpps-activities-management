@@ -256,6 +256,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('exampleDatePickerDate', () => `29/9/${formatDate(addYears(new Date(), 1), 'yyyy')}`)
 
   njkEnv.addGlobal('prisonerExtraInformationEnabled', config.prisonerExtraInformationEnabled)
+  njkEnv.addGlobal('sameDayScheduleModificationsEnabled', config.sameDayScheduleModificationsEnabled)
 
   for (const [name, filter] of Object.entries(mojFilters())) {
     njkEnv.addFilter(name, filter as (...args: any[]) => any)
