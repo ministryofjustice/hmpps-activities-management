@@ -48,6 +48,8 @@ export type AllocateToActivityJourney = {
   latestAllocationStartDate?: string
   exclusions?: Array<Slot>
   updatedExclusions?: Array<Slot>
+  futureSameDaySlots?: Array<Slot>
+  addToSessionsToday?: boolean
   deallocationCaseNote?: {
     type: string
     text: string
