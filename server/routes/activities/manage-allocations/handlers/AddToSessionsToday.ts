@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { formatListWithAnd, convertToTitleCase } from '../../../../utils/utils'
 import { FormValidationError } from '../../../../middleware/formValidationErrorHandler'
 import { Slot } from '../../../../@types/activitiesAPI/types'
+import config from '../../../../config'
 
 export default class AddToSessionsToday {
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -9,6 +10,10 @@ export default class AddToSessionsToday {
     const headingText = this.createHeadingText(inmate.prisonerName, futureSameDaySlots)
     const yesText = this.createYesText(futureSameDaySlots)
     const noText = this.createNoText(futureSameDaySlots)
+
+    if (!config.sameDayScheduleModificationsEnabled) {
+      return res.redirect('exclusions')
+    }
 
     return res.render('pages/activities/manage-allocations/addToSessionsToday', {
       prisonerName: inmate.prisonerName,
