@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
+import EventTier, { eventTierRadioOptionDescriptions } from '../../../../enum/eventTiers'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 export class TierForm {
@@ -15,17 +15,14 @@ export default class TierRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> =>
-    res.render(`pages/activities/create-an-activity/tier`, { eventTierDescriptions })
+    res.render(`pages/activities/create-an-activity/tier`, { eventTierRadioOptionDescriptions })
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { tier }: TierForm = req.body
     const { preserveHistory } = req.query
 
     req.journeyData.createJourney.tierCode = tier
-
-    if (EventTier.FOUNDATION !== tier) {
-      req.journeyData.createJourney.attendanceRequired = true
-    }
+    req.journeyData.createJourney.attendanceRequired = true
 
     if (EventTier.TIER_2 === tier) {
       return res.redirect(`organiser${preserveHistory ? '?preserveHistory=true' : ''}`)

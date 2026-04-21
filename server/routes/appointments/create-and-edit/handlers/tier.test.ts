@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import TierRoutes, { TierForm } from './tier'
-import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
+import EventTier, { eventTierRadioOptionDescriptions } from '../../../../enum/eventTiers'
 import Organiser from '../../../../enum/eventOrganisers'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourney, AppointmentJourneyMode } from '../appointmentJourney'
@@ -53,7 +53,7 @@ describe('Route Handlers - Create Appointment - Tier', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/tier', {
-        eventTierDescriptions,
+        eventTierRadioOptionDescriptions,
         isCtaAcceptAndSave: false,
       })
     })
@@ -67,7 +67,7 @@ describe('Route Handlers - Create Appointment - Tier', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/tier', {
-        eventTierDescriptions,
+        eventTierRadioOptionDescriptions,
         isCtaAcceptAndSave: true,
       })
     })
