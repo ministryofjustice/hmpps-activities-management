@@ -15,13 +15,15 @@ export default class ActivitiesRoutes {
     filters.stateFilter ??= 'live'
     filters.isOutsideWorkFilter ??= 'false'
 
-    const activities = await this.activitiesService
+    let activities = await this.activitiesService
       .getActivities(false, user)
       .then(act =>
-        act
-          .filter(a => filters.stateFilter === 'all' || a.activityState.toLowerCase() === filters.stateFilter)
-          .filter(a => a.outsideWork === (filters.isOutsideWorkFilter === 'true')),
+        act.filter(a => filters.stateFilter === 'all' || a.activityState.toLowerCase() === filters.stateFilter),
       )
+
+    if (user.externalActivitiesRolledOut) {
+      activities = activities.filter(a => a.outsideWork === (filters.isOutsideWorkFilter === 'true'))
+    }
 
     res.render('pages/activities/manage-activities/activities-dashboard', {
       activities,
