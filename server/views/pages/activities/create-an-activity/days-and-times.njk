@@ -30,7 +30,11 @@
             {% endif %}
 
             {% if session.req.routeContext.mode == 'edit' %}
-                <p class="govuk-body">Any changes you make will take effect tomorrow.</p>
+                {% if sameDayScheduleModificationsEnabled %}
+                    <p class="govuk-body" data-qa="modification-time">If you add a session for today, you can choose if it runs today or not. Other changes you make will take effect tomorrow.</p>
+                {% else %}
+                    <p class="govuk-body" data-qa="modification-time">Any changes you make will take effect tomorrow.</p>
+                {% endif %}
                 <p class="govuk-body">You should update any unlock lists that have been printed.</p>
             {% elseif createJourney.scheduleWeeks > 1 and session.req.params.weekNumber == 1 %}
                 <p class="govuk-body">Your chosen start date will fall in week 1 of your schedule, even if there are no sessions planned for the rest of the week</p>
