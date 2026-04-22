@@ -96,7 +96,7 @@
     "@types/nunjucks": "^3.2.6",
     "@types/passport": "^1.0.17",
     "@types/passport-oauth2": "^1.8.0",
-    "@types/sinon": "^21.0.0",
+    "@types/sinon": "^21.0.1",
     "@types/superagent": "^8.1.9",
     "axe-core": "^4.11.1",
     "better-npm-audit": "^3.11.0",
@@ -124,7 +124,7 @@
     "openapi-typescript": "^7.13.0",
     "prettier": "3.8.1",
     "prettier-plugin-jinja-template": "^2.1.0",
-    "sinon": "^21.0.3",
+    "sinon": "^21.1.0",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3"
