@@ -133,7 +133,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
         addToSessionsToday: YesNo.NO,
         addToTodayText: null,
         futureSameDaySlots: [],
-        sameDayScheduleModificationsEnabled: true,
+        sameDayScheduleModificationsEnabled: false,
       })
     })
   })
