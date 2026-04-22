@@ -164,6 +164,13 @@ export default class ExclusionRoutes {
     const { user } = res.locals
     const { activity, exclusions } = req.journeyData.allocateJourney
 
+    // Reset futureSameDaySlots and addToSessionsToday to default values to handle user returning from later steps.
+    req.journeyData.allocateJourney = {
+      ...req.journeyData.allocateJourney,
+      futureSameDaySlots: [],
+      addToSessionsToday: undefined,
+    }
+
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
     const updatedSlots = this.mapBodyToSlots(req.body)

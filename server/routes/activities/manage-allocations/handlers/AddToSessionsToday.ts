@@ -3,10 +3,11 @@ import { formatListWithAnd, convertToTitleCase } from '../../../../utils/utils'
 import { FormValidationError } from '../../../../middleware/formValidationErrorHandler'
 import { Slot } from '../../../../@types/activitiesAPI/types'
 import config from '../../../../config'
+import { YesNo } from '../../../../@types/activities'
 
 export default class AddToSessionsToday {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { inmate, updatedExclusions, futureSameDaySlots } = req.journeyData.allocateJourney
+    const { inmate, updatedExclusions, futureSameDaySlots, addToSessionsToday } = req.journeyData.allocateJourney
     const headingText = this.createHeadingText(inmate.prisonerName, futureSameDaySlots)
     const yesText = this.createYesText(futureSameDaySlots)
     const noText = this.createNoText(futureSameDaySlots)
@@ -15,12 +16,15 @@ export default class AddToSessionsToday {
       return res.redirect('exclusions')
     }
 
+    const addToTodaySession = this.convertTodaySessionToYesNo(addToSessionsToday)
+
     return res.render('pages/activities/manage-allocations/addToSessionsToday', {
       prisonerName: inmate.prisonerName,
       updatedExclusions,
       headingText,
       yesText,
       noText,
+      addToTodaySession,
     })
   }
 
@@ -30,8 +34,7 @@ export default class AddToSessionsToday {
     if (!addToSessionsToday) {
       throw new FormValidationError('addToSessionsToday', 'Select an option')
     }
-    // TODO: wire this variable into the updated check answers page
-    req.journeyData.allocateJourney.addToSessionsToday = addToSessionsToday === 'yes'
+    req.journeyData.allocateJourney.addToSessionsToday = addToSessionsToday === YesNo.YES
     return res.redirect('confirm-exclusions')
   }
 
@@ -56,5 +59,12 @@ export default class AddToSessionsToday {
   private formatSlots(slots: Slot[]): string {
     const timeSlots = slots.map(slot => slot.timeSlot)
     return formatListWithAnd(timeSlots)
+  }
+
+  private convertTodaySessionToYesNo(value: boolean | undefined): YesNo | undefined {
+    if (value === undefined) {
+      return undefined
+    }
+    return value ? YesNo.YES : YesNo.NO
   }
 }

@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import AddToSessionsToday from './AddToSessionsToday'
 import { FormValidationError } from '../../../../middleware/formValidationErrorHandler'
 import { Slot } from '../../../../@types/activitiesAPI/types'
+import { YesNo } from '../../../../@types/activities'
 import config from '../../../../config'
 
 describe('Route Handlers - Allocation - Add To Sessions Today', () => {
@@ -184,7 +185,7 @@ describe('Route Handlers - Allocation - Add To Sessions Today', () => {
 
   describe('POST', () => {
     it('should set addToSessionsToday to true when yes is selected', async () => {
-      req.body.addToSessionsToday = 'yes'
+      req.body.addToSessionsToday = YesNo.YES
 
       await handler.POST(req, res)
 
@@ -193,7 +194,7 @@ describe('Route Handlers - Allocation - Add To Sessions Today', () => {
     })
 
     it('should set addToSessionsToday to false when no is selected', async () => {
-      req.body.addToSessionsToday = 'no'
+      req.body.addToSessionsToday = YesNo.NO
 
       await handler.POST(req, res)
 
