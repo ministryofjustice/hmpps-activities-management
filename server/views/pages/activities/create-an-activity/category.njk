@@ -38,7 +38,8 @@
                     },
                     name: "category",
                     errorMessage: validationErrors | findError('category'),
-                    items: categoryOptions
+                    items: categoryOptions,
+                    attributes: {"data-qa": "category-radio-options"}
                 }) }}
 
                 {% if session.req.routeContext.mode == 'edit' %}
