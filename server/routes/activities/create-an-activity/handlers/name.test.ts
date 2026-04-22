@@ -66,6 +66,7 @@ describe('Route Handlers - Create an activity - Name', () => {
             waitlisted: 1,
             createdTime: '2023-07-20T16:05:16',
             activityState: 'LIVE',
+            outsideWork: false,
           },
           {
             id: 7,
@@ -81,6 +82,7 @@ describe('Route Handlers - Create an activity - Name', () => {
             waitlisted: 0,
             createdTime: '2025-10-15T16:00:00',
             activityState: 'ARCHIVED',
+            outsideWork: false,
           },
         ])
     })

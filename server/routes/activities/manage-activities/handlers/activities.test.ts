@@ -36,6 +36,7 @@ describe('Route Handlers - Activities dashboard', () => {
       activityName: 'Maths level 1',
       activityState: 'LIVE',
       category: educationCategory,
+      outsideWork: false,
     } as ActivitySummary
 
     english = {
@@ -43,6 +44,7 @@ describe('Route Handlers - Activities dashboard', () => {
       activityName: 'English level 1',
       activityState: 'LIVE',
       category: educationCategory,
+      outsideWork: false,
     } as ActivitySummary
 
     gym = {
@@ -50,6 +52,7 @@ describe('Route Handlers - Activities dashboard', () => {
       activityName: 'Gym',
       activityState: 'ARCHIVED',
       category: gymCategory,
+      outsideWork: false,
     } as ActivitySummary
 
     when(activitiesService.getActivities).mockResolvedValue([maths, english, gym])
@@ -81,7 +84,7 @@ describe('Route Handlers - Activities dashboard', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/activities-dashboard', {
         activities: [maths, english, gym],
-        filters: { categoryFilter: 'all', stateFilter: 'all' },
+        filters: { categoryFilter: 'all', stateFilter: 'all', isOutsideWorkFilter: 'false' },
       })
     })
 
@@ -93,6 +96,7 @@ describe('Route Handlers - Activities dashboard', () => {
         activities: [maths, english],
         filters: {
           stateFilter: 'live',
+          isOutsideWorkFilter: 'false',
         },
       })
     })
@@ -105,6 +109,7 @@ describe('Route Handlers - Activities dashboard', () => {
         activities: [gym],
         filters: {
           stateFilter: 'archived',
+          isOutsideWorkFilter: 'false',
         },
       })
     })

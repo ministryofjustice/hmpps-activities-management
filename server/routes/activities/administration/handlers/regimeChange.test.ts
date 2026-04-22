@@ -638,6 +638,7 @@ describe('Route Handlers - Change Regime times', () => {
         waitlisted: 0,
         createdTime: '2023-10-23T09:52:30',
         activityState: 'LIVE',
+        outsideWork: false,
       }
       const activitySummary2: ActivitySummary = {
         id: 872,
@@ -653,6 +654,7 @@ describe('Route Handlers - Change Regime times', () => {
         waitlisted: 0,
         createdTime: '2024-08-22T09:15:54',
         activityState: 'LIVE',
+        outsideWork: false,
       }
       const activitySummary3: ActivitySummary = {
         id: 539,
@@ -669,6 +671,7 @@ describe('Route Handlers - Change Regime times', () => {
         waitlisted: 0,
         createdTime: '2023-10-23T09:59:24',
         activityState: 'LIVE',
+        outsideWork: false,
       }
       const archivedActivitySummary: ActivitySummary = {
         id: 222,
@@ -685,6 +688,7 @@ describe('Route Handlers - Change Regime times', () => {
         waitlisted: 0,
         createdTime: '2023-10-23T09:59:24',
         activityState: 'ARCHIVED',
+        outsideWork: false,
       }
 
       const activity1: Activity = {
