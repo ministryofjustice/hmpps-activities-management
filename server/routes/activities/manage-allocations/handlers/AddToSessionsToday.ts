@@ -7,14 +7,14 @@ import { YesNo } from '../../../../@types/activities'
 
 export default class AddToSessionsToday {
   GET = async (req: Request, res: Response): Promise<void> => {
+    if (!config.sameDayScheduleModificationsEnabled) {
+      return res.redirect('exclusions')
+    }
+
     const { inmate, updatedExclusions, futureSameDaySlots, addToSessionsToday } = req.journeyData.allocateJourney
     const headingText = this.createHeadingText(inmate.prisonerName, futureSameDaySlots)
     const yesText = this.createYesText(futureSameDaySlots)
     const noText = this.createNoText(futureSameDaySlots)
-
-    if (!config.sameDayScheduleModificationsEnabled) {
-      return res.redirect('exclusions')
-    }
 
     const addToTodaySession = this.convertTodaySessionToYesNo(addToSessionsToday)
 
