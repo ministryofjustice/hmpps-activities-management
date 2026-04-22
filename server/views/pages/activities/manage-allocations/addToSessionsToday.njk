@@ -28,17 +28,17 @@
           name: "addToSessionsToday",
           items: [
             {
-              value: "yes",
+              value: YesNo.YES,
               html: yesText | safe,
               hint: {
               text: "Unlock, movement and attendance lists may need to be printed again."
             },
-              checked: addToTodaySession == "yes"
+              checked: addToTodaySession == YesNo.YES
             },
             {
-              value: "no",
+              value: YesNo.NO,
               html: noText | safe,
-              checked: addToTodaySession == "no"
+              checked: addToTodaySession == YesNo.NO
             }
           ],
           errorMessage: validationErrors | findError('addToTodaySession')

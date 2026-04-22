@@ -122,6 +122,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       jest.useFakeTimers().setSystemTime(new Date('2024-08-30'))
+      config.sameDayScheduleModificationsEnabled = false
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/exclusions', {
@@ -193,6 +194,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           },
         ],
       })
+      jest.useRealTimers()
     })
 
     it('should redirect to allocations dashboard when allocate journey data is not available', async () => {
@@ -389,6 +391,23 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       config.sameDayScheduleModificationsEnabled = featureFlagEnabled
 
       try {
+        // Set non-default values to simulate user returning from later steps
+        req.journeyData.allocateJourney.futureSameDaySlots = [
+          {
+            weekNumber: 1,
+            timeSlot: 'PM',
+            monday: true,
+            tuesday: false,
+            wednesday: false,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
+            daysOfWeek: ['MONDAY'],
+          },
+        ]
+        req.journeyData.allocateJourney.addToSessionsToday = true
+
         req.journeyData.allocateJourney.exclusions = [
           {
             weekNumber: 1,
@@ -425,6 +444,14 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         if (shouldNotRedirectTo) {
           expect(res.redirect).not.toHaveBeenCalledWith(shouldNotRedirectTo)
         }
+
+        // Check that futureSameDaySlots and addToSessionsToday have been reset
+        if (featureFlagEnabled && expectedRedirect === 'addToToday') {
+          expect(req.journeyData.allocateJourney.futureSameDaySlots.length).toBeGreaterThan(0)
+        } else {
+          expect(req.journeyData.allocateJourney.futureSameDaySlots).toEqual([])
+        }
+        expect(req.journeyData.allocateJourney.addToSessionsToday).toBe(undefined)
       } finally {
         config.sameDayScheduleModificationsEnabled = originalValue
         jest.useRealTimers()
