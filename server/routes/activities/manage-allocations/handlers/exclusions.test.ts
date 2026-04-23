@@ -365,21 +365,21 @@ describe('Route Handlers - Allocation - Exclusions', () => {
     it.each([
       {
         description: 'NOT redirect to addToToday when feature flag is disabled and future same day slots exist',
-        systemTime: '2024-08-28 08:00:00',
+        systemTime: '2024-08-21 08:00:00',
         featureFlagEnabled: false,
         expectedRedirect: 'confirm-exclusions',
         shouldNotRedirectTo: 'addToToday',
       },
       {
         description: 'redirect to addToToday when feature flag is enabled as slot is in future',
-        systemTime: '2024-08-28 07:00:00',
+        systemTime: '2024-08-21 07:00:00',
         featureFlagEnabled: true,
         expectedRedirect: 'addToToday',
         shouldNotRedirectTo: null,
       },
       {
         description: 'NOT redirect to addToToday when feature flag is enabled but slot start time has passed',
-        systemTime: '2024-08-28 12:30:00',
+        systemTime: '2024-08-21 12:30:00',
         featureFlagEnabled: true,
         expectedRedirect: 'confirm-exclusions',
         shouldNotRedirectTo: 'addToToday',
