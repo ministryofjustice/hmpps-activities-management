@@ -455,44 +455,4 @@ describe('getFutureSameDaySlots', () => {
     expect(result).toHaveLength(1)
     expect(result.map((s: Slot) => s.timeSlot).sort()).toEqual(['ED'])
   })
-
-  it('should return empty array when activity has not started yet', () => {
-    // Monday, April 20, 2026
-    jest.setSystemTime(new Date('2026-04-20T10:00:00'))
-
-    const schedule = {
-      // Saturday, April 25, 2026 - Activity scheduled to start in 5 days
-      startDate: '2026-04-25',
-      scheduleWeeks: 1,
-      slots: [
-        {
-          weekNumber: 1,
-          timeSlot: 'PM',
-          startTime: '13:00',
-          endTime: '17:00',
-          daysOfWeek: ['Fri'],
-        },
-      ],
-    }
-
-    const addedSlots = [
-      {
-        weekNumber: 1,
-        timeSlot: 'PM',
-        daysOfWeek: ['FRIDAY'],
-        monday: false,
-        tuesday: false,
-        wednesday: false,
-        thursday: false,
-        friday: true,
-        saturday: false,
-        sunday: false,
-      },
-    ]
-
-    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule)
-
-    // Should return empty as calcCurrentWeek returns null (activity hasn't started)
-    expect(result).toEqual([])
-  })
 })

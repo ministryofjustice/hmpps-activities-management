@@ -34,7 +34,7 @@
                 }) }}
             {% endif %}
 
-          {% if sameDayScheduleModificationsEnabled and session.req.routeContext.mode == 'edit' %}
+          {% if sameDayScheduleModificationsEnabled and session.req.routeContext.mode == 'edit' and allocationHasStarted %}
           {{ govukDetails({
             summaryText: "Adding sessions for people to attend today",
             html: "If you add a session for today, you can choose if you want the prisoner to attend today or from next week. </br></br>

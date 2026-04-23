@@ -3,7 +3,7 @@ import calcCurrentWeek from './currentWeekCalculator'
 import { ActivitySchedule, Slot } from '../../@types/activitiesAPI/types'
 
 /**
- * Filters slots that occur today in the current week and have a start time in the future.
+ * Filters for slots that occur later today, provided this week is the current week of the schedule
  * Multi-week schedules are handled by only returning slots from the current week,
  * preventing future week slots from triggering the same-day redirect.
  * @param addedSlots The slots that were changed
