@@ -1,0 +1,235 @@
+[
+  {
+    "id": 2,
+    "description": "Entry level English 1 - Tuesday AM",
+    "internalLocation": {
+      "id": 1,
+      "code": "EDU-ROOM-1",
+      "description": "Education - R1"
+    },
+    "capacity": 10,
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "inCell": false,
+      "pieceWork": false,
+      "outsideWork": false,
+      "payPerSession": "H",
+      "summary": "English level 1",
+      "description": "A basic english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDUCATION",
+        "name": "Education",
+        "description": "Such as classes in English, maths, construction and computer skills"
+      },
+      "riskLevel": null,
+      "pay": [
+        {
+          "id": 1,
+          "incentiveLevel": "Basic",
+          "incentiveNomisCode": "BAS",
+          "prisonPayBand": {
+            "alias": "",
+            "description": "",
+            "displaySequence": 0,
+            "id": 0,
+            "nomisPayBand": 0,
+            "prisonCode": ""
+          }
+        }
+      ]
+    },
+    "slots": [
+      {
+        "id": 5,
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "daysOfWeek": ["Tue"],
+        "timeSlot": "AM"
+      },
+      
+      {
+        "id": 10,
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "daysOfWeek": ["Wed"],
+        "timeSlot": "AM"
+      },
+      {
+        "id": 11,
+        "startTime": "14:00",
+        "endTime": "15:00",
+        "daysOfWeek": ["Wed"],
+        "timeSlot": "PM"
+      },
+      {
+        "id": 12,
+        "startTime": "17:00",
+        "endTime": "18:00",
+        "daysOfWeek": ["Wed"],
+        "timeSlot": "ED"
+      }
+    ],
+    "startDate": "2022-10-10",
+    "endDate": null
+  },
+  {
+    "id": 6,
+    "description": "Entry level English 2 - Tuesday PM",
+    "internalLocation": {
+      "id": 2,
+      "code": "EDU-ROOM-2",
+      "description": "Education - R2"
+    },
+    "capacity": 10,
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "inCell": false,
+      "pieceWork": false,
+      "outsideWork": false,
+      "payPerSession": "H",
+      "summary": "English level 1",
+      "description": "A basic english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDUCATION",
+        "name": "Education",
+        "description": "Such as classes in English, maths, construction and computer skills"
+      },
+      "riskLevel": null
+    },
+    "slots": [
+      {
+        "id": 6,
+        "startTime": "14:00",
+        "endTime": "15:00",
+        "daysOfWeek": ["Tue"],
+        "timeSlot": "PM"
+      }
+    ],
+    "startDate": "2022-10-10",
+    "endDate": null
+  },
+  {
+    "id": 9,
+    "description": "Entry level English 5 - Tuesday ED",
+    "internalLocation": {
+      "id": 1,
+      "code": "EDU-ROOM-1",
+      "description": "Education - R1"
+    },
+    "capacity": 10,
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "inCell": false,
+      "pieceWork": false,
+      "outsideWork": false,
+      "payPerSession": "H",
+      "summary": "English level 1",
+      "description": "A basic english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDUCATION",
+        "name": "Education",
+        "description": "Such as classes in English, maths, construction and computer skills"
+      },
+      "riskLevel": null
+    },
+    "slots": [
+      {
+        "id": 9,
+        "startTime": "18:00",
+        "endTime": "19:00",
+        "daysOfWeek": ["Tue"],
+        "timeSlot": "ED"
+      }
+    ],
+    "startDate": "2022-10-10",
+    "endDate": null
+  },
+  {
+    "id": 7,
+    "description": "Entry level English 3 - Wednesday AM",
+    "internalLocation": {
+      "id": 1,
+      "code": "EDU-ROOM-1",
+      "description": "Education - R1"
+    },
+    "capacity": 10,
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "inCell": false,
+      "pieceWork": false,
+      "outsideWork": false,
+      "payPerSession": "H",
+      "summary": "English level 1",
+      "description": "A basic english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDUCATION",
+        "name": "Education",
+        "description": "Such as classes in English, maths, construction and computer skills"
+      },
+      "riskLevel": null
+    },
+    "slots": [
+      {
+        "id": 7,
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "daysOfWeek": ["Wed"],
+        "timeSlot": "AM"
+      }
+    ],
+    "startDate": "2022-10-10",
+    "endDate": null
+  },
+  {
+    "id": 8,
+    "description": "Entry level English 4 - Thursday PM",
+    "internalLocation": {
+      "id": 2,
+      "code": "EDU-ROOM-2",
+      "description": "Education - R2"
+    },
+    "capacity": 10,
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "inCell": false,
+      "pieceWork": false,
+      "outsideWork": false,
+      "payPerSession": "H",
+      "summary": "English level 1",
+      "description": "A basic english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDUCATION",
+        "name": "Education",
+        "description": "Such as classes in English, maths, construction and computer skills"
+      },
+      "riskLevel": null
+    },
+    "slots": [
+      {
+        "id": 8,
+        "startTime": "14:00",
+        "endTime": "15:00",
+        "daysOfWeek": ["Thu"],
+        "timeSlot": "PM"
+      }
+    ],
+    "startDate": "2022-10-10",
+    "endDate": null
+  }
+]
+
