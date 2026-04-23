@@ -1,9 +1,13 @@
 import { addMonths, subWeeks } from 'date-fns'
 import getActivities from '../../../fixtures/activitiesApi/getActivities.json'
-import getSchedulesInActivity from '../../../fixtures/activitiesApi/getSchedulesInActivity.json'
+import getActivity from '../../../fixtures/activitiesApi/getActivity.json'
+import getSchedulesInActivity from '../../../fixtures/activitiesApi/getSchedulesInActivityMultipleDays.json'
+import getScheduleWithMultipleSlots from '../../../fixtures/activitiesApi/getSchedule.json'
 import getAllocations from '../../../fixtures/activitiesApi/getAllocations.json'
+import getAllocationDetailsA1351DZ from '../../../fixtures/activitiesApi/getAllocationDetailsA1351DZ.json'
 import prisonerAllocations from '../../../fixtures/activitiesApi/prisonerAllocations.json'
 import moorlandIncentiveLevels from '../../../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
+import getInmateDetailsForSameDayModifications from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-A1351DZ.json'
 import getInmateDetails from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-A5015DY.json'
 import getPrisonerIepSummary from '../../../fixtures/incentivesApi/getPrisonerIepSummary.json'
 import getDeallocationReasons from '../../../fixtures/activitiesApi/getDeallocationReasons.json'
@@ -31,6 +35,7 @@ import ManageActivitiesDashboardPage from '../../../pages/activities/manageActiv
 import BeforeYouAllocate from '../../../pages/allocateToActivity/beforeYouAllocate'
 import ActivitiesIndexPage from '../../../pages/activities'
 import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
+import AddToSessionsTodayPage from '../../../pages/allocateToActivity/addToSessionsToday'
 import resetActivityAndScheduleStubs from './allocationsStubHelper'
 
 const navigateToActivitiesDashboard = (): AllocationDashboard => {
@@ -230,7 +235,6 @@ context('Allocate to activity', () => {
     allocatePage.waitlistRows().eq(0).should('contain.text', 'Withdrawn')
   })
 
-  // TODO: This test will change when sameDayScheduleModificationsEnabled is enabled
   it('with sameDayScheduleModificationsEnabled NOT enabled, content should not change.', () => {
     const allocatePage = navigateToActivitiesDashboard()
     allocatePage.tabWithTitle('Other people').click()
@@ -261,12 +265,115 @@ context('Allocate to activity', () => {
 
     const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
 
-    // WITHOUT sameDayScheduleModificationsEnabled, the title text should NOT mention changing scheduled sessions
-    exclusionsPage.pageTitle().should('contain.text', 'Change when Alfonso Cholak should attend this activity')
+    // TODO: Can set these with feature flag override. But not sure completley neccessary.
+    // WITH sameDayScheduleModificationsEnabled, the title text should mention changing scheduled sessions
+    exclusionsPage.pageTitle().should('contain.text', `Change Alfonso Cholak's scheduled sessions for this activity`)
 
-    // WITHOUT sameDayScheduleModificationsEnabled, the same day details summary should NOT be displayed
-    exclusionsPage.detailsSummary().should('not.exist')
+    // WITH sameDayScheduleModificationsEnabled, the same day details summary should be displayed
+    exclusionsPage.detailsSummary().should('exist')
 
     exclusionsPage.continue()
+  })
+})
+
+context('Same day schedule modifications - addToToday redirect', () => {
+  beforeEach(() => {
+    cy.task('reset')
+    cy.task('stubSignIn')
+    cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
+    cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
+    cy.stubEndpoint('GET', '/schedules/2', getScheduleWithMultipleSlots)
+    cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
+    cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations)
+    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
+    cy.stubEndpoint(
+      'GET',
+      '/schedules/2/waiting-list-applications\\?includeNonAssociationsCheck=true',
+      JSON.parse('[]'),
+    )
+    cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
+    cy.stubEndpoint('GET', '/prisoner/A1351DZ', getInmateDetailsForSameDayModifications)
+    cy.stubEndpoint('GET', '/allocations/id/2', getAllocations[0])
+    cy.stubEndpoint('GET', '/allocations/id/3', getAllocationDetailsA1351DZ)
+    cy.stubEndpoint('GET', '/activities/2', getActivity)
+    cy.stubEndpoint('GET', '/activities/(\\d)*/filtered', getActivities[1])
+    cy.stubEndpoint('GET', '/users/MR BLOGS', { name: 'MR BLOGS', activeCaseLoadId: 'MDI' })
+    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', [
+      { prisonerNumber: 'A1351DZ', firstName: 'NO', lastName: 'BODY' },
+    ])
+    cy.stubEndpoint('POST', '/exclusions')
+    cy.stubEndpoint('GET', '/addToToday')
+
+    resetActivityAndScheduleStubs({ activityStartDate: subWeeks(Date(), 2) })
+
+    cy.signIn()
+  })
+
+  afterEach(() => {
+  })
+
+  it.only('should show addToToday page when slots added for today are later than current time', () => {
+
+    navigateToActivitiesDashboard()
+
+    cy.get('label[for="allocated-2"]').click({ force: true })
+
+    cy.get('button').contains('Manage allocation').click()
+
+    // TODO: need to set the time to be able to reliably test this. I.E set time as midday Tuesday ('today')
+    // TODO: this should then redirect to addToToday page as the ED slot will be later today.
+
+    cy.stubEndpoint('GET', '/allocations/id/3', {
+      ...getAllocationDetailsA1351DZ,
+      exclusions: [
+        {
+          weekNumber: 1,
+          timeSlot: 'PM',
+          daysOfWeek: ['TUESDAY'],
+          monday: false,
+          tuesday: true,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+        },
+        {
+          weekNumber: 1,
+          timeSlot: 'ED',
+          daysOfWeek: ['TUESDAY'],
+          monday: false,
+          tuesday: true,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+        },
+      ],
+    })
+
+    cy.get('.govuk-link').eq(3).click()
+
+    const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
+
+    cy.get('.govuk-checkboxes__item').eq(2).click()
+
+    exclusionsPage.continue()
+
+    const addToSessionsTodayPage = Page.verifyOnPage(AddToSessionsTodayPage)
+
+    addToSessionsTodayPage.selectOption('yes')
+
+    exclusionsPage.continue()
+  //   TODO: Complete tests when journey is built
+  })
+
+  it('should NOT redirect to addToToday when todays slot time has passed', () => {
+//   TODO: Tests dont exist for this afik;  should be as is.
+})
+
+  it('should NOT redirect to addToToday when added slot is not for today ', () => {
+//   TODO: Tests dont exist for this afik; this should also be as is.
   })
 })
