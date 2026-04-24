@@ -5,6 +5,7 @@ import ExclusionRoutes from './exclusions'
 import atLeast from '../../../../../jest.setup'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -121,6 +122,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       jest.useFakeTimers().setSystemTime(new Date('2024-08-30'))
+      config.sameDayScheduleModificationsEnabled = false
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/exclusions', {
@@ -192,6 +194,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           },
         ],
       })
+      jest.useRealTimers()
     })
 
     it('should redirect to allocations dashboard when allocate journey data is not available', async () => {
@@ -357,6 +360,102 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       ])
 
       expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
+    })
+
+    it.each([
+      {
+        description: 'NOT redirect to addToToday when feature flag is disabled and future same day slots exist',
+        systemTime: '2024-08-28 08:00:00',
+        featureFlagEnabled: false,
+        expectedRedirect: 'confirm-exclusions',
+        shouldNotRedirectTo: 'addToToday',
+      },
+      {
+        description: 'redirect to addToToday when feature flag is enabled as slot is in future',
+        systemTime: '2024-08-28 07:00:00',
+        featureFlagEnabled: true,
+        expectedRedirect: 'addToToday',
+        shouldNotRedirectTo: null,
+      },
+      {
+        description: 'NOT redirect to addToToday when feature flag is enabled but slot start time has passed',
+        systemTime: '2024-08-28 12:30:00',
+        featureFlagEnabled: true,
+        expectedRedirect: 'confirm-exclusions',
+        shouldNotRedirectTo: 'addToToday',
+      },
+    ])('should $description', async ({ systemTime, featureFlagEnabled, expectedRedirect, shouldNotRedirectTo }) => {
+      jest.useFakeTimers().setSystemTime(new Date(systemTime))
+
+      const originalValue = config.sameDayScheduleModificationsEnabled
+      config.sameDayScheduleModificationsEnabled = featureFlagEnabled
+
+      try {
+        // Set non-default values to simulate user returning from later steps
+        req.journeyData.allocateJourney.futureSameDaySlots = [
+          {
+            weekNumber: 1,
+            timeSlot: 'PM',
+            monday: true,
+            tuesday: false,
+            wednesday: false,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
+            daysOfWeek: ['MONDAY'],
+          },
+        ]
+        req.journeyData.allocateJourney.addToSessionsToday = true
+
+        req.journeyData.allocateJourney.exclusions = [
+          {
+            weekNumber: 1,
+            timeSlot: 'AM',
+            monday: false,
+            tuesday: false,
+            wednesday: true,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
+            daysOfWeek: ['WEDNESDAY'],
+          },
+        ]
+
+        req.routeContext = { mode: 'edit' }
+        req.params.allocationId = '1'
+
+        req.body = {
+          week1: {
+            monday: [],
+            tuesday: [],
+            wednesday: ['AM'],
+            thursday: [],
+            friday: [],
+            saturday: [],
+            sunday: [],
+          },
+        }
+
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith(expectedRedirect)
+        if (shouldNotRedirectTo) {
+          expect(res.redirect).not.toHaveBeenCalledWith(shouldNotRedirectTo)
+        }
+
+        // Check that futureSameDaySlots and addToSessionsToday have been reset
+        if (featureFlagEnabled && expectedRedirect === 'addToToday') {
+          expect(req.journeyData.allocateJourney.futureSameDaySlots.length).toBeGreaterThan(0)
+        } else {
+          expect(req.journeyData.allocateJourney.futureSameDaySlots).toEqual([])
+        }
+        expect(req.journeyData.allocateJourney.addToSessionsToday).toBe(undefined)
+      } finally {
+        config.sameDayScheduleModificationsEnabled = originalValue
+        jest.useRealTimers()
+      }
     })
   })
 })

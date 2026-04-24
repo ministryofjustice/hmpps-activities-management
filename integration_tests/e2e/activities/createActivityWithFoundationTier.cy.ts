@@ -21,11 +21,9 @@ import EndDatePage from '../../pages/createSchedule/endDate'
 import ScheduleFrequencyPage from '../../pages/createSchedule/scheduleFrequency'
 import DaysAndSessionsPage from '../../pages/createSchedule/daysAndSessions'
 import BankHolidayPage from '../../pages/createSchedule/bankHoliday'
-import LocationPage from '../../pages/createSchedule/location'
 import CapacityPage from '../../pages/createSchedule/capacity'
 import ManageActivitiesDashboardPage from '../../pages/activities/manageActivitiesDashboard'
 import ActivitiesIndexPage from '../../pages/activities'
-import ActivityTierPage from '../../pages/createActivity/tier'
 import PayOptionPage from '../../pages/createActivity/pay-option'
 import AttendanceRequired from '../../pages/createActivity/recordAttendance'
 import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOption'
@@ -62,16 +60,12 @@ context('Create activity', () => {
     manageActivitiesPage.cardActivityCard().click()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.selectCategory('Gym, sport and fitness')
+    categoryPage.selectCategory('Not in work')
     categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
     activityNamePage.enterName('5-a-side Football')
     activityNamePage.continue()
-
-    const activityTierPage = Page.verifyOnPage(ActivityTierPage)
-    activityTierPage.selectActivityTier('Routine activities also called "Foundation"')
-    activityTierPage.continue()
 
     const riskLevelPage = Page.verifyOnPage(RiskLevelPage)
     riskLevelPage.selectRiskLevel('Only people with a low workplace risk assessment are suitable')
@@ -117,17 +111,12 @@ context('Create activity', () => {
     bankHolidayPage.runOnBankHoliday('Yes')
     bankHolidayPage.continue()
 
-    const locationPage = Page.verifyOnPage(LocationPage)
-    locationPage.selectSearchForLocation()
-    locationPage.selectLocation('HB2 Classroom 2')
-    locationPage.continue()
-
     const capacityPage = Page.verifyOnPage(CapacityPage)
     capacityPage.enterCapacity('6')
     capacityPage.continue()
   }
 
-  it('should create a foundation tier activity when we record attendance', () => {
+  it('should create a "Not in work" category foundation tier activity when we record attendance', () => {
     whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen()
 
     const attendanceRequiredPage = Page.verifyOnPage(AttendanceRequired)
@@ -147,7 +136,7 @@ context('Create activity', () => {
     Page.verifyOnPage(ConfirmationPage)
   })
 
-  it('should create a foundation tier activity when we do not record attendance', () => {
+  it('should create a "Not in work" category foundation tier activity when we do not record attendance', () => {
     whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen()
 
     const attendanceRequiredPage = Page.verifyOnPage(AttendanceRequired)

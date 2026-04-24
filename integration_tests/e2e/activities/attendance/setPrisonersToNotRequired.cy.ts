@@ -6,7 +6,7 @@ import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceD
 import SelectPeriodPage from '../../../pages/activities/attendanceSummary/selectPeriod'
 import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
-import getActivityCategories from '../../../fixtures/activitiesApi/getActivityCategories.json'
+import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 import getAllAttendances from '../../../fixtures/activitiesApi/getAllAttendances.json'
@@ -29,7 +29,7 @@ context('Exclude multiple prisoners from an activity', () => {
 
     getScheduledInstanceEnglishLevel2.date = date3DaysFromNow
 
-    cy.stubEndpoint('GET', '/activity-categories', getActivityCategories)
+    cy.stubEndpoint('GET', '/activity-categories', getCategories)
 
     cy.stubEndpoint(
       'GET',

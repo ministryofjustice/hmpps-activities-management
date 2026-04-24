@@ -77,7 +77,8 @@ context('Create external activity', () => {
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.caption().should('contain.text', 'Create an activity')
-    categoryPage.selectCategory('Gym, sport and fitness')
+    categoryPage.categoryLabels().should('contain', 'Not in work')
+    categoryPage.selectCategory('Gym, sport, fitness')
     categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
@@ -207,6 +208,7 @@ context('Create external activity', () => {
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.caption().should('contain.text', 'Create an outside activity')
+    categoryPage.categoryLabels().should('not.contain', 'Not in work')
     categoryPage.selectCategory('Industries')
     categoryPage.continue()
 
@@ -275,6 +277,7 @@ context('Create external activity', () => {
     activityTypePage.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
+    categoryPage.categoryLabels().should('not.contain', 'Induction')
     categoryPage.selectCategory('Industries')
     categoryPage.continue()
 

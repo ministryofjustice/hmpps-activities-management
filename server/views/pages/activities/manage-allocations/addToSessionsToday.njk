@@ -1,0 +1,56 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = "Do you want to add prisoner to todays session - Activities - DPS" %}
+{% set pageId = 'exclusions-add-to-todays-sessions-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">{{ allocateJourney.activity.name | safe }}</span>
+
+        <h1 class="govuk-heading-l">{{ headingText | safe}}</h1>
+
+    </div>
+    <div class="govuk-grid-column-full">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {{ govukRadios({
+          classes: "govuk-radios",
+          name: "addToSessionsToday",
+          items: [
+            {
+              value: YesNo.YES,
+              html: yesText | safe,
+              hint: {
+              text: "Unlock, movement and attendance lists may need to be printed again."
+            },
+              checked: addToTodaySession == YesNo.YES
+            },
+            {
+              value: YesNo.NO,
+              html: noText | safe,
+              checked: addToTodaySession == YesNo.NO
+            }
+          ],
+          errorMessage: validationErrors | findError('addToTodaySession')
+        }) }}
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Continue"
+          }) }}
+        </div>
+
+      </form>
+    </div>
+  </div>
+{% endblock %}
