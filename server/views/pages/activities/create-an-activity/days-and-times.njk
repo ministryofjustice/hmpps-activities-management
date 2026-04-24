@@ -16,14 +16,14 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(createJourney) }}
-            {% set headerText = 'the days and sessions when people can be out at this activity' if user.externalActivitiesRolledOut and createJourney.activityOutsidePrison else 'the days and sessions when this activity runs' %}
+            {% set headerText = 'the days and sessions when people can be out at this activity' if user.externalActivitiesRolledOut and createJourney.outsideWork else 'the days and sessions when this activity runs' %}
             {% if createJourney.scheduleWeeks > 1 %}
                 <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ createJourney.scheduleWeeks }}: {{ 'change' if session.req.routeContext.mode == 'edit' else 'select' }} {{ headerText }}</h1>
             {% else %}
                 <h1 class="govuk-heading-l">{{ 'Change' if session.req.routeContext.mode == 'edit' else 'Select' }} {{ headerText }}</h1>
             {% endif %}
             
-            {% if user.externalActivitiesRolledOut and createJourney.activityOutsidePrison %}
+            {% if user.externalActivitiesRolledOut and createJourney.outsideWork %}
                 <p class="govuk-body">If people can work shifts at different times, select all of the days and sessions that people may be out at the activity.</p>
             {% else %}
                 <p class="govuk-body">Select each day that the activity will run, then select the slots when the activity will run on that day.</p>
