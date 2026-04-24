@@ -364,26 +364,28 @@
                 ), dateAndScheduleRows) %}
             {% endfor %}
 
-            {% set dateAndScheduleRows = (dateAndScheduleRows.push(
-                {
-                    key: {
-                        text: "Runs on bank holidays"
-                    },
-                    value: {
-                        html: runsOnBankHolidays(schedule.runsOnBankHoliday, hasAtLeastOneValidDay)
-                    },
-                    actions: {
-                        items: [
-                            {
-                                href: "/activities/edit/" + activity.id + "/bank-holiday-option?preserveHistory=true",
-                                text: "Change",
-                                visuallyHiddenText: " bank holiday",
-                                classes: "govuk-link--no-visited-state"
-                            }
-                        ]
-                    } if (not activityEnded) and hasAtLeastOneValidDay
-                }
-            ), dateAndScheduleRows) %}
+            {% if not activity.outsideWork %}
+                {% set dateAndScheduleRows = (dateAndScheduleRows.push(
+                    {
+                        key: {
+                            text: "Runs on bank holidays"
+                        },
+                        value: {
+                            html: runsOnBankHolidays(schedule.runsOnBankHoliday, hasAtLeastOneValidDay)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/edit/" + activity.id + "/bank-holiday-option?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: " bank holiday",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if (not activityEnded) and hasAtLeastOneValidDay
+                    }
+                ), dateAndScheduleRows) %}
+            {% endif %}
 
             {{ govukSummaryList({
                 card: {
