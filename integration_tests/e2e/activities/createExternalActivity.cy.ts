@@ -77,7 +77,8 @@ context('Create external activity', () => {
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.caption().should('contain.text', 'Create an activity')
-    categoryPage.selectCategory('Gym, sport and fitness')
+    categoryPage.categoryLabels().should('contain', 'Not in work')
+    categoryPage.selectCategory('Gym, sport, fitness')
     categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
@@ -207,6 +208,7 @@ context('Create external activity', () => {
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.caption().should('contain.text', 'Create an outside activity')
+    categoryPage.categoryLabels().should('not.contain', 'Not in work')
     categoryPage.selectCategory('Industries')
     categoryPage.continue()
 
@@ -252,14 +254,11 @@ context('Create external activity', () => {
     capacityPage.enterCapacity('6')
     capacityPage.continue()
 
-    Page.verifyOnPage(CheckAnswersPage)
-    // TODO: For EA submission isn't possible. Location has no viable option.
-    // To be updated once a solution is reached.
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.createActivity()
 
-    // checkAnswersPage.createActivity()
-
-    // const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    // confirmationPage.payReviewLink().should('exist')
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.payReviewLink().should('not.exist')
   })
 
   it('should allow external activity journey with internal payer and custom times', () => {
@@ -278,6 +277,7 @@ context('Create external activity', () => {
     activityTypePage.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
+    categoryPage.categoryLabels().should('not.contain', 'Induction')
     categoryPage.selectCategory('Industries')
     categoryPage.continue()
 
@@ -348,13 +348,13 @@ context('Create external activity', () => {
     sessionTimesPage.continue()
 
     const capacityPage = Page.verifyOnPage(CapacityPage)
-    capacityPage.enterCapacity('6')
+    capacityPage.enterCapacity('5')
     capacityPage.continue()
 
-    Page.verifyOnPage(CheckAnswersPage)
-    // checkAnswersPage.createActivity()
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.createActivity()
 
-    // const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    // confirmationPage.payReviewLink().should('exist')
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.payReviewLink().should('exist')
   })
 })

@@ -48,6 +48,7 @@ const maths: ActivitySummary = {
   activityName: 'Maths level 1',
   activityState: 'LIVE',
   category: educationCategory,
+  outsideWork: false,
 }
 
 const english: ActivitySummary = {
@@ -59,6 +60,7 @@ const english: ActivitySummary = {
   activityName: 'English level 1',
   activityState: 'LIVE',
   category: educationCategory,
+  outsideWork: false,
 }
 
 const gym: ActivitySummary = {
@@ -70,6 +72,7 @@ const gym: ActivitySummary = {
   activityName: 'Gym',
   activityState: 'ARCHIVED',
   category: gymCategory,
+  outsideWork: false,
 }
 
 const mockActivity: Activity = {

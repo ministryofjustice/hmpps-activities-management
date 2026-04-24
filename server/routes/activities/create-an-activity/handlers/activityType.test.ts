@@ -11,7 +11,9 @@ describe('ActivityType Handler', () => {
   beforeEach(() => {
     req = {
       journeyData: {
-        createJourney: {},
+        createJourney: {
+          activityOutsidePrison: true,
+        },
       },
       body: {},
     } as unknown as Request
@@ -56,6 +58,7 @@ describe('ActivityType Handler', () => {
     it('should render the activity type page', async () => {
       await handler.GET(req, res)
 
+      expect(req.journeyData.createJourney.activityOutsidePrison).toBe(false)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/activity-type')
     })
   })

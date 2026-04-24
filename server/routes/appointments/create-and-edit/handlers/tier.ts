@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
-import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
+import EventTier, { eventTierRadioOptionDescriptions } from '../../../../enum/eventTiers'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
@@ -17,7 +17,7 @@ export default class TierRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> =>
     res.render(`pages/appointments/create-and-edit/tier`, {
-      eventTierDescriptions,
+      eventTierRadioOptionDescriptions,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),

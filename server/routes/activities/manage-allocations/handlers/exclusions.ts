@@ -1,12 +1,14 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
-import { parseDate } from '../../../../utils/utils'
+import { parseDate, getTodayAsDayOfTheWeek, isSlotTimeInFuture } from '../../../../utils/utils'
+import config from '../../../../config'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import TimeSlot from '../../../../enum/timeSlot'
 import {
   DayOfWeek,
   DayOfWeekEnum,
+  calculateExclusionSlots,
   calculateUniqueSlots,
   mapActivityScheduleSlotsToSlots,
   sessionSlotsToSchedule,
@@ -117,6 +119,7 @@ export default class ExclusionRoutes {
       prisonerName: inmate.prisonerName,
       weeks,
       disabledSlotsExist: disabledSlots.length > 0,
+      sameDayScheduleModificationsEnabled: config.sameDayScheduleModificationsEnabled,
     })
   }
 
@@ -159,14 +162,29 @@ export default class ExclusionRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activity } = req.journeyData.allocateJourney
+    const { activity, exclusions } = req.journeyData.allocateJourney
+
+    // Reset futureSameDaySlots and addToSessionsToday to default values to handle user returning from later steps.
+    req.journeyData.allocateJourney = {
+      ...req.journeyData.allocateJourney,
+      futureSameDaySlots: [],
+      addToSessionsToday: undefined,
+    }
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
     const updatedSlots = this.mapBodyToSlots(req.body)
 
     const updatedExclusions = calculateUniqueSlots(slots, updatedSlots)
+    const changedExclusionSlots = calculateExclusionSlots(exclusions, updatedExclusions)
     req.journeyData.allocateJourney.updatedExclusions = updatedExclusions
+
+    const futureSameDaySlots = this.getFutureSameDaySlots(changedExclusionSlots, schedule.slots)
+
+    if (config.sameDayScheduleModificationsEnabled && futureSameDaySlots.length > 0) {
+      req.journeyData.allocateJourney.futureSameDaySlots = futureSameDaySlots
+      return res.redirect('addToToday')
+    }
 
     if (req.routeContext.mode === 'create') {
       return res.redirect('check-answers')
@@ -206,5 +224,23 @@ export default class ExclusionRoutes {
           : undefined
       })
       .filter(s => s?.daysOfWeek?.length > 0)
+  }
+  /**
+   * Filters added slots to return only those scheduled for today that haven't started yet.
+   * Checks if the slot day matches today and if the slot's start time is in the future.
+   * @param addedSlots The slots that were added by the user
+   * @param scheduleSlots The activity's schedule slots containing start times
+   * @returns Array of slots occurring today that are scheduled for later
+   */
+
+  private getFutureSameDaySlots(addedSlots: Slot[], scheduleSlots: { timeSlot: string; startTime: string }[]): Slot[] {
+    const todayAsDayOfTheWeek = getTodayAsDayOfTheWeek()
+    return addedSlots.filter(slot => {
+      const occursToday = slot.daysOfWeek.includes(todayAsDayOfTheWeek)
+      if (!occursToday) return false
+      const slotStartTime = scheduleSlots.find(s => s.timeSlot === slot.timeSlot)?.startTime
+      if (!slotStartTime) return false
+      return isSlotTimeInFuture(slotStartTime)
+    })
   }
 }

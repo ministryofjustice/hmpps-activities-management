@@ -11,6 +11,7 @@ export class ActivityType {
 
 export default class ActivityTypeRoutes {
   async GET(req: Request, res: Response): Promise<void> {
+    req.journeyData.createJourney.activityOutsidePrison = false
     res.render('pages/activities/create-an-activity/activity-type')
   }
 

@@ -4,6 +4,7 @@ import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import CheckAnswersRoutes from './checkAnswers'
 import activity from '../../../../services/fixtures/activity_1.json'
+import externalActivity from '../../../../services/fixtures/activity_external_1.json'
 import atLeast from '../../../../../jest.setup'
 import PrisonService from '../../../../services/prisonService'
 import { Activity, PrisonRegime } from '../../../../@types/activitiesAPI/types'
@@ -315,7 +316,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
   })
 
   describe('POST', () => {
-    it('should create the activity and redirect to confirmation page', async () => {
+    it('should create the internal activity and redirect to confirmation page', async () => {
       const expectedActivity = {
         prisonCode: 'MDI',
         summary: 'Maths level 1',
@@ -337,6 +338,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         ],
         description: 'Maths level 1',
         startDate: '2023-01-17',
+        outsideWork: false,
         endDate: '2023-01-18',
         dpsLocationId: '99999999-0000-aaaa-bbbb-cccccccccccc',
         capacity: 12,
@@ -353,6 +355,104 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         .mockResolvedValueOnce(activity as unknown as Activity)
 
       await handler.POST(req, res)
+      expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
+    })
+
+    it('should create an external activity (paid by prison) and redirect to confirmation page', async () => {
+      req.journeyData.createJourney.activityOutsidePrison = true
+      req.journeyData.createJourney.whoPays = 'prison'
+      req.journeyData.createJourney.name = 'Prison driver'
+      req.journeyData.createJourney.capacity = 1
+      req.journeyData.createJourney.payChange = []
+
+      const expectedActivity = {
+        prisonCode: 'MDI',
+        summary: 'Prison driver',
+        categoryId: 1,
+        tierCode: EventTier.TIER_1,
+        organiserCode: Organiser.PRISONER,
+        riskLevel: 'low',
+        attendanceRequired: true,
+        paid: true,
+        pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+        payChange: [],
+        minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
+        description: 'Prison driver',
+        startDate: '2023-01-17',
+        endDate: '2023-01-18',
+        inCell: false,
+        onWing: false,
+        offWing: false,
+        dpsLocationId: null,
+        capacity: 1,
+        scheduleWeeks: 1,
+        slots: [
+          { weekNumber: 1, timeSlot: 'AM', tuesday: true },
+          { weekNumber: 1, timeSlot: 'PM', friday: true },
+          { weekNumber: 1, timeSlot: 'ED', friday: true },
+        ],
+        runsOnBankHoliday: true,
+        outsideWork: true,
+      }
+
+      when(activitiesService.createActivity)
+        .calledWith(atLeast(expectedActivity))
+        .mockResolvedValueOnce(externalActivity as unknown as Activity)
+
+      await handler.POST(req, res)
+
+      expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
+    })
+
+    it('should create an external activity (paid by the employer) and redirect to confirmation page', async () => {
+      req.journeyData.createJourney.activityOutsidePrison = true
+      req.journeyData.createJourney.whoPays = 'external'
+      req.journeyData.createJourney.paid = false
+      req.journeyData.createJourney.pay = []
+      req.journeyData.createJourney.payChange = []
+      req.journeyData.createJourney.name = 'Driver'
+      req.journeyData.createJourney.capacity = 1
+      req.journeyData.createJourney.organiserCode = undefined
+      req.journeyData.createJourney.educationLevels = undefined
+
+      const expectedActivity = {
+        prisonCode: 'MDI',
+        summary: 'Driver',
+        categoryId: 1,
+        tierCode: EventTier.TIER_1,
+        organiserCode: undefined,
+        riskLevel: 'low',
+        attendanceRequired: true,
+        minimumEducationLevel: undefined,
+        paid: false,
+        pay: [],
+        payChange: [],
+        description: 'Driver',
+        startDate: '2023-01-17',
+        endDate: '2023-01-18',
+        inCell: false,
+        onWing: false,
+        offWing: false,
+        dpsLocationId: null,
+        capacity: 1,
+        scheduleWeeks: 1,
+        slots: [
+          { weekNumber: 1, timeSlot: 'AM', tuesday: true },
+          { weekNumber: 1, timeSlot: 'PM', friday: true },
+          { weekNumber: 1, timeSlot: 'ED', friday: true },
+        ],
+        runsOnBankHoliday: true,
+        outsideWork: true,
+      }
+
+      when(activitiesService.createActivity)
+        .calledWith(atLeast(expectedActivity))
+        .mockResolvedValueOnce(externalActivity as unknown as Activity)
+
+      await handler.POST(req, res)
+
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
     })
@@ -387,6 +487,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             endDateOption: 'yes',
             endDate: '2023-01-18',
             scheduleWeeks: 1,
+            outsideWork: false,
             customSlots: [
               {
                 customStartTime: '09:15',
@@ -433,6 +534,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         tierCode: EventTier.TIER_1,
         organiserCode: Organiser.PRISONER,
         riskLevel: 'High',
+        outsideWork: false,
         minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
         paid: true,
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
@@ -501,6 +603,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         organiserCode: Organiser.PRISONER,
         riskLevel: 'High',
         paid: true,
+        outsideWork: false,
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
         payChange: [
           {
@@ -548,6 +651,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         attendanceRequired: true,
         riskLevel: 'High',
         paid: true,
+        outsideWork: false,
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
         payChange: [
           {

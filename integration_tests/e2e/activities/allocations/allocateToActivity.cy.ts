@@ -33,6 +33,23 @@ import ActivitiesIndexPage from '../../../pages/activities'
 import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
 import resetActivityAndScheduleStubs from './allocationsStubHelper'
 
+const navigateToActivitiesDashboard = (): AllocationDashboard => {
+  const indexPage = Page.verifyOnPage(IndexPage)
+  indexPage.activitiesCard().click()
+
+  const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+  activitiesIndexPage.allocateToActivitiesCard().click()
+
+  const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
+  manageActivitiesPage.allocateToActivityCard().click()
+
+  const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
+  activitiesPage.selectActivityWithName('English level 1')
+
+  const allocatePage = Page.verifyOnPage(AllocationDashboard)
+  return allocatePage
+}
+
 context('Allocate to activity', () => {
   beforeEach(() => {
     cy.task('reset')
@@ -62,21 +79,7 @@ context('Allocate to activity', () => {
   })
 
   it('should be able to allocate when selecting a specific start date', () => {
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.allocateToActivitiesCard().click()
-
-    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
-
-    const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
-    activitiesPage.activityRows().should('have.length', 3)
-    activitiesPage.selectActivityWithName('English level 1')
-
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = navigateToActivitiesDashboard()
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')
@@ -138,21 +141,7 @@ context('Allocate to activity', () => {
 
   it('should be able to allocate when selecting a specific start date', () => {
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', [])
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.allocateToActivitiesCard().click()
-
-    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
-
-    const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
-    activitiesPage.activityRows().should('have.length', 3)
-    activitiesPage.selectActivityWithName('English level 1')
-
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = navigateToActivitiesDashboard()
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
     allocatePage.activeTimeSlots().should('have.length', 1)
@@ -219,19 +208,7 @@ context('Allocate to activity', () => {
       { prisonerNumber: 'A1351DZ', allocations: [] },
     ])
 
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.allocateToActivitiesCard().click()
-
-    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().click()
-
-    const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
-    activitiesPage.selectActivityWithName('English level 1')
-
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = navigateToActivitiesDashboard()
     allocatePage.tabWithTitle('Waitlist').click()
 
     allocatePage.waitlistStatusFilter().should('exist')
@@ -251,5 +228,45 @@ context('Allocate to activity', () => {
     allocatePage.waitlistApplyFilterButton().click()
     allocatePage.waitlistRows().should('have.length', 1)
     allocatePage.waitlistRows().eq(0).should('contain.text', 'Withdrawn')
+  })
+
+  // TODO: This test will change when sameDayScheduleModificationsEnabled is enabled
+  it('with sameDayScheduleModificationsEnabled NOT enabled, content should not change.', () => {
+    const allocatePage = navigateToActivitiesDashboard()
+    allocatePage.tabWithTitle('Other people').click()
+    allocatePage.selectRiskLevelOption('Any Workplace Risk Assessment')
+    allocatePage.applyFilters()
+    allocatePage.selectCandidateWithName('Alfonso Cholak')
+
+    const beforeYouAllocatePage = Page.verifyOnPage(BeforeYouAllocate)
+    beforeYouAllocatePage.selectConfirmationRadio('yes')
+    beforeYouAllocatePage.getButton('Continue').click()
+
+    const startDatePage = Page.verifyOnPage(StartDatePage)
+    startDatePage.selectNextSession()
+    startDatePage.continue()
+
+    const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
+    endDateOptionPage.addEndDate('Yes')
+    endDateOptionPage.continue()
+
+    const endDatePage = Page.verifyOnPage(EndDatePage)
+    const endDate = addMonths(new Date(), 8)
+    endDatePage.selectDatePickerDate(endDate)
+    endDatePage.continue()
+
+    const payBandPage = Page.verifyOnPage(PayBandPage)
+    payBandPage.selectPayBand('Medium - £1.75')
+    payBandPage.continue()
+
+    const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
+
+    // WITHOUT sameDayScheduleModificationsEnabled, the title text should NOT mention changing scheduled sessions
+    exclusionsPage.pageTitle().should('contain.text', 'Change when Alfonso Cholak should attend this activity')
+
+    // WITHOUT sameDayScheduleModificationsEnabled, the same day details summary should NOT be displayed
+    exclusionsPage.detailsSummary().should('not.exist')
+
+    exclusionsPage.continue()
   })
 })
