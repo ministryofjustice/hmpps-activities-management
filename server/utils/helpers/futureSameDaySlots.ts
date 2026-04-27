@@ -6,7 +6,7 @@ import { ActivitySchedule, Slot } from '../../@types/activitiesAPI/types'
  * Filters for slots that occur later today, provided this week is the current week of the schedule
  * Multi-week schedules are handled by only returning slots from the current week,
  * preventing future week slots from triggering the same-day redirect.
- * Keep all slot properties, but filter daysOfWeek to only today. e.g ['THURSDAY', 'SATURDAY'] becomes ['FRIDAY']
+ * Keep all slot properties, but filter daysOfWeek to only today. e.g ['THURSDAY', 'FRIDAY'] becomes ['FRIDAY']
  * Slots will include a startTime property if using a prisons regime time, otherwise customStartTime is used.
  * @param addedSlots The slots that were changed
  * @param schedule The activity schedule containing slots and metadata

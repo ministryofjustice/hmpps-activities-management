@@ -275,9 +275,16 @@ export default class DaysAndSessionsRoutes {
     const slots: Slot[] = []
     const timeSlotMap = new Map<string, DayOfWeek[]>()
 
+    let selectedDays: string[] = []
+    if (Array.isArray(body.days)) {
+      selectedDays = body.days
+    } else if (body.days) {
+      selectedDays = [body.days]
+    }
+
     DAYS_OF_WEEK.forEach(day => {
       // Only continue if day checkbox selected in body
-      if (!body.days.includes(day.toLowerCase())) return
+      if (!selectedDays.includes(day.toLowerCase())) return
 
       const timeSlotsProp = `timeSlots${day}`
       let timeSlots = body[timeSlotsProp as keyof DaysAndSessions]

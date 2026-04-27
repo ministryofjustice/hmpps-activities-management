@@ -12,7 +12,7 @@ export default class RunSessionTodayRoutes {
     const { futureSameDaySlots, allSameDaySlots } = req.journeyData.createJourney
 
     if (!futureSameDaySlots || futureSameDaySlots.length === 0) {
-      return res.redirect('confirm-exclusions')
+      return res.redirect('/activities')
     }
 
     const headingText = this.createHeadingText(futureSameDaySlots)
@@ -35,8 +35,13 @@ export default class RunSessionTodayRoutes {
     const { futureSameDaySlots, customSlots, scheduleWeeks, activityId, name } = req.journeyData.createJourney
     const slots = mapJourneySlotsToActivityRequest(req.journeyData.createJourney.slots)
 
+    // redirect as we've lost futureSameDaySlots and cant validate.
+    if (!futureSameDaySlots || futureSameDaySlots.length === 0) {
+      return res.redirect('/activities')
+    }
+
     if (!runSessionToday) {
-      throw new FormValidationError('runSessionsToday', 'Select an option')
+      throw new FormValidationError('runSessionToday', 'Select an option')
     }
 
     const addToSessionsToday = runSessionToday === YesNo.YES

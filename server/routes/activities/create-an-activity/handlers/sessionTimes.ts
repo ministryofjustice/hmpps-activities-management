@@ -22,7 +22,7 @@ import {
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { ServiceUser } from '../../../../@types/express'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
-import getFutureSameDaySlots from '../../../../utils/helpers/futureSameDaySlots'
+import getFutureSameDaySlots, { getAllSameDaySlots } from '../../../../utils/helpers/futureSameDaySlots'
 import config from '../../../../config'
 
 export class SessionTimes {
@@ -141,7 +141,7 @@ export default class SessionTimesRoutes {
         const existingSlotsAndNewSlots = req.journeyData.createJourney.customSlots
         const newSlots = calculateUniqueSlots(existingSlotsAndNewSlots, existingSlots)
 
-        req.journeyData.createJourney.allSameDaySlots = newSlots
+        req.journeyData.createJourney.allSameDaySlots = getAllSameDaySlots(newSlots, activitySchedule)
 
         if (newSlots.length > 0) {
           const futureSameDaySlots = getFutureSameDaySlots(newSlots, activitySchedule)

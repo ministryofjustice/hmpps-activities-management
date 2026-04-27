@@ -14,7 +14,7 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <span class="govuk-caption-xl">{{ createJoruney.activity.name | safe }}</span>
+      <span class="govuk-caption-xl">{{ createJourney.name | safe }}</span>
 
         <h1 class="govuk-heading-l">{{ headingText | safe}}</h1>
 
@@ -37,13 +37,11 @@
               html: yesText | safe,
               hint: {
               text: "Unlock, movement and attendance lists may need to be printed again."
-            },
-              checked: runSessionToday == YesNo.YES
+              }
             },
             {
               value: YesNo.NO,
-              html: noText | safe,
-              checked: runSessionToday == YesNo.NO
+              html: noText | safe
             }
           ],
           errorMessage: validationErrors | findError('runSessionToday')
