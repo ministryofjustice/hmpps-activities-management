@@ -43,7 +43,10 @@
                         active: true if filters.isOutsideWorkFilter === 'true' else false
                     }]
                 }) }}
+
+                <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ 'Outside' if filters.isOutsideWorkFilter === 'true' else 'In-prison' }} activities</h2>
             {% endif %}
+
             {% set rows = [
                 [
                     {
@@ -90,7 +93,7 @@
                         },
                         classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
                         text: total.waitlisted
-                    },
+                    } if filters.isOutsideWorkFilter === 'false',
                     {
                         attributes: {
                             id: 'percentage-allocated-total',
@@ -155,7 +158,7 @@
                         },
                         classes: 'govuk-table__cell--numeric',
                         text: activity.waitlisted
-                    },
+                    } if filters.isOutsideWorkFilter === 'false',
                     {
                         attributes: {
                             id: 'percentage-allocated-' + loop.index,
@@ -215,7 +218,7 @@
                             "aria-sort": "none"
                         },
                         classes: 'govuk-table__header--numeric'
-                    },
+                    } if filters.isOutsideWorkFilter === 'false',
                     {
                         text: "Percentage allocated",
                         attributes: {
