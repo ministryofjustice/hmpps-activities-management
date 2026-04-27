@@ -69,6 +69,6 @@ export type CreateAnActivityJourney = {
   runsOnBankHoliday?: boolean
   hasAtLeastOneValidDay?: boolean
   incentiveLevel?: string
-  activityOutsidePrison?: boolean
+  outsideWork?: boolean
   whoPays?: string
 }
