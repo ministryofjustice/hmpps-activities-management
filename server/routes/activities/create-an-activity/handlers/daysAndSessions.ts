@@ -158,54 +158,51 @@ export default class DaysAndSessionsRoutes {
   }
 
   private async editDaysAndSessions(req: Request, res: Response) {
-    const usingRegimeTimes = await this.onPrisonRegime(req, res)
     const { user } = res.locals
     const { sameDayScheduleModificationsEnabled } = config
+
+    const { weekNumber } = req.params as { weekNumber: string }
+    const weekNumberInt = +weekNumber
+    const { startDate, baselineSlots = [], activityId } = req.journeyData.createJourney
+
+    const activity = await this.activitiesService.getActivity(activityId, user)
+    const usingRegimeTimes = activity.schedules[0].usePrisonRegimeTime
 
     if (!sameDayScheduleModificationsEnabled) {
       return usingRegimeTimes ? this.editSlots(req, res) : res.redirect('../session-times')
     }
-    const { weekNumber } = req.params as { weekNumber: string }
-    const weekNumberInt = +weekNumber
-    const { startDate, baselineSlots, activityId } = req.journeyData.createJourney
-    const activity = await this.activitiesService.getActivity(activityId, user)
+
     const activitySchedule = activity.schedules[0]
     const allocationHasStarted = new Date() >= parseDate(startDate)
 
-    if (usingRegimeTimes) {
-      if (allocationHasStarted && req.routeContext.mode === 'edit') {
-        let addedSlots: Slot[] = []
-        const allSlots = this.mapBodyToSlots(req.body as DaysAndSessions, weekNumberInt)
+    if (!usingRegimeTimes) {
+      return res.redirect('../session-times')
+    }
 
-        if (allSlots.length > 0) {
-          const baselineForCurrentWeek = baselineSlots.filter(slot => slot.weekNumber === weekNumberInt)
-
-          addedSlots = calculateUniqueSlots(allSlots, baselineForCurrentWeek)
-
-          const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
-          const futureSameDaySlots = getFutureSameDaySlots(addedSlots, activitySchedule, regimeTimes)
-
-          req.journeyData.createJourney.allSameDaySlots = getAllSameDaySlots(addedSlots, activitySchedule)
-
-          if (futureSameDaySlots.length > 0) {
-            req.journeyData.createJourney.futureSameDaySlots = futureSameDaySlots
-            return res.redirect('../run-session-today')
-          }
-        }
-      }
-
+    if (!allocationHasStarted || req.routeContext.mode !== 'edit') {
       return this.editSlots(req, res)
     }
 
-    return res.redirect('../session-times')
-  }
+    const allSlots = this.mapBodyToSlots(req.body as DaysAndSessions, weekNumberInt)
 
-  private async onPrisonRegime(req: Request, res: Response) {
-    const activity = await this.activitiesService.getActivity(
-      +req.journeyData.createJourney.activityId,
-      res.locals.user,
-    )
-    return activity.schedules[0].usePrisonRegimeTime
+    if (allSlots.length === 0) {
+      return this.editSlots(req, res)
+    }
+
+    const baselineForCurrentWeek = baselineSlots.filter(slot => slot.weekNumber === weekNumberInt)
+    const addedSlots = calculateUniqueSlots(allSlots, baselineForCurrentWeek)
+
+    const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+    const futureSameDaySlots = getFutureSameDaySlots(addedSlots, activitySchedule, regimeTimes)
+
+    req.journeyData.createJourney.allSameDaySlots = getAllSameDaySlots(addedSlots, activitySchedule)
+
+    if (futureSameDaySlots.length > 0) {
+      req.journeyData.createJourney.futureSameDaySlots = futureSameDaySlots
+      return res.redirect('../run-session-today')
+    }
+
+    return this.editSlots(req, res)
   }
 
   private async editSlots(req: Request, res: Response) {
