@@ -40,7 +40,7 @@ describe('Route Handlers - Create an activity - Start', () => {
       await handler.GET(req, res)
 
       expect(req.journeyData.createJourney).toEqual({
-        activityOutsidePrison: false,
+        outsideWork: false,
       })
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.CREATE_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),

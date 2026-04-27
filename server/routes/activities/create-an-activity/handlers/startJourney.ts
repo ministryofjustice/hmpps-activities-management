@@ -15,7 +15,7 @@ export default class StartJourneyRoutes {
     )
     const url = req.session.user.externalActivitiesRolledOut ? 'activity-type' : 'category'
     // If prison is not isExternalActivitiesEnabled journey should behave as if it is in-prison
-    req.journeyData.createJourney.activityOutsidePrison = false
+    req.journeyData.createJourney.outsideWork = false
     res.redirect(`${url}${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 }

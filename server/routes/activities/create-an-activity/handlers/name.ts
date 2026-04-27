@@ -53,7 +53,7 @@ export default class NameRoutes {
       return res.validationFailed('name', 'Enter a different name. There is already an activity with this name')
     }
 
-    if (req.journeyData.createJourney.activityOutsidePrison) {
+    if (req.journeyData.createJourney.outsideWork) {
       req.journeyData.createJourney.tierCode = EventTier.TIER_1
       req.journeyData.createJourney.riskLevel = 'low'
       return res.redirectOrReturn('who-pays')
