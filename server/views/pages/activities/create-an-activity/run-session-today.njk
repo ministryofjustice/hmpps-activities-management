@@ -1,0 +1,59 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = "Do you want the session to run today - Activities - DPS" %}
+{% set pageId = 'create-schedule-run-session-today-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">{{ createJourney.name | safe }}</span>
+
+        <h1 class="govuk-heading-l">{{ headingText | safe}}</h1>
+
+    </div>
+    <div class="govuk-grid-column-full">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {{ govukInsetText({
+          classes: "govuk-!-margin-top-0",
+          text: insetText | safe
+        }) }}
+
+        {{ govukRadios({
+          classes: "govuk-radios",
+          name: "runSessionToday",
+          items: [
+            {
+              value: YesNo.YES,
+              html: yesText | safe,
+              hint: {
+              text: "Unlock, movement and attendance lists may need to be printed again."
+              }
+            },
+            {
+              value: YesNo.NO,
+              html: noText | safe
+            }
+          ],
+          errorMessage: validationErrors | findError('runSessionToday')
+        }) }}
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Continue"
+          }) }}
+        </div>
+
+      </form>
+    </div>
+  </div>
+{% endblock %}

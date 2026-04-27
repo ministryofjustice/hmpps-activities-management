@@ -185,16 +185,14 @@ export default class ExclusionRoutes {
 
     const allocationHasStarted = new Date() >= parseDate(startDate)
 
-    const futureSameDaySlots = getFutureSameDaySlots(changedExclusionSlots, schedule)
+    if (config.sameDayScheduleModificationsEnabled && allocationHasStarted && req.routeContext.mode === 'edit') {
+      const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+      const futureSameDaySlots = getFutureSameDaySlots(changedExclusionSlots, schedule, regimeTimes)
 
-    if (
-      config.sameDayScheduleModificationsEnabled &&
-      allocationHasStarted &&
-      futureSameDaySlots.length > 0 &&
-      req.routeContext.mode === 'edit'
-    ) {
-      req.journeyData.allocateJourney.futureSameDaySlots = futureSameDaySlots
-      return res.redirect('addToToday')
+      if (futureSameDaySlots.length > 0) {
+        req.journeyData.allocateJourney.futureSameDaySlots = futureSameDaySlots
+        return res.redirect('addToToday')
+      }
     }
 
     if (req.routeContext.mode === 'create') {

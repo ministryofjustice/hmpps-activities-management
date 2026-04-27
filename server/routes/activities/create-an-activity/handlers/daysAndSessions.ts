@@ -3,13 +3,29 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
 import createHttpError from 'http-errors'
 import { NextFunction } from 'express-serve-static-core'
-import { convertToArray, DAYS_OF_WEEK, formatDate, mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
-import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import {
+  convertToArray,
+  DAYS_OF_WEEK,
+  formatDate,
+  mapJourneySlotsToActivityRequest,
+  parseDate,
+} from '../../../../utils/utils'
+import { ActivityUpdateRequest, Slot } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
+import {
+  calculateUniqueSlots,
+  DayOfWeek,
+  DayOfWeekEnum,
+  mapActivityScheduleSlotsToSlots,
+  mergeExclusionSlots,
+} from '../../../../utils/helpers/activityTimeSlotMappers'
 import { CreateAnActivityJourney, ScheduleFrequency, Slots } from '../journey'
+import getFutureSameDaySlots, { getAllSameDaySlots } from '../../../../utils/helpers/futureSameDaySlots'
+import config from '../../../../config'
+import TimeSlot from '../../../../enum/timeSlot'
 
 export class DaysAndSessions {
   @Expose()
@@ -55,8 +71,16 @@ export default class DaysAndSessionsRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { scheduleWeeks, startDate } = req.journeyData.createJourney
+    const { scheduleWeeks, startDate, scheduleId, baselineSlots } = req.journeyData.createJourney
+    const { sameDayScheduleModificationsEnabled } = config
     const { weekNumber } = req.params as { weekNumber: string }
+
+    // Store existing slots, which will be used to compare against user changes for same-day validation when editing
+    if (sameDayScheduleModificationsEnabled && !baselineSlots && req.routeContext.mode === 'edit') {
+      const schedule = await this.activitiesService.getActivitySchedule(scheduleId, res.locals.user)
+      const mappedSlots = mapActivityScheduleSlotsToSlots(schedule.slots)
+      req.journeyData.createJourney.baselineSlots = mergeExclusionSlots(mappedSlots)
+    }
 
     if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
 
@@ -134,16 +158,51 @@ export default class DaysAndSessionsRoutes {
   }
 
   private async editDaysAndSessions(req: Request, res: Response) {
-    const usingRegimeTimes = await this.onPrisonRegime(req, res)
-    return usingRegimeTimes ? this.editSlots(req, res) : res.redirect('../session-times')
-  }
+    const { user } = res.locals
+    const { sameDayScheduleModificationsEnabled } = config
 
-  private async onPrisonRegime(req: Request, res: Response) {
-    const activity = await this.activitiesService.getActivity(
-      +req.journeyData.createJourney.activityId,
-      res.locals.user,
-    )
-    return activity.schedules[0].usePrisonRegimeTime
+    const { weekNumber } = req.params as { weekNumber: string }
+    const weekNumberInt = +weekNumber
+    const { startDate, baselineSlots = [], activityId } = req.journeyData.createJourney
+
+    const activity = await this.activitiesService.getActivity(activityId, user)
+    const usingRegimeTimes = activity.schedules[0].usePrisonRegimeTime
+
+    if (!sameDayScheduleModificationsEnabled) {
+      return usingRegimeTimes ? this.editSlots(req, res) : res.redirect('../session-times')
+    }
+
+    const activitySchedule = activity.schedules[0]
+    const allocationHasStarted = new Date() >= parseDate(startDate)
+
+    if (!usingRegimeTimes) {
+      return res.redirect('../session-times')
+    }
+
+    if (!allocationHasStarted || req.routeContext.mode !== 'edit') {
+      return this.editSlots(req, res)
+    }
+
+    const allSlots = this.mapBodyToSlots(req.body as DaysAndSessions, weekNumberInt)
+
+    if (allSlots.length === 0) {
+      return this.editSlots(req, res)
+    }
+
+    const baselineForCurrentWeek = baselineSlots.filter(slot => slot.weekNumber === weekNumberInt)
+    const addedSlots = calculateUniqueSlots(allSlots, baselineForCurrentWeek)
+
+    const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+    const futureSameDaySlots = getFutureSameDaySlots(addedSlots, activitySchedule, regimeTimes)
+
+    req.journeyData.createJourney.allSameDaySlots = getAllSameDaySlots(addedSlots, activitySchedule)
+
+    if (futureSameDaySlots.length > 0) {
+      req.journeyData.createJourney.futureSameDaySlots = futureSameDaySlots
+      return res.redirect('../run-session-today')
+    }
+
+    return this.editSlots(req, res)
   }
 
   private async editSlots(req: Request, res: Response) {
@@ -212,5 +271,55 @@ export default class DaysAndSessionsRoutes {
     })
 
     return true
+  }
+
+  private mapBodyToSlots(body: DaysAndSessions, weekNumber: number): Slot[] {
+    const slots: Slot[] = []
+    const timeSlotMap = new Map<string, DayOfWeek[]>()
+
+    let selectedDays: string[] = []
+    if (Array.isArray(body.days)) {
+      selectedDays = body.days
+    } else if (body.days) {
+      selectedDays = [body.days]
+    }
+
+    DAYS_OF_WEEK.forEach(day => {
+      // Only continue if day checkbox selected in body
+      if (!selectedDays.includes(day.toLowerCase())) return
+
+      const timeSlotsProp = `timeSlots${day}`
+      let timeSlots = body[timeSlotsProp as keyof DaysAndSessions]
+
+      if (timeSlots && !Array.isArray(timeSlots)) {
+        timeSlots = [timeSlots]
+      }
+
+      if (Array.isArray(timeSlots)) {
+        timeSlots.forEach(timeSlot => {
+          const key = `${timeSlot}`
+          const days = timeSlotMap.get(key) || []
+          days.push(DayOfWeekEnum[day.toUpperCase() as keyof typeof DayOfWeekEnum])
+          timeSlotMap.set(key, days)
+        })
+      }
+    })
+
+    timeSlotMap.forEach((daysOfWeek, timeSlot) => {
+      slots.push({
+        weekNumber,
+        timeSlot: timeSlot as TimeSlot,
+        monday: daysOfWeek.includes(DayOfWeekEnum.MONDAY),
+        tuesday: daysOfWeek.includes(DayOfWeekEnum.TUESDAY),
+        wednesday: daysOfWeek.includes(DayOfWeekEnum.WEDNESDAY),
+        thursday: daysOfWeek.includes(DayOfWeekEnum.THURSDAY),
+        friday: daysOfWeek.includes(DayOfWeekEnum.FRIDAY),
+        saturday: daysOfWeek.includes(DayOfWeekEnum.SATURDAY),
+        sunday: daysOfWeek.includes(DayOfWeekEnum.SUNDAY),
+        daysOfWeek,
+      })
+    })
+
+    return slots
   }
 }
