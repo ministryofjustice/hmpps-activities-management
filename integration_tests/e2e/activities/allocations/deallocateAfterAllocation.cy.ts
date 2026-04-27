@@ -27,6 +27,7 @@ import getDeallocationReasons from '../../../fixtures/activitiesApi/getDeallocat
 import SelectActivitiesPage from '../../../pages/allocateToActivity/selectActivityDeallocation'
 import DeallocationDatePage from '../../../pages/allocateToActivity/deallocationDate'
 import getAllocationsMaths from '../../../fixtures/activitiesApi/getAllocationsMaths.json'
+import getMdiPrisonRegime from '../../../fixtures/prisonApi/getMdiPrisonRegime.json'
 import DeallocationReasonPage from '../../../pages/allocateToActivity/deallocationReason'
 import DeallocationCheckAndConfirmPage from '../../../pages/allocateToActivity/deallocationCheckAndConfirm'
 import { formatDate, toDateString } from '../../../../server/utils/utils'
@@ -59,6 +60,7 @@ context('Deallocate from activities after an allocation', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
+    cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getMdiPrisonRegime)
     cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A5015DY', getCandidateSuitability)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)

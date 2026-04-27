@@ -9,11 +9,14 @@ import DaysAndSessionsRoutes, { DaysAndSessions } from './daysAndSessions'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
-import { Activity, Slot } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivitySchedule, Slot } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
+import getFutureSameDaySlots from '../../../../utils/helpers/futureSameDaySlots'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../utils/helpers/activityScheduleValidator')
+jest.mock('../../../../utils/helpers/futureSameDaySlots')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const findActivitySlotErrorsMock = validateSlotChanges as jest.MockedFunction<typeof validateSlotChanges>
@@ -43,6 +46,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
     } as unknown as Response
 
     req = {
+      session: {},
       journeyData: {
         createJourney: {
           startDate: formatIsoDate(startDate),
@@ -966,6 +970,109 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         expect(res.validationFailed).toHaveBeenCalledWith('days', `You must select at least 1 slot across the schedule`)
         expect(res.validationFailed).toHaveBeenCalledTimes(1)
       })
+    })
+  })
+
+  describe('Same-day schedule modifications (sameDayScheduleModificationsEnabled is true)', () => {
+    let getFutureSameDaySlotsMock: jest.Mock
+
+    beforeEach(() => {
+      config.sameDayScheduleModificationsEnabled = true
+      getFutureSameDaySlotsMock = getFutureSameDaySlots as jest.Mock
+      getFutureSameDaySlotsMock.mockClear()
+      activitiesService.getActivity.mockClear()
+      activitiesService.getActivitySchedule.mockClear()
+      activitiesService.updateActivity.mockClear()
+
+      req.journeyData.createJourney = {
+        activityId: 1,
+        name: 'Gardening',
+        scheduleWeeks: 1,
+        startDate: formatIsoDate(addDays(new Date(), -1)),
+        endDate: formatIsoDate(addDays(new Date(), 8)),
+        scheduleId: 123,
+        baselineSlots: [],
+      }
+      req.routeContext = {
+        mode: 'edit',
+      }
+      req.params = {
+        weekNumber: '1',
+      }
+    })
+
+    it('should redirect to run-session-today page if there are future same-day slots', async () => {
+      const futureSameDaySlots = [
+        {
+          weekNumber: 1,
+          timeSlot: TimeSlot.PM,
+          daysOfWeek: ['MONDAY'],
+          monday: true,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+        },
+      ]
+
+      const activity = {
+        schedules: [
+          {
+            usePrisonRegimeTime: true,
+          },
+        ],
+      } as unknown as Activity
+
+      const schedule = {
+        slots: [],
+      }
+
+      activitiesService.getActivity.mockResolvedValueOnce(activity)
+      activitiesService.getActivitySchedule.mockResolvedValueOnce(schedule as ActivitySchedule)
+      getFutureSameDaySlotsMock.mockReturnValueOnce(futureSameDaySlots as Slot[])
+
+      req.body = {
+        days: ['monday'],
+        timeSlotsMonday: ['PM'],
+      }
+      req.journeyData.createJourney.baselineSlots = []
+
+      await handler.POST(req, res, next)
+
+      expect(res.redirect).toHaveBeenCalledWith('../run-session-today')
+      expect(req.journeyData.createJourney.futureSameDaySlots).toEqual(futureSameDaySlots)
+    })
+
+    it('should call updateActivity if there are no future same-day slots', async () => {
+      const activity = {
+        schedules: [
+          {
+            usePrisonRegimeTime: true,
+          },
+        ],
+      } as unknown as Activity
+
+      const schedule = {
+        slots: [],
+      }
+
+      activitiesService.getActivity.mockResolvedValueOnce(activity)
+      activitiesService.getActivitySchedule.mockResolvedValueOnce(schedule as ActivitySchedule)
+      activitiesService.updateActivity.mockResolvedValueOnce({} as Activity)
+      getFutureSameDaySlotsMock.mockReturnValueOnce([])
+
+      req.body = {
+        days: ['monday'],
+        timeSlotsMonday: ['PM'],
+      }
+      req.journeyData.createJourney.baselineSlots = []
+
+      await handler.POST(req, res, next)
+
+      expect(activitiesService.updateActivity).toHaveBeenCalled()
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalled()
     })
   })
 })

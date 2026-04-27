@@ -3,13 +3,93 @@ import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import ExclusionRoutes from './exclusions'
 import atLeast from '../../../../../jest.setup'
-import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import { ActivitySchedule, PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+
+const mdiPrisonRegime = [
+  {
+    id: 127,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'MONDAY',
+  },
+  {
+    id: 128,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'TUESDAY',
+  },
+  {
+    id: 129,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'WEDNESDAY',
+  },
+  {
+    id: 130,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'THURSDAY',
+  },
+  {
+    id: 131,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'FRIDAY',
+  },
+  {
+    id: 132,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'SATURDAY',
+  },
+  {
+    id: 133,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'SUNDAY',
+  },
+]
 
 describe('Route Handlers - Allocation - Exclusions', () => {
   const handler = new ExclusionRoutes(activitiesService)
@@ -21,7 +101,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       locals: {
         user: {
           username: 'joebloggs',
-          activeCaseLoadId: 'LEI',
+          activeCaseLoadId: 'MDI',
         },
       },
       render: jest.fn(),
@@ -117,6 +197,10 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           },
         ],
       } as ActivitySchedule)
+
+    when(activitiesService.getPrisonRegime)
+      .calledWith(atLeast('MDI'))
+      .mockResolvedValue(mdiPrisonRegime as PrisonRegime[])
   })
 
   describe('GET', () => {
