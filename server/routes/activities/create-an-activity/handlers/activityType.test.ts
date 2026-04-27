@@ -12,7 +12,7 @@ describe('ActivityType Handler', () => {
     req = {
       journeyData: {
         createJourney: {
-          activityOutsidePrison: true,
+          outsideWork: true,
         },
       },
       body: {},
@@ -58,27 +58,27 @@ describe('ActivityType Handler', () => {
     it('should render the activity type page', async () => {
       await handler.GET(req, res)
 
-      expect(req.journeyData.createJourney.activityOutsidePrison).toBe(false)
+      expect(req.journeyData.createJourney.outsideWork).toBe(false)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/activity-type')
     })
   })
 
   describe('POST', () => {
-    it('should set activityOutsidePrison to true when type is external', async () => {
+    it('should set outsideWork to true when type is external', async () => {
       req.body = { type: 'external' }
 
       await handler.POST(req, res)
 
-      expect(req.journeyData.createJourney.activityOutsidePrison).toBe(true)
+      expect(req.journeyData.createJourney.outsideWork).toBe(true)
       expect(res.redirect).toHaveBeenCalledWith('category')
     })
 
-    it('should set activityOutsidePrison to false when type is not external', async () => {
+    it('should set outsideWork to false when type is not external', async () => {
       req.body = { type: 'internal' }
 
       await handler.POST(req, res)
 
-      expect(req.journeyData.createJourney.activityOutsidePrison).toBe(false)
+      expect(req.journeyData.createJourney.outsideWork).toBe(false)
       expect(res.redirect).toHaveBeenCalledWith('category')
     })
   })

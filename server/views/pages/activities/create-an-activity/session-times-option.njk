@@ -44,7 +44,7 @@
                     ],
                     errorMessage: validationErrors | findError('usePrisonRegimeTime'),
                     hint: { 
-                        text: "You can set different start and end times for sessions that people can be out at this activity. For example, for early morning or late night shifts." if createJourney.activityOutsidePrison else "If the sessions of this activity do not follow the prison\'s regime times, you can set different start and end times."
+                        text: "You can set different start and end times for sessions that people can be out at this activity. For example, for early morning or late night shifts." if createJourney.outsideWork else "If the sessions of this activity do not follow the prison\'s regime times, you can set different start and end times."
                     }
                 }) }}
                 {{ govukButton({
