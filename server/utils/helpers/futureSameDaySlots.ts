@@ -1,6 +1,17 @@
 import { parseDate, getTodayAsDayOfTheWeek, isSlotTimeInFuture } from '../utils'
 import calcCurrentWeek from './currentWeekCalculator'
-import { ActivitySchedule, Slot } from '../../@types/activitiesAPI/types'
+import { ActivitySchedule, Slot, PrisonRegime } from '../../@types/activitiesAPI/types'
+
+const REGIME_TIME_MAP = {
+  AM: 'amStart',
+  PM: 'pmStart',
+  ED: 'edStart',
+} as const
+
+function getRegimeStartTime(regime: PrisonRegime, timeSlot: string): string | undefined {
+  const key = REGIME_TIME_MAP[timeSlot as keyof typeof REGIME_TIME_MAP]
+  return key ? regime[key] : undefined
+}
 
 /**
  * Filters for slots that occur later today, provided this week is the current week of the schedule
@@ -10,9 +21,14 @@ import { ActivitySchedule, Slot } from '../../@types/activitiesAPI/types'
  * Slots will include a startTime property if using a prisons regime time, otherwise customStartTime is used.
  * @param addedSlots The slots that were changed
  * @param schedule The activity schedule containing slots and metadata
+ * @param regimeTimes Optional prison regime times to look up start times for new slots
  * @returns Array of slots occurring today with future start times in the current week
  */
-export default function getFutureSameDaySlots(addedSlots: Slot[], schedule: ActivitySchedule): Slot[] {
+export default function getFutureSameDaySlots(
+  addedSlots: Slot[],
+  schedule: ActivitySchedule,
+  regimeTimes?: PrisonRegime[],
+): Slot[] {
   const todayAsDayOfTheWeek = getTodayAsDayOfTheWeek()
 
   const currentWeekNumber = calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks)
@@ -22,9 +38,13 @@ export default function getFutureSameDaySlots(addedSlots: Slot[], schedule: Acti
     .filter(slot => {
       if (slot.weekNumber !== weekToCheck) return false
 
-      const slotStartTime =
-        slot.customStartTime ||
-        schedule.slots?.find(s => s.weekNumber === slot.weekNumber && s.timeSlot === slot.timeSlot)?.startTime
+      let slotStartTime = slot.customStartTime
+
+      // If no custom start time, look up timeslot in regime times
+      if (!slotStartTime && regimeTimes) {
+        const regimeForToday = regimeTimes.find(r => r.dayOfWeek === todayAsDayOfTheWeek)
+        slotStartTime = regimeForToday ? getRegimeStartTime(regimeForToday, slot.timeSlot) : undefined
+      }
 
       return slot.daysOfWeek.includes(todayAsDayOfTheWeek) && !!slotStartTime && isSlotTimeInFuture(slotStartTime)
     })

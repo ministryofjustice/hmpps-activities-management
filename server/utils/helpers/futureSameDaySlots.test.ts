@@ -1,5 +1,85 @@
 import getFutureSameDaySlots, { getAllSameDaySlots } from './futureSameDaySlots'
-import { ActivitySchedule, Slot } from '../../@types/activitiesAPI/types'
+import { ActivitySchedule, Slot, PrisonRegime } from '../../@types/activitiesAPI/types'
+
+const mdiPrisonRegime: PrisonRegime[] = [
+  {
+    id: 127,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'MONDAY',
+  },
+  {
+    id: 128,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'TUESDAY',
+  },
+  {
+    id: 129,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'WEDNESDAY',
+  },
+  {
+    id: 130,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'THURSDAY',
+  },
+  {
+    id: 131,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'FRIDAY',
+  },
+  {
+    id: 132,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'SATURDAY',
+  },
+  {
+    id: 133,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'SUNDAY',
+  },
+]
 
 describe('getFutureSameDaySlots', () => {
   beforeEach(() => {
@@ -82,7 +162,7 @@ describe('getFutureSameDaySlots', () => {
       },
     ]
 
-    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule)
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule, mdiPrisonRegime)
 
     expect(result).toHaveLength(2)
     expect(result.map((s: Slot) => s.timeSlot).sort()).toEqual(['ED', 'PM'])
@@ -160,7 +240,7 @@ describe('getFutureSameDaySlots', () => {
       },
     ]
 
-    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule)
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule, mdiPrisonRegime)
 
     expect(result).toHaveLength(1)
     expect(result[0].timeSlot).toBe('ED')
@@ -220,7 +300,7 @@ describe('getFutureSameDaySlots', () => {
       },
     ]
 
-    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule)
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule, mdiPrisonRegime)
 
     expect(result).toHaveLength(1)
     expect(result[0].timeSlot).toBe('ED')
@@ -286,7 +366,7 @@ describe('getFutureSameDaySlots', () => {
       },
     ]
 
-    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule)
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule, mdiPrisonRegime)
 
     expect(result).toHaveLength(1)
     expect(result[0].timeSlot).toBe('PM')
@@ -345,7 +425,7 @@ describe('getFutureSameDaySlots', () => {
       },
     ]
 
-    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule)
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule, mdiPrisonRegime)
 
     expect(result).toHaveLength(1)
     expect(result[0].timeSlot).toBe('PM')
@@ -385,7 +465,7 @@ describe('getFutureSameDaySlots', () => {
       },
     ]
 
-    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule)
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule, mdiPrisonRegime)
 
     expect(result).toEqual([])
   })
@@ -450,7 +530,7 @@ describe('getFutureSameDaySlots', () => {
       },
     ]
 
-    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule)
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule, mdiPrisonRegime)
 
     expect(result).toHaveLength(1)
     expect(result.map((s: Slot) => s.timeSlot).sort()).toEqual(['ED'])
@@ -490,7 +570,7 @@ describe('getFutureSameDaySlots', () => {
       },
     ]
 
-    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule)
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule as ActivitySchedule, mdiPrisonRegime)
 
     expect(result).toHaveLength(1)
     expect(result[0].daysOfWeek).toEqual(['FRIDAY'])
@@ -860,5 +940,221 @@ describe('getAllSameDaySlots', () => {
 
     expect(result).toHaveLength(3)
     expect(result.map((s: Slot) => s.timeSlot).sort()).toEqual(['AM', 'ED', 'PM'])
+  })
+})
+
+describe('getFutureSameDaySlots with regimeTimes', () => {
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-04-24T10:00:00'))
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it('should look up start times from regime times when custom start time is not provided', () => {
+    // Friday, April 24, 2026
+    jest.setSystemTime(new Date('2026-04-24T14:00:00'))
+
+    const schedule = {
+      startDate: '2026-04-20',
+      scheduleWeeks: 1,
+      slots: [],
+    } as ActivitySchedule
+
+    const regimeTimes = [
+      {
+        id: 131,
+        prisonCode: 'RSI',
+        amStart: '08:30',
+        amFinish: '11:45',
+        pmStart: '13:45',
+        pmFinish: '16:45',
+        edStart: '17:30',
+        edFinish: '19:15',
+        dayOfWeek: 'FRIDAY',
+      },
+    ]
+
+    const addedSlots = [
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        daysOfWeek: ['FRIDAY'],
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'ED',
+        daysOfWeek: ['FRIDAY'],
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+      },
+    ]
+
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule, regimeTimes as PrisonRegime[])
+
+    expect(result).toHaveLength(1)
+    expect(result[0].timeSlot).toBe('ED')
+  })
+
+  it('should prefer custom start times over regime times', () => {
+    // Friday, April 24, 2026
+    jest.setSystemTime(new Date('2026-04-24T14:00:00'))
+
+    const schedule = {
+      startDate: '2026-04-20',
+      scheduleWeeks: 1,
+      slots: [],
+    } as ActivitySchedule
+
+    const regimeTimes = [
+      {
+        id: 131,
+        prisonCode: 'RSI',
+        amStart: '08:30',
+        amFinish: '11:45',
+        pmStart: '13:45',
+        pmFinish: '16:45',
+        edStart: '17:30',
+        edFinish: '19:15',
+        dayOfWeek: 'FRIDAY',
+      },
+    ]
+
+    const addedSlots = [
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        customStartTime: '15:00',
+        daysOfWeek: ['FRIDAY'],
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+      },
+    ]
+
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule, regimeTimes as PrisonRegime[])
+
+    // Should use customStartTime 15:00 which is in the future, not regime time 13:45
+    expect(result).toHaveLength(1)
+    expect(result[0].timeSlot).toBe('PM')
+  })
+
+  it('should return empty array if regime times not provided and no custom start time', () => {
+    // Friday, April 24, 2026
+    jest.setSystemTime(new Date('2026-04-24T14:00:00'))
+
+    const schedule = {
+      startDate: '2026-04-20',
+      scheduleWeeks: 1,
+      slots: [],
+    } as ActivitySchedule
+
+    const addedSlots = [
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        daysOfWeek: ['FRIDAY'],
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+      },
+    ]
+
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule)
+
+    // No regime times provided and no custom start time, so should return empty
+    expect(result).toHaveLength(0)
+  })
+
+  it('should handle multiple time slots with regime times', () => {
+    // Monday, April 20, 2026 at 09:00
+    jest.setSystemTime(new Date('2026-04-20T09:00:00'))
+
+    const schedule = {
+      startDate: '2026-04-20',
+      scheduleWeeks: 1,
+      slots: [],
+    } as ActivitySchedule
+
+    const regimeTimes = [
+      {
+        id: 127,
+        prisonCode: 'RSI',
+        amStart: '08:30',
+        amFinish: '11:45',
+        pmStart: '13:45',
+        pmFinish: '16:45',
+        edStart: '17:30',
+        edFinish: '19:15',
+        dayOfWeek: 'MONDAY',
+      },
+    ]
+
+    const addedSlots = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        daysOfWeek: ['MONDAY'],
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        daysOfWeek: ['MONDAY', 'THURSDAY'],
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'ED',
+        daysOfWeek: ['MONDAY'],
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+      },
+    ]
+
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule, regimeTimes as PrisonRegime[])
+
+    // Time is 09:00 AM - 08:30 is in the past so is excluded.
+
+    expect(result).toHaveLength(2)
+    expect(result.map((s: Slot) => s.timeSlot).sort()).toEqual(['ED', 'PM'])
   })
 })

@@ -23,7 +23,7 @@ import {
   mergeExclusionSlots,
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { CreateAnActivityJourney, ScheduleFrequency, Slots } from '../journey'
-import getFutureSameDaySlots from '../../../../utils/helpers/futureSameDaySlots'
+import getFutureSameDaySlots, { getAllSameDaySlots } from '../../../../utils/helpers/futureSameDaySlots'
 import config from '../../../../config'
 import TimeSlot from '../../../../enum/timeSlot'
 
@@ -75,8 +75,8 @@ export default class DaysAndSessionsRoutes {
     const { sameDayScheduleModificationsEnabled } = config
     const { weekNumber } = req.params as { weekNumber: string }
 
-    // Store existing activity slots, which will be used to compare against user changes for same-day validation
-    if (sameDayScheduleModificationsEnabled && !baselineSlots) {
+    // Store existing slots, which will be used to compare against user changes for same-day validation when editing
+    if (sameDayScheduleModificationsEnabled && !baselineSlots && req.routeContext.mode === 'edit') {
       const schedule = await this.activitiesService.getActivitySchedule(scheduleId, res.locals.user)
       const mappedSlots = mapActivityScheduleSlotsToSlots(schedule.slots)
       req.journeyData.createJourney.baselineSlots = mergeExclusionSlots(mappedSlots)
@@ -159,6 +159,7 @@ export default class DaysAndSessionsRoutes {
 
   private async editDaysAndSessions(req: Request, res: Response) {
     const usingRegimeTimes = await this.onPrisonRegime(req, res)
+    const { user } = res.locals
     const { sameDayScheduleModificationsEnabled } = config
 
     if (!sameDayScheduleModificationsEnabled) {
@@ -166,7 +167,9 @@ export default class DaysAndSessionsRoutes {
     }
     const { weekNumber } = req.params as { weekNumber: string }
     const weekNumberInt = +weekNumber
-    const { scheduleId, startDate, baselineSlots } = req.journeyData.createJourney
+    const { startDate, baselineSlots, activityId } = req.journeyData.createJourney
+    const activity = await this.activitiesService.getActivity(activityId, user)
+    const activitySchedule = activity.schedules[0]
     const allocationHasStarted = new Date() >= parseDate(startDate)
 
     if (usingRegimeTimes) {
@@ -179,8 +182,10 @@ export default class DaysAndSessionsRoutes {
 
           addedSlots = calculateUniqueSlots(allSlots, baselineForCurrentWeek)
 
-          const schedule = await this.activitiesService.getActivitySchedule(scheduleId, res.locals.user)
-          const futureSameDaySlots = getFutureSameDaySlots(addedSlots, schedule)
+          const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+          const futureSameDaySlots = getFutureSameDaySlots(addedSlots, activitySchedule, regimeTimes)
+
+          req.journeyData.createJourney.allSameDaySlots = getAllSameDaySlots(addedSlots, activitySchedule)
 
           if (futureSameDaySlots.length > 0) {
             req.journeyData.createJourney.futureSameDaySlots = futureSameDaySlots
