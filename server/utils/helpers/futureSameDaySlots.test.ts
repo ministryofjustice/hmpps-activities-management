@@ -1056,15 +1056,29 @@ describe('getFutureSameDaySlots with regimeTimes', () => {
     expect(result[0].timeSlot).toBe('PM')
   })
 
-  it('should return empty array if regime times not provided and no custom start time', () => {
-    // Friday, April 24, 2026
-    jest.setSystemTime(new Date('2026-04-24T14:00:00'))
+  it('should return empty array if regime time slots have start times earlier today', () => {
+    // Friday, April 24, 2026 at 20:00 (evening - all slots already started)
+    jest.setSystemTime(new Date('2026-04-24T19:30:00'))
 
     const schedule = {
       startDate: '2026-04-20',
       scheduleWeeks: 1,
       slots: [],
     } as ActivitySchedule
+
+    const regimeTimes = [
+      {
+        id: 131,
+        prisonCode: 'RSI',
+        amStart: '08:30',
+        amFinish: '11:45',
+        pmStart: '13:45',
+        pmFinish: '16:45',
+        edStart: '17:30',
+        edFinish: '19:15',
+        dayOfWeek: 'FRIDAY',
+      },
+    ]
 
     const addedSlots = [
       {
@@ -1079,11 +1093,21 @@ describe('getFutureSameDaySlots with regimeTimes', () => {
         saturday: false,
         sunday: false,
       },
+      {
+        weekNumber: 1,
+        timeSlot: 'ED',
+        daysOfWeek: ['FRIDAY'],
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+      },
     ]
 
-    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule)
-
-    // No regime times provided and no custom start time, so should return empty
+    const result = getFutureSameDaySlots(addedSlots as Slot[], schedule, regimeTimes as PrisonRegime[])
     expect(result).toHaveLength(0)
   })
 

@@ -40,10 +40,10 @@ export default function getFutureSameDaySlots(
 
       let slotStartTime = slot.customStartTime
 
-      // If no custom start time, look up timeslot in regime times
-      if (!slotStartTime && regimeTimes) {
+      // If no custom start time, use regime time
+      if (!slotStartTime) {
         const regimeForToday = regimeTimes.find(r => r.dayOfWeek === todayAsDayOfTheWeek)
-        slotStartTime = regimeForToday ? getRegimeStartTime(regimeForToday, slot.timeSlot) : undefined
+        slotStartTime = regimeForToday && getRegimeStartTime(regimeForToday, slot.timeSlot)
       }
 
       return slot.daysOfWeek.includes(todayAsDayOfTheWeek) && !!slotStartTime && isSlotTimeInFuture(slotStartTime)
