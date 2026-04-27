@@ -101,7 +101,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       locals: {
         user: {
           username: 'joebloggs',
-          activeCaseLoadId: 'LEI',
+          activeCaseLoadId: 'MDI',
         },
       },
       render: jest.fn(),
@@ -199,7 +199,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       } as ActivitySchedule)
 
     when(activitiesService.getPrisonRegime)
-      .calledWith(atLeast('LEI'))
+      .calledWith(atLeast('MDI'))
       .mockResolvedValue(mdiPrisonRegime as PrisonRegime[])
   })
 
