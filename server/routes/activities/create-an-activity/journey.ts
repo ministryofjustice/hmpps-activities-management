@@ -50,7 +50,12 @@ export type CreateAnActivityJourney = {
   earliestAllocationStartDate?: string
   scheduleWeeks?: number
   slots?: { [weekNumber: string]: Slots }
+  baselineSlots?: Slot[]
   customSlots?: Slot[]
+  futureSameDaySlots?: Slot[]
+  allSameDaySlots?: Slot[]
+  addToSessionsToday?: boolean
+  currentEditingWeek?: string
   inCell?: boolean
   onWing?: boolean
   offWing?: boolean
