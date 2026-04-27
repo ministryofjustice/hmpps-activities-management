@@ -141,7 +141,7 @@ export default class SessionTimesRoutes {
       return res.redirect('check-answers')
     }
 
-    if (req.journeyData.createJourney.activityOutsidePrison) {
+    if (req.journeyData.createJourney.outsideWork) {
       req.journeyData.createJourney.runsOnBankHoliday = false
       req.journeyData.createJourney.location = null
       return res.redirectOrReturn('capacity')

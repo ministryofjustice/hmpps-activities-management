@@ -71,7 +71,7 @@
                                 }
                             ] if createJourney.category.code != 'SAA_NOT_IN_WORK'
                         }
-                    } if not createJourney.activityOutsidePrison,
+                    } if not createJourney.outsideWork,
                     {
                         key: {
                             text: "Organiser"
@@ -96,7 +96,7 @@
                         value: {
                             text: "Outside"
                         }
-                    } if createJourney.activityOutsidePrison,
+                    } if createJourney.outsideWork,
                     {
                         key: { text: "Record attendance" },
                         value: { text: "Yes" if createJourney.attendanceRequired else "No"},
@@ -108,11 +108,11 @@
                             }] if not createJourney.paid
 
                         }
-                    } if createJourney.tierCode === 'FOUNDATION' and not createJourney.activityOutsidePrison
+                    } if createJourney.tierCode === 'FOUNDATION' and not createJourney.outsideWork
                 ]
             }) }}
 
-            {% if createJourney.activityOutsidePrison %}
+            {% if createJourney.outsideWork %}
                 <h2 class="govuk-heading-m">Pay</h2>
             {% else %}
                 <h2 class="govuk-heading-m">Requirements and pay</h2>
@@ -137,7 +137,7 @@
                                 }
                             ]
                         }
-                    } if not createJourney.activityOutsidePrison,
+                    } if not createJourney.outsideWork,
                     {
                         key: {
                             text: "Education levels"
@@ -154,7 +154,7 @@
                                 }
                             ]
                         }
-                    } if not createJourney.activityOutsidePrison,
+                    } if not createJourney.outsideWork,
                     {
                         key: {
                             text: "Paid by"
@@ -171,7 +171,7 @@
                                 }
                             ]
                         }
-                    } if createJourney.activityOutsidePrison,
+                    } if createJourney.outsideWork,
                     {
                         key: {
                             text: "Pay rates"
@@ -188,7 +188,7 @@
                                 }
                             ]
                         }
-                    } if not createJourney.activityOutsidePrison or (createJourney.activityOutsidePrison and createJourney.whoPays == 'prison')
+                    } if not createJourney.outsideWork or (createJourney.outsideWork and createJourney.whoPays == 'prison')
                 ]
             }) }}
 
@@ -263,7 +263,7 @@
                     }
                 ), scheduleRows) %}
             {% endfor %}
-            {% if not createJourney.activityOutsidePrison %}
+            {% if not createJourney.outsideWork %}
                 {% set scheduleRows = (scheduleRows.push(
                     {
                         key: { text: "Runs on bank holidays" },
@@ -283,7 +283,7 @@
                 rows: scheduleRows
             }) }}
 
-            {% if createJourney.activityOutsidePrison %}
+            {% if createJourney.outsideWork %}
                 <h2 class="govuk-heading-m">Capacity</h2>
                 {{ govukSummaryList({
                     rows: [
