@@ -171,10 +171,8 @@ export default class DaysAndSessionsRoutes {
 
     if (usingRegimeTimes) {
       if (allocationHasStarted && req.routeContext.mode === 'edit') {
-        let allSlots: Slot[]
-        let addedSlots: Slot[]
-
-        allSlots = this.mapBodyToSlots(req.body as DaysAndSessions, weekNumberInt)
+        let addedSlots: Slot[] = []
+        const allSlots = this.mapBodyToSlots(req.body as DaysAndSessions, weekNumberInt)
 
         if (allSlots.length > 0) {
           const baselineForCurrentWeek = baselineSlots.filter(slot => slot.weekNumber === weekNumberInt)
