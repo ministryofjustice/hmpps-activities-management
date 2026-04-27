@@ -176,6 +176,7 @@ export default class ExclusionRoutes {
     }
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
+    const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
     const updatedSlots = this.mapBodyToSlots(req.body)
 
@@ -185,7 +186,7 @@ export default class ExclusionRoutes {
 
     const allocationHasStarted = new Date() >= parseDate(startDate)
 
-    const futureSameDaySlots = getFutureSameDaySlots(changedExclusionSlots, schedule)
+    const futureSameDaySlots = getFutureSameDaySlots(changedExclusionSlots, schedule, regimeTimes)
 
     if (
       config.sameDayScheduleModificationsEnabled &&
