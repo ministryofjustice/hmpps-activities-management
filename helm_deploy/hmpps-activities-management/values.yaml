@@ -33,8 +33,7 @@ generic-service:
     FEEDBACK_URL: "https://www.smartsurvey.co.uk/s/ActivitiesAndAppointments/"
     BANK_HOLIDAYS_API_URL: "https://www.gov.uk/bank-holidays.json"
     PRISONER_EXTRA_INFORMATION_ENABLED: "false"
-    PROBATION_TEAM_RADIO_ENABLED: "false"
-    SAME_DAY_SCHEDULE_MODIFICATIONS_ENABLED: "false"
+    PROBATION_TEAM_RADIO_ENABLED: "true"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
