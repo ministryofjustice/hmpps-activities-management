@@ -21,6 +21,7 @@ describe('Route Handlers - Activities dashboard', () => {
       capacity: 150,
       allocated: 75,
       waitlisted: 5,
+      outsideWork: false,
     } as ActivitySummary
     const english = {
       id: 2,
@@ -28,21 +29,33 @@ describe('Route Handlers - Activities dashboard', () => {
       capacity: 200,
       allocated: 100,
       waitlisted: 2,
+      outsideWork: false,
+    } as ActivitySummary
+    const outsideWorkActivity = {
+      id: 3,
+      activityName: 'Outside Work Activity',
+      capacity: 100,
+      allocated: 50,
+      waitlisted: 10,
+      outsideWork: true,
     } as ActivitySummary
 
-    when(activitiesService.getActivities).mockResolvedValue([maths, english])
+    when(activitiesService.getActivities).mockResolvedValue([maths, english, outsideWorkActivity])
   }
 
   beforeEach(() => {
     res = {
       locals: {
-        user: {},
+        user: {
+          externalActivitiesRolledOut: true,
+        },
       },
       render: jest.fn(),
     } as unknown as Response
 
     req = {
       params: { categoryId: '1' },
+      query: {},
     } as unknown as Request
 
     mockActivitiesData()
@@ -66,6 +79,7 @@ describe('Route Handlers - Activities dashboard', () => {
             percentageAllocated: 50,
             vacancies: 100,
             waitlisted: 2,
+            outsideWork: false,
           },
           {
             activityName: 'Maths level 1',
@@ -75,9 +89,33 @@ describe('Route Handlers - Activities dashboard', () => {
             percentageAllocated: 50,
             vacancies: 75,
             waitlisted: 5,
+            outsideWork: false,
           },
         ]),
         total: { allocated: 175, capacity: 350, percentageAllocated: 50, vacancies: 175, waitlisted: 7 },
+        filters: { isOutsideWorkFilter: 'false' },
+      })
+    })
+
+    it('should render outside work activities', async () => {
+      req.query.isOutsideWorkFilter = 'true'
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
+        activities: expect.arrayContaining([
+          {
+            activityName: 'Outside Work Activity',
+            id: 3,
+            capacity: 100,
+            allocated: 50,
+            percentageAllocated: 50,
+            vacancies: 50,
+            waitlisted: 10,
+            outsideWork: true,
+          },
+        ]),
+        total: { allocated: 50, capacity: 100, percentageAllocated: 50, vacancies: 50, waitlisted: 10 },
+        filters: { isOutsideWorkFilter: 'true' },
       })
     })
   })
