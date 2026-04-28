@@ -2,7 +2,8 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { subDays } from 'date-fns'
+import { subDays, addDays } from 'date-fns'
+import { SessionData } from 'express-session'
 import atLeast from '../../../../../jest.setup'
 import SessionTimesRoutes, { SessionTimes } from './sessionTimes'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -15,8 +16,11 @@ import { DaysAndSlotsInRegime } from '../../../../utils/helpers/applicableRegime
 import activitySchedule from '../../../../services/fixtures/activity_schedule_bi_weekly_1.json'
 import { DayOfWeekEnum, SessionSlot } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
+import config from '../../../../config'
+import getFutureSameDaySlots, { getAllSameDaySlots } from '../../../../utils/helpers/futureSameDaySlots'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../utils/helpers/futureSameDaySlots')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
@@ -793,5 +797,281 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
     await handler.POST(req, res)
 
     expect(res.addValidationError).toHaveBeenCalledTimes(0)
+  })
+})
+
+describe('Same-day schedule modifications (sameDayScheduleModificationsEnabled is true)', () => {
+  let getFutureSameDaySlotsMock: jest.Mock
+  let getAllSameDaySlotsMock: jest.Mock
+  let handler: SessionTimesRoutes
+  let req: Request
+  let res: Response
+  const activityStartDate = '2026-04-27' // Activity has started
+
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-04-27T14:00:00'))
+    config.sameDayScheduleModificationsEnabled = true
+    getFutureSameDaySlotsMock = getFutureSameDaySlots as jest.Mock
+    getAllSameDaySlotsMock = getAllSameDaySlots as jest.Mock
+    getFutureSameDaySlotsMock.mockClear()
+    getAllSameDaySlotsMock.mockClear()
+    activitiesService.getActivity.mockClear()
+
+    handler = new SessionTimesRoutes(activitiesService)
+
+    res = {
+      locals: {
+        user: {
+          username: 'joebloggs',
+          activeCaseLoadId: 'MDI',
+        },
+      },
+      render: jest.fn(),
+      redirect: jest.fn(),
+      redirectWithSuccess: jest.fn(),
+      redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
+      addValidationError: jest.fn(),
+      validationFailed: jest.fn(),
+    } as unknown as Response
+
+    req = {
+      session: {} as unknown as SessionData,
+      journeyData: {
+        createJourney: {
+          startDate: activityStartDate,
+          endDate: toDateString(addDays(new Date(activityStartDate), 7)),
+          customSlots: [],
+          scheduleWeeks: 1,
+          activityId: 1,
+          name: 'Test activity',
+        },
+      },
+      body: {},
+      params: {},
+      query: {},
+      routeContext: { mode: 'edit' },
+    } as unknown as Request
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+    config.sameDayScheduleModificationsEnabled = false
+  })
+
+  it('should redirect to run-session-today if there are future same-day slots', async () => {
+    const futureSameDaySlots = [
+      {
+        weekNumber: 1,
+        timeSlot: TimeSlot.PM,
+        daysOfWeek: ['FRIDAY'],
+        friday: true,
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        saturday: false,
+        sunday: false,
+      },
+    ]
+
+    const allSameDaySlots = [...futureSameDaySlots]
+
+    activitiesService.getActivity.mockResolvedValueOnce(activity as unknown as Activity)
+    getFutureSameDaySlotsMock.mockReturnValueOnce(futureSameDaySlots)
+    getAllSameDaySlotsMock.mockReturnValueOnce(allSameDaySlots)
+
+    const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+    const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+    const startTime = new SimpleTime()
+    startTime.hour = 13
+    startTime.minute = 45
+
+    startMap.set('FRIDAY-PM', startTime)
+
+    const endTime = new SimpleTime()
+    endTime.hour = 16
+    endTime.minute = 45
+
+    endMap.set('FRIDAY-PM', endTime)
+
+    req.body = {
+      startTimes: startMap,
+      endTimes: endMap,
+    }
+    req.journeyData.createJourney.slots = {
+      '1': {
+        days: ['friday'],
+        timeSlotsFriday: ['PM'],
+      },
+    }
+
+    await handler.POST(req, res)
+
+    expect(res.redirect).toHaveBeenCalledWith('run-session-today')
+    expect(req.journeyData.createJourney.futureSameDaySlots).toEqual(futureSameDaySlots)
+    expect(req.journeyData.createJourney.allSameDaySlots).toEqual(allSameDaySlots)
+  })
+
+  it('should not check for same-day slots if activity has not started', async () => {
+    jest.setSystemTime(new Date('2026-04-20T10:00:00')) // Before activity start date
+
+    req.journeyData.createJourney.startDate = '2026-04-27'
+    activitiesService.getActivity.mockResolvedValueOnce(activity as unknown as Activity)
+    activitiesService.updateActivity.mockResolvedValueOnce({} as Activity)
+
+    const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+    const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+    const startTime = new SimpleTime()
+    startTime.hour = 13
+    startTime.minute = 45
+
+    startMap.set('FRIDAY-PM', startTime)
+
+    const endTime = new SimpleTime()
+    endTime.hour = 16
+    endTime.minute = 45
+
+    endMap.set('FRIDAY-PM', endTime)
+
+    req.body = {
+      startTimes: startMap,
+      endTimes: endMap,
+    }
+    req.journeyData.createJourney.slots = {
+      '1': {
+        days: ['friday'],
+        timeSlotsFriday: ['PM'],
+      },
+    }
+
+    await handler.POST(req, res)
+
+    expect(getFutureSameDaySlotsMock).not.toHaveBeenCalled()
+    expect(getAllSameDaySlotsMock).not.toHaveBeenCalled()
+    expect(activitiesService.updateActivity).toHaveBeenCalled()
+  })
+
+  it('should save slots and redirect if no future same-day slots and activity has started', async () => {
+    const allSameDaySlots = []
+    const futureSameDaySlots = []
+
+    activitiesService.getActivity.mockResolvedValueOnce(activity as unknown as Activity)
+    activitiesService.updateActivity.mockResolvedValueOnce({} as Activity)
+    getFutureSameDaySlotsMock.mockReturnValueOnce(futureSameDaySlots)
+    getAllSameDaySlotsMock.mockReturnValueOnce(allSameDaySlots)
+
+    const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+    const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+    const startTime = new SimpleTime()
+    startTime.hour = 13
+    startTime.minute = 45
+
+    startMap.set('FRIDAY-PM', startTime)
+
+    const endTime = new SimpleTime()
+    endTime.hour = 16
+    endTime.minute = 45
+
+    endMap.set('FRIDAY-PM', endTime)
+
+    req.body = {
+      startTimes: startMap,
+      endTimes: endMap,
+    }
+    req.journeyData.createJourney.slots = {
+      '1': {
+        days: ['friday'],
+        timeSlotsFriday: ['PM'],
+      },
+    }
+
+    await handler.POST(req, res)
+
+    expect(req.journeyData.createJourney.allSameDaySlots).toEqual(allSameDaySlots)
+    expect(activitiesService.updateActivity).toHaveBeenCalled()
+    expect(res.redirectWithSuccess).toHaveBeenCalled()
+  })
+
+  it('should not check for same-day slots if not in edit mode', async () => {
+    req.routeContext = { mode: 'create' }
+
+    const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+    const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+    const startTime = new SimpleTime()
+    startTime.hour = 13
+    startTime.minute = 45
+
+    startMap.set('FRIDAY-PM', startTime)
+
+    const endTime = new SimpleTime()
+    endTime.hour = 16
+    endTime.minute = 45
+
+    endMap.set('FRIDAY-PM', endTime)
+
+    req.body = {
+      startTimes: startMap,
+      endTimes: endMap,
+    }
+    req.journeyData.createJourney.slots = {
+      '1': {
+        days: ['friday'],
+        timeSlotsFriday: ['PM'],
+      },
+    }
+
+    await handler.POST(req, res)
+
+    expect(activitiesService.getActivity).not.toHaveBeenCalled()
+    expect(getFutureSameDaySlotsMock).not.toHaveBeenCalled()
+    expect(activitiesService.updateActivity).toHaveBeenCalled()
+    expect(res.redirectOrReturn).toHaveBeenCalled()
+  })
+
+  it('should handle empty newSlots gracefully', async () => {
+    const allSameDaySlots = []
+    const futureSameDaySlots = []
+
+    activitiesService.getActivity.mockResolvedValueOnce(activity as unknown as Activity)
+    activitiesService.updateActivity.mockResolvedValueOnce({} as Activity)
+    getFutureSameDaySlotsMock.mockReturnValueOnce(futureSameDaySlots)
+    getAllSameDaySlotsMock.mockReturnValueOnce(allSameDaySlots)
+
+    const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+    const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+    const startTime = new SimpleTime()
+    startTime.hour = 13
+    startTime.minute = 45
+
+    startMap.set('FRIDAY-PM', startTime)
+
+    const endTime = new SimpleTime()
+    endTime.hour = 16
+    endTime.minute = 45
+
+    endMap.set('FRIDAY-PM', endTime)
+
+    req.body = {
+      startTimes: startMap,
+      endTimes: endMap,
+    }
+    req.journeyData.createJourney.slots = {
+      '1': {
+        days: ['friday'],
+        timeSlotsFriday: ['PM'],
+      },
+    }
+
+    await handler.POST(req, res)
+
+    expect(req.journeyData.createJourney.allSameDaySlots).toEqual(allSameDaySlots)
+    expect(activitiesService.updateActivity).toHaveBeenCalled()
+    expect(res.redirectWithSuccess).toHaveBeenCalled()
   })
 })

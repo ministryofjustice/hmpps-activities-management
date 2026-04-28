@@ -27,6 +27,7 @@ import getInmateDetails from '../../../fixtures/prisonerSearchApi/getPrisoner-MD
 import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidateSuitability.json'
 import getDeallocationReasons from '../../../fixtures/activitiesApi/getDeallocationReasons.json'
 import moorlandPayBands from '../../../fixtures/activitiesApi/getMdiPrisonPayBands.json'
+import getMdiPrisonRegime from '../../../fixtures/prisonApi/getMdiPrisonRegime.json'
 import EndDatePage from '../../../pages/allocateToActivity/endDate'
 import CheckAllocationPage from '../../../pages/allocateToActivity/checkAllocationPage'
 import DeallocationReasonOptionPage from '../../../pages/allocateToActivity/deallocationReasonOption'
@@ -78,6 +79,7 @@ context('Update an allocation end as needed', () => {
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
+    cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getMdiPrisonRegime)
     cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A5015DY', getCandidateSuitability)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
