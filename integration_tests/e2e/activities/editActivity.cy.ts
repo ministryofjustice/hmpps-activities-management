@@ -113,6 +113,7 @@ context('Edit activity', () => {
     viewActivityPage.changePayLink().click()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
+    checkPayPage.backLink().should('not.contain.text', 'Back to risk level')
     checkPayPage.addNewPayRate()
 
     const payRateTypePage2 = Page.verifyOnPage(PayRateTypePage)
@@ -127,6 +128,7 @@ context('Edit activity', () => {
     payPage.saveAndContinue()
 
     Page.verifyOnPage(CheckPayPage)
+    checkPayPage.backLink().should('not.contain.text', 'Back to risk level')
     checkPayPage.changePay()
 
     const payAmountPage = Page.verifyOnPage(PayAmountPage)
