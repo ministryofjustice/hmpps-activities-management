@@ -186,8 +186,54 @@
       "tuesdayFlag": true,
       "daysOfWeek": ["Tue"],
       "timeSlot": "AM"
+    },
+    {
+      "id": 8,
+      "weekNumber": 1,
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Tue"],
+      "timeSlot": "PM"
+    },
+    {
+      "id": 9,
+      "weekNumber": 1,
+      "startTime": "17:00",
+      "endTime": "18:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Tue"],
+      "timeSlot": "ED"
+    },
+    {
+      "id": 10,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "wednesdayFlag": true,
+      "daysOfWeek": ["Wed"],
+      "timeSlot": "AM"
+    },
+    {
+      "id": 11,
+      "weekNumber": 1,
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "wednesdayFlag": true,
+      "daysOfWeek": ["Wed"],
+      "timeSlot": "PM"
+    },
+    {
+      "id": 12,
+      "weekNumber": 1,
+      "startTime": "17:00",
+      "endTime": "18:00",
+      "wednesdayFlag": true,
+      "daysOfWeek": ["Wed"],
+      "timeSlot": "ED"
     }
   ],
   "startDate": "2022-10-10",
   "endDate": null
 }
+

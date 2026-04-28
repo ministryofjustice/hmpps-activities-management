@@ -526,6 +526,7 @@ export const convertToTitleCase = (sentence: string): string =>
   isBlank(sentence) ? '' : sentence.split(' ').map(properCaseName).join(' ')
 
 export const getTodayAsDayOfTheWeek = (): DaysOfWeek => {
+  console.log('⚠️ Today is: ', new Date())
   return format(new Date(), 'EEEE').toUpperCase() as DaysOfWeek
 }
 
