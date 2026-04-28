@@ -7,17 +7,24 @@ export default class ActivitiesRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const filters = req.query as { isOutsideWorkFilter: string }
+    filters.isOutsideWorkFilter ??= 'false'
 
-    const activities = await this.activitiesService.getActivities(true, user).then(act =>
+    let activities = await this.activitiesService.getActivities(true, user).then(act =>
       act.map(a => ({
         ...a,
         ...this.getCalculatedFields(a),
       })),
     )
 
+    if (user.externalActivitiesRolledOut) {
+      activities = activities.filter(a => a.outsideWork === (filters.isOutsideWorkFilter === 'true'))
+    }
+
     res.render('pages/activities/allocation-dashboard/activities', {
       total: this.getCalculatedFields(this.calculateTotals(activities) as ActivitySummary),
       activities,
+      filters,
     })
   }
 
