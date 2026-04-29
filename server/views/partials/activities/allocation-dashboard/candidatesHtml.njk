@@ -1,6 +1,8 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full govuk-!-margin-bottom-4">
-        <h2 class="govuk-heading-l">Allocate people to {{ schedule.description }}</h2>
+        {% if activity.outsideWork %}
+            <h2 class="govuk-heading-l">Allocate people to {{ schedule.description }}</h2>
+        {% endif %}
         <p class="govuk-body">You can:</p>
         <ul class="govuk-list govuk-list--bullet">
             {% if activity.outsideWork %}
