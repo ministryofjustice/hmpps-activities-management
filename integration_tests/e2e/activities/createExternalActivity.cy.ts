@@ -112,6 +112,7 @@ context('Create external activity', () => {
     payPage.reviewAndAddMoreRates()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
+    checkPayPage.backLink().should('contain.text', 'Back to risk level')
     checkPayPage.payRows().should('have.length', 1)
     checkPayPage.addAnother()
 
@@ -300,6 +301,7 @@ context('Create external activity', () => {
     payPage.reviewAndAddMoreRates()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
+    checkPayPage.backLink().should('not.contain.text', 'Back to risk level')
     checkPayPage.payRows().should('have.length', 1)
     checkPayPage.addAnother()
 
