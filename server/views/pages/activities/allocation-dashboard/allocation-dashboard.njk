@@ -26,7 +26,11 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l">Manage allocations</span>
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-7">{{ schedule.description }}</h1>
-            <p class="govuk-body-l">Check the requirements for this activity so that you can allocate suitable candidates.</p>
+            {% if activity.outsideWork %}
+                <p class="govuk-body-l">View and edit people's allocations, and find who to allocate.</p>
+            {% else %}
+                <p class="govuk-body-l">Check the requirements for this activity so that you can allocate suitable candidates.</p>
+            {% endif %}
         </div>
         <div class="govuk-grid-column-one-third">
             <div class='related-tasks'>
@@ -37,15 +41,21 @@
         </div>
     </div>
 
-    {% include 'partials/activities/allocation-dashboard/currentAllocationInformationCard.njk' %}
-    {% include 'partials/activities/allocation-dashboard/requirementsInformationCard.njk' %}
+    <div class="govuk-grid-row">
+        {% include 'partials/activities/allocation-dashboard/currentAllocationInformationCard.njk' %}
+        {% if not activity.outsideWork %}
+            {% include 'partials/activities/allocation-dashboard/requirementsInformationCard.njk' %}
+        {% endif %}
+    </div>
 
     {% set currentlyAllocatedHtml %}
         {% include 'partials/activities/allocation-dashboard/currentlyAllocatedHtml.njk' %}
     {% endset %}
-    {% set waitlistHtml %}
-        {% include 'partials/activities/allocation-dashboard/waitlistHtml.njk' %}
-    {% endset %}
+    {% if not activity.outsideWork %}
+        {% set waitlistHtml %}
+            {% include 'partials/activities/allocation-dashboard/waitlistHtml.njk' %}
+        {% endset %}
+    {% endif %}
     {% set candidatesHtml %}
         {% include 'partials/activities/allocation-dashboard/candidatesHtml.njk' %}
     {% endset %}
@@ -53,37 +63,41 @@
         {% include 'partials/activities/allocation-dashboard/scheduleHtml.njk' %}
     {% endset %}
 
-    {{ govukTabs({
-        classes: "govuk-tabs--borderless",
-        items: [
-            {
-                label: "Currently allocated",
-                id: "currently-allocated-tab",
-                panel: {
-                    html: currentlyAllocatedHtml
-                }
-            },
-            {
-                label: "Waitlist",
-                id: "waitlist-tab",
-                panel: {
-                    html: waitlistHtml
-                }
-            },
-            {
-                label: "Other people",
-                id: "candidates-tab",
-                panel: {
-                    html: candidatesHtml
-                }
-            },
-            {
-                label: schedule.description + " schedule",
-                id: "schedule-tab",
-                panel: {
-                    html: scheduleHtml
-                }
-            }
-        ]
-    }) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {{ govukTabs({
+                classes: "govuk-tabs--borderless",
+                items: [
+                    {
+                        label: "Currently allocated",
+                        id: "currently-allocated-tab",
+                        panel: {
+                            html: currentlyAllocatedHtml
+                        }
+                    },
+                    {
+                        label: "Waitlist",
+                        id: "waitlist-tab",
+                        panel: {
+                            html: waitlistHtml
+                        }
+                    } if not activity.outsideWork,
+                    {
+                        label: "Other people",
+                        id: "candidates-tab",
+                        panel: {
+                            html: candidatesHtml
+                        }
+                    },
+                    {
+                        label: schedule.description + " schedule",
+                        id: "schedule-tab",
+                        panel: {
+                            html: scheduleHtml
+                        }
+                    }
+                ]
+            }) }}
+        </div>
+    </div>
 {% endblock %}

@@ -1,4 +1,8 @@
-<p>This activity {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
+{% if activity.outsideWork %}
+    <h2 class="govuk-heading-m">{{ schedule.description }} schedule</h2>
+{% else %}
+    <p>This activity {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
+{% endif %}
 {% for week, slots in dailySlots %}
     {% set rows = [] %}
     {% if scheduleWeeks > 1 %}
