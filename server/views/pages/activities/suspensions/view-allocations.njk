@@ -28,6 +28,8 @@
         },
         {
             text: allocation.payRate | toMoney if allocation.payRate else 'Unpaid'
+        } if not allocation.outsideWork else {
+            text: allocation.payRate | toMoney if allocation.payRate else 'None - employer-paid activity'
         },
         {
             html: '<a href=../suspend/' + session.req.params.prisonerNumber + '/suspend-from?allocationIds=' + allocation.id +' data-qa="suspend-'+allocation.id+'">Suspend from activity <span class="govuk-visually-hidden">{{ allocation.activitySummary }}</span></a>'
@@ -38,13 +40,15 @@
 {% set suspendedAllocationRows = [] %}
 {% for allocation in suspendedAllocations %}
     {% set paid %}
-    {% if allocation.prisonPayBand and(allocation.status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY or allocation.plannedSuspension.paid) %}
-                Yes
-            {% elif allocation.prisonPayBand == null %}
-                No - activity is unpaid
-            {% else %}
-                No
-            {% endif %}
+        {% if allocation.outsideWork and allocation.prisonPayBand == null %}
+            No - employer-paid activity
+        {% elif allocation.prisonPayBand and(allocation.status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY or allocation.plannedSuspension.paid) %}
+            Yes
+        {% elif allocation.prisonPayBand == null %}
+            No - activity is unpaid
+        {% else %}
+            No
+        {% endif %}
     {% endset %}
 
     {% set suspendedAllocationRows = (suspendedAllocationRows.push([
