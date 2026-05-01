@@ -837,6 +837,9 @@ context('Bulk suspend/unsuspend', () => {
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/activities/234/filtered', activityUnpaid as unknown as JSON)
     cy.stubEndpoint('GET', '/activities/123/filtered', activity123 as unknown as JSON)
+    cy.stubEndpoint('GET', '/activities/778/filtered', activityUnpaid as unknown as JSON)
+    cy.stubEndpoint('GET', '/activities/539/filtered', activity539 as unknown as JSON)
+    cy.stubEndpoint('GET', '/activities/923/filtered', activityUnpaid as unknown as JSON)
     cy.stubEndpoint('GET', '/prisoner/G0995GW', getInmateDetails as unknown as JSON)
     cy.stubEndpoint('POST', '/allocations/MDI/suspend', {
       prisonerNumber: 'G0995GW',
