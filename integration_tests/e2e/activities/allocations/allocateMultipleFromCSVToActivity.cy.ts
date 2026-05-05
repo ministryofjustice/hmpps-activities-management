@@ -57,7 +57,7 @@ context('Allocate multiple via CSV to an activity', () => {
     cy.stubEndpoint('GET', '/incentive-reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
-    cy.stubEndpoint('POST', '/schedules/2/allocations')
+    cy.stubEndpoint('POST', '/schedules/2/allocations/bulk')
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
     cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociationsInvolving)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails.content)

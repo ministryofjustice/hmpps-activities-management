@@ -111,30 +111,61 @@ describe('Allocate multiple people - check and confirm answers', () => {
     })
   })
   describe('POST', () => {
+    it('Should correctly map inmates to allocation requests with payBands', async () => {
+      req.journeyData.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
+
+      await handler.POST(req, res)
+
+      const callArgs = activitiesService.postBulkAllocations.mock.calls[0]
+      const { allocations } = callArgs[1]
+
+      expect(allocations).toHaveLength(2)
+      expect(allocations[0]).toEqual({
+        prisonerNumber: 'G3096GX',
+        payBandId: 1,
+        startDate: '2025-01-01',
+        endDate: '2026-01-01',
+        exclusions: [],
+        scheduleInstanceId: 123,
+      })
+      expect(allocations[1]).toEqual({
+        prisonerNumber: 'G4977UO',
+        payBandId: 2,
+        startDate: '2025-01-01',
+        endDate: '2026-01-01',
+        exclusions: [],
+        scheduleInstanceId: 123,
+      })
+    })
+
     it('Start date next session', async () => {
       req.journeyData.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
 
       await handler.POST(req, res)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledTimes(2)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+      expect(activitiesService.postBulkAllocations).toHaveBeenCalledTimes(1)
+      expect(activitiesService.postBulkAllocations).toHaveBeenCalledWith(
         1,
-        'G3096GX',
-        1,
+        {
+          allocations: [
+            {
+              prisonerNumber: 'G3096GX',
+              payBandId: 1,
+              startDate: '2025-01-01',
+              endDate: '2026-01-01',
+              exclusions: [],
+              scheduleInstanceId: 123,
+            },
+            {
+              prisonerNumber: 'G4977UO',
+              payBandId: 2,
+              startDate: '2025-01-01',
+              endDate: '2026-01-01',
+              exclusions: [],
+              scheduleInstanceId: 123,
+            },
+          ],
+        },
         { username: 'joebloggs' },
-        '2025-01-01',
-        '2026-01-01',
-        [],
-        123,
-      )
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
-        1,
-        'G4977UO',
-        2,
-        { username: 'joebloggs' },
-        '2025-01-01',
-        '2026-01-01',
-        [],
-        123,
       )
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
@@ -142,26 +173,30 @@ describe('Allocate multiple people - check and confirm answers', () => {
       req.journeyData.allocateJourney.startDateOption = StartDateOption.START_DATE
 
       await handler.POST(req, res)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledTimes(2)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+      expect(activitiesService.postBulkAllocations).toHaveBeenCalledTimes(1)
+      expect(activitiesService.postBulkAllocations).toHaveBeenCalledWith(
         1,
-        'G3096GX',
-        1,
+        {
+          allocations: [
+            {
+              prisonerNumber: 'G3096GX',
+              payBandId: 1,
+              startDate: '2025-01-01',
+              endDate: '2026-01-01',
+              exclusions: [],
+              scheduleInstanceId: null,
+            },
+            {
+              prisonerNumber: 'G4977UO',
+              payBandId: 2,
+              startDate: '2025-01-01',
+              endDate: '2026-01-01',
+              exclusions: [],
+              scheduleInstanceId: null,
+            },
+          ],
+        },
         { username: 'joebloggs' },
-        '2025-01-01',
-        '2026-01-01',
-        [],
-        null,
-      )
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
-        1,
-        'G4977UO',
-        2,
-        { username: 'joebloggs' },
-        '2025-01-01',
-        '2026-01-01',
-        [],
-        null,
       )
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
@@ -170,27 +205,32 @@ describe('Allocate multiple people - check and confirm answers', () => {
       req.journeyData.allocateJourney.endDate = null
 
       await handler.POST(req, res)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledTimes(2)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+      expect(activitiesService.postBulkAllocations).toHaveBeenCalledTimes(1)
+      expect(activitiesService.postBulkAllocations).toHaveBeenCalledWith(
         1,
-        'G3096GX',
-        1,
+        {
+          allocations: [
+            {
+              prisonerNumber: 'G3096GX',
+              payBandId: 1,
+              startDate: '2025-01-01',
+              endDate: null,
+              exclusions: [],
+              scheduleInstanceId: 123,
+            },
+            {
+              prisonerNumber: 'G4977UO',
+              payBandId: 2,
+              startDate: '2025-01-01',
+              endDate: null,
+              exclusions: [],
+              scheduleInstanceId: 123,
+            },
+          ],
+        },
         { username: 'joebloggs' },
-        '2025-01-01',
-        null,
-        [],
-        123,
       )
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
-        1,
-        'G4977UO',
-        2,
-        { username: 'joebloggs' },
-        '2025-01-01',
-        null,
-        [],
-        123,
-      )
+      expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
     it('No payband id', async () => {
       req.journeyData.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
@@ -212,26 +252,30 @@ describe('Allocate multiple people - check and confirm answers', () => {
       ] as Inmate[]
 
       await handler.POST(req, res)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledTimes(2)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+      expect(activitiesService.postBulkAllocations).toHaveBeenCalledTimes(1)
+      expect(activitiesService.postBulkAllocations).toHaveBeenCalledWith(
         1,
-        'G3096GX',
-        null,
+        {
+          allocations: [
+            {
+              prisonerNumber: 'G3096GX',
+              payBandId: null,
+              startDate: '2025-01-01',
+              endDate: '2026-01-01',
+              exclusions: [],
+              scheduleInstanceId: 123,
+            },
+            {
+              prisonerNumber: 'G4977UO',
+              payBandId: null,
+              startDate: '2025-01-01',
+              endDate: '2026-01-01',
+              exclusions: [],
+              scheduleInstanceId: 123,
+            },
+          ],
+        },
         { username: 'joebloggs' },
-        '2025-01-01',
-        '2026-01-01',
-        [],
-        123,
-      )
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
-        1,
-        'G4977UO',
-        null,
-        { username: 'joebloggs' },
-        '2025-01-01',
-        '2026-01-01',
-        [],
-        123,
       )
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
