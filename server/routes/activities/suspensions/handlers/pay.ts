@@ -38,6 +38,7 @@ export default class SuspensionPayRoutes {
         totalAllocations: allocations.length,
         numberPaid: allocations.filter(al => al.payBand).length,
         paidAllocations: allocations?.filter(allocation => !!allocation.payBand),
+        hasOutsideWork: allocations.some(allocation => allocation.outsideWork),
       }
     }
     return false
