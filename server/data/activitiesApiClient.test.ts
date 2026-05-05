@@ -302,6 +302,41 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('postBulkAllocations', () => {
+    it('should post bulk allocation data to api', async () => {
+      const allocationRequests = {
+        allocations: [
+          {
+            prisonerNumber: 'ABC123',
+            payBandId: 1,
+            startDate: '2023-01-01',
+            endDate: null,
+            exclusions: [],
+            scheduleInstanceId: null,
+          },
+          {
+            prisonerNumber: 'DEF456',
+            payBandId: 2,
+            startDate: '2023-01-01',
+            endDate: null,
+            exclusions: [],
+            scheduleInstanceId: null,
+          },
+        ],
+      }
+
+      fakeActivitiesApi
+        .post('/schedules/1/allocations/bulk', allocationRequests)
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(204)
+
+      await activitiesApiClient.postBulkAllocations(1, allocationRequests, user)
+
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getPayBandsForPrison', () => {
     it('should return data from api', async () => {
       fakeActivitiesApi
