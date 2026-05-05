@@ -186,6 +186,35 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('postBulkAllocations', () => {
+    it('should call activities API client to post bulk allocations', async () => {
+      const allocationRequests = {
+        allocations: [
+          {
+            prisonerNumber: 'ABC123',
+            payBandId: 1,
+            startDate: '2023-01-01',
+            endDate: null,
+            exclusions: [],
+            scheduleInstanceId: 123,
+          },
+          {
+            prisonerNumber: 'DEF456',
+            payBandId: 2,
+            startDate: '2023-01-01',
+            endDate: null,
+            exclusions: [],
+            scheduleInstanceId: 123,
+          },
+        ],
+      }
+
+      await activitiesService.postBulkAllocations(1, allocationRequests, user)
+
+      expect(activitiesApiClient.postBulkAllocations).toHaveBeenCalledWith(1, allocationRequests, user)
+    })
+  })
+
   describe('getPayBandsForPrison', () => {
     it('should get the list of prison pay bands', async () => {
       const expectedResult = [{ id: 1, alias: 'High' }] as PrisonPayBand[]
