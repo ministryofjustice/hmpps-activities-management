@@ -55,7 +55,7 @@ context('Allocate multiple people to an activity by copying from another activit
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=G4793VF', getCandidateSuitability)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=B1351RE', getCandidateSuitability2)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A1351DZ', getCandidateSuitability)
-    cy.stubEndpoint('POST', '/schedules/2/allocations')
+    cy.stubEndpoint('POST', '/schedules/2/allocations/bulk')
 
     resetActivityAndScheduleStubs({
       activityStartDate: subWeeks(new Date(), 2),
