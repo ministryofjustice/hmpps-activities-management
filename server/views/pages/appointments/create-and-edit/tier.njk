@@ -4,7 +4,6 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
-{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     {% set pageTitle = appointmentJourneyTitle("Change appointment tier - Appointments - DPS", session.appointmentJourney) %}
@@ -16,7 +15,7 @@
 {% set jsBackLink = true %}
 
 {% set activityTierOptions = [] %}
-{% for tierKey, tierText in eventTierDescriptions %}
+{% for tierKey, tierText in eventTierRadioOptionDescriptions %}
     {% set activityTierOptions = (activityTierOptions.push({
         value: tierKey,
         text: tierText,
@@ -39,7 +38,7 @@
                         }
                     },
                     hint: {
-                        text: 'Recording whether the appointments are tier 1 (core curriculum, for example a health clinic or induction assessment), tier 2 (extra-curricular, for example an Alcohol Awareness Day event or Storybook Mums and Dads) or not purposeful (also called foundational) helps ensure there is a balanced regime.'
+                        text: 'Recording whether the appointments are tier 1 (core curriculum, for example a health clinic or induction assessment) or tier 2 (extra-curricular, for example an Alcohol Awareness Day event or Storybook Mums and Dads) helps ensure there is a balanced regime.'
                     },
                     id: "tier",
                     name: "tier",

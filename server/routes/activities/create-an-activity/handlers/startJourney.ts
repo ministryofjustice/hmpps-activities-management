@@ -13,6 +13,9 @@ export default class StartJourneyRoutes {
     this.metricsService.trackEvent(
       MetricsEvent.CREATE_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
     )
-    res.redirect(`category${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
+    const url = req.session.user.externalActivitiesRolledOut ? 'activity-type' : 'category'
+    // If prison is not isExternalActivitiesEnabled journey should behave as if it is in-prison
+    req.journeyData.createJourney.outsideWork = false
+    res.redirect(`${url}${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 }

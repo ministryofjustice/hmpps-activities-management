@@ -54,7 +54,7 @@ context('Create activity', () => {
       getNonResidentialActivityLocations,
     )
     cy.stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile)
-    cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
+    cy.stubEndpoint('POST', '/activities', JSON.parse('{"id": 1, "schedules": [{"id": 1}]}'))
   })
 
   it('should click through create activity journey', () => {
@@ -69,7 +69,8 @@ context('Create activity', () => {
     manageActivitiesPage.cardActivityCard().click()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.selectCategory('Gym, sport and fitness')
+    categoryPage.caption().should('contain.text', 'Create an activity')
+    categoryPage.selectCategory('Gym, sport, fitness')
     categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
@@ -103,6 +104,7 @@ context('Create activity', () => {
     payPage.reviewAndAddMoreRates()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
+    checkPayPage.backLink().should('contain.text', 'Back to risk level')
     checkPayPage.payRows().should('have.length', 1)
     checkPayPage.addAnother()
 
@@ -159,7 +161,7 @@ context('Create activity', () => {
     daysAndSessionsPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
+    sessionTimesOptionPage.useSessionOption('Yes')
     sessionTimesOptionPage.continue()
 
     const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
@@ -179,6 +181,12 @@ context('Create activity', () => {
     checkAnswersPage.createActivity()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.allocateLink().should('exist')
     confirmationPage.payReviewLink().should('exist')
+    confirmationPage.allocateLink().click()
+    cy.location().should(loc => {
+      expect(loc.pathname).to.eq('/activities/allocation-dashboard/1')
+      expect(loc.hash).to.eq('#candidates-tab')
+    })
   })
 })

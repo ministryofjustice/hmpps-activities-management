@@ -6,7 +6,7 @@ import {
   AppointmentCancellationReason,
   AppointmentFrequency,
 } from '../@types/appointments'
-import { formatDate, formatFirstLastName, parseDate, toDate } from './utils'
+import { formatDate, formatFirstLastName, parseDate, toDate, formatListWithAnd } from './utils'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { parseIsoDate } from './datePickerUtils'
@@ -72,7 +72,7 @@ export const getAppointmentEditMessage = (
   }
 
   if (updateProperties.length > 0) {
-    return `change the ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')} for`
+    return `change the ${formatListWithAnd(updateProperties)} for`
   }
 
   if (editAppointmentJourney.addPrisoners?.length === 1) {
@@ -138,7 +138,7 @@ export const getConfirmAppointmentEditCta = (
   }
 
   if (updateProperties.length > 0) {
-    return `Update ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')}`
+    return `Update ${formatListWithAnd(updateProperties)}`
   }
 
   if (editAppointmentJourney.addPrisoners?.length === 1) {
@@ -201,7 +201,7 @@ export const getAppointmentEditApplyToCta = (
   }
 
   if (updateProperties.length > 0) {
-    return `Update ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')}`
+    return `Update ${formatListWithAnd(updateProperties)}`
   }
 
   if (editAppointmentJourney.addPrisoners?.length === 1) {
@@ -293,7 +293,7 @@ export const getAppointmentEditHeadingMessage = (
   }
 
   if (updateProperties.length > 0) {
-    return `Which appointments do you want to change the ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')} for?`
+    return `Which appointments do you want to change the ${formatListWithAnd(updateProperties)} for?`
   }
 
   if (editAppointmentJourney.addPrisoners?.length === 1) {

@@ -16,16 +16,25 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(createJourney) }}
+            {% set headerText = 'the days and sessions when people can be out at this activity' if user.externalActivitiesRolledOut and createJourney.outsideWork else 'the days and sessions when this activity runs' %}
             {% if createJourney.scheduleWeeks > 1 %}
-                <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ createJourney.scheduleWeeks }}: {{ 'change' if session.req.routeContext.mode == 'edit' else 'select' }} the days and sessions when this activity runs</h1>
+                <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ createJourney.scheduleWeeks }}: {{ 'change' if session.req.routeContext.mode == 'edit' else 'select' }} {{ headerText }}</h1>
             {% else %}
-                <h1 class="govuk-heading-l">{{ 'Change' if session.req.routeContext.mode == 'edit' else 'Select' }} the days and sessions when this activity runs</h1>
+                <h1 class="govuk-heading-l">{{ 'Change' if session.req.routeContext.mode == 'edit' else 'Select' }} {{ headerText }}</h1>
+            {% endif %}
+            
+            {% if user.externalActivitiesRolledOut and createJourney.outsideWork %}
+                <p class="govuk-body">If people can work shifts at different times, select all of the days and sessions that people may be out at the activity.</p>
+            {% else %}
+                <p class="govuk-body">Select each day that the activity will run, then select the slots when the activity will run on that day.</p>
             {% endif %}
 
-            <p class="govuk-body">Select each day that the activity will run, then select the slots when the activity will run on that day.</p>
-
             {% if session.req.routeContext.mode == 'edit' %}
-                <p class="govuk-body">Any changes you make will take effect tomorrow.</p>
+                {% if sameDayScheduleModificationsEnabled %}
+                    <p class="govuk-body" data-qa="modification-time">If you add a session for today, you can choose if it runs today or not. Other changes you make will take effect tomorrow.</p>
+                {% else %}
+                    <p class="govuk-body" data-qa="modification-time">Any changes you make will take effect tomorrow.</p>
+                {% endif %}
                 <p class="govuk-body">You should update any unlock lists that have been printed.</p>
             {% elseif createJourney.scheduleWeeks > 1 and session.req.params.weekNumber == 1 %}
                 <p class="govuk-body">Your chosen start date will fall in week 1 of your schedule, even if there are no sessions planned for the rest of the week</p>

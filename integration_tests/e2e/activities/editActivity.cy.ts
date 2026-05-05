@@ -113,6 +113,7 @@ context('Edit activity', () => {
     viewActivityPage.changePayLink().click()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
+    checkPayPage.backLink().should('not.contain.text', 'Back to risk level')
     checkPayPage.addNewPayRate()
 
     const payRateTypePage2 = Page.verifyOnPage(PayRateTypePage)
@@ -127,6 +128,7 @@ context('Edit activity', () => {
     payPage.saveAndContinue()
 
     Page.verifyOnPage(CheckPayPage)
+    checkPayPage.backLink().should('not.contain.text', 'Back to risk level')
     checkPayPage.changePay()
 
     const payAmountPage = Page.verifyOnPage(PayAmountPage)
@@ -155,6 +157,14 @@ context('Edit activity', () => {
     customTimesChangeOptionPage.continue()
 
     const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
+    // TODO: when sameDayScheduleModificationsEnabled is enabled, use commented out assertion and remove the one below it
+    // daysAndSessionsPage
+    //   .modParagraph()
+    //   .should(
+    //     'contain.text',
+    //     'If you add a session for today, you can choose if it runs today or not. Other changes you make will take effect tomorrow.',
+    //   )
+    daysAndSessionsPage.modParagraph().should('contain.text', 'Any changes you make will take effect tomorrow.')
     daysAndSessionsPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
     daysAndSessionsPage.getInputById('timeSlotsTuesday').should('be.checked')
     daysAndSessionsPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
@@ -215,6 +225,7 @@ context('Edit activity', () => {
     viewActivityPage.changeScheduleLink().click()
 
     const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
+    customTimesChangeOptionPage.caption().should('contain.text', 'English level 1')
     customTimesChangeOptionPage.changeDaysAndSessions('Activity start and end times')
     customTimesChangeOptionPage.continue()
 

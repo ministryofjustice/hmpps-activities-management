@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { SanitisedError } from '@ministryofjustice/hmpps-rest-client'
 import RegimeChangeRoutes, { RegimeTimes } from './regimeChange'
 import ActivitiesService from '../../../../services/activitiesService'
 import { Activity, ActivitySummary, PrisonRegime, Slot } from '../../../../@types/activitiesAPI/types'
@@ -351,6 +352,43 @@ describe('Route Handlers - Change Regime times', () => {
         regimeSlots: regimeSchedule,
       })
     })
+
+    it('should use default regime when getPrisonRegime returns a 404 error', async () => {
+      const error: SanitisedError = {
+        name: 'SanitisedError',
+        message: 'Not Found',
+        data: {
+          status: 404,
+          errorCode: null,
+          userMessage: 'Not found: no regime set for prison',
+          developerMessage: 'no regime set for prison',
+          moreInfo: null,
+        },
+        stack: '',
+      }
+
+      activitiesService.getPrisonRegime.mockRejectedValueOnce(error)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/administration/regime-times',
+        expect.objectContaining({
+          createMode: true,
+          regimeTimes: expect.arrayContaining([
+            expect.objectContaining({
+              dayOfWeek: 'MONDAY',
+              amStart: '-',
+              amFinish: '-',
+              pmStart: '-',
+              pmFinish: '-',
+              edStart: '-',
+              edFinish: '-',
+            }),
+          ]),
+        }),
+      )
+    })
   })
 
   describe('POST', () => {
@@ -600,6 +638,7 @@ describe('Route Handlers - Change Regime times', () => {
         waitlisted: 0,
         createdTime: '2023-10-23T09:52:30',
         activityState: 'LIVE',
+        outsideWork: false,
       }
       const activitySummary2: ActivitySummary = {
         id: 872,
@@ -615,6 +654,7 @@ describe('Route Handlers - Change Regime times', () => {
         waitlisted: 0,
         createdTime: '2024-08-22T09:15:54',
         activityState: 'LIVE',
+        outsideWork: false,
       }
       const activitySummary3: ActivitySummary = {
         id: 539,
@@ -631,6 +671,7 @@ describe('Route Handlers - Change Regime times', () => {
         waitlisted: 0,
         createdTime: '2023-10-23T09:59:24',
         activityState: 'LIVE',
+        outsideWork: false,
       }
       const archivedActivitySummary: ActivitySummary = {
         id: 222,
@@ -647,6 +688,7 @@ describe('Route Handlers - Change Regime times', () => {
         waitlisted: 0,
         createdTime: '2023-10-23T09:59:24',
         activityState: 'ARCHIVED',
+        outsideWork: false,
       }
 
       const activity1: Activity = {
@@ -3798,6 +3840,46 @@ describe('Route Handlers - Change Regime times', () => {
       expect(activitiesService.updateActivity).toHaveBeenCalledWith(401, { slots: slots1 }, res.locals.user)
       expect(activitiesService.updateActivity).toHaveBeenCalledWith(539, { slots: slots2 }, res.locals.user)
       expect(activitiesService.updateActivity).toHaveBeenCalledTimes(2)
+    })
+
+    it('should fall back to default regime when getPrisonRegime returns a 404 error', async () => {
+      const error: SanitisedError = {
+        name: 'SanitisedError',
+        message: 'Not Found',
+        data: {
+          status: 404,
+          errorCode: null,
+          userMessage: 'Not found: no regime set for prison',
+          developerMessage: 'no regime set for prison',
+          moreInfo: null,
+        },
+        stack: '',
+      }
+
+      activitiesService.getPrisonRegime.mockRejectedValueOnce(error)
+      activitiesService.getActivities.mockResolvedValueOnce([])
+
+      await handler.POST(req, res)
+
+      expect(activitiesService.updatePrisonRegime).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            dayOfWeek: 'MONDAY',
+            amStart: '09:21',
+            amFinish: '11:37',
+            pmStart: '13:30',
+            pmFinish: '14:45',
+          }),
+        ]),
+        'RSI',
+        res.locals.user,
+      )
+
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '/activities/admin',
+        'Regime updated',
+        "You've updated the regime schedule",
+      )
     })
   })
 

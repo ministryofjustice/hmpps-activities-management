@@ -35,6 +35,7 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
         roles,
         isActivitiesRolledOut: req.session.user?.isActivitiesRolledOut,
         isAppointmentsRolledOut: req.session.user?.isAppointmentsRolledOut,
+        externalActivitiesRolledOut: req.session.user?.externalActivitiesRolledOut,
       }
 
       if (res.locals.user.activeCaseLoad.caseLoadId !== req.session.user?.activeCaseLoadId) {
@@ -44,6 +45,9 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
         const rolloutPlan = await activitiesService.getPrisonRolloutPlan(res.locals.user.activeCaseLoad.caseLoadId)
         res.locals.user.isActivitiesRolledOut = rolloutPlan.activitiesRolledOut
         res.locals.user.isAppointmentsRolledOut = rolloutPlan.appointmentsRolledOut
+        res.locals.user.externalActivitiesRolledOut = rolloutPlan.externalActivitiesRolledOut
+        // Use for local dev
+        // res.locals.user.externalActivitiesRolledOut = true
       }
 
       if (res.locals.user.authSource === 'nomis') {

@@ -21,6 +21,10 @@ import {
   getAdvancedAttendanceSummary,
   formatFirstLastName,
   validateUuid,
+  getTodayAsDayOfTheWeek,
+  isSlotTimeInFuture,
+  formatListWithAnd,
+  type DaysOfWeek,
 } from './utils'
 import { AdvanceAttendance, Attendance, ScheduledEvent } from '../@types/activitiesAPI/types'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
@@ -533,5 +537,65 @@ describe('eventClashes', () => {
     it('should return false for an undefined UUID', () => {
       expect(validateUuid(undefined)).toEqual(false)
     })
+  })
+})
+
+describe('getTodayAsDayOfTheWeek', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it.each([
+    [new Date(2024, 0, 7), 'SUNDAY'],
+    [new Date(2024, 0, 8), 'MONDAY'],
+    [new Date(2024, 0, 9), 'TUESDAY'],
+    [new Date(2024, 0, 10), 'WEDNESDAY'],
+    [new Date(2024, 0, 11), 'THURSDAY'],
+    [new Date(2024, 0, 12), 'FRIDAY'],
+    [new Date(2024, 0, 13), 'SATURDAY'],
+  ])('returns system date: %s as correct date of the week: %s', (date: Date, expected: DaysOfWeek) => {
+    jest.setSystemTime(date)
+    expect(getTodayAsDayOfTheWeek()).toBe(expected)
+  })
+})
+
+describe('isSlotTimeInFuture', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it.each([
+    [new Date(2024, 0, 1, 9, 0), '10:00', true],
+    [new Date(2024, 0, 1, 9, 0), '09:00', false],
+    [new Date(2024, 0, 1, 9, 0), '08:00', false],
+    [new Date(2024, 0, 1, 0, 0), '00:01', true],
+    [new Date(2024, 0, 1, 0, 0), '00:00', false],
+    [new Date(2024, 0, 1, 13, 45), '13:45', false],
+    [new Date(2024, 0, 1, 13, 44), '13:45', true],
+  ])(
+    'when current time is %s and slot time is %s it returns %s',
+    (currentTime: Date, timeToCheck: string, expected: boolean) => {
+      jest.setSystemTime(currentTime)
+      expect(isSlotTimeInFuture(timeToCheck)).toBe(expected)
+    },
+  )
+})
+
+describe('formatListWithAnd', () => {
+  it.each([
+    [['AM'], 'AM'],
+    [['AM', 'PM'], 'AM and PM'],
+    [['AM', 'PM', 'ED'], 'AM, PM and ED'],
+    [['Monday', 'Tuesday', 'Wednesday', 'Friday'], 'Monday, Tuesday, Wednesday and Friday'],
+  ])('formats %s as %s', (items: string[], expected: string) => {
+    expect(formatListWithAnd(items)).toBe(expected)
   })
 })

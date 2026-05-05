@@ -524,3 +524,32 @@ const properCaseName = (name: string): string => (isBlank(name) ? '' : name.spli
 
 export const convertToTitleCase = (sentence: string): string =>
   isBlank(sentence) ? '' : sentence.split(' ').map(properCaseName).join(' ')
+
+export const getTodayAsDayOfTheWeek = (): DaysOfWeek => {
+  return format(new Date(), 'EEEE').toUpperCase() as DaysOfWeek
+}
+
+/**
+ * Compares a slot time string ("10:30") against the current time to determine if it is in the future.
+ * @param timeString time in format "HH:MM"
+ * @returns true if the slot time is in the future
+ */
+export const isSlotTimeInFuture = (timeString: string): boolean => {
+  const slotTime = timeString.replace(':', '')
+  const now = new Date()
+  const currentTimeNumber = `${now.getHours()}${String(now.getMinutes()).padStart(2, '0')}`
+
+  return Number(slotTime) > Number(currentTimeNumber)
+}
+
+/**
+ * Formats an array of strings to be seperated by commas, then an 'and' before the last item.
+ * For example:
+ * ['AM'] returns 'AM'
+ * ['AM', 'PM', 'ED'] returns 'AM, PM and ED'
+ * @param items Array of strings to format
+ * @returns Formatted string with commas and "and"
+ */
+export const formatListWithAnd = (items: string[]): string => {
+  return items.join(', ').replace(/(,)(?!.*\1)/, ' and')
+}

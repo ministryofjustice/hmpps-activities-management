@@ -17,6 +17,7 @@ import StartDateRoutes, { StartDate } from './handlers/startDate'
 import EndDateOptionRoutes, { EndDateOption } from './handlers/endDateOption'
 import EndDateRoutes, { EndDate } from './handlers/endDate'
 import DaysAndSessionsRoutes, { DaysAndSessions } from './handlers/daysAndSessions'
+import RunSessionTodayRoutes from './handlers/runSessionToday'
 import BankHolidayOptionRoutes, { BankHolidayOption } from './handlers/bankHoliday'
 import SessionTimesOptionRoutes, { SessionTimesOption } from './handlers/sessionTimesOption'
 import LocationRoutes, { Location } from './handlers/location'
@@ -38,6 +39,8 @@ import CustomTimesChangeDefaultOrCustomRoutes, {
   DefaultOrCustomOption,
 } from './handlers/customTimesChangeDefaultOrCustom'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
+import ActivityTypeRoutes, { ActivityType } from './handlers/activityType'
+import WhoPaysRoutes, { WhoPays } from './handlers/whoPays'
 
 export default function Index({
   activitiesService,
@@ -77,6 +80,7 @@ export default function Index({
   const endDateHandler = new EndDateRoutes(activitiesService, ukBankHolidayService)
   const scheduleFrequencyHandler = new ScheduleFrequencyRoutes()
   const daysAndSessionsHandler = new DaysAndSessionsRoutes(activitiesService)
+  const runSessionTodayHandler = new RunSessionTodayRoutes(activitiesService)
   const bankHolidayHandler = new BankHolidayOptionRoutes(activitiesService)
   const sessionTimesOptionHandler = new SessionTimesOptionRoutes(activitiesService, ukBankHolidayService)
   const sessionTimesHandler = new SessionTimesRoutes(activitiesService)
@@ -85,6 +89,14 @@ export default function Index({
   const locationHandler = new LocationRoutes(activitiesService, locationsService)
   const capacityHandler = new CapacityRoutes(activitiesService)
   const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(activitiesService)
+
+  const activityTypeHandler = new ActivityTypeRoutes()
+  get('/activity-type', activityTypeHandler.GET, true)
+  post('/activity-type', activityTypeHandler.POST, ActivityType)
+
+  const whoPaysHandler = new WhoPaysRoutes()
+  get('/who-pays', whoPaysHandler.GET, true)
+  post('/who-pays', whoPaysHandler.POST, WhoPays)
 
   get('/category', categoryHandler.GET, true)
   post('/category', categoryHandler.POST, Category)
@@ -133,6 +145,8 @@ export default function Index({
   post('/schedule-frequency', scheduleFrequencyHandler.POST, ScheduleFrequencyForm)
   get('/days-and-times/:weekNumber', daysAndSessionsHandler.GET, true)
   post('/days-and-times/:weekNumber', daysAndSessionsHandler.POST, DaysAndSessions)
+  get('/run-session-today', runSessionTodayHandler.GET, true)
+  post('/run-session-today', runSessionTodayHandler.POST)
   get('/bank-holiday-option', bankHolidayHandler.GET, true)
   post('/bank-holiday-option', bankHolidayHandler.POST, BankHolidayOption)
   get('/session-times-option/:weekNumber', sessionTimesOptionHandler.GET, true)

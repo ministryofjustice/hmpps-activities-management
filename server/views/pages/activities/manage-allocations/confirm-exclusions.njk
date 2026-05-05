@@ -29,6 +29,54 @@
                 {% endif %}
             {% endset %}
 
+          {% if sameDayScheduleModificationsEnabled and futureSameDaySlots | length %}
+            {{ govukSummaryList({
+              rows: [
+                {
+                  key: {
+                  text: "Sessions you’re adding " + allocateJourney.inmate.prisonerName + " to"
+                },
+                  value: { html: addedSlotsHtml },
+                  actions: {
+                  items: [{
+                    href: "exclusions?preserveHistory=true",
+                    classes: 'govuk-link--no-visited-state',
+                    text: "Change",
+                    visuallyHiddenText: "Change sessions added"
+                  }]
+                }
+                },
+                {
+                  key: {
+                  html: "Add to " + addToTodayText + "?"
+                },
+                  value: { text: addToSessionsToday | toTitleCase },
+                  actions: {
+                  items: [{
+                    href: "addToToday?preserveHistory=true",
+                    classes: 'govuk-link--no-visited-state',
+                    text: "Change",
+                    visuallyHiddenText: "Sessions to add to today"
+                  }]
+                }
+                },
+                {
+                  key: {
+                  text: "Sessions you’re excluding " + allocateJourney.inmate.prisonerName + " from"
+                },
+                  value: { html: excludedSlotsHtml },
+                  actions: {
+                  items: [{
+                    href: "exclusions?preserveHistory=true",
+                    classes: 'govuk-link--no-visited-state',
+                    text: "Change",
+                    visuallyHiddenText: "sessions modified out"
+                  }]
+                }
+                }
+              ]
+            }) }}
+            {% else %}
             {{ govukSummaryList({
                 rows: [
                     {
@@ -61,8 +109,17 @@
                     }
                 ]
             }) }}
+          {% endif %}
 
-
+      {% if sameDayScheduleModificationsEnabled and futureSameDaySlots | length %}
+          {% if addToSessionsToday === YesNo.YES %}
+            <p class="govuk-body">Sessions someone has been modified out of will need to be added back to their schedule before they can attend again.</p>
+            <p class="govuk-body">They’ll be added to {{ addToTodayText }}. All other changes take effect on unlock, movement and attendance lists from tomorrow.</p>
+          {% else %}
+            <p class="govuk-body">Sessions someone has been modified out of will need to be added back to their schedule before they can attend again.</p>
+            <p class="govuk-body">Changes take effect on unlock, movement and attendance lists from tomorrow.</p>
+            {% endif %}
+      {% else %}
             {% if excludedSlots | length %}
                 <p class="govuk-body">Sessions someone has been modified out of will need to be added back to their schedule before they can attend again.</p>
             {% endif %}
@@ -74,6 +131,7 @@
             {% if addedSlots | length == 0 and excludedSlots | length == 0  %}
                 <p class="govuk-body">You are not making any changes to when {{ allocateJourney.inmate.prisonerName }} should attend.</p>
             {% endif %}
+      {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

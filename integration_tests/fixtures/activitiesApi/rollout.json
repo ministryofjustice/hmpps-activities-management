@@ -3,5 +3,6 @@
   "activitiesRolledOut": true,
   "activitiesRolloutDate": "2022-01-01",
   "appointmentsRolledOut": true,
-  "appointmentsRolloutDate": "2022-01-01"
+  "appointmentsRolloutDate": "2022-01-01",
+  "externalActivitiesRolledOut": false
 }

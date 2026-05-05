@@ -1,9 +1,14 @@
 function Card(container) {
   this.container = container
 
-  if (this.container.querySelector('a') !== null) {
-    this.container.addEventListener('click', () => {
-      this.container.querySelector('a').click()
+  const link = this.container.querySelector('a')
+  if (link !== null) {
+    link.addEventListener('click', e => {
+      e.stopPropagation()
+    })
+    this.container.addEventListener('click', e => {
+      e.stopPropagation()
+      link.click()
     })
   }
 }

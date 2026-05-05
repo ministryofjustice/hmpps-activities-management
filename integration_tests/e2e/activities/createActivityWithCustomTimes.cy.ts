@@ -70,7 +70,7 @@ context('Create activity with custom times', () => {
     manageActivitiesPage.cardActivityCard().click()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.selectCategory('Gym, sport and fitness')
+    categoryPage.selectCategory('Gym, sport, fitness')
     categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
@@ -156,7 +156,7 @@ context('Create activity with custom times', () => {
     daysAndSessionsPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption('Select the start and end times')
+    sessionTimesOptionPage.useSessionOption('No, set different start and end times')
     sessionTimesOptionPage.continue()
 
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)

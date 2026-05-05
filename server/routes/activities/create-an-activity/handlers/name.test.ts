@@ -66,6 +66,7 @@ describe('Route Handlers - Create an activity - Name', () => {
             waitlisted: 1,
             createdTime: '2023-07-20T16:05:16',
             activityState: 'LIVE',
+            outsideWork: false,
           },
           {
             id: 7,
@@ -81,9 +82,11 @@ describe('Route Handlers - Create an activity - Name', () => {
             waitlisted: 0,
             createdTime: '2025-10-15T16:00:00',
             activityState: 'ARCHIVED',
+            outsideWork: false,
           },
         ])
     })
+
     it('should save entered name in session and redirect to tier page', async () => {
       req.body = {
         name: 'Maths Level 1',
@@ -93,6 +96,19 @@ describe('Route Handlers - Create an activity - Name', () => {
 
       expect(req.journeyData.createJourney.name).toEqual('Maths Level 1')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
+    })
+
+    it('should redirect correctly when activity is outside of prison', async () => {
+      req.journeyData.createJourney.outsideWork = true
+      req.body = {
+        name: 'Maths Level 1',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.createJourney.tierCode).toEqual('TIER_1')
+      expect(req.journeyData.createJourney.riskLevel).toEqual('low')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('who-pays')
     })
 
     it('should save entered name in session and redirect to risk level page if category "not in work"', async () => {

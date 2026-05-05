@@ -2,11 +2,14 @@ import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import { parseDate } from '../../../../utils/utils'
+import getFutureSameDaySlots from '../../../../utils/helpers/futureSameDaySlots'
+import config from '../../../../config'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import TimeSlot from '../../../../enum/timeSlot'
 import {
   DayOfWeek,
   DayOfWeekEnum,
+  calculateExclusionSlots,
   calculateUniqueSlots,
   mapActivityScheduleSlotsToSlots,
   sessionSlotsToSchedule,
@@ -64,7 +67,7 @@ export default class ExclusionRoutes {
       return res.redirect('/activities/allocations')
     }
 
-    const { activity, exclusions, inmate } = req.journeyData.allocateJourney
+    const { activity, exclusions, inmate, startDate } = req.journeyData.allocateJourney
 
     const activitySchedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
 
@@ -77,6 +80,8 @@ export default class ExclusionRoutes {
     const weekDaysUsed = this.getAllWeekDaysUsed(weeklySchedule)
 
     const disabledSlots = this.getDisabledSlots(weeklySchedule)
+
+    const allocationHasStarted = new Date() >= parseDate(startDate)
 
     for (let i = 0; i < activitySchedule.scheduleWeeks; i += 1) {
       const weekNumber = i + 1
@@ -117,6 +122,8 @@ export default class ExclusionRoutes {
       prisonerName: inmate.prisonerName,
       weeks,
       disabledSlotsExist: disabledSlots.length > 0,
+      allocationHasStarted,
+      sameDayScheduleModificationsEnabled: config.sameDayScheduleModificationsEnabled,
     })
   }
 
@@ -159,14 +166,34 @@ export default class ExclusionRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activity } = req.journeyData.allocateJourney
+    const { activity, exclusions, startDate } = req.journeyData.allocateJourney
+
+    // Reset futureSameDaySlots and addToSessionsToday to default values to handle user returning from later steps.
+    req.journeyData.allocateJourney = {
+      ...req.journeyData.allocateJourney,
+      futureSameDaySlots: [],
+      addToSessionsToday: undefined,
+    }
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
     const updatedSlots = this.mapBodyToSlots(req.body)
 
     const updatedExclusions = calculateUniqueSlots(slots, updatedSlots)
+    const changedExclusionSlots = calculateExclusionSlots(exclusions, updatedExclusions)
     req.journeyData.allocateJourney.updatedExclusions = updatedExclusions
+
+    const allocationHasStarted = new Date() >= parseDate(startDate)
+
+    if (config.sameDayScheduleModificationsEnabled && allocationHasStarted && req.routeContext.mode === 'edit') {
+      const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+      const futureSameDaySlots = getFutureSameDaySlots(changedExclusionSlots, schedule, regimeTimes)
+
+      if (futureSameDaySlots.length > 0) {
+        req.journeyData.allocateJourney.futureSameDaySlots = futureSameDaySlots
+        return res.redirect('addToToday')
+      }
+    }
 
     if (req.routeContext.mode === 'create') {
       return res.redirect('check-answers')

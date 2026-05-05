@@ -71,7 +71,7 @@
                                 }
                             ] if createJourney.category.code != 'SAA_NOT_IN_WORK'
                         }
-                    },
+                    } if not createJourney.outsideWork,
                     {
                         key: {
                             text: "Organiser"
@@ -90,6 +90,14 @@
                         }
                     } if createJourney.organiserCode,
                     {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: "Outside"
+                        }
+                    } if createJourney.outsideWork,
+                    {
                         key: { text: "Record attendance" },
                         value: { text: "Yes" if createJourney.attendanceRequired else "No"},
                         actions: {
@@ -97,13 +105,18 @@
                                 href: "attendance-required?preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "Change record attendance option"
-                            }] if not (createJourney.paid or (createJourney.attendanceRequired and createJourney.tierCode != 'FOUNDATION'))
+                            }] if not createJourney.paid
+
                         }
-                    }
+                    } if createJourney.tierCode === 'FOUNDATION' and not createJourney.outsideWork
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Requirements and pay</h2>
+            {% if createJourney.outsideWork %}
+                <h2 class="govuk-heading-m">Pay</h2>
+            {% else %}
+                <h2 class="govuk-heading-m">Requirements and pay</h2>
+            {% endif %}
             {{ govukSummaryList({
                 rows: [
                     {
@@ -124,7 +137,7 @@
                                 }
                             ]
                         }
-                    },
+                    } if not createJourney.outsideWork,
                     {
                         key: {
                             text: "Education levels"
@@ -141,7 +154,24 @@
                                 }
                             ]
                         }
-                    },
+                    } if not createJourney.outsideWork,
+                    {
+                        key: {
+                            text: "Paid by"
+                        },
+                        value: {
+                            text: "The prison" if createJourney.whoPays == 'prison' else "An external employer"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "who-pays?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "who pays for this activity"
+                                }
+                            ]
+                        }
+                    } if createJourney.outsideWork,
                     {
                         key: {
                             text: "Pay rates"
@@ -158,7 +188,7 @@
                                 }
                             ]
                         }
-                    }
+                    } if not createJourney.outsideWork or (createJourney.outsideWork and createJourney.whoPays == 'prison')
                 ]
             }) }}
 
@@ -233,63 +263,91 @@
                     }
                 ), scheduleRows) %}
             {% endfor %}
-            {% set scheduleRows = (scheduleRows.push(
-                {
-                    key: { text: "Runs on bank holidays" },
-                    value: { html: runsOnBankHolidays(createJourney.runsOnBankHoliday, createJourney.hasAtLeastOneValidDay) },
-                    actions: {
-                        items: [{
-                            href: "bank-holiday-option?preserveHistory=true",
-                            text: "Change",
-                            visuallyHiddenText: "Change bank holiday option"
-                        }] if createJourney.hasAtLeastOneValidDay
+            {% if not createJourney.outsideWork %}
+                {% set scheduleRows = (scheduleRows.push(
+                    {
+                        key: { text: "Runs on bank holidays" },
+                        value: { html: runsOnBankHolidays(createJourney.runsOnBankHoliday, createJourney.hasAtLeastOneValidDay) },
+                        actions: {
+                            items: [{
+                                href: "bank-holiday-option?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "Change bank holiday option"
+                            }] if createJourney.hasAtLeastOneValidDay
+                        }
                     }
-                }
-            ), scheduleRows) %}
+                ), scheduleRows) %}
+            {% endif %}
 
             {{ govukSummaryList({
                 rows: scheduleRows
             }) }}
 
-            <h2 class="govuk-heading-m">Location and capacity</h2>
-            {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Location"
-                        },
-                        value: {
-                            text: showLocation(createJourney)
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "location?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change location"
-                                }
-                            ]
+            {% if createJourney.outsideWork %}
+                <h2 class="govuk-heading-m">Capacity</h2>
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Capacity"
+                            },
+                            value: {
+                                text: createJourney.capacity
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "capacity?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change capacity"
+                                    }
+                                ]
+                            }
                         }
-                    },
-                    {
-                        key: {
-                            text: "Capacity"
+                    ]
+                }) }}
+            {% else %}
+                <h2 class="govuk-heading-m">Location and capacity</h2>
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Location"
+                            },
+                            value: {
+                                text: showLocation(createJourney)
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "location?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change location"
+                                    }
+                                ]
+                            }
                         },
-                        value: {
-                            text: createJourney.capacity
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "capacity?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change capacity"
-                                }
-                            ]
+                        {
+                            key: {
+                                text: "Capacity"
+                            },
+                            value: {
+                                text: createJourney.capacity
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "capacity?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change capacity"
+                                    }
+                                ]
+                            }
                         }
-                    }
-                ]
-            }) }}
+                    ]
+                }) }}
+            {% endif %}
+
 
             <form method="POST" data-module="form-spinner" data-loading-text="Creating activity">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

@@ -17,9 +17,14 @@ import {
   getMatchingSlots,
   SessionSlot,
   transformActivitySlotsToDailySlots,
+  mapActivityScheduleSlotsToSlots,
+  calculateUniqueSlots,
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { ServiceUser } from '../../../../@types/express'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
+import getFutureSameDaySlots, { getAllSameDaySlots } from '../../../../utils/helpers/futureSameDaySlots'
+import config from '../../../../config'
+import { parseDate } from '../../../../utils/utils'
 
 export class SessionTimes {
   @Transform(({ value }) =>
@@ -80,9 +85,11 @@ export default class SessionTimesRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activityId, name, scheduleWeeks } = req.journeyData.createJourney
+    const { activityId, name, scheduleWeeks, startDate } = req.journeyData.createJourney
     const { startTimes, endTimes }: SessionTimes = req.body
     const { preserveHistory } = req.query
+    const { sameDayScheduleModificationsEnabled } = config
+    const allocationHasStarted = new Date() >= parseDate(startDate)
 
     const startTimesObj = Array.from(startTimes.keys()).reduce((acc, key) => {
       acc[key] = startTimes.get(key)
@@ -128,17 +135,42 @@ export default class SessionTimesRoutes {
     req.journeyData.createJourney.customSlots = customSlots
 
     if (req.routeContext.mode === 'edit') {
-      const activity = {
+      if (sameDayScheduleModificationsEnabled && allocationHasStarted) {
+        const activity = await this.activitiesService.getActivity(activityId, user)
+        const activitySchedule = activity.schedules[0]
+
+        const existingSlots = mapActivityScheduleSlotsToSlots(activitySchedule?.slots || [])
+        const existingSlotsAndNewSlots = req.journeyData.createJourney.customSlots
+        const newSlots = calculateUniqueSlots(existingSlotsAndNewSlots, existingSlots)
+
+        req.journeyData.createJourney.allSameDaySlots = getAllSameDaySlots(newSlots, activitySchedule)
+
+        if (newSlots.length > 0) {
+          const futureSameDaySlots = getFutureSameDaySlots(newSlots, activitySchedule)
+
+          if (futureSameDaySlots.length > 0) {
+            req.journeyData.createJourney.futureSameDaySlots = futureSameDaySlots
+            return res.redirect('run-session-today')
+          }
+        }
+      }
+      const updatedActivity = {
         slots: req.journeyData.createJourney.customSlots,
         scheduleWeeks,
       } as ActivityUpdateRequest
-      await this.activitiesService.updateActivity(activityId, activity, user)
+      await this.activitiesService.updateActivity(activityId, updatedActivity, user)
       const successMessage = `You've updated the daily schedule for ${name}`
       return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
     }
 
     if (preserveHistory === 'true') {
       return res.redirect('check-answers')
+    }
+
+    if (req.journeyData.createJourney.outsideWork) {
+      req.journeyData.createJourney.runsOnBankHoliday = false
+      req.journeyData.createJourney.location = null
+      return res.redirectOrReturn('capacity')
     }
 
     return res.redirectOrReturn(`bank-holiday-option`)

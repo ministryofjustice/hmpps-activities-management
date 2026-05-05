@@ -4,10 +4,13 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 
 {% set pageTitle = "Activities dashboard - Activities - DPS" %}
 {% set pageId = 'manage-schedules-activities-page' %}
 {% set jsBackLink = true %}
+
+{% set stateFilterParams = (('stateFilter=' + filters.stateFilter | urlencode) if filters.stateFilter else '') %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -38,45 +41,61 @@
                         <div class="moj-action-bar__filter"></div>
                     </div>
 
-                    {% set rows = [] %}
-                    {% for activity in activities %}
-                        {% set rows = (rows.push([
-                                {
-                                    attributes: {
-                                        id: 'activity-' + loop.index,
-                                        "data-sort-value": activity.activityName
-                                    },
-                                    html: '
-                                            <p class="govuk-heading-m govuk-!-margin-bottom-3">
-                                                <a href="/activities/view/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + (activity.activityName | escape) + '</a>
-                                            </p>
-                                        '
-                                },
-                                {
-                                    attributes: {
-                                        id: 'activity-' + loop.index,
-                                        "data-sort-value": activity.createdTime | getUnixTime 
-                                    },
-                                    text: activity.createdTime | parseISODate | formatDate('d MMM yyyy')
-                                },
-                                {
-                                    attributes: {
-                                        id: 'activity-' + loop.index,
-                                        "data-sort-value": activity.category.name
-                                    },
-                                    text: activity.category.name
-                                },
-                                {
-                                    attributes: {
-                                        id: 'activity-' + loop.index,
-                                        "data-sort-value": activity.activityState
-                                    },
-                                    text: renderActivityState(activity.activityState)
-                                }
-                            ]), rows) %}
-                    {% endfor %}
+                    {% if user.externalActivitiesRolledOut %}
+                        {{ mojSubNavigation({
+                            label: "Sub navigation",
+                            items: [{
+                                text: "In-prison activities",
+                                href: "dashboard?" + stateFilterParams + "&isOutsideWorkFilter=false",
+                                active: true if filters.isOutsideWorkFilter === 'false' else false
+                            }, {
+                                text: "Outside activities",
+                                href: "dashboard?" + stateFilterParams + "&isOutsideWorkFilter=true",
+                                active: true if filters.isOutsideWorkFilter === 'true' else false
+                            }]
+                        }) }}
+                    {% endif %}
 
-                    {{ govukTable({
+                    {% if activities | length %}
+                        {% set rows = [] %}
+                        {% for activity in activities %}
+                            {% set rows = (rows.push([
+                                    {
+                                        attributes: {
+                                            id: 'activity-' + loop.index,
+                                            "data-sort-value": activity.activityName
+                                        },
+                                        html: '
+                                                <p class="govuk-heading-m govuk-!-margin-bottom-3">
+                                                    <a href="/activities/view/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + (activity.activityName | escape) + '</a>
+                                                </p>
+                                            '
+                                    },
+                                    {
+                                        attributes: {
+                                            id: 'activity-' + loop.index,
+                                            "data-sort-value": activity.createdTime | getUnixTime 
+                                        },
+                                        text: activity.createdTime | parseISODate | formatDate('d MMM yyyy')
+                                    },
+                                    {
+                                        attributes: {
+                                            id: 'activity-' + loop.index,
+                                            "data-sort-value": activity.category.name
+                                        },
+                                        text: activity.category.name
+                                    },
+                                    {
+                                        attributes: {
+                                            id: 'activity-' + loop.index,
+                                            "data-sort-value": activity.activityState
+                                        },
+                                        text: renderActivityState(activity.activityState)
+                                    }
+                                ]), rows) %}
+                        {% endfor %}
+
+                        {{ govukTable({
                             attributes: {
                                 'data-module': 'moj-sortable-table'
                             },
@@ -111,6 +130,10 @@
                             ],
                             rows: rows
                         }) }}
+                    {% else %}
+                        <p class="govuk-body-l">There are no {{ filters.stateFilter }} {{ 'outside ' if filters.isOutsideWorkFilter == 'true' }}activities.</p>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
