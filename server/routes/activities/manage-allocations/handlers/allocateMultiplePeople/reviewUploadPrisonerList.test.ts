@@ -424,5 +424,12 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('activity-requirements-review')
     })
+
+    it('should redirect to start date page for external activities', async () => {
+      req.journeyData.allocateJourney.activity.outsideWork = true
+
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('../start-date')
+    })
   })
 })

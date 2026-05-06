@@ -22,6 +22,10 @@ export default class ReviewSearchPrisonerListRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     if (req.query.preserveHistory) return res.redirect('check-answers')
+    if (req.journeyData.allocateJourney.activity.outsideWork) {
+      req.journeyData.allocateJourney.allocateMultipleInmatesMode = true
+      return res.redirect('../start-date')
+    }
     return res.redirect('activity-requirements-review')
   }
 

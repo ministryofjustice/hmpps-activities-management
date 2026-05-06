@@ -107,6 +107,13 @@ describe('Review the prisoners added individually', () => {
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('activity-requirements-review')
     })
+
+    it('should redirect to start date page for external activities', async () => {
+      req.journeyData.allocateJourney.activity.outsideWork = true
+
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('../start-date')
+    })
   })
   describe('REMOVE', () => {
     it('Removes the prisoner from the session and redirects back', async () => {

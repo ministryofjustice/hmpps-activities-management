@@ -55,6 +55,7 @@ export default class StartJourneyRoutes {
         endDate: schedule.endDate,
         scheduleWeeks: schedule.scheduleWeeks,
         paid: schedule.activity.paid,
+        outsideWork: schedule.activity.outsideWork,
       },
       exclusions: [],
       updatedExclusions: [],
@@ -70,6 +71,10 @@ export default class StartJourneyRoutes {
     this.metricsServices.trackEvent(
       MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
     )
+
+    if (req.journeyData.allocateJourney.activity.outsideWork) {
+      return res.redirect('../start-date')
+    }
 
     return res.redirect(`../before-you-allocate`)
   }
