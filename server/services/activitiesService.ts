@@ -30,6 +30,7 @@ import {
   Attendance,
   AttendanceReason,
   AttendanceUpdateRequest,
+  BulkAllocationRequest,
   DeallocationReasonCode,
   EventAcknowledgeRequest,
   EventReviewSearchResults,
@@ -194,6 +195,10 @@ export default class ActivitiesService {
       exclusions,
       scheduleInstanceId,
     )
+  }
+
+  postBulkAllocations(scheduleId: number, allocationRequests: BulkAllocationRequest, user: ServiceUser) {
+    return this.activitiesApiClient.postBulkAllocations(scheduleId, allocationRequests, user)
   }
 
   getPayBandsForPrison(user: ServiceUser): Promise<PrisonPayBand[]> {

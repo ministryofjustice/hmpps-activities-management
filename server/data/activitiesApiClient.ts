@@ -74,6 +74,7 @@ import {
   ActivityPayHistory,
   WaitingListApplicationHistory,
   LocationPrefixes,
+  BulkAllocationRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -276,6 +277,21 @@ export default class ActivitiesApiClient extends RestClient {
         path: `/schedules/${scheduleId}/allocations`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
         data: { prisonerNumber, payBandId, startDate, endDate, exclusions, scheduleInstanceId },
+      },
+      asUser(user.token),
+    )
+  }
+
+  async postBulkAllocations(
+    scheduleId: number,
+    allocationRequests: BulkAllocationRequest,
+    user: ServiceUser,
+  ): Promise<void> {
+    return this.post(
+      {
+        path: `/schedules/${scheduleId}/allocations/bulk`,
+        headers: CASELOAD_HEADER(user.activeCaseLoadId),
+        data: allocationRequests,
       },
       asUser(user.token),
     )
