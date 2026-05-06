@@ -30,15 +30,23 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
 
     const prisoner = await prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
 
-    req.session.suspendJourney = {
-      allocations: allocations
+    const allocationsWithOutsideData = await Promise.all(
+      allocations
         .filter(a => mode === 'unsuspend' || a.status !== 'SUSPENDED')
-        .map(a => ({
-          allocationId: a.id,
-          activityId: a.activityId,
-          activityName: a.activitySummary,
-          payBand: a.prisonPayBand,
-        })),
+        .map(async allocation => {
+          const activity = await activitiesService.getActivity(allocation.activityId, user)
+          return { ...allocation, outsideWork: activity.outsideWork }
+        }),
+    )
+
+    req.session.suspendJourney = {
+      allocations: allocationsWithOutsideData.map(a => ({
+        allocationId: a.id,
+        activityId: a.activityId,
+        activityName: a.activitySummary,
+        payBand: a.prisonPayBand,
+        outsideWork: a.outsideWork,
+      })),
       inmate: {
         prisonerName: formatFirstLastName(prisoner.firstName, prisoner.lastName),
         prisonerNumber,

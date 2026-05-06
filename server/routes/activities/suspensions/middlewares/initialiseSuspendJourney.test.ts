@@ -7,7 +7,7 @@ import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
 import atLeast from '../../../../../jest.setup'
-import { PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
+import { Activity, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../../services/activitiesService')
@@ -74,6 +74,13 @@ describe('initialiseSuspendJourney', () => {
         firstName: 'John',
         lastName: 'Smith',
       } as Prisoner)
+
+    when(activitiesService.getActivity)
+      .calledWith(10, user)
+      .mockResolvedValue({ pay: [], riskLevel: 'low', schedules: [], outsideWork: false } as unknown as Activity)
+    when(activitiesService.getActivity)
+      .calledWith(20, user)
+      .mockResolvedValue({ pay: [], riskLevel: 'low', schedules: [], outsideWork: false } as unknown as Activity)
   })
 
   it('should call next if suspend journey is already populated', async () => {
@@ -119,11 +126,15 @@ describe('initialiseSuspendJourney', () => {
           activityId: 10,
           activityName: 'Activity 1',
           allocationId: 1,
+          payBand: undefined,
+          outsideWork: false,
         },
         {
           activityId: 20,
           activityName: 'Activity 2',
           allocationId: 2,
+          payBand: undefined,
+          outsideWork: false,
         },
       ],
       earliestAllocationEndDate: '2024-06-02',
@@ -148,6 +159,8 @@ describe('initialiseSuspendJourney', () => {
           activityId: 20,
           activityName: 'Activity 2',
           allocationId: 2,
+          payBand: undefined,
+          outsideWork: false,
         },
       ],
       earliestAllocationEndDate: '2024-06-02',

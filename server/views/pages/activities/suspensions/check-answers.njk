@@ -33,6 +33,24 @@
                     All activities
                 {% endif %}
             {% endset %}
+            {% set paidText %}
+                {% if session.suspendJourney.paid == YesNo.YES and paidCount == session.suspendJourney.allocations | length %}
+                    Yes
+                {% elif session.suspendJourney.paid == YesNo.NO %}
+                    No
+                {% elif session.suspendJourney.paid == YesNo.YES and paidCount > 0 %}
+                    Yes for:
+                    <ul class="govuk-list govuk-list--bullet">
+                        {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
+                            {% if allocation.payBand %}
+                                <li>{{allocation.activityName}}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    Not specified
+                {% endif %}
+            {% endset %}
 
             {{ govukSummaryList({
                 attributes: {
@@ -71,7 +89,7 @@
                             text: "Paid while suspended?"
                         },
                         value: {
-                            text: session.suspendJourney.paid | toTitleCase
+                            html: paidText
                         },
                         actions: {
                             items: [
@@ -83,7 +101,7 @@
                                 }
                             ]
                         }
-                    } if session.suspendJourney.paid != null,
+                    } if session.suspendJourney.paid != null and paidCount > 0,
                     {
                         key: { text: "Last day of suspension" },
                         value: {

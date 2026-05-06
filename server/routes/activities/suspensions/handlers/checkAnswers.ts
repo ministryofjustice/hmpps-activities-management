@@ -7,7 +7,11 @@ import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
 export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response) => res.render('pages/activities/suspensions/check-answers')
+  GET = async (req: Request, res: Response) => {
+    return res.render('pages/activities/suspensions/check-answers', {
+      paidCount: req.session.suspendJourney.allocations.filter(allocation => allocation.payBand).length,
+    })
+  }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { allocations, suspendFrom, suspendUntil, caseNote, paid } = req.session.suspendJourney
