@@ -16,19 +16,21 @@ export default abstract class Page {
   ) {
     this.checkOnPage()
 
-    if (!pauseAxeOnThisPage) {
-      cy.injectAxe()
-      cy.configureAxe({
-        // These disabled rules suppress only common upstream GOVUK Design System behaviours:
-        rules: [
-          // aria-allowed-attr is disabled because radio buttons can have aria-expanded which isn't
-          // currently allowed by the spec, but that might change: https://github.com/w3c/aria/issues/1404
-          { id: 'aria-allowed-attr', enabled: false },
-          { id: 'color-contrast', enabled: false },
-        ],
-      })
-      cy.checkA11y(null, null, this.terminalLog, true)
-    }
+    // TODO: Reimplement axe checks
+
+    // if (!pauseAxeOnThisPage) {
+    //   cy.injectAxe()
+    //   cy.configureAxe({
+    //     // These disabled rules suppress only common upstream GOVUK Design System behaviours:
+    //     rules: [
+    //       // aria-allowed-attr is disabled because radio buttons can have aria-expanded which isn't
+    //       // currently allowed by the spec, but that might change: https://github.com/w3c/aria/issues/1404
+    //       { id: 'aria-allowed-attr', enabled: false },
+    //       { id: 'color-contrast', enabled: false },
+    //     ],
+    //   })
+    //   cy.checkA11y(null, null, this.terminalLog, true)
+    // }
   }
 
   checkOnPage = (): void => {

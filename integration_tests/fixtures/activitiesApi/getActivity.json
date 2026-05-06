@@ -136,6 +136,56 @@
           "cancelledTime": null,
           "cancelledBy": null,
           "attendances": []
+        },
+        {
+          "id": 100,
+          "date": "2022-10-11",
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "cancelled": false,
+          "cancelledTime": null,
+          "cancelledBy": null,
+          "attendances": []
+        },
+        {
+          "id": 101,
+          "date": "2022-10-11",
+          "startTime": "17:00",
+          "endTime": "18:00",
+          "cancelled": false,
+          "cancelledTime": null,
+          "cancelledBy": null,
+          "attendances": []
+        },
+        {
+          "id": 102,
+          "date": "2022-10-12",
+          "startTime": "10:00",
+          "endTime": "11:00",
+          "cancelled": false,
+          "cancelledTime": null,
+          "cancelledBy": null,
+          "attendances": []
+        },
+        {
+          "id": 103,
+          "date": "2022-10-12",
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "cancelled": false,
+          "cancelledTime": null,
+          "cancelledBy": null,
+          "attendances": []
+        },
+        {
+          "id": 104,
+          "date": "2022-10-12",
+          "startTime": "17:00",
+          "endTime": "18:00",
+          "cancelled": false,
+          "cancelledTime": null,
+          "cancelledBy": null,
+          "attendances": []
         }
       ],
       "allocations": [
@@ -198,6 +248,51 @@
           "saturdayFlag": false,
           "sundayFlag": false,
           "timeSlot": "AM"
+        },
+        {
+          "id": 10,
+          "weekNumber": 1,
+          "startTime": "10:00",
+          "endTime": "11:00",
+          "daysOfWeek": ["Wed"],
+          "mondayFlag": false,
+          "tuesdayFlag": false,
+          "wednesdayFlag": true,
+          "thursdayFlag": false,
+          "fridayFlag": false,
+          "saturdayFlag": false,
+          "sundayFlag": false,
+          "timeSlot": "AM"
+        },
+        {
+          "id": 11,
+          "weekNumber": 1,
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "daysOfWeek": ["Wed"],
+          "mondayFlag": false,
+          "tuesdayFlag": false,
+          "wednesdayFlag": true,
+          "thursdayFlag": false,
+          "fridayFlag": false,
+          "saturdayFlag": false,
+          "sundayFlag": false,
+          "timeSlot": "PM"
+        },
+        {
+          "id": 12,
+          "weekNumber": 1,
+          "startTime": "17:00",
+          "endTime": "18:00",
+          "daysOfWeek": ["Wed"],
+          "mondayFlag": false,
+          "tuesdayFlag": false,
+          "wednesdayFlag": true,
+          "thursdayFlag": false,
+          "fridayFlag": false,
+          "saturdayFlag": false,
+          "sundayFlag": false,
+          "timeSlot": "ED"
         }
       ],
       "startDate": "2022-10-10",
