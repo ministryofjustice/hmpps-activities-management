@@ -42,4 +42,3 @@ export interface PrisonerWithAttendanceRecord {
  * Array of prisoners with attendance records for location
  */
 export type AttendanceRecordList = PrisonerWithAttendanceRecord[]
-
