@@ -7,13 +7,13 @@
 {% set pageId = 'suspension-pay-page' %}
 {% set jsBackLink = true %}
 
-{% set outsideContent = 'by the prison' if extraContent.hasOutsideWork else '' %}
+{% set outsideContent = 'by the prison ' if extraContent.hasOutsideWork else '' %}
 
 {% set heading %}
     {% if session.suspendJourney.allocations | length == 1 %}
         Should {{ session.suspendJourney.inmate.prisonerName | safe }} be paid for {{ session.suspendJourney.allocations[0].activityName | safe }} while they’re suspended?
     {% else %}
-        Should {{ session.suspendJourney.inmate.prisonerName | safe }} be paid {{ outsideContent }} for {{ extraContent.numberPaid }} activities while they’re suspended?
+        Should {{ session.suspendJourney.inmate.prisonerName | safe }} be paid {{ outsideContent }}for {{ extraContent.numberPaid }} activities while they’re suspended?
     {% endif %}
 {% endset %}
 
