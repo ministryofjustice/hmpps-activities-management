@@ -2,7 +2,6 @@
 [![Docker Repository on ghcr](https://img.shields.io/badge/ghcr.io-repository-2496ED.svg?logo=docker)](https://ghcr.io/ministryofjustice/hmpps-activities-management)
 
 # hmpps-activities-management
-
 This application is the frontend client for the activities management service. It is used to manage activities and appointments in prisons.
 
 The client is backed by, [hmpps-activities-management-api](https://github.com/ministryofjustice/hmpps-activities-management-api).
