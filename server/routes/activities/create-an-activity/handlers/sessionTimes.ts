@@ -18,7 +18,7 @@ import {
   SessionSlot,
   transformActivitySlotsToDailySlots,
   mapActivityScheduleSlotsToSlots,
-  calculateUniqueSlots,
+  calculateUniqueSlotsByDay,
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { ServiceUser } from '../../../../@types/express'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
@@ -141,8 +141,7 @@ export default class SessionTimesRoutes {
 
         const existingSlots = mapActivityScheduleSlotsToSlots(activitySchedule?.slots || [])
         const existingSlotsAndNewSlots = req.journeyData.createJourney.customSlots
-        const newSlots = calculateUniqueSlots(existingSlotsAndNewSlots, existingSlots)
-
+        const newSlots = calculateUniqueSlotsByDay(existingSlotsAndNewSlots, existingSlots)
         req.journeyData.createJourney.allSameDaySlots = getAllSameDaySlots(newSlots, activitySchedule)
 
         if (newSlots.length > 0) {
