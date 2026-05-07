@@ -460,6 +460,13 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         },
       } as unknown as Request
 
+      const futureSameDaySlotsMock = getFutureSameDaySlots as jest.Mock
+      const allSameDaySlotsMock = getAllSameDaySlots as jest.Mock
+
+      activitiesService.getActivity.mockResolvedValueOnce(activity as unknown as Activity)
+      futureSameDaySlotsMock.mockReturnValueOnce([])
+      allSameDaySlotsMock.mockReturnValueOnce([])
+
       await handler.POST(req, res)
       expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -813,9 +820,10 @@ describe('Same-day schedule modifications (sameDayScheduleModificationsEnabled i
     config.sameDayScheduleModificationsEnabled = true
     getFutureSameDaySlotsMock = getFutureSameDaySlots as jest.Mock
     getAllSameDaySlotsMock = getAllSameDaySlots as jest.Mock
-    getFutureSameDaySlotsMock.mockClear()
-    getAllSameDaySlotsMock.mockClear()
-    activitiesService.getActivity.mockClear()
+    getFutureSameDaySlotsMock.mockReset()
+    getAllSameDaySlotsMock.mockReset()
+    activitiesService.getActivity.mockReset()
+    activitiesService.updateActivity.mockReset()
 
     handler = new SessionTimesRoutes(activitiesService)
 
@@ -996,6 +1004,73 @@ describe('Same-day schedule modifications (sameDayScheduleModificationsEnabled i
     expect(res.redirectWithSuccess).toHaveBeenCalled()
   })
 
+  it('should not treat a start time change on an existing day as a new slot', async () => {
+    const allSameDaySlots = []
+    const currentActivity = {
+      ...activity,
+      schedules: [
+        {
+          ...activity.schedules[0],
+          scheduleWeeks: 1,
+          slots: [
+            {
+              weekNumber: 1,
+              timeSlot: TimeSlot.PM,
+              mondayFlag: false,
+              tuesdayFlag: false,
+              wednesdayFlag: false,
+              thursdayFlag: false,
+              fridayFlag: true,
+              saturdayFlag: false,
+              sundayFlag: false,
+              daysOfWeek: ['Fri'],
+              startTime: '13:45',
+              endTime: '16:45',
+            },
+          ],
+        },
+      ],
+    } as unknown as Activity
+
+    activitiesService.getActivity.mockResolvedValueOnce(currentActivity)
+    activitiesService.updateActivity.mockResolvedValueOnce({} as Activity)
+    getAllSameDaySlotsMock.mockReturnValueOnce(allSameDaySlots)
+    getFutureSameDaySlotsMock.mockReturnValueOnce([])
+
+    const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+    const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+    const startTime = new SimpleTime()
+    startTime.hour = 15
+    startTime.minute = 0
+
+    startMap.set('1-FRIDAY-PM', startTime)
+
+    const endTime = new SimpleTime()
+    endTime.hour = 16
+    endTime.minute = 45
+
+    endMap.set('1-FRIDAY-PM', endTime)
+
+    req.body = {
+      startTimes: startMap,
+      endTimes: endMap,
+    }
+    req.journeyData.createJourney.slots = {
+      '1': {
+        days: ['friday'],
+        timeSlotsFriday: ['PM'],
+      },
+    }
+
+    await handler.POST(req, res)
+
+    expect(getAllSameDaySlotsMock).toHaveBeenCalledWith([], expect.anything())
+    expect(getFutureSameDaySlotsMock).not.toHaveBeenCalled()
+    expect(activitiesService.updateActivity).toHaveBeenCalled()
+    expect(res.redirectWithSuccess).toHaveBeenCalled()
+  })
+
   it('should not check for same-day slots if not in edit mode', async () => {
     req.routeContext = { mode: 'create' }
 
@@ -1029,7 +1104,7 @@ describe('Same-day schedule modifications (sameDayScheduleModificationsEnabled i
 
     expect(activitiesService.getActivity).not.toHaveBeenCalled()
     expect(getFutureSameDaySlotsMock).not.toHaveBeenCalled()
-    expect(activitiesService.updateActivity).toHaveBeenCalled()
+    expect(activitiesService.updateActivity).not.toHaveBeenCalled()
     expect(res.redirectOrReturn).toHaveBeenCalled()
   })
 
