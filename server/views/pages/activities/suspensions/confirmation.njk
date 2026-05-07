@@ -67,11 +67,11 @@
             {% if session.req.routeContext.mode == 'unsuspend' %}
                 {% if session.suspendJourney.suspendUntil == now | toDateString %}
                     {% set subText %}
-                    {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is now due to attend
-                        {% if session.suspendJourney.allocations | length == 1 %}
-                        {{ session.suspendJourney.allocations[0].activityName | safe }} again
+                        {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is no longer suspended from
+                        {% if allocationCount == 1 %}
+                            {{ session.suspendJourney.allocations[0].activityName | safe }}
                         {% else %}
-                            their allocated activities again
+                            {{ allocationCount }} activities
                         {% endif %}
                     {% endset %}
 
@@ -81,16 +81,16 @@
                     }) }}
 
                     {{ govukWarningText({
-                        text: "Unlock and movement lists for the rest of today may need to be printed again, to show that the prisoner is due to attend.",
+                        text: "Unlock and movement lists may need to be printed again if they're due to attend {{ 'this activity' if allocationCount == 1 else 'any of these activities' }} later today.",
                         iconFallbackText: "Warning"
                     }) }}
                 {% else %}
                     {% set subText %}
-                    {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is now due to attend
-                        {% if session.suspendJourney.allocations | length == 1 %}
-                        {{ session.suspendJourney.allocations[0].activityName | safe }} again
+                        {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) will be due to attend
+                        {% if allocationCount == 1 %}
+                            {{ session.suspendJourney.allocations[0].activityName | safe }} again
                         {% else %}
-                            their allocated activities again
+                            {{ allocationCount }} activities again
                         {% endif %}
                         from {{ session.suspendJourney.suspendUntil |  formatDate('d MMMM yyyy') }}
                     {% endset %}
