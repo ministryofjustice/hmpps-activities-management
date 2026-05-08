@@ -80,6 +80,8 @@
                     ]
                   }) }}
                 {% else %}
+                    <span class="govuk-label govuk-label--s">Probation Team</span>
+                    <p class="govuk-body govuk-!-margin-bottom-6">{{ (probationTeams | find('code', session.bookAProbationMeetingJourney.probationTeamCode)).description }}</p>
                     <input type="hidden" name="probationTeamRequired" value="{{ 'YES' if session.bookAProbationMeetingJourney.probationTeamRequired == true else 'NO' }}">
                     <input type="hidden" name="probationTeamCode" value="{{ session.bookAProbationMeetingJourney.probationTeamCode }}">
                 {% endif %}
