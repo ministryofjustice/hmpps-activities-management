@@ -25,12 +25,15 @@
         </div>
 
         <div class="govuk-grid-column-one-third card-group__item">
+            {% set movementCardContent = "To use as lists of people expected at each activity or appointment location or going out on temporary absences." if user.externalActivitiesRolledOut
+                else "To use at prison locations, like workplaces and classrooms, as the list of who is expected to be there."
+            %}
             {{ card({
                 "id": "CreateMovementLists",
                 "href": "/activities/movement-list/choose-details",
                 "clickable": "true",
                 "heading": "Create movement lists",
-                "description": "To use at prison locations, like workplaces and classrooms, as the list of who is expected to be there.",
+                "description": movementCardContent,
                 "data-qa": "create-movement-lists"
             }) }}
         </div>
