@@ -13,12 +13,16 @@
 {% block content %}
     <div class="card-group govuk-grid-row">
         <div class="govuk-grid-column-one-third card-group__item">
+            {% set unlockContent =
+                "To use on wings and houseblocks as the list of who to unlock to attend activities and appointments and go out on temporary absences." if user.externalActivitiesRolledOut
+                else "Unlock lists are used on wings and houseblocks as the list of who to unlock to attend activities and appointments."
+            %}
             {{ card({
                 "id": "CreateUnlockLists",
                 "href": "/activities/unlock-list/select-date-and-location",
                 "clickable": "true",
                 "heading": "Create unlock lists",
-                "description": "To use on wings and houseblocks as the list of who to unlock to attend activities and appointments.",
+                "description": unlockContent,
                 "data-qa": "create-unlock-lists"
             }) }}
         </div>
