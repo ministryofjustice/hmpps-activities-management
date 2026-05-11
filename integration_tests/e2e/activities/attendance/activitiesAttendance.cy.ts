@@ -29,32 +29,52 @@ const inmateDetails = [
   },
 ]
 
+const navigateToActivitiesPage = () => {
+  const indexPage = Page.verifyOnPage(IndexPage)
+  indexPage.activitiesCard().click()
+
+  const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+  activitiesIndexPage.recordAttendanceCard().click()
+
+  const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+  recordAttendancePage.attendanceSummaryCard().click()
+
+  const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+  selectPeriodPage.selectToday()
+  selectPeriodPage.continue()
+
+  const dailySummaryPage = Page.verifyOnPage(DailySummaryPage)
+  dailySummaryPage.selectSessionsLink()
+
+  return Page.verifyOnPage(ActivitiesPage)
+}
+
+const stubCommonAttendanceEndpoints = () => {
+  cy.stubEndpoint('GET', `/attendances/MDI/${today}`, getAllAttendances)
+  cy.stubEndpoint('GET', `/attendances/MDI/${today}\\?eventTier=TIER_2`, getAllAttendances)
+  cy.stubEndpoint('GET', `/attendances/MDI/${today}\\?eventTier=TIER_1`, getAllAttendances)
+  cy.stubEndpoint('GET', `/attendances/MDI/${today}\\?eventTier=FOUNDATION`, getAllAttendances)
+  cy.stubEndpoint(
+    'GET',
+    `/prisons/MDI/scheduled-instances\\?startDate=${today}&endDate=${today}&cancelled=true`,
+    JSON.parse('[]'),
+  )
+  cy.stubEndpoint('GET', `/activity-categories`, getCategories)
+  cy.stubEndpoint('GET', `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`, getAttendanceSummary)
+  cy.stubEndpoint(
+    'GET',
+    '/locations/prison/MDI/non-residential-usage-type\\?formatLocalName=true',
+    getNonResidentialActivityLocations,
+  )
+  cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
+}
+
 context('Daily Attendance', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
-    cy.stubEndpoint('GET', `/attendances/MDI/${today}`, getAllAttendances)
-    cy.stubEndpoint('GET', `/attendances/MDI/${today}\\?eventTier=TIER_2`, getAllAttendances)
-    cy.stubEndpoint('GET', `/attendances/MDI/${today}\\?eventTier=TIER_1`, getAllAttendances)
-    cy.stubEndpoint('GET', `/attendances/MDI/${today}\\?eventTier=FOUNDATION`, getAllAttendances)
-    cy.stubEndpoint(
-      'GET',
-      `/prisons/MDI/scheduled-instances\\?startDate=${today}&endDate=${today}&cancelled=true`,
-      JSON.parse('[]'),
-    )
-    cy.stubEndpoint('GET', `/activity-categories`, getCategories)
-    cy.stubEndpoint(
-      'GET',
-      `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,
-      getAttendanceSummary,
-    )
-    cy.stubEndpoint(
-      'GET',
-      '/locations/prison/MDI/non-residential-usage-type\\?formatLocalName=true',
-      getNonResidentialActivityLocations,
-    )
-    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
+    stubCommonAttendanceEndpoints()
   })
 
   it('should display the correct counts on the summary page', () => {
@@ -269,5 +289,26 @@ context('Daily Attendance', () => {
       'Incentive level warning',
       'View attendance record',
     )
+  })
+
+  it('should NOT show the Outside location radio when externalActivitiesRolledOut is false', () => {
+    const activitiesPage = navigateToActivitiesPage()
+    activitiesPage.locationTypeRadio('OUTSIDE_WORK').should('not.exist')
+    activitiesPage.locationTypeRadio('ALL').should('exist')
+  })
+})
+
+context('Daily Attendance - external activities rolled out', () => {
+  beforeEach(() => {
+    cy.task('reset')
+    cy.task('stubSignIn')
+    cy.signInEAEnabled()
+    stubCommonAttendanceEndpoints()
+  })
+
+  it('should show the Outside location radio when externalActivitiesRolledOut is true', () => {
+    const activitiesPage = navigateToActivitiesPage()
+    activitiesPage.locationTypeRadio('OUTSIDE_WORK').should('exist')
+    activitiesPage.locationTypeRadio('ALL').should('exist')
   })
 })

@@ -50,6 +50,7 @@ export default class ActivitiesRoutes {
 
     return res.render('pages/activities/record-attendance/activities', {
       activityDate,
+      externalActivitiesRolledOut: user.externalActivitiesRolledOut,
       filterItems: filterItems(categories, filterValues, asString(locationId), locationTypeFilter),
       selectedSessions: filterValues.sessionFilters,
       activityRows: activities,

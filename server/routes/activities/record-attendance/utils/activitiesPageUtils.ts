@@ -57,6 +57,8 @@ export const activityRows = (
           return a.onWing
         case LocationType.OFF_WING:
           return a.offWing
+        case LocationType.OUTSIDE_WORK:
+          return a.outsideWork
         default:
           return true
       }

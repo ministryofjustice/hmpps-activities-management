@@ -37,6 +37,7 @@ export default class UncancelMultipleSessionsRoutes {
     const uniqueLocations = _.uniqBy(locations, 'locationId')
 
     return res.render('pages/activities/record-attendance/uncancel-multiple-sessions/cancelled-activities', {
+      externalActivitiesRolledOut: user.externalActivitiesRolledOut,
       activityDate,
       filterItems: filterItems(categories, filterValues, asString(locationId), locationTypeFilter),
       selectedSessions: filterValues.sessionFilters,
