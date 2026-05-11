@@ -4,7 +4,7 @@
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 
-{% macro activitiesTableFilters(locations, filterItems) %}
+{% macro activitiesTableFilters(locations, filterItems, externalActivitiesRolledOut) %}
   {% set filterOptionsHtml %}
 
     {% set locationOptions = [{ value: '-', text: '' }] %}
@@ -12,27 +12,17 @@
       {% set options = (locationOptions.push( { value: location.id, text: location.description }), locationOptions) %}
     {% endfor %}
 
-    {{ govukRadios({
-      id: "location-type",
-      name: "locationType",
-      classes: "govuk-radios--small",
-      fieldset: {
-        legend: {
-          text: 'Location',
-          classes: 'govuk-fieldset__legend--m'
-        }
+    {% set radioItems = [
+      {
+        value: "ALL",
+        text: "All locations",
+        checked: filterItems.locationType == 'ALL'
       },
-      items: [
-        {
-          value: "ALL",
-          text: "All locations",
-          checked: filterItems.locationType == 'ALL'
-        },
-        {
-          value: LocationType.OUT_OF_CELL,
-          text: "Search for a location",
-          checked: filterItems.locationType == LocationType.OUT_OF_CELL,
-          conditional: {
+      {
+        value: LocationType.OUT_OF_CELL,
+        text: "Search for a location",
+        checked: filterItems.locationType == LocationType.OUT_OF_CELL,
+        conditional: {
           html: govukSelect({
             id: "locationId",
             name: "locationId",
@@ -44,23 +34,42 @@
             items: locationOptions
           })
         }
-        },
-        {
-          value: LocationType.IN_CELL,
-          text: "In cell",
-          checked: filterItems.locationType == LocationType.IN_CELL
-        },
-        {
-          value: LocationType.OFF_WING,
-          text: "Off wing - not listed",
-          checked: filterItems.locationType == LocationType.OFF_WING
-        },
-        {
-          value: LocationType.ON_WING,
-          text: "On wing",
-          checked: filterItems.locationType == LocationType.ON_WING
+      },
+      {
+        value: LocationType.IN_CELL,
+        text: "In cell",
+        checked: filterItems.locationType == LocationType.IN_CELL
+      },
+      {
+        value: LocationType.OFF_WING,
+        text: "Off wing - not listed",
+        checked: filterItems.locationType == LocationType.OFF_WING
+      },
+      {
+        value: LocationType.ON_WING,
+        text: "On wing",
+        checked: filterItems.locationType == LocationType.ON_WING
+      }
+    ] %}
+    {% if externalActivitiesRolledOut %}
+      {% set radioItems = radioItems.concat([{
+        value: LocationType.OUTSIDE_WORK,
+        text: "Outside",
+        checked: filterItems.locationType == LocationType.OUTSIDE_WORK
+      }]) %}
+    {% endif %}
+
+    {{ govukRadios({
+      id: "location-type",
+      name: "locationType",
+      classes: "govuk-radios--small",
+      fieldset: {
+        legend: {
+          text: 'Location',
+          classes: 'govuk-fieldset__legend--m'
         }
-      ]
+      },
+      items: radioItems
     }) }}
 
     {{ govukCheckboxes({
