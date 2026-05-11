@@ -1,6 +1,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
-{% macro payStatus(options = {}) %}  
+{% macro payStatus(options = {}) %}
+    {% set outsideWork = options.outsideWork or false %}
     {% set dataPresentCheck = options.dataPresentCheck or false %}
     {% set status = options.status or false %}
     {% set issuePayment = options.issuePayment or false %}
@@ -10,21 +11,28 @@
     {% set marginTagClass = 'govuk-!-margin-bottom-1 ' if options.marginTagClass else '' %}
 
     {% if dataPresentCheck and status != 'WAITING' %}
-        {% if issuePayment %}
+        {% if outsideWork and not payable %}
             {{ govukTag({
-                text: payText,
-                classes: smallTagClass + 'govuk-tag--green ' + marginTagClass
-            }) }}
-        {% elseif payable %}
-            {{ govukTag({
-                text: "No pay",
-                classes: smallTagClass + 'govuk-tag--red ' + marginTagClass
+                text: "Employer-paid",
+                classes: smallTagClass + 'govuk-tag--grey ' + marginTagClass
             }) }}
         {% else %}
-            {{ govukTag({
-                text: "Unpaid",
-                classes: smallTagClass + 'govuk-tag--red ' + marginTagClass
-            }) }}
+            {% if issuePayment %}
+                {{ govukTag({
+                    text: payText,
+                    classes: smallTagClass + 'govuk-tag--green ' + marginTagClass
+                }) }}
+            {% elseif payable %}
+                {{ govukTag({
+                    text: "No pay",
+                    classes: smallTagClass + 'govuk-tag--red ' + marginTagClass
+                }) }}
+            {% else %}
+                {{ govukTag({
+                    text: "Unpaid",
+                    classes: smallTagClass + 'govuk-tag--red ' + marginTagClass
+                }) }}
+            {% endif %}
         {% endif %}
     {% endif %}
 {% endmacro %}

@@ -53,4 +53,12 @@ describe('Views - Attendance list', () => {
     const $ = cheerio.load(compiledTemplate.render(attendanceListContext))
     expect($('a[href="cancel"]')).toHaveLength(0)
   })
+
+  it('should display Employer-paid tag when outside work flag is set', () => {
+    attendanceListContext.isPayable = false
+    attendanceListContext.instance.activitySchedule.activity.outsideWork = true
+
+    const $ = cheerio.load(compiledTemplate.render(attendanceListContext))
+    expect($('strong:contains("Employer-paid")')).toHaveLength(1)
+  })
 })
