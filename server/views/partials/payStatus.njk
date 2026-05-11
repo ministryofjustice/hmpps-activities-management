@@ -11,7 +11,7 @@
     {% set marginTagClass = 'govuk-!-margin-bottom-1 ' if options.marginTagClass else '' %}
 
     {% if dataPresentCheck and status != 'WAITING' %}
-        {% if outsideWork and not issuePayment %}
+        {% if outsideWork and not payable %}
             {{ govukTag({
                 text: "Employer-paid",
                 classes: smallTagClass + 'govuk-tag--grey ' + marginTagClass

@@ -18,7 +18,7 @@
 {% endset %}
 
 {% macro renderPay(attendance, payable) %}
-    {% if outsideWork and not attendance.issuePayment %}
+    {% if outsideWork and not payable %}
         Managed by an external employer
     {% else %}
         {% if attendance.issuePayment %}
