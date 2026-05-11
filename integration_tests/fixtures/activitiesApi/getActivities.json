@@ -4,27 +4,49 @@
     "activityName": "Maths level 1",
     "category": {
       "id": 1,
-      "code": "EDU",
+      "code": "SAA_EDUCATION",
+      "name": "Education",
       "description": "Education"
     },
     "capacity": 15,
     "allocated": 8,
     "waitlisted": 2,
     "createdTime": "2023-07-20T16:05:16",
-    "activityState": "LIVE"
+    "activityState": "LIVE",
+    "outsideWork": false
   },
   {
     "id": 2,
     "activityName": "English level 1",
     "category": {
       "id": 1,
-      "code": "EDU",
+      "code": "SAA_EDUCATION",
+      "name": "Education",
       "description": "Education"
     },
     "capacity": 15,
     "allocated": 8,
     "waitlisted": 2,
     "createdTime": "2023-07-20T16:05:16",
-    "activityState": "LIVE"
+    "activityState": "LIVE",
+    "outsideWork": false
+  },
+  {
+    "id": 3,
+    "activityName": "Outside Cafe",
+    "category": {
+      "id": 1,
+      "code": "INDUSTRIES",
+      "name": "Education",
+      "description": "Cafe"
+    },
+    "capacity": 10,
+    "allocated": 1,
+    "waitlisted": 0,
+    "createdTime": "2026-04-15T15:53:49",
+    "outsideWork": true,
+    "activityState": "LIVE",
+    "percentageAllocated": 10,
+    "vacancies": 9
   }
 ]
