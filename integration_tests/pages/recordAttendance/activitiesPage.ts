@@ -59,6 +59,8 @@ export default class ActivitiesPage extends Page {
 
   sessionPMCheckbox = () => cy.get(`[name=sessionFilters][value="PM"]`)
 
+  locationTypeRadio = (value: string) => cy.get(`input[name="locationType"][value="${value}"]`)
+
   uncancelSessionsLink = () => cy.get('a').contains('Uncancel sessions that have been cancelled')
 
   recordEditAttendance = () => cy.get('button').contains('Record or edit attendance').click()

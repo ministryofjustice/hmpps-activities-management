@@ -46,8 +46,12 @@
                             {% set location = "On wing" %}
                         {% elseif instance.activitySchedule.activity.offWing %}
                             {% set location = "Off wing" %}
+                        {% elseif instance.activitySchedule.activity.outsideWork %}
+                            {% set location = "Outside" %}
                         {% elseif instance.activitySchedule.internalLocation %}
                             {% set location = instance.activitySchedule.internalLocation.description %}
+                        {% else %}
+                            {% set location = "" %}
                         {% endif %}
                         <div>
                             <div class='govuk-!-margin-0'>{{ instance.activitySchedule.activity.summary | trim }}</div>
@@ -60,7 +64,7 @@
                 {% else %}
                     {{ attendee.instance.activitySchedule.activity.summary }}
                 {% endif %}
-            
+
             {% endif %}
         {% endset %}
 
@@ -82,8 +86,8 @@
         {% set attendanceTagDetails %}
             {% if attendee.advancedAttendance %}
                 {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', attendee.instance.activitySchedule.activity.attendanceRequired) }}
-                {{ payStatus( 
-                    { 
+                {{ payStatus(
+                    {
                         dataPresentCheck: attendee.advancedAttendance,
                         status: 'COMPLETED',
                         payable: isPayable,
@@ -96,8 +100,8 @@
                         <div>
                             {% if advancedAttendance is not undefined %}
                                 {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', attendee.instance.activitySchedule.activity.attendanceRequired) }}
-                                {{ payStatus( 
-                                    { 
+                                {{ payStatus(
+                                    {
                                         dataPresentCheck: advancedAttendance,
                                         status: 'COMPLETED',
                                         payable: isPayable,
@@ -116,8 +120,8 @@
                     {% for attendance in attendee.attendances %}
                         <div>
                             {{ attendanceTag(attendance.status, attendance.attendanceReason.code, attendee.instance.activitySchedule.activity.attendanceRequired) }}
-                            {{ payStatus( 
-                                { 
+                            {{ payStatus(
+                                {
                                     dataPresentCheck: attendance,
                                     status: attendance.status,
                                     payable: isPayable,
@@ -131,8 +135,8 @@
                 </div>
             {% else %}
                 {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, attendee.instance.activitySchedule.activity.attendanceRequired) }}
-                {{ payStatus( 
-                    { 
+                {{ payStatus(
+                    {
                         dataPresentCheck: attendee.attendance,
                         status: attendee.attendance.status,
                         payable: isPayable,
@@ -174,7 +178,7 @@
             }), items) %}
         {% endif %}
         {% if includeTimeColumn %}
-            {% set items = (items.push({   
+            {% set items = (items.push({
                 text: attendee.instance.startTime + ' to ' + attendee.instance.endTime,
                 attributes: {
                     "data-qa": "time",

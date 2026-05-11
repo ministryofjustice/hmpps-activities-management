@@ -15,6 +15,7 @@ const attendanceSummaryResponse = [
     inCell: true,
     onWing: false,
     offWing: false,
+    outsideWork: false,
     timeSlot: TimeSlot.PM,
     attendanceRequired: true,
     cancelled: false,
@@ -40,6 +41,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: false,
     offWing: false,
+    outsideWork: false,
     attendanceRequired: false,
     internalLocation: {
       id: 100,
@@ -70,6 +72,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: true,
     offWing: false,
+    outsideWork: false,
     attendanceRequired: true,
     cancelled: false,
     attendanceSummary: {
@@ -94,6 +97,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: false,
     offWing: true,
+    outsideWork: false,
     attendanceRequired: true,
     cancelled: false,
     attendanceSummary: {
@@ -118,6 +122,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: false,
     offWing: true,
+    outsideWork: false,
     attendanceRequired: true,
     cancelled: true,
     attendanceSummary: {
@@ -127,6 +132,31 @@ const attendanceSummaryResponse = [
       attended: 1,
       absences: 2,
       paid: 1,
+    },
+  },
+  {
+    scheduledInstanceId: 555,
+    activityId: 13,
+    activityScheduleId: 13,
+    summary: 'Garden Shop',
+    categoryId: 2,
+    sessionDate: '2023-08-22',
+    startTime: '18:00',
+    endTime: '19:00',
+    timeSlot: TimeSlot.ED,
+    inCell: false,
+    onWing: false,
+    offWing: false,
+    outsideWork: true,
+    attendanceRequired: true,
+    cancelled: false,
+    attendanceSummary: {
+      allocations: 3,
+      attendees: 3,
+      notRecorded: 0,
+      attended: 3,
+      absences: 0,
+      paid: 3,
     },
   },
 ]
@@ -416,6 +446,31 @@ describe('activityRows', () => {
           ...attendanceSummaryResponse[1],
           session: 'AM',
           allowSelection: false,
+        },
+      ])
+    })
+
+    it('should filter OUTSIDE_WORK activities', async () => {
+      const filterValues = {
+        categoryFilters: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+        sessionFilters: ['AM', 'PM', 'ED'],
+      }
+
+      const result = activityRows(
+        new Date(),
+        categories,
+        attendanceSummaryResponse,
+        filterValues,
+        null,
+        'OUTSIDE_WORK',
+        '',
+      )
+
+      expect(result).toEqual([
+        {
+          ...attendanceSummaryResponse[5],
+          session: 'ED',
+          allowSelection: true,
         },
       ])
     })

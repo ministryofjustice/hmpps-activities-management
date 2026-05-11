@@ -8,6 +8,7 @@
 {% set pageId = 'attendance-view-details-page' %}
 {% set jsBackLink = true %}
 
+{% set outsideWork = instance.activitySchedule.activity.outsideWork %}
 {% set caseNoteHref %} 
     <p>
         <a href='{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}/case-notes' class='govuk-link govuk-link--no-visited-state' target='_blank' rel='noopener noreferrer'>
@@ -17,12 +18,16 @@
 {% endset %}
 
 {% macro renderPay(attendance, payable) %}
-    {% if attendance.issuePayment %}
-        {{ '£' + (attendance.payAmount / 100) | toFixed }}
-    {% elseif payable %}
-        None
+    {% if outsideWork and not payable %}
+        Managed by an external employer
     {% else %}
-        Unpaid
+        {% if attendance.issuePayment %}
+            {{ '£' + (attendance.payAmount / 100) | toFixed }}
+        {% elseif payable %}
+            None
+        {% else %}
+            Unpaid
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
