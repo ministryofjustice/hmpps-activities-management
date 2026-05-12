@@ -206,6 +206,23 @@
       "startTime": "19:00",
       "endTime": "20:00",
       "priority": 5
+    },
+    {
+      "eventSource": "SAA",
+      "eventType": "ACTIVITY",
+      "prisonCode": "MDI",
+      "scheduledInstanceId": 100,
+      "bookingId": 1151729,
+      "prisonerNumber": "G7218GI",
+      "categoryCode": "OUTSIDE_WORK",
+      "categoryDescription": "Outside Work",
+      "summary": "Outside work",
+      "date": "2023-04-04",
+      "startTime": "19:00",
+      "endTime": "20:00",
+      "priority": 5,
+      "paidActivity": false,
+      "issuePayment": null
     }
   ],
   "externalTransfers": [],

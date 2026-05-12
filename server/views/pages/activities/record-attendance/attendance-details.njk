@@ -9,7 +9,7 @@
 {% set jsBackLink = true %}
 
 {% set outsideWork = instance.activitySchedule.activity.outsideWork %}
-{% set caseNoteHref %} 
+{% set caseNoteHref %}
     <p>
         <a href='{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}/case-notes' class='govuk-link govuk-link--no-visited-state' target='_blank' rel='noopener noreferrer'>
             Go to {{ attendee.name | toTitleCase | possessive }} case notes to add more details (opens in new tab)
@@ -28,6 +28,16 @@
         {% else %}
             Unpaid
         {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro renderPayHistory(attendance, payable, history) %}
+    {% if outsideWork and not payable %}
+      Managed by an external employer
+    {% elseif history.issuePayment %}
+      ('£' + (attendance.payAmount / 100) | toFixed)
+    {% else %}
+      None
     {% endif %}
 {% endmacro %}
 
@@ -156,7 +166,7 @@
                 <h1 class="govuk-heading-l">Attendance record for {{ attendee.name | toTitleCase }}</h1>
                 <div class="govuk-inset-text">
                     <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a>
-                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }}) 
+                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }})
                </div>
                {% if attendance.status === 'WAITING' %}
                    <h2 class="govuk-heading-m">Attendance record reset</h2>
@@ -226,7 +236,7 @@
                                 key: {
                                     text: "Pay"
                                 },
-                                value: { text: ('£' + (attendance.payAmount / 100) | toFixed) if attendanceHistory.issuePayment else 'None' }
+                                value: { text: renderPay(attendance, activity.paid, attendanceHistory) }
                             }
                         ), historyListRows) %}
 
