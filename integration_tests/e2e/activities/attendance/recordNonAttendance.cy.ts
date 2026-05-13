@@ -50,7 +50,7 @@ context('Record non attendance', () => {
     )
   })
 
-  it('should click through record non attendance journey', () => {
+  it('should click through record non attendance journey and SHOULD display sick pay radios for prison work', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -70,7 +70,7 @@ context('Record non attendance', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1')
+    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1', 'Outside Prison Shop')
     activitiesPage.selectActivityWithName('English level 1')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
@@ -88,7 +88,7 @@ context('Record non attendance', () => {
     Page.verifyOnPage(AttendanceListPage)
   })
 
-  it.only('should click through record non attendance journey', () => {
+  it('should click through record non attendance journey and should NOT display sick pay options for outside work ', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -134,7 +134,6 @@ context('Record non attendance', () => {
     notAttendedReasonPage.selectRadio('notAttendedData[0][notAttendedReason]')
     cy.get(`#notAttendedData-0-sickPay`).should('not.exist')
     cy.get(`#notAttendedData-0-notAttendedReason-4`).click()
-
     cy.get(`#notAttendedData-0-restPay`).should('not.exist')
     cy.get(`#notAttendedData-0-category-4`).should('not.exist')
     notAttendedReasonPage.submit()
