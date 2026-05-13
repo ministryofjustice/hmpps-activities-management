@@ -10,93 +10,106 @@
 {% set jsBackLink = true %}
 
 {% set cancellationSummaryHtml %}
-  {{ cancellationSummary(selectedDateAndSlotsText, instances) }}
+    {{ cancellationSummary(selectedDateAndSlotsText, instances) }}
+{% endset %}
+
+{% set paidText %}
+    {% if recordAttendanceJourney.sessionCancellationMultiple.issuePayment and allPaid %}
+        Yes
+    {% elif not recordAttendanceJourney.sessionCancellationMultiple.issuePayment %}
+        No
+    {% elif recordAttendanceJourney.sessionCancellationMultiple.issuePayment and paidActivities | length > 0 %}
+        Yes for:
+        <ul class="govuk-list govuk-list--bullet">
+            {% for activity in paidActivities | sortBy('summary') %}
+                {% if activity.payBand or (activity.outsideWork and activity.paid) %}
+                    <li>{{activity.summary}}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% else %}
+        Not specified
+    {% endif %}
 {% endset %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <span class="govuk-caption-l">Cancel activity sessions</span>
-      <h1 class="govuk-heading-l">Check and confirm cancellation details</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l">Cancel activity sessions</span>
+            <h1 class="govuk-heading-l">Check and confirm cancellation details</h1>
 
-      {{ govukSummaryList({
-        attributes: { 'data-qa': 'cancellation-details' },
-        rows: [
-          {
-            key: {
-            text: "Sessions you're cancelling"
-          },
-            value: {
-            text: instances.length
-          },
-            actions: {
-            items: [
-              {
-                href: activitiesRedirectUrl,
-                text: "Change",
-                visuallyHiddenText: "change sessions"
-              }
-            ]
-          }
-          },
-          {
-            key: {
-            text: "Cancellation reason"
-          },
-            value: {
-            text: reason + ' - ' + comment
-          },
-            actions: {
-            items: [
-              {
-                href: "cancel-reason?preserveHistory=true",
-                text: "Change",
-                visuallyHiddenText: "change cancellation reason"
-              }
-            ]
-          }
-          },
-          {
-            key: {
-            text: "Pay for cancelled sessions"
-          },
-            value: {
-            text: issuePayment
-          },
-            actions: {
-            items: [
-              {
-                href: "payment?preserveHistory=true",
-                text: "Change",
-                visuallyHiddenText: "change payment"
-              }
-            ] if isPayable
-          }
-          }
-        ]
-      }) }}
+            {{ govukSummaryList({
+                attributes: { 'data-qa': 'cancellation-details' },
+                rows: [
+                    {
+                        key: {
+                            text: "Sessions you're cancelling"
+                        },
+                        value: {
+                            text: instances.length
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: activitiesRedirectUrl,
+                                    text: "Change",
+                                    visuallyHiddenText: "change sessions"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Cancellation reason"
+                        },
+                        value: {
+                            text: reason + ' - ' + comment
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "cancel-reason?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change cancellation reason"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Pay for cancelled sessions"
+                        },
+                        value: {
+                            html: paidText
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "payment?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change payment"
+                                }
+                            ] if isPayable
+                        }
+                    }
+                ]
+            }) }}
 
-      <form method="POST" data-module="form-spinner" data-loading-text="Cancelling sessions">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <form method="POST" data-module="form-spinner" data-loading-text="Cancelling sessions">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-        <div class="govuk-button-group">
-          {{ govukButton({
-            text: "Confirm activity cancellations",
-            preventDoubleClick: true
-          }) }}
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Confirm activity cancellations",
+                        preventDoubleClick: true
+                    }) }}
+                </div>
+            </form>
+
+            {{ govukDetails({
+                summaryText: "View the sessions you're cancelling",
+                html: cancellationSummaryHtml
+            }) }}
         </div>
-      </form>
-
-      {{ govukDetails({
-        summaryText: "View the sessions you're cancelling",
-        html: cancellationSummaryHtml
-      }) }}
     </div>
-  </div>
 {% endblock %}
-
-
-
-
-
-
