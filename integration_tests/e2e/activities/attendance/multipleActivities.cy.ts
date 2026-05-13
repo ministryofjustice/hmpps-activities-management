@@ -86,7 +86,14 @@ context('Record attendance', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Gym', 'Maths level 1', 'Outside Prison Shop')
+    activitiesPage.containsActivities(
+      'English level 1',
+      'English level 2',
+      'Football',
+      'Gym',
+      'Maths level 1',
+      'Outside Prison Shop',
+    )
     activitiesPage.selectActivitiesWithNames('English level 1', 'English level 2')
     activitiesPage.getButton('Record or edit attendance').click()
 
@@ -292,7 +299,13 @@ context('Record attendance', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1', 'Outside Prison Shop')
+    activitiesPage.containsActivities(
+      'English level 1',
+      'English level 2',
+      'Football',
+      'Maths level 1',
+      'Outside Prison Shop',
+    )
     activitiesPage.selectActivitiesWithNames('English level 1')
     activitiesPage.getButton('Record or edit attendance').click()
 

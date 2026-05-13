@@ -142,7 +142,13 @@ context('Record attendance for activity hub users', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1', 'Outside Prison Shop')
+    activitiesPage.containsActivities(
+      'English level 1',
+      'English level 2',
+      'Football',
+      'Maths level 1',
+      'Outside Prison Shop',
+    )
     activitiesPage.back()
 
     Page.verifyOnPage(SelectPeriodPage)

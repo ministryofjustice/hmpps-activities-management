@@ -85,7 +85,13 @@ context('Exclude multiple prisoners from an activity', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1', 'Outside Prison Shop')
+    activitiesPage.containsActivities(
+      'English level 1',
+      'English level 2',
+      'Football',
+      'Maths level 1',
+      'Outside Prison Shop',
+    )
     activitiesPage.selectActivityWithName('English level 2')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
@@ -133,7 +139,13 @@ context('Exclude multiple prisoners from an activity', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1', 'Outside Prison Shop')
+    activitiesPage.containsActivities(
+      'English level 1',
+      'English level 2',
+      'Football',
+      'Maths level 1',
+      'Outside Prison Shop',
+    )
     activitiesPage.selectActivityWithName('English level 2')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)

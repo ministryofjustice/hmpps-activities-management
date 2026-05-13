@@ -70,7 +70,13 @@ context('Record non attendance', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1', 'Outside Prison Shop')
+    activitiesPage.containsActivities(
+      'English level 1',
+      'English level 2',
+      'Football',
+      'Maths level 1',
+      'Outside Prison Shop',
+    )
     activitiesPage.selectActivityWithName('English level 1')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
@@ -92,7 +98,6 @@ context('Record non attendance', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
-
     const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
     activitiesIndexPage.recordAttendanceCard().click()
 
@@ -109,7 +114,13 @@ context('Record non attendance', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1', 'Outside Prison Shop')
+    activitiesPage.containsActivities(
+      'English level 1',
+      'English level 2',
+      'Football',
+      'Maths level 1',
+      'Outside Prison Shop',
+    )
     activitiesPage.selectActivityWithName('Outside Prison Shop')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
@@ -124,11 +135,7 @@ context('Record non attendance', () => {
       })),
     }
 
-    cy.stubEndpoint(
-      'GET',
-      '/scheduled-instances/100',
-      outsideWorkInstance,
-    )
+    cy.stubEndpoint('GET', '/scheduled-instances/100', outsideWorkInstance)
 
     const notAttendedReasonPage = Page.verifyOnPage(NotAttendedReasonPage)
     notAttendedReasonPage.selectRadio('notAttendedData[0][notAttendedReason]')
