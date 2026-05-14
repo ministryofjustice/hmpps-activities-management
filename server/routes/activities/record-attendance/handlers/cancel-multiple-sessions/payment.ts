@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
+import ActivitiesService from '../../../../../services/activitiesService'
+import { convertToNumberArray } from '../../../../../utils/utils'
 
 enum IssuePayOptions {
   YES = 'yes',
@@ -15,10 +17,25 @@ export class SessionPayMultipleForm {
   issuePayOption: string
 }
 export default class CancelMultipleSessionsPayRoutes {
-  constructor() {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/activities/record-attendance/cancel-multiple-sessions/payment')
+    const { user } = res.locals
+    const { selectedInstanceIds } = req.journeyData.recordAttendanceJourney
+
+    const instances = await this.activitiesService.getScheduledActivities(
+      convertToNumberArray(selectedInstanceIds),
+      user,
+    )
+
+    res.render('pages/activities/record-attendance/cancel-multiple-sessions/payment', {
+      allPaid: instances.every(a => a.activitySchedule.activity.paid),
+      hasExternalEmployerPaid: instances.some(
+        a => a.activitySchedule.activity.outsideWork && !a.activitySchedule.activity.paid,
+      ),
+      paidActivities: instances.filter(a => a.activitySchedule.activity.paid).map(a => a.activitySchedule.activity),
+      allActivities: instances.map(a => a.activitySchedule.activity),
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
