@@ -31,13 +31,15 @@
     {% endif %}
 {% endmacro %}
 
-{% macro renderPayHistory(attendance, payable, history) %}
+{% macro renderPayHistory(attendance, payable, attendanceHistory) %}
     {% if outsideWork and not payable %}
       Managed by an external employer
-    {% elseif history.issuePayment %}
-      ('£' + (attendance.payAmount / 100) | toFixed)
     {% else %}
-      None
+        {% if attendanceHistory.issuePayment %}
+            {{ '£' + (attendance.payAmount / 100) | toFixed }}
+        {% else %}
+            None
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
@@ -187,6 +189,13 @@
                     </div>
                 {% endif %}
 
+              {% if attendance.issuePayment and attendance.attendanceReason.code == 'ATTENDED' and attendance.editable %}
+                {{ govukButton({
+                  text: "Remove pay and add case note",
+                  classes: "govuk-button--warning"
+                }) }}
+              {% endif %}
+
                 {% if attendance.attendanceHistory | length %}
                     <h2 class="govuk-heading-m" data-qa="history-heading">Change history for this attendance record</h2>
                     {% set changeNo = attendance.attendanceHistory | length %}
@@ -236,7 +245,7 @@
                                 key: {
                                     text: "Pay"
                                 },
-                                value: { text: renderPay(attendance, activity.paid, attendanceHistory) }
+                                value: { text: renderPayHistory(attendance, activity.paid, attendanceHistory) }
                             }
                         ), historyListRows) %}
 
@@ -301,13 +310,6 @@
 
                         {% set changeNo = changeNo - 1 %}
                     {% endfor %}
-                {% endif %}
-
-                {% if attendance.issuePayment and attendance.attendanceReason.code == 'ATTENDED' and attendance.editable %}
-                    {{ govukButton({
-                        text: "Remove pay and add case note",
-                        classes: "govuk-button--warning"
-                    }) }}
                 {% endif %}
 
                 {% if attendee.prisonId == user.activeCaseLoadId %}

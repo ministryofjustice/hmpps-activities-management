@@ -28,11 +28,6 @@ context('Record non attendance', () => {
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=2023-02-02`,
       getAttendanceSummary,
     )
-    cy.stubEndpoint(
-      'GET',
-      `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=2023-04-04`,
-      getAttendanceSummary,
-    )
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
     cy.stubEndpoint('GET', '/scheduled-instances/100', getScheduledOutsideWorkInstance)
     cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
@@ -94,7 +89,7 @@ context('Record non attendance', () => {
     Page.verifyOnPage(AttendanceListPage)
   })
 
-  it('should click through record non attendance journey and should NOT display sick pay options for outside work ', () => {
+  it('should click through record non attendance journey and should NOT display sick pay options for outside work', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
