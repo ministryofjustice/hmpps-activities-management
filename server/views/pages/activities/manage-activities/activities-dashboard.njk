@@ -54,6 +54,8 @@
                                 active: true if filters.isOutsideWorkFilter === 'true' else false
                             }]
                         }) }}
+
+                        <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ 'Outside' if filters.isOutsideWorkFilter === 'true' else 'In-prison' }} activities</h2>
                     {% endif %}
 
                     {% if activities | length %}
