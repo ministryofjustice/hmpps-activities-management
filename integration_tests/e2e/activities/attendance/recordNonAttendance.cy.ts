@@ -5,6 +5,7 @@ import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
 import getAttendanceReasons from '../../../fixtures/activitiesApi/getAttendanceReasons.json'
 import getScheduledInstance from '../../../fixtures/activitiesApi/getScheduledInstance93.json'
+import getScheduledOutsideWorkInstance from '../../../fixtures/activitiesApi/getScheduledInstance100.json'
 import getAttendeesForScheduledInstance from '../../../fixtures/activitiesApi/getAttendeesScheduledInstance93.json'
 import getScheduledEvents from '../../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetailsForNonAttendance.json'
@@ -28,8 +29,11 @@ context('Record non attendance', () => {
       getAttendanceSummary,
     )
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
+    cy.stubEndpoint('GET', '/scheduled-instances/100', getScheduledOutsideWorkInstance)
     cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
+    cy.stubEndpoint('GET', '/scheduled-instances/100/scheduled-attendees', getAttendeesForScheduledInstance)
     cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2023-02-02', getScheduledEvents)
+    cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2023-04-04', getScheduledEvents)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('PUT', '/attendances')
     cy.stubEndpoint('GET', '/attendance-reasons', getAttendanceReasons)
@@ -41,7 +45,7 @@ context('Record non attendance', () => {
     )
   })
 
-  it('should click through record non attendance journey', () => {
+  it('should click through record non attendance journey and SHOULD display sick pay radios for prison work', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -61,7 +65,13 @@ context('Record non attendance', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1')
+    activitiesPage.containsActivities(
+      'English level 1',
+      'English level 2',
+      'Football',
+      'Maths level 1',
+      'Outside Prison Shop',
+    )
     activitiesPage.selectActivityWithName('English level 1')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
@@ -77,5 +87,60 @@ context('Record non attendance', () => {
     notAttendedReasonPage.submit()
 
     Page.verifyOnPage(AttendanceListPage)
+  })
+
+  it('should click through record non attendance journey and should NOT display sick pay options for outside work', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.enterDate(new Date(2023, 1, 2))
+    selectPeriodPage.selectAM()
+    selectPeriodPage.continue()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesPage)
+    activitiesPage.containsActivities(
+      'English level 1',
+      'English level 2',
+      'Football',
+      'Maths level 1',
+      'Outside Prison Shop',
+    )
+    activitiesPage.selectActivityWithName('Outside Prison Shop')
+
+    const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.selectPrisoner('Arianniver, Eeteljan')
+    attendanceListPage.markAsNotAttended()
+
+    const outsideWorkInstance = {
+      ...getScheduledOutsideWorkInstance,
+      attendances: getScheduledOutsideWorkInstance.attendances.map(attendance => ({
+        ...attendance,
+        status: 'COMPLETED',
+      })),
+    }
+
+    cy.stubEndpoint('GET', '/scheduled-instances/100', outsideWorkInstance)
+
+    const notAttendedReasonPage = Page.verifyOnPage(NotAttendedReasonPage)
+    notAttendedReasonPage.selectRadio('notAttendedData[0][notAttendedReason]')
+    cy.get(`#notAttendedData-0-sickPay`).should('not.exist')
+    cy.get(`#notAttendedData-0-notAttendedReason-4`).click()
+    cy.get(`#notAttendedData-0-restPay`).should('not.exist')
+    cy.get(`#notAttendedData-0-category-4`).should('not.exist')
+    notAttendedReasonPage.submit()
+
+    Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Sick', 'Employer-paid')
   })
 })
