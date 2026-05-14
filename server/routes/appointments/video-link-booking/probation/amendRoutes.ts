@@ -7,8 +7,6 @@ import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
 import ScheduleRoutes from './handlers/schedule'
-import MeetingDetailsRoutes, { MeetingDetails } from './handlers/meetingDetails'
-import config from '../../../../config'
 import ProbationMeetingDetailsRoutes, { ProbationMeetingDetails } from './handlers/probationMeetingDetails'
 
 export default function AmendRoutes({
@@ -44,16 +42,9 @@ export default function AmendRoutes({
     return next()
   })
 
-  if (config.probationTeamRadioEnabled) {
-    const probationMeetingDetails = new ProbationMeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
-    get('/meeting-details', probationMeetingDetails.GET)
-    post('/meeting-details', probationMeetingDetails.POST, ProbationMeetingDetails)
-  } else {
-    const meetingDetails = new MeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
-    get('/meeting-details', meetingDetails.GET)
-    post('/meeting-details', meetingDetails.POST, MeetingDetails)
-  }
-
+  const probationMeetingDetails = new ProbationMeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
+  get('/meeting-details', probationMeetingDetails.GET)
+  post('/meeting-details', probationMeetingDetails.POST, ProbationMeetingDetails)
   get('/location', location.GET)
   post('/location', location.POST, Location)
   get('/date-and-time', dateAndTime.GET)
