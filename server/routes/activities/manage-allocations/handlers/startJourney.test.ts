@@ -31,6 +31,7 @@ describe('Route Handlers - Allocate - Start', () => {
         user: {
           username: 'joebloggs',
           activeCaseLoadId: 'LEI',
+          externalActivitiesRolledOut: false,
         },
       },
       render: jest.fn(),
@@ -153,8 +154,9 @@ describe('Route Handlers - Allocate - Start', () => {
       expect(res.redirect).toHaveBeenCalledWith('../error/transferred')
     })
 
-    it('should populate the session with journey data and redirect to the start allocation date page', async () => {
+    it('should populate the session with journey data and redirect to the start allocation date page for an external activity', async () => {
       req.query = { scheduleId: '2' }
+      res.locals.user.externalActivitiesRolledOut = true
 
       when(prisonService.getInmateByPrisonerNumber)
         .calledWith(atLeast('ABC123'))

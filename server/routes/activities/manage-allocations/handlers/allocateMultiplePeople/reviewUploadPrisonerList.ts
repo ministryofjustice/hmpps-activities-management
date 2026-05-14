@@ -102,7 +102,7 @@ export default class ReviewUploadPrisonerListRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    if (req.journeyData.allocateJourney.activity.outsideWork) {
+    if (res.locals.user.externalActivitiesRolledOut && req.journeyData.allocateJourney.activity.outsideWork) {
       req.journeyData.allocateJourney.allocateMultipleInmatesMode = true
       return res.redirect('../start-date')
     }

@@ -130,6 +130,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
         user: {
           username: 'test.user',
           activeCaseLoadId: 'TPR',
+          externalActivitiesRolledOut: false,
         },
       },
       render: jest.fn(),
@@ -427,6 +428,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
 
     it('should redirect to start date page for external activities', async () => {
       req.journeyData.allocateJourney.activity.outsideWork = true
+      res.locals.user.externalActivitiesRolledOut = true
 
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('../start-date')

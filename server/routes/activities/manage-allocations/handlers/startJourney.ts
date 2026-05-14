@@ -72,7 +72,7 @@ export default class StartJourneyRoutes {
       MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
     )
 
-    if (req.journeyData.allocateJourney.activity.outsideWork) {
+    if (user.externalActivitiesRolledOut && req.journeyData.allocateJourney.activity.outsideWork) {
       return res.redirect('../start-date')
     }
 
