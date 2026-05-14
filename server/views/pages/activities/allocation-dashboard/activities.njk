@@ -3,7 +3,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 
-{% set pageTitle = applicationName + " - Allocate to an activity - Activities" %}
+{% set pageTitle = "Allocation dashboard - Activities - DPS" %}
 {% set pageId = 'manage-allocations-activities-page' %}
 {% set hardBackLinkHref = "/activities/allocations" %}
 {% set hardBackLinkText = "Back" %}
@@ -170,13 +170,15 @@
                 ]), rows) %}
             {% endfor %}
 
+            {% set captionText = "Outside activities with allocations and vacancies details" if filters.isOutsideWorkFilter === 'true' else "In-prison activities with allocations, vacancies and waitlist details" %}
+
             {{ govukTable({
                 attributes: {
                     'data-module': 'moj-sortable-table',
                     'data-table-fixed-rows': 'true'
                 },
                 classes: 'sticky-header',
-                caption: "Activities",
+                caption: captionText,
                 captionClasses: "govuk-visually-hidden",
                 head: [
                     {

@@ -101,7 +101,7 @@
                             attributes: {
                                 'data-module': 'moj-sortable-table'
                             },
-                            caption: "Activities",
+                            caption: ("Outside" if filters.isOutsideWorkFilter === 'true' else "In-prison") + " activities with the date created, activity category and current state",
                             captionClasses: "govuk-visually-hidden",
                             classes: 'sticky-header',
                             head: [
