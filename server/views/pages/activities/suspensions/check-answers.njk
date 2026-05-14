@@ -43,7 +43,7 @@
                 {% elif session.suspendJourney.paid == YesNo.NO %}
                     No
                 {% elif session.suspendJourney.paid == YesNo.YES and paidCount > 0 %}
-                    Yes for:
+                    Yes, for:
                     <ul class="govuk-list govuk-list--bullet">
                         {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
                             {% if allocation.payBand %}
@@ -73,7 +73,7 @@
                         key: { text: "First day of suspension" },
                         value: {
                             text: (
-                                ("Today - suspension ends immediately" if session.suspendJourney.suspendFrom == now | toDateString) or
+                                ("Today - suspension starts immediately" if session.suspendJourney.suspendFrom == now | toDateString) or
                                 ("Tomorrow: " + session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom == now | addDays(1) | toDateString) or
                                 (session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom > now | addDays(1) | toDateString)
                             )
