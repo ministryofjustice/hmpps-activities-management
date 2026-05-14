@@ -567,5 +567,6 @@
     "attendedPercentage": "33",
     "notAttendedPercentage": "0",
     "notRecordedPercentage": "67"
-  }
+  },
+  "isPayable": true
 }

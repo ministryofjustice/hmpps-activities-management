@@ -7,6 +7,8 @@
         {% set location = "On wing" %}
     {% elseif event.offWing %}
         {% set location = "Off wing" %}
+    {% elseif event.outsideWork %}
+      {% set location = "Outside" %}
     {% elseif internalLocation %}
         {% set location = internalLocation %}
     {% else %}

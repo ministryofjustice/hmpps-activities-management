@@ -27,6 +27,7 @@ const attendanceSummaryResponse = [
     inCell: true,
     onWing: false,
     offWing: false,
+    outsideWork: false,
     timeSlot: TimeSlot.PM,
     attendanceRequired: true,
     cancelled: false,
@@ -52,6 +53,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: false,
     offWing: false,
+    outsideWork: false,
     attendanceRequired: false,
     internalLocation: {
       id: 100,
@@ -81,6 +83,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: true,
     offWing: false,
+    outsideWork: false,
     attendanceRequired: true,
     cancelled: true,
     attendanceSummary: {
@@ -105,6 +108,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: false,
     offWing: true,
+    outsideWork: false,
     attendanceRequired: true,
     cancelled: false,
     attendanceSummary: {

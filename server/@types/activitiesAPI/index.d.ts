@@ -8427,6 +8427,7 @@ export interface components {
        * @example false
        */
       attendanceRequired: boolean
+      outsideWork: boolean
     }
     /** @description Describes the rollout plan of a prison which may or may not be rolled out */
     RolloutPrisonPlan: {

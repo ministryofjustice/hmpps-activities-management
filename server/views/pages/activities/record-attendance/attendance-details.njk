@@ -8,7 +8,8 @@
 {% set pageId = 'attendance-view-details-page' %}
 {% set jsBackLink = true %}
 
-{% set caseNoteHref %} 
+{% set outsideWork = instance.activitySchedule.activity.outsideWork %}
+{% set caseNoteHref %}
     <p>
         <a href='{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}/case-notes' class='govuk-link govuk-link--no-visited-state' target='_blank' rel='noopener noreferrer'>
             Go to {{ attendee.name | toTitleCase | possessive }} case notes to add more details (opens in new tab)
@@ -17,12 +18,28 @@
 {% endset %}
 
 {% macro renderPay(attendance, payable) %}
-    {% if attendance.issuePayment %}
-        {{ '£' + (attendance.payAmount / 100) | toFixed }}
-    {% elseif payable %}
-        None
+    {% if outsideWork and not payable %}
+        Managed by an external employer
     {% else %}
-        Unpaid
+        {% if attendance.issuePayment %}
+            {{ '£' + (attendance.payAmount / 100) | toFixed }}
+        {% elseif payable %}
+            None
+        {% else %}
+            Unpaid
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro renderPayHistory(attendance, payable, attendanceHistory) %}
+    {% if outsideWork and not payable %}
+      Managed by an external employer
+    {% else %}
+        {% if attendanceHistory.issuePayment %}
+            {{ '£' + (attendance.payAmount / 100) | toFixed }}
+        {% else %}
+            None
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
@@ -151,7 +168,7 @@
                 <h1 class="govuk-heading-l">Attendance record for {{ attendee.name | toTitleCase }}</h1>
                 <div class="govuk-inset-text">
                     <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a>
-                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }}) 
+                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }})
                </div>
                {% if attendance.status === 'WAITING' %}
                    <h2 class="govuk-heading-m">Attendance record reset</h2>
@@ -171,6 +188,13 @@
                         }) }}
                     </div>
                 {% endif %}
+
+              {% if attendance.issuePayment and attendance.attendanceReason.code == 'ATTENDED' and attendance.editable %}
+                {{ govukButton({
+                  text: "Remove pay and add case note",
+                  classes: "govuk-button--warning"
+                }) }}
+              {% endif %}
 
                 {% if attendance.attendanceHistory | length %}
                     <h2 class="govuk-heading-m" data-qa="history-heading">Change history for this attendance record</h2>
@@ -221,7 +245,7 @@
                                 key: {
                                     text: "Pay"
                                 },
-                                value: { text: ('£' + (attendance.payAmount / 100) | toFixed) if attendanceHistory.issuePayment else 'None' }
+                                value: { text: renderPayHistory(attendance, activity.paid, attendanceHistory) }
                             }
                         ), historyListRows) %}
 
@@ -286,13 +310,6 @@
 
                         {% set changeNo = changeNo - 1 %}
                     {% endfor %}
-                {% endif %}
-
-                {% if attendance.issuePayment and attendance.attendanceReason.code == 'ATTENDED' and attendance.editable %}
-                    {{ govukButton({
-                        text: "Remove pay and add case note",
-                        classes: "govuk-button--warning"
-                    }) }}
                 {% endif %}
 
                 {% if attendee.prisonId == user.activeCaseLoadId %}

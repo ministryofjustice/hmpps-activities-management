@@ -8,7 +8,8 @@
 
 {% set pageTitle = "Activities dashboard - Activities - DPS" %}
 {% set pageId = 'manage-schedules-activities-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkHref = "/activities/allocations" %}
+{% set hardBackLinkText = "Back" %}
 
 {% set stateFilterParams = (('stateFilter=' + filters.stateFilter | urlencode) if filters.stateFilter else '') %}
 
@@ -36,7 +37,7 @@
                     </form>
                 </div>
                 <hr class="print-only"/>
-                <div class="moj-filter-layout__content">
+                <div class="moj-filter-layout__content govuk-grid-column-full govuk-!-padding-0">
                     <div class="moj-action-bar govuk-!-display-none-print">
                         <div class="moj-action-bar__filter"></div>
                     </div>
@@ -54,6 +55,8 @@
                                 active: true if filters.isOutsideWorkFilter === 'true' else false
                             }]
                         }) }}
+
+                        <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ 'Outside' if filters.isOutsideWorkFilter === 'true' else 'In-prison' }} activities</h2>
                     {% endif %}
 
                     {% if activities | length %}
@@ -99,7 +102,7 @@
                             attributes: {
                                 'data-module': 'moj-sortable-table'
                             },
-                            caption: "Activities",
+                            caption: ("Outside" if filters.isOutsideWorkFilter === 'true' else "In-prison") + " activities with the date created, activity category and current state",
                             captionClasses: "govuk-visually-hidden",
                             classes: 'sticky-header',
                             head: [
