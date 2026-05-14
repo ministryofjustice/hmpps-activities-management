@@ -45,7 +45,7 @@
                     <p class="govuk-body govuk-!-margin-top-4">
                         <a href='../cancel-multiple/view-edit-details/{{instance.id}}' class="govuk-link">View or edit cancellation</a>
                         {% if instance.isAmendable %}
-                        or 
+                        or
                         <a href="uncancel" class="govuk-link">uncancel this session</a>
                         {% endif %}
                     </p>
@@ -182,8 +182,8 @@
         {% set attendanceTagDetails %}
             {% if attendee.advancedAttendance %}
                 {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', instance.activitySchedule.activity.attendanceRequired) }}
-                {{ payStatus( 
-                    { 
+                {{ payStatus(
+                    {
                         dataPresentCheck: attendee.advancedAttendance,
                         status: 'COMPLETED',
                         payable: isPayable,
@@ -193,8 +193,8 @@
                     }) }}
             {% else %}
                 {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) }}
-                {{ payStatus( 
-                    { 
+                {{ payStatus(
+                    {
                         dataPresentCheck: attendee.attendance,
                         status: attendee.attendance.status,
                         payable: isPayable,
