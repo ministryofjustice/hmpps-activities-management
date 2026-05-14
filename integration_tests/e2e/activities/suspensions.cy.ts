@@ -518,7 +518,7 @@ context('Suspensions', () => {
       .then($dd => {
         expect($dd.get(0).innerText).to.contain('Alfonso Cholak\nG0995GW')
         expect($dd.get(1).innerText).to.contain('Active activity')
-        expect($dd.get(2).innerText).to.contain('Today - suspension ends immediately')
+        expect($dd.get(2).innerText).to.contain('Today - suspension starts immediately')
         expect($dd.get(4).innerText).to.contain('Yes')
         expect($dd.get(6).innerText).to.contain('No')
       })
@@ -880,7 +880,7 @@ context('Bulk suspend/unsuspend', () => {
         expect($dd.get(0).innerText).to.contain('Alfonso Cholak\nG0995GW')
         expect($dd.get(1).innerText).to.contain('Activity 1')
         expect($dd.get(1).innerText).to.contain('Activity 2')
-        expect($dd.get(2).innerText).to.contain('Today - suspension ends immediately')
+        expect($dd.get(2).innerText).to.contain('Today - suspension starts immediately')
         expect($dd.get(4).innerText).to.contain('Yes')
         expect($dd.get(6).innerText).to.contain('No')
       })

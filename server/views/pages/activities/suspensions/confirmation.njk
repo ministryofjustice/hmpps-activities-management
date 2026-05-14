@@ -25,7 +25,6 @@
                         {% else %}
                             {{ allocationCount }} activities
                         {% endif %}
-                        {{ ' with pay' if sessionIsPaid else ' without pay' }}
                     {% endset %}
 
                     {{ govukPanel({
@@ -54,7 +53,7 @@
                         {% else %}
                             {{ allocationCount }} activities
                         {% endif %}
-                        {{ ' with pay' if sessionIsPaid else ' without pay' }} from {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}
+                        from {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}
                     {% endset %}
 
                     {{ govukPanel({
