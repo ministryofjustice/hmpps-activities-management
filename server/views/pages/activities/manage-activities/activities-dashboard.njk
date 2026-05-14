@@ -8,7 +8,8 @@
 
 {% set pageTitle = "Activities dashboard - Activities - DPS" %}
 {% set pageId = 'manage-schedules-activities-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkHref = "/activities/allocations" %}
+{% set hardBackLinkText = "Back" %}
 
 {% set stateFilterParams = (('stateFilter=' + filters.stateFilter | urlencode) if filters.stateFilter else '') %}
 
@@ -36,7 +37,7 @@
                     </form>
                 </div>
                 <hr class="print-only"/>
-                <div class="moj-filter-layout__content">
+                <div class="moj-filter-layout__content govuk-grid-column-full">
                     <div class="moj-action-bar govuk-!-display-none-print">
                         <div class="moj-action-bar__filter"></div>
                     </div>
