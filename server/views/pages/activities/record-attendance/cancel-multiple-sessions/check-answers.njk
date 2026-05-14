@@ -22,9 +22,7 @@
         Yes for:
         <ul class="govuk-list govuk-list--bullet">
             {% for activity in paidActivities | sortBy('summary') %}
-                {% if activity.payBand or (activity.outsideWork and activity.paid) %}
-                    <li>{{activity.summary}}</li>
-                {% endif %}
+                <li>{{activity.summary}}</li>
             {% endfor %}
         </ul>
     {% else %}
