@@ -204,12 +204,54 @@
         "incentiveNomisCode": "STD",
         "incentiveLevel": "Standard",
         "prisonPayBand": {
-          "id": 1148,
+          "id": 1,
           "displaySequence": 1,
           "alias": "Pay band 1 (Lowest)",
           "description": "Pay band 1 (Lowest)",
           "nomisPayBand": 1,
-          "prisonCode": "NSI",
+          "prisonCode": "MDI",
+          "createdTime": null,
+          "createdBy": null,
+          "updatedTime": null,
+          "updatedBy": null
+        },
+        "rate": 150,
+        "pieceRate": null,
+        "pieceRateItems": null,
+        "startDate": null
+      },
+      {
+        "id": 2,
+        "incentiveNomisCode": "STD",
+        "incentiveLevel": "Standard",
+        "prisonPayBand": {
+          "id": 2,
+          "displaySequence": 1,
+          "alias": "Pay band 2 (Medium)",
+          "description": "Pay band 2 (Medium)",
+          "nomisPayBand": 1,
+          "prisonCode": "MDI",
+          "createdTime": null,
+          "createdBy": null,
+          "updatedTime": null,
+          "updatedBy": null
+        },
+        "rate": 190,
+        "pieceRate": null,
+        "pieceRateItems": null,
+        "startDate": null
+      },
+      {
+        "id": 3,
+        "incentiveNomisCode": "ENH",
+        "incentiveLevel": "Enhanced",
+        "prisonPayBand": {
+          "id": 2,
+          "displaySequence": 1,
+          "alias": "Pay band 1 (Lowest)",
+          "description": "Pay band 1 (Lowest)",
+          "nomisPayBand": 1,
+          "prisonCode": "MDI",
           "createdTime": null,
           "createdBy": null,
           "updatedTime": null,
@@ -248,7 +290,7 @@
       "id": 1,
       "code": "INDUSTRIES",
       "name": "Industries",
-      "description": "Cafe"
+      "description": "Hotel"
     },
     "tier": {
       "id": 1,
