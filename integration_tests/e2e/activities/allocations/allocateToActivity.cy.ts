@@ -1,4 +1,4 @@
-import { addMonths, subWeeks } from 'date-fns'
+import { addMonths } from 'date-fns'
 import getActivities from '../../../fixtures/activitiesApi/getActivities.json'
 import getSchedulesInActivity from '../../../fixtures/activitiesApi/getSchedulesInActivity.json'
 import getAllocations from '../../../fixtures/activitiesApi/getAllocations.json'
@@ -32,7 +32,6 @@ import ManageActivitiesDashboardPage from '../../../pages/activities/manageActiv
 import BeforeYouAllocate from '../../../pages/allocateToActivity/beforeYouAllocate'
 import ActivitiesIndexPage from '../../../pages/activities'
 import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
-import resetActivityAndScheduleStubs from './allocationsStubHelper'
 
 const navigateToActivitiesDashboard = (): AllocationDashboard => {
   const indexPage = Page.verifyOnPage(IndexPage)
@@ -75,7 +74,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
 
-    resetActivityAndScheduleStubs({ activityStartDate: subWeeks(new Date(), 2) })
+    // resetActivityAndScheduleStubs({ activityStartDate: subWeeks(new Date(), 2) })
 
     cy.signIn()
   })
