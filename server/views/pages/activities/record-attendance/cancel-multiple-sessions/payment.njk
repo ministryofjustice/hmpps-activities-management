@@ -13,8 +13,8 @@
     {% if not allPaid %}
         <div class="govuk-inset-text"><p class="govuk-body">People are currently paid {{ outsideContent }}for attending {{ paidActivities | length }} of {{ allActivities | length }} activities you're cancelling:</p>
         <ul class="govuk-list govuk-list--bullet">
-                {% for activity in paidActivities | sortBy('description') %}
-                    <li>{{ activity.description }}</li>
+                {% for activity in paidActivities | sortBy('summary') %}
+                    <li>{{ activity.summary }}</li>
                 {% endfor %}
             </ul>
         </div>
