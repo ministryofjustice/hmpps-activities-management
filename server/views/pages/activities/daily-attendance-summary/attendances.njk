@@ -206,7 +206,8 @@
                     status: attendee.attendance.status,
                     issuePayment: attendee.attendance.issuePayment,
                     payable: true,
-                    marginTagClass: true
+                    marginTagClass: true,
+                    user: user
                 }) %}
                 {% if status == 'Absences' %}
                     {% set attendanceDetailsHtml = attendanceDetailsHtml + ' ' + incentiveLevelWarningTag(attendee.attendance)  %}

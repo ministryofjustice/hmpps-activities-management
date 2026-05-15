@@ -34,7 +34,7 @@
                     <p class='govuk-body'>While they are suspended, their attendance for {{ 'this activity' if allocationCount == 1 else 'these activities' }} will be recorded as 'Suspended'.</p>
                     {% if allocationCount == 1 %}
                         <p class='govuk-body'>If they were due to attend a session that has already started, attendance for that session will need to be recorded.</p>
-                        {% if session.suspendJourney.allocations[0].outsideWork %}
+                        {% if user.externalActivitiesRolledOut and session.suspendJourney.allocations[0].outsideWork %}
                             <p class='govuk-body'>
                                 Temporary absences for {{ session.suspendJourney.inmate.prisonerName | safe }} to go out to this activity should be cancelled.
                                 Unlock and movement lists for today may need to be printed again.
@@ -61,7 +61,7 @@
                         text: subText
                     }) }}
                     <p class='govuk-body'>From {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}, their attendance for {{ 'this activity' if allocationCount == 1 else 'these activities' }} will be recorded as 'Suspended'.</p>
-                    {% if allocationCount == 1 and session.suspendJourney.allocations[0].outsideWork %}
+                    {% if allocationCount == 1 and user.externalActivitiesRolledOut and session.suspendJourney.allocations[0].outsideWork %}
                         <p class='govuk-body'>Temporary absences for {{ session.suspendJourney.inmate.prisonerName | safe }} to go out to this activity should be cancelled.</p>
                     {% endif %}
                 {% endif %}

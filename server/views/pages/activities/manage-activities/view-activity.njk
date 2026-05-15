@@ -114,7 +114,7 @@
                         value: {
                             text: "The prison" if activity.paid else "An external employer"
                         }
-                    } if activity.outsideWork
+                    } if user.externalActivitiesRolledOut and activity.outsideWork
                 ]
             }) }}
 
@@ -219,7 +219,7 @@
                 }) }}
             {% endif %}
 
-            {% if not activity.outsideWork or (activity.outsideWork and activity.paid) %}
+            {% if not activity.outsideWork or (user.externalActivitiesRolledOut and activity.outsideWork and activity.paid) %}
                 {% set payRows = [] %}
                 {% if schedule.activity.paid %}
                     {% if displayPays | length > 0 %}

@@ -96,7 +96,7 @@
                         value: {
                             text: "Outside"
                         }
-                    } if createJourney.outsideWork,
+                    } if user.externalActivitiesRolledOut and createJourney.outsideWork,
                     {
                         key: { text: "Record attendance" },
                         value: { text: "Yes" if createJourney.attendanceRequired else "No"},
@@ -112,7 +112,7 @@
                 ]
             }) }}
 
-            {% if createJourney.outsideWork %}
+            {% if user.externalActivitiesRolledOut and createJourney.outsideWork %}
                 <h2 class="govuk-heading-m">Pay</h2>
             {% else %}
                 <h2 class="govuk-heading-m">Requirements and pay</h2>
@@ -171,7 +171,7 @@
                                 }
                             ]
                         }
-                    } if createJourney.outsideWork,
+                    } if user.externalActivitiesRolledOut and createJourney.outsideWork,
                     {
                         key: {
                             text: "Pay rates"
@@ -188,7 +188,7 @@
                                 }
                             ]
                         }
-                    } if not createJourney.outsideWork or (createJourney.outsideWork and createJourney.whoPays == 'prison')
+                    } if not createJourney.outsideWork or (user.externalActivitiesRolledOut and createJourney.outsideWork and createJourney.whoPays == 'prison')
                 ]
             }) }}
 
@@ -283,7 +283,7 @@
                 rows: scheduleRows
             }) }}
 
-            {% if createJourney.outsideWork %}
+            {% if user.externalActivitiesRolledOut and createJourney.outsideWork %}
                 <h2 class="govuk-heading-m">Capacity</h2>
                 {{ govukSummaryList({
                     rows: [

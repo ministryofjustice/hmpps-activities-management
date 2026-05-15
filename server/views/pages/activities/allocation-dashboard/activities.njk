@@ -170,7 +170,7 @@
                 ]), rows) %}
             {% endfor %}
 
-            {% set captionText = "Outside activities with allocations and vacancies details" if filters.isOutsideWorkFilter === 'true' else "In-prison activities with allocations, vacancies and waitlist details" %}
+            {% set captionText = "Outside activities with allocations and vacancies details" if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter === 'true' else "In-prison activities with allocations, vacancies and waitlist details" %}
 
             {{ govukTable({
                 attributes: {

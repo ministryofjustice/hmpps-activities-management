@@ -34,13 +34,14 @@
         {% if attendanceListDesign %}
             {{ renderAttendance(event) }}
             {{ payStatus({
-            dataPresentCheck: event.attendanceStatus,
-            status: event.attendanceStatus,
-            issuePayment: event.issuePayment,
-            payable: event.paid,
-            smallTagClass: true,
-            payText: 'Paid'
-        }) }}
+                dataPresentCheck: event.attendanceStatus,
+                status: event.attendanceStatus,
+                issuePayment: event.issuePayment,
+                payable: event.paid,
+                smallTagClass: true,
+                payText: 'Paid',
+                user: user
+            }) }}
         {% endif %}
     </div>
 {% endmacro %}

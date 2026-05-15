@@ -8,7 +8,7 @@
 {% set pageTitle = "Check pay - Activities - DPS" %}
 {% set pageId = 'check-pay-page' %}
 
-{% if session.req.query.preserveHistory or createJourney.outsideWork %}
+{% if session.req.query.preserveHistory or (user.externalActivitiesRolledOut and createJourney.outsideWork) %}
     {% set jsBackLink = true %}
 {% else %}
     {% set hardBackLinkText = 'Back to risk level' %}

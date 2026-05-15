@@ -7,7 +7,7 @@
 {% set pageId = 'suspension-pay-page' %}
 {% set jsBackLink = true %}
 
-{% set outsideContent = 'by the prison ' if extraContent.hasOutsideWork else '' %}
+{% set outsideContent = 'by the prison ' if user.externalActivitiesRolledOut and extraContent.hasOutsideWork else '' %}
 
 {% set heading %}
     {% if session.suspendJourney.allocations | length == 1 %}

@@ -105,7 +105,7 @@
                             attributes: {
                                 'data-qa': 'activities-table'
                             },
-                            caption: ("Outside" if filters.isOutsideWorkFilter === 'true' else "In-prison") + " activities with the date created, activity category and current state",
+                            caption: ("Outside" if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter === 'true' else "In-prison") + " activities with the date created, activity category and current state",
                             captionClasses: "govuk-visually-hidden",
                             classes: 'sticky-header',
                             head: [
@@ -137,7 +137,7 @@
                             rows: rows
                         }) }}
                     {% else %}
-                        <p class="govuk-body-l" data-qa="no-activities">There are no {{ filters.stateFilter }} {{ 'outside ' if filters.isOutsideWorkFilter == 'true' }}activities.</p>
+                        <p class="govuk-body-l" data-qa="no-activities">There are no {{ filters.stateFilter }} {{ 'outside ' if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter == 'true' }}activities.</p>
                     {% endif %}
 
                 </div>
