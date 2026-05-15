@@ -56,8 +56,8 @@ context('Create activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.cardActivityCard().should('contain.text', 'Create an activity')
-    manageActivitiesPage.cardActivityCard().click()
+    manageActivitiesPage.createAnActivityCard().should('contain.text', 'Create an activity')
+    manageActivitiesPage.createAnActivityCard().click()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.selectCategory('Not in work')

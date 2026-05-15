@@ -42,7 +42,7 @@ const navigateToActivitiesDashboard = (): AllocationDashboard => {
   activitiesIndexPage.allocateToActivitiesCard().click()
 
   const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-  manageActivitiesPage.allocateToActivityCard().click()
+  manageActivitiesPage.manageAllocationsCard().click()
 
   const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
   activitiesPage.selectActivityWithName('English level 1')

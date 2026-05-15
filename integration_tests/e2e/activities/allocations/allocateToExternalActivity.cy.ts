@@ -1,5 +1,5 @@
 import { addMonths } from 'date-fns'
-import getExternalActivities from '../../../fixtures/activitiesApi/getExternalActivities.json'
+import getExternalActivities from '../../../fixtures/activitiesApi/getActivities-withExternal.json'
 import getExternalActivity from '../../../fixtures/activitiesApi/getExternalActivity.json'
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 import getAllocations from '../../../fixtures/activitiesApi/getAllocations.json'
@@ -242,7 +242,7 @@ const navigateToActivitiesDashboard = (): ActivitiesDashboardPage => {
   activitiesIndexPage.allocateToActivitiesCard().click()
 
   const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-  manageActivitiesPage.allocateToActivityCard().click()
+  manageActivitiesPage.manageAllocationsCard().click()
 
   const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
   return activitiesPage

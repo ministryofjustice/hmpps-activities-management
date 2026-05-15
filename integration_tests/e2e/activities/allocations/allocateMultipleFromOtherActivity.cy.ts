@@ -82,8 +82,8 @@ context('Allocate multiple people to an activity by copying from another activit
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -174,8 +174,8 @@ context('Allocate multiple people to an activity by copying from another activit
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -232,8 +232,8 @@ context('Allocate multiple people to an activity by copying from another activit
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
