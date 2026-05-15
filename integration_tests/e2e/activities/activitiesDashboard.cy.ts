@@ -3,7 +3,7 @@ import Page from '../../pages/page'
 import ActivitiesIndexPage from '../../pages/activities'
 import ManageActivitiesDashboardPage from '../../pages/activities/manageActivitiesDashboard'
 import getActivities from '../../fixtures/activitiesApi/getActivities.json'
-import getActivitiesWithOutsideWork from '../../fixtures/activitiesApi/getActivities-withOutsideWork.json'
+import getActivitiesWithOutsideWork from '../../fixtures/activitiesApi/getActivities-withExternal.json'
 import ActivitiesDashboardPage from '../../pages/activities/activitiesDashboard'
 
 context('Activities dashboard', () => {

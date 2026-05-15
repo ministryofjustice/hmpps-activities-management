@@ -1,5 +1,5 @@
 import { addMonths } from 'date-fns'
-import getExternalActivities from '../../../fixtures/activitiesApi/getExternalActivities.json'
+import getExternalActivities from '../../../fixtures/activitiesApi/getActivities-withExternal.json'
 import getExternalActivity from '../../../fixtures/activitiesApi/getExternalActivity.json'
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 import getAllocations from '../../../fixtures/activitiesApi/getAllocations.json'
