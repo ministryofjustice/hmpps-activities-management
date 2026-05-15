@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "activityName": "Maths level 1",
+    "category": {
+      "id": 1,
+      "code": "SAA_EDUCATION",
+      "name": "Education",
+      "description": "Education"
+    },
+    "capacity": 15,
+    "allocated": 8,
+    "waitlisted": 2,
+    "createdTime": "2023-07-20T16:05:16",
+    "activityState": "LIVE",
+    "outsideWork": false
+  },
+  {
+    "id": 2,
+    "activityName": "English level 1",
+    "category": {
+      "id": 1,
+      "code": "SAA_EDUCATION",
+      "name": "Education",
+      "description": "Education"
+    },
+    "capacity": 15,
+    "allocated": 8,
+    "waitlisted": 2,
+    "createdTime": "2023-07-20T16:05:16",
+    "activityState": "LIVE",
+    "outsideWork": false
+  },
+  {
+    "id": 3,
+    "activityName": "Cleaning activity",
+    "category": {
+      "id": 2,
+      "code": "SAA_INDUSTRIES",
+      "name": "Industries",
+      "description": "Industries"
+    },
+    "capacity": 9,
+    "allocated": 1,
+    "waitlisted": 0,
+    "createdTime": "2026-04-29T10:31:46",
+    "activityState": "LIVE",
+    "outsideWork": false
+  },
+  {
+    "id": 4,
+    "activityName": "Key Cutter",
+    "category": {
+      "id": 1,
+      "code": "SAA_INDUSTRIES",
+      "name": "Industries",
+      "description": "Industries"
+    },
+    "capacity": 15,
+    "allocated": 8,
+    "waitlisted": 2,
+    "createdTime": "2023-07-20T16:05:16",
+    "activityState": "LIVE",
+    "outsideWork": true
+  },
+  {
+    "id": 5,
+    "activityName": "Farm shop",
+    "category": {
+      "id": 3,
+      "code": "SAA_PRISON_JOBS",
+      "name": "Prison jobs",
+      "description": "Prison jobs"
+    },
+    "capacity": 19,
+    "allocated": 4,
+    "waitlisted": 0,
+    "createdTime": "2026-04-22T10:22:09",
+    "activityState": "LIVE",
+    "outsideWork": true
+  },
+  {
+    "id": 6,
+    "activityName": "Outside cafe",
+    "category": {
+      "id": 3,
+      "code": "SAA_PRISON_JOBS",
+      "name": "Prison jobs",
+      "description": "Prison jobs"
+    },
+    "capacity": 9,
+    "allocated": 1,
+    "waitlisted": 0,
+    "createdTime": "2026-04-29T10:34:23",
+    "activityState": "LIVE",
+    "outsideWork": true
+  }
+]

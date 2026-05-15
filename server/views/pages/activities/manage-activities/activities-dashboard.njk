@@ -45,6 +45,9 @@
                     {% if user.externalActivitiesRolledOut %}
                         {{ mojSubNavigation({
                             label: "Sub navigation",
+                            attributes: {
+                                "data-qa": "moj-sub-navigation"
+                            },
                             items: [{
                                 text: "In-prison activities",
                                 href: "dashboard?" + stateFilterParams + "&isOutsideWorkFilter=false",
@@ -100,7 +103,7 @@
 
                         {{ govukTable({
                             attributes: {
-                                'data-module': 'moj-sortable-table'
+                                'data-qa': 'activities-table'
                             },
                             caption: ("Outside" if filters.isOutsideWorkFilter === 'true' else "In-prison") + " activities with the date created, activity category and current state",
                             captionClasses: "govuk-visually-hidden",
@@ -134,7 +137,7 @@
                             rows: rows
                         }) }}
                     {% else %}
-                        <p class="govuk-body-l">There are no {{ filters.stateFilter }} {{ 'outside ' if filters.isOutsideWorkFilter == 'true' }}activities.</p>
+                        <p class="govuk-body-l" data-qa="no-activities">There are no {{ filters.stateFilter }} {{ 'outside ' if filters.isOutsideWorkFilter == 'true' }}activities.</p>
                     {% endif %}
 
                 </div>
