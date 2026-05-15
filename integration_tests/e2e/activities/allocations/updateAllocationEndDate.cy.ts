@@ -118,7 +118,7 @@ context('Update an allocation end as needed', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
