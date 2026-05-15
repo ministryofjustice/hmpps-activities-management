@@ -36,6 +36,7 @@ export type AllocateToActivityJourney = {
     endDate?: string
     scheduleWeeks?: number
     paid?: boolean
+    outsideWork: boolean
     notInWork?: boolean
   }
   startDateOption?: StartDateOption
