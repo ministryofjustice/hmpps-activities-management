@@ -31,6 +31,7 @@ describe('Route Handlers - Allocate - Start', () => {
         user: {
           username: 'joebloggs',
           activeCaseLoadId: 'LEI',
+          externalActivitiesRolledOut: false,
         },
       },
       render: jest.fn(),
@@ -72,6 +73,7 @@ describe('Route Handlers - Allocate - Start', () => {
           offWing: false,
           inCell: false,
           paid: true,
+          outsideWork: false,
         },
         description: 'Maths',
         internalLocation: { description: 'Education room 1' },
@@ -124,6 +126,7 @@ describe('Route Handlers - Allocate - Start', () => {
           onWing: true,
           inCell: false,
           paid: true,
+          outsideWork: false,
         },
         scheduledInstance: {
           id: 123,
@@ -149,6 +152,100 @@ describe('Route Handlers - Allocate - Start', () => {
       await handler.GET(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('../error/transferred')
+    })
+
+    it('should populate the session with journey data and redirect to the start allocation date page for an external activity', async () => {
+      req.query = { scheduleId: '2' }
+      res.locals.user.externalActivitiesRolledOut = true
+
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue({
+          prisonerNumber: 'ABC123',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          cellLocation: '1-2-001',
+          prisonId: 'LEI',
+          status: 'ACTIVE IN',
+        } as Prisoner)
+
+      when(prisonService.getPrisonerIepSummary)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue({
+          iepLevel: 'Standard',
+        } as IepSummary)
+
+      const schedule1 = {
+        id: 2,
+        activity: {
+          id: 2,
+          onWing: true,
+          offWing: false,
+          inCell: false,
+          paid: true,
+          outsideWork: true,
+        },
+        description: 'Cafe',
+        internalLocation: { description: 'Cafe' },
+        startDate: '2023-07-26',
+        endDate: '2023-08-26',
+        scheduleWeeks: 2,
+        instances: [
+          {
+            id: 456,
+          },
+        ],
+      } as unknown as ActivitySchedule
+
+      when(activitiesService.getActivitySchedule).calledWith(2, res.locals.user).mockResolvedValue(schedule1)
+
+      when(findNextSchedulesInstance).calledWith(schedule1).mockReturnValue(schedule1.instances[0])
+
+      await handler.GET(req, res)
+
+      expect(req.journeyData.allocateJourney).toEqual({
+        exclusions: [],
+        updatedExclusions: [],
+        inmates: [
+          {
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            cellLocation: '1-2-001',
+            incentiveLevel: 'Standard',
+            prisonCode: 'LEI',
+            status: 'ACTIVE IN',
+          },
+        ],
+        inmate: {
+          prisonerNumber: 'ABC123',
+          prisonerName: 'Joe Bloggs',
+          cellLocation: '1-2-001',
+          incentiveLevel: 'Standard',
+          prisonCode: 'LEI',
+          status: 'ACTIVE IN',
+        },
+        activity: {
+          activityId: 2,
+          scheduleId: 2,
+          scheduleWeeks: 2,
+          name: 'Cafe',
+          location: 'Cafe',
+          startDate: '2023-07-26',
+          endDate: '2023-08-26',
+          offWing: false,
+          onWing: true,
+          inCell: false,
+          paid: true,
+          outsideWork: true,
+        },
+        scheduledInstance: {
+          id: 456,
+        },
+      })
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+      )
+      expect(res.redirect).toHaveBeenCalledWith('../start-date')
     })
   })
 })

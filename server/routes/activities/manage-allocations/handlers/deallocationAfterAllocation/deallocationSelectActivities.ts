@@ -56,6 +56,7 @@ export default class DeallocationSelectActivities {
         inCell: activity.inCell,
         onWing: activity.onWing,
         offWing: activity.offWing,
+        outsideWork: activity.outsideWork,
       }
       // We need to protect against the eventuality that a user selects multiple to deallocate, then goes back and only selects one. So we need to wipe activitiesToDeallocate if they have selected only one in this POST
       req.journeyData.allocateJourney.activitiesToDeallocate = null

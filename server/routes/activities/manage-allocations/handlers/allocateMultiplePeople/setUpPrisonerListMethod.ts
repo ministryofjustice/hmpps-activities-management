@@ -50,6 +50,7 @@ export default class SetUpPrisonerListMethodRoutes {
         endDate: schedule.endDate,
         scheduleWeeks: schedule.scheduleWeeks,
         paid: schedule.activity.paid,
+        outsideWork: schedule.activity.outsideWork,
       },
       inmates: [],
       exclusions: [],

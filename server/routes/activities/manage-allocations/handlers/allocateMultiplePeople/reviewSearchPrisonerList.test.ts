@@ -19,6 +19,7 @@ describe('Review the prisoners added individually', () => {
         user: {
           username: 'USER1',
           activeCaseLoadDescription: 'Moorland (HMP & YOI)',
+          externalActivitiesRolledOut: false,
         },
       },
       render: jest.fn(),
@@ -106,6 +107,14 @@ describe('Review the prisoners added individually', () => {
     it('Redirects to the next page', async () => {
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('activity-requirements-review')
+    })
+
+    it('should redirect to start date page for external activities', async () => {
+      req.journeyData.allocateJourney.activity.outsideWork = true
+      res.locals.user.externalActivitiesRolledOut = true
+
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('../start-date')
     })
   })
   describe('REMOVE', () => {

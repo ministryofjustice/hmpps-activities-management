@@ -21,4 +21,6 @@ export default class CheckAndConfirmMultiplePage extends Page {
       .find('td')
       .then($data => expect($data.get(cellNumber).innerText).to.contain(contents))
   }
+
+  location = (): Cypress.Chainable => cy.get(':nth-child(2) > .govuk-summary-list__value').contains('Outside')
 }
