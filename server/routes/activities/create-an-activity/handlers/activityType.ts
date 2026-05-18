@@ -16,7 +16,8 @@ export default class ActivityTypeRoutes {
   }
 
   async POST(req: Request, res: Response): Promise<void> {
-    req.journeyData.createJourney.outsideWork = res.locals.user.externalActivitiesRolledOut && req.body.type === 'external'
+    req.journeyData.createJourney.outsideWork =
+      res.locals.user.externalActivitiesRolledOut && req.body.type === 'external'
     res.redirect('category')
   }
 }
