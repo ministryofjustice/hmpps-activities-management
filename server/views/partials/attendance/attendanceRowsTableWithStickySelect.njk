@@ -92,7 +92,8 @@
                         status: 'COMPLETED',
                         payable: isPayable,
                         issuePayment: attendee.advancedAttendance.issuePayment,
-                        marginTagClass: true
+                        marginTagClass: true,
+                        user: user
                     }) }}
             {% elif attendee.advancedAttendances | length %}
                 <div class="multi-row--container">
@@ -106,7 +107,8 @@
                                         status: 'COMPLETED',
                                         payable: isPayable,
                                         issuePayment: advancedAttendance.issuePayment,
-                                        marginTagClass: true
+                                        marginTagClass: true,
+                                        user: user
                                     }) }}
                             {% else %}
                                 -
@@ -126,7 +128,8 @@
                                     status: attendance.status,
                                     payable: isPayable,
                                     issuePayment: attendance.issuePayment,
-                                    marginTagClass: true
+                                    marginTagClass: true,
+                                    user: user
                                 }) }}
                             {{ incentiveLevelWarningTag(attendance) }}
                         </div>
@@ -141,7 +144,8 @@
                         status: attendee.attendance.status,
                         payable: isPayable,
                         issuePayment: attendee.attendance.issuePayment,
-                        marginTagClass: true
+                        marginTagClass: true,
+                        user: user
                     }) }}
                 {{ incentiveLevelWarningTag(attendee.attendance) }}
             {% endif %}

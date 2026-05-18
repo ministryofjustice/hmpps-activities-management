@@ -21,6 +21,11 @@ describe('ActivityType Handler', () => {
     res = {
       render: jest.fn(),
       redirect: jest.fn(),
+      locals: {
+        user: {
+          externalActivitiesRolledOut: true,
+        },
+      },
     } as unknown as Response
 
     handler = new ActivityTypeRoutes()

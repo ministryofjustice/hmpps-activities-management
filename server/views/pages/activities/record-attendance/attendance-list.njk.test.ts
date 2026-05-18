@@ -57,6 +57,7 @@ describe('Views - Attendance list', () => {
   it('should display Employer-paid tag when outside work flag is set', () => {
     attendanceListContext.isPayable = false
     attendanceListContext.instance.activitySchedule.activity.outsideWork = true
+    attendanceListContext.user.externalActivitiesRolledOut = true
 
     const $ = cheerio.load(compiledTemplate.render(attendanceListContext))
     expect($('strong:contains("Employer-paid")')).toHaveLength(1)

@@ -21,7 +21,7 @@
 {% set pageTitle = "Record attendance at an activity - Activities - DPS" %}
 {% set pageId = 'attendance-list-page' %}
 {% set cancelledComment = '' %}
-{% set isOutsideActivity = instance.activitySchedule.activity.outsideWork %}
+{% set isOutsideActivity = user.externalActivitiesRolledOut and instance.activitySchedule.activity.outsideWork %}
 {% if instance and instance.comment %}
     {% set cancelledComment = " - "+instance.comment %}
 {% endif %}
@@ -189,7 +189,8 @@
                         payable: isPayable,
                         issuePayment: attendee.advancedAttendance.issuePayment,
                         marginTagClass: true,
-                        outsideWork: isOutsideActivity
+                        outsideWork: isOutsideActivity,
+                        user: user
                     }) }}
             {% else %}
                 {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) }}
@@ -200,7 +201,8 @@
                         payable: isPayable,
                         issuePayment: attendee.attendance.issuePayment,
                         marginTagClass: true,
-                        outsideWork: isOutsideActivity
+                        outsideWork: isOutsideActivity,
+                        user: user
                     }) }}
                 {{ incentiveLevelWarningTag(attendee.attendance) }}
             {% endif %}
