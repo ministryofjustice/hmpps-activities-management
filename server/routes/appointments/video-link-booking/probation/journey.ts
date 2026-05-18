@@ -11,6 +11,7 @@ export type BookAProbationMeetingJourney = {
   probationTeamCode?: string
   meetingTypeCode?: string
   officerDetailsNotKnown?: boolean
+  probationOfficerDetailsKnown?: boolean
   officer?: {
     fullName: string
     email: string

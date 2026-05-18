@@ -69,13 +69,15 @@ export default ({
       probationTeamCode: booking.probationTeamCode,
       meetingTypeCode: booking.probationMeetingType,
       officerDetailsNotKnown: booking.additionalBookingDetails?.contactName === undefined,
-      officer: booking.additionalBookingDetails?.contactName
-        ? {
-            fullName: booking.additionalBookingDetails?.contactName,
-            email: booking.additionalBookingDetails?.contactEmail,
-            telephone: booking.additionalBookingDetails?.contactNumber,
-          }
-        : undefined,
+      probationOfficerDetailsKnown: booking.additionalBookingDetails?.contactName === undefined,
+      officer:
+        booking.additionalBookingDetails?.contactName !== undefined
+          ? {
+              fullName: booking.additionalBookingDetails?.contactName,
+              email: booking.additionalBookingDetails?.contactEmail,
+              telephone: booking.additionalBookingDetails?.contactNumber,
+            }
+          : undefined,
       date: parseDateToISOString(mainAppointment.appointmentDate),
       startTime: parseTimeToISOString(mainAppointment.startTime),
       endTime: parseTimeToISOString(mainAppointment.endTime),

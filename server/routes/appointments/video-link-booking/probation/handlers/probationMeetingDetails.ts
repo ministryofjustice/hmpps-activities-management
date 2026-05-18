@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { Equals, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, ValidateIf } from 'class-validator'
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, ValidateIf } from 'class-validator'
 import { parsePhoneNumberWithError } from 'libphonenumber-js'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import ProbationBookingService from '../../../../../services/probationBookingService'
 import { YesNo } from '../../../../../@types/activities'
+import IsValidUkPhoneNumber from '../../../../../validators/isValidUkPhoneNumber'
 
 export class ProbationMeetingDetails {
   @Expose()
@@ -22,35 +23,29 @@ export class ProbationMeetingDetails {
   meetingTypeCode: string
 
   @Expose()
-  @Transform(({ obj }) =>
-    !obj.officerDetailsNotKnown && !obj.officerFullName && !obj.officerEmail && !obj.officerTelephone
-      ? null
-      : !!obj.officerDetailsNotKnown !== !!(obj.officerFullName || obj.officerEmail || obj.officerTelephone),
-  )
-  @Equals(true, { message: `Enter either the probation officer's details, or select 'Not yet known'` })
-  @IsNotEmpty({ message: "Enter the probation officer's details" })
-  officerDetailsOrUnknown: boolean
+  @IsEnum(YesNo, { message: 'Select if you know the details of the probation officer' })
+  probationOfficerDetailsKnown: string
 
   @Expose()
-  @Transform(({ value }) => value === 'true')
-  officerDetailsNotKnown: boolean
-
-  @Expose()
-  @ValidateIf(o => o.officerDetailsOrUnknown && !o.officerDetailsNotKnown)
+  @Transform(({ value, obj }) => (obj.probationOfficerDetailsKnown === YesNo.YES ? value : undefined))
+  @ValidateIf(o => o.probationOfficerDetailsKnown === YesNo.YES)
   @IsNotEmpty({ message: `Enter the probation officer's full name` })
   officerFullName: string
 
   @Expose()
-  @ValidateIf(o => o.officerDetailsOrUnknown && !o.officerDetailsNotKnown)
+  @Transform(({ value, obj }) => (obj.probationOfficerDetailsKnown === YesNo.YES ? value : undefined))
+  @ValidateIf(o => o.probationOfficerDetailsKnown === YesNo.YES)
   @IsEmail({}, { message: 'Enter a valid email address' })
   @IsNotEmpty({ message: `Enter the probation officer's email address` })
   officerEmail: string
 
   @Expose()
-  @Transform(({ value }) => (value.trim() === '' ? undefined : value))
-  @ValidateIf(o => o.officerDetailsOrUnknown && !o.officerDetailsNotKnown)
+  @Transform(({ value, obj }) =>
+    value && value.trim() !== '' && obj.probationOfficerDetailsKnown === YesNo.YES ? value : undefined,
+  )
+  @ValidateIf(o => o.probationOfficerDetailsKnown === YesNo.YES)
   @IsOptional()
-  @IsPhoneNumber('GB', { message: 'Enter a valid UK phone number' })
+  @IsValidUkPhoneNumber({ message: 'Enter a valid UK phone number' })
   officerTelephone: string
 }
 
@@ -80,7 +75,7 @@ export default class ProbationMeetingDetailsRoutes {
       probationTeamRequired,
       probationTeamCode,
       meetingTypeCode,
-      officerDetailsNotKnown,
+      probationOfficerDetailsKnown,
       officerFullName,
       officerEmail,
       officerTelephone,
@@ -93,16 +88,17 @@ export default class ProbationMeetingDetailsRoutes {
       probationTeamRequired: probationTeamRequired === YesNo.YES,
       probationTeamCode: probationTeamRequired === YesNo.YES ? probationTeamCode : 'TEAM_NOT_LISTED',
       meetingTypeCode,
-      officerDetailsNotKnown,
-      officer: officerDetailsNotKnown
-        ? undefined
-        : {
-            fullName: officerFullName,
-            email: officerEmail,
-            telephone: officerTelephone
-              ? parsePhoneNumberWithError(officerTelephone, 'GB').formatNational()
-              : undefined,
-          },
+      probationOfficerDetailsKnown: probationOfficerDetailsKnown === YesNo.YES,
+      officer:
+        probationOfficerDetailsKnown === YesNo.YES
+          ? {
+              fullName: officerFullName,
+              email: officerEmail,
+              telephone: officerTelephone
+                ? parsePhoneNumberWithError(officerTelephone, 'GB').formatNational()
+                : undefined,
+            }
+          : undefined,
     }
 
     if (mode === 'amend') {
