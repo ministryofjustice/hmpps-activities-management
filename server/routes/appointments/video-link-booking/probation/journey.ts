@@ -10,7 +10,6 @@ export type BookAProbationMeetingJourney = {
   probationTeamRequired?: boolean
   probationTeamCode?: string
   meetingTypeCode?: string
-  officerDetailsNotKnown?: boolean
   probationOfficerDetailsKnown?: boolean
   officer?: {
     fullName: string

@@ -68,8 +68,7 @@ export default ({
       probationTeamRequired: booking.probationTeamCode !== 'TEAM_NOT_LISTED',
       probationTeamCode: booking.probationTeamCode,
       meetingTypeCode: booking.probationMeetingType,
-      officerDetailsNotKnown: booking.additionalBookingDetails?.contactName === undefined,
-      probationOfficerDetailsKnown: booking.additionalBookingDetails?.contactName === undefined,
+      probationOfficerDetailsKnown: booking.additionalBookingDetails?.contactName !== undefined,
       officer:
         booking.additionalBookingDetails?.contactName !== undefined
           ? {
