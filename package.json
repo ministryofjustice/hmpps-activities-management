@@ -101,7 +101,7 @@
     "axe-core": "^4.11.4",
     "better-npm-audit": "^3.11.0",
     "cheerio": "1.2.0",
-    "cypress": "15.14.2",
+    "cypress": "15.15.0",
     "cypress-axe": "^1.7.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-multi-reporters": "^2.0.5",
@@ -137,6 +137,6 @@
     "path-to-regexp": "8.4.2",
     "diff": "^9.0.0",
     "@actions/http-client": "^3.0.2",
-    "undici": "^8.2.0"
+    "undici": "^8.3.0"
   }
 }
