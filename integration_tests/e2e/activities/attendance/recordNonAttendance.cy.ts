@@ -21,7 +21,7 @@ context('Record non attendance', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.signIn()
+    
 
     cy.stubEndpoint(
       'GET',
@@ -46,6 +46,7 @@ context('Record non attendance', () => {
   })
 
   it('should click through record non attendance journey and SHOULD display sick pay radios for prison work', () => {
+    cy.signIn()
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -90,6 +91,7 @@ context('Record non attendance', () => {
   })
 
   it('should click through record non attendance journey and should NOT display sick pay options for outside work', () => {
+    cy.signInEAEnabled()
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
