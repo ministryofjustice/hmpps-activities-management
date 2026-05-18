@@ -26,7 +26,7 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l">Manage allocations</span>
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-7">{{ schedule.description }}</h1>
-            {% if activity.outsideWork %}
+            {% if user.externalActivitiesRolledOut and activity.outsideWork %}
                 <p class="govuk-body-l">View and edit people's allocations, and find who to allocate.</p>
             {% else %}
                 <p class="govuk-body-l">Check the requirements for this activity so that you can allocate suitable candidates.</p>

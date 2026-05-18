@@ -568,5 +568,8 @@
     "notAttendedPercentage": "0",
     "notRecordedPercentage": "67"
   },
-  "isPayable": true
+  "isPayable": true,
+  "user": {
+    "externalActivitiesRolledOut": false
+  }
 }

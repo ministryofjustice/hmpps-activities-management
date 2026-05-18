@@ -107,6 +107,9 @@ describe('show payStatus macro', () => {
           status: 'COMPLETED',
           outsideWork: true,
           payable: false,
+          user: {
+            externalActivitiesRolledOut: true,
+          },
         },
       }
 

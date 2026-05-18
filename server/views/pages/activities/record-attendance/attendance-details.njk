@@ -8,7 +8,7 @@
 {% set pageId = 'attendance-view-details-page' %}
 {% set jsBackLink = true %}
 
-{% set outsideWork = instance.activitySchedule.activity.outsideWork %}
+{% set outsideWork = user.externalActivitiesRolledOut and instance.activitySchedule.activity.outsideWork %}
 {% set caseNoteHref %}
     <p>
         <a href='{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}/case-notes' class='govuk-link govuk-link--no-visited-state' target='_blank' rel='noopener noreferrer'>
