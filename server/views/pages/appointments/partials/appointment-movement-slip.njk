@@ -33,7 +33,7 @@
                     '<li>' + appointmentTime(appointment) + '</li>' +
                     '<li>' + (appointment.startDate | toDate | formatDate) + '</li>' +
                 '</ul>') }}
-                {{ labelAndValue('Location', showLocation(appointment)) }}
+                {{ labelAndValue('Location', showLocation(user.externalActivitiesRolledOut, appointment)) }}
 
                 {# Suppress extra information on movement slip for some video link appointments (may contain personal data) #}
                 {% if not prisonerExtraInformationEnabled and appointment.category.code in ['VLPA', 'VLAP', 'VLLA', 'VLOO'] %}
