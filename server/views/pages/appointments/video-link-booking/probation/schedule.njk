@@ -263,6 +263,6 @@
 
 {% macro locationText(scheduledEvent) %}
     {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
-        {{ showLocation(scheduledEvent) }}
+        {{ showLocation(user.externalActivitiesRolledOut, scheduledEvent) }}
     {% endif %}
 {% endmacro %}
