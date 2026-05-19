@@ -1,11 +1,12 @@
+{% set outsideWork = user.externalActivitiesRolledOut and activity.outsideWork %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full govuk-!-margin-bottom-4">
-        {% if activity.outsideWork %}
+        {% if outsideWork %}
             <h2 class="govuk-heading-l">Allocate people to {{ schedule.description }}</h2>
         {% endif %}
         <p class="govuk-body">You can:</p>
         <ul class="govuk-list govuk-list--bullet">
-            {% if activity.outsideWork %}
+            {% if outsideWork %}
                 <li>search the list for who you want to allocate</li>
             {% else %}
                 <li>find someone to allocate</li>
@@ -16,7 +17,7 @@
 </div>
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop govuk-grid-column-one-half">
-        {% if activity.outsideWork %}
+        {% if outsideWork %}
             <p class="govuk-body">The list shows people not currently allocated to {{ schedule.description }}</p>
         {% else %}
             <p class="govuk-heading-s">Find someone to allocate</p>
@@ -25,7 +26,7 @@
             </p>
         {% endif %}
     </div>
-    {% if not activity.outsideWork %}
+    {% if not outsideWork %}
         <div class="govuk-grid-column-one-third-from-desktop govuk-grid-column-one-half">
             <form method='GET'>
                 <label class="govuk-label" for="candidate-search-input">Search by name or prison number:</label>
@@ -43,7 +44,7 @@
         </div>
     {% endif %}
 </div>
-{% if activity.outsideWork %}
+{% if outsideWork %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <form method='GET'>
@@ -62,7 +63,7 @@
         </div>
     </div>
 {% endif %}
-{% if not activity.outsideWork %}
+{% if not outsideWork %}
     <div class='filter'>
         <form method='GET'>
             <div class="filter__items" id='candidates-filter'>
