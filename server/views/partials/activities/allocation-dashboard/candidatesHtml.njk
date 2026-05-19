@@ -62,7 +62,7 @@
         </div>
     </div>
 {% endif %}
-{% if user.externalActivitiesRolledOut and not activity.outsideWork %}
+{% if (user.externalActivitiesRolledOut and not activity.outsideWork) or not user.externalActivitiesRolledOut %}
     <div class='filter'>
         <form method='GET'>
             <div class="filter__items" id='candidates-filter'>
