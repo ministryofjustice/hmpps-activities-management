@@ -184,7 +184,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: showLocation(appointment)
+                            text: showLocation(user.externalActivitiesRolledOut, appointment)
                         },
                         actions: {
                             items: [
@@ -319,7 +319,7 @@
             <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointment.appointmentName }}</h1>
             <span class="govuk-caption-l">{{ appointment.startDate | toDate | formatDate }}</span>
             <span class="govuk-caption-l">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }}</span>
-            <span class="govuk-caption-l">{{ showLocation(appointment) }}</span>
+            <span class="govuk-caption-l">{{ showLocation(user.externalActivitiesRolledOut, appointment) }}</span>
             <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
         </div>
     </div>
