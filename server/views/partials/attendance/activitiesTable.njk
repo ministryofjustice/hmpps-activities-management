@@ -42,7 +42,7 @@
 
     {% set rows = [] %}
     {% for activity in activities %}
-        {% set activityLocation = showLocation(activity, makeCapitals = true) %}
+        {% set activityLocation = showLocation(user.externalActivitiesRolledOut, activity, makeCapitals = true) %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + activity.summary + ' ' + (activity.session),
             value: activity.scheduledInstanceId,

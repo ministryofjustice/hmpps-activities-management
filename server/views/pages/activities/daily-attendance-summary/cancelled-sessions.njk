@@ -95,7 +95,7 @@
     {% for cancelledSession in cancelledSessions %}
         {% set sessionTimes = cancelledSession.startTime + ' to ' + cancelledSession.endTime %}
         {% if timeSlot === 'DAY' or timeSlot === cancelledSession.timeSlot %}
-            {% set location = showLocation(cancelledSession) %}
+            {% set location = showLocation(user.externalActivitiesRolledOut, cancelledSession) %}
             {% set cancelledSessionsRows = (cancelledSessionsRows.push([
                 {
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": cancelledSession.summary },
