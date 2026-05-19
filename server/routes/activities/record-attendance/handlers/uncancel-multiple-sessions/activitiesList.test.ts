@@ -221,6 +221,7 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
             },
           ],
           locations: [],
+          hasCancelledSessionsToday: false,
         },
       )
     })
@@ -265,6 +266,7 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
             },
           ],
           locations: [],
+          hasCancelledSessionsToday: false,
         },
       )
     })

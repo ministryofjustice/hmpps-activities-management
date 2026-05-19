@@ -100,3 +100,8 @@ export const activityRows = (
       return a.endTime.localeCompare(b.endTime)
     })
 }
+
+export const hasCancelledSessionsToday = (activityAttendanceSummary: ScheduledInstanceAttendanceSummary[]) => {
+  const today = formatIsoDate(new Date())
+  return activityAttendanceSummary.some(a => a.cancelled && a.sessionDate === today)
+}
