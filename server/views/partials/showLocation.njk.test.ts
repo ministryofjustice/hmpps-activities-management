@@ -262,6 +262,116 @@ describe('Show Location Macro', () => {
     })
   })
 
+  describe('External Activities Rolled Out and Outside Work', () => {
+    it("should display 'Outside' when externalActivitiesRolledOut and outsideWork", () => {
+      const viewContext = {
+        event: {
+          outsideWork: true,
+        },
+        externalActivitiesRolledOut: true,
+      }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('body').text()).toContain('Outside')
+    })
+
+    it("should not display 'Outside' when externalActivitiesRolledOut is false and outsideWork is true", () => {
+      const viewContext = {
+        event: {
+          outsideWork: true,
+          inCell: true,
+        },
+        externalActivitiesRolledOut: false,
+      }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('body').text()).toContain('In cell')
+      expect($('body').text()).not.toContain('Outside')
+    })
+
+    it("should not display 'Outside' when externalActivitiesRolledOut is true and outsideWork is false", () => {
+      const viewContext = {
+        event: {
+          outsideWork: false,
+          inCell: true,
+        },
+        externalActivitiesRolledOut: true,
+      }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('body').text()).toContain('In cell')
+      expect($('body').text()).not.toContain('Outside')
+    })
+
+    it('should prioritize inCell over outsideWork', () => {
+      const viewContext = {
+        event: {
+          inCell: true,
+          outsideWork: true,
+        },
+        externalActivitiesRolledOut: true,
+      }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('body').text()).toContain('In cell')
+      expect($('body').text()).not.toContain('Outside')
+    })
+
+    it('should prioritize onWing over outsideWork', () => {
+      const viewContext = {
+        event: {
+          onWing: true,
+          outsideWork: true,
+        },
+        externalActivitiesRolledOut: true,
+      }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('body').text()).toContain('On wing')
+      expect($('body').text()).not.toContain('Outside')
+    })
+
+    it('should prioritize offWing over outsideWork', () => {
+      const viewContext = {
+        event: {
+          offWing: true,
+          outsideWork: true,
+        },
+        externalActivitiesRolledOut: true,
+      }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('body').text()).toContain('Off wing')
+      expect($('body').text()).not.toContain('Outside')
+    })
+
+    it('should display "Outside" with capitalize option', () => {
+      const view = `
+        {% from "partials/showLocation.njk" import showLocation %}
+
+        {{ showLocation(externalActivitiesRolledOut, event, makeCapitals = true) }}
+      `
+      compiledTemplate = compile(view, njkEnv)
+
+      const viewContext = {
+        event: {
+          outsideWork: true,
+        },
+        externalActivitiesRolledOut: true,
+      }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('body').text()).toContain('Outside')
+    })
+  })
+
   describe('Internal Location Provided', () => {
     beforeEach(() => {
       const view = `
