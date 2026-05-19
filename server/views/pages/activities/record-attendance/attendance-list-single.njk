@@ -64,7 +64,7 @@
                     {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.timeSlot }})
                 </span>
                 <span class="govuk-caption-l">{{ activityDate }}</span>
-                <span class="govuk-caption-l">{{ showLocation(instance.activitySchedule.activity, instance.activitySchedule.internalLocation.description, true) }}
+                <span class="govuk-caption-l">{{ showLocation(user.externalActivitiesRolledOut, instance.activitySchedule.activity, instance.activitySchedule.internalLocation.description, true) }}
                 </span>
             </h1>
 

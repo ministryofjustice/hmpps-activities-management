@@ -75,7 +75,7 @@
     {% for attendee in refusedSessions %}
         {% set sessionTimes = attendee.attendance.startTime + ' to ' + attendee.attendance.endTime %}
         {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
-            {% set location = showLocation(attendee) %}
+            {% set location = showLocation(user.externalActivitiesRolledOut, attendee) %}
             {% set caseNoteType = "Incentive level warning" if attendee.attendance.incentiveLevelWarningIssued else "Negative: general entry" %}
             {% set linkText = "View or edit attendance record" if attendee.editable else "View attendance record" %}
             {% set refusedRows = (refusedRows.push([
