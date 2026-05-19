@@ -57,6 +57,10 @@ export default class UncancelActivitiesListPage extends Page {
       })
   }
 
+  locationTypeRadio = (value: string) => cy.get(`input[name="locationType"][value="${value}"]`)
+
+  applyFilters = () => cy.get('button[type="submit"]').first().click()
+
   sessionPMCheckbox = () => cy.get(`[name=sessionFilters][value="PM"]`)
 
   uncancelSessions = () => cy.get('button').contains('Uncancel activity sessions').click()

@@ -1,5 +1,5 @@
 import { addDays, subDays } from 'date-fns'
-import { activityRows, filterItems } from './activitiesPageUtils'
+import { activityRows, filterItems, hasCancelledSessionsToday } from './activitiesPageUtils'
 import TimeSlot from '../../../../enum/timeSlot'
 
 const attendanceSummaryResponse = [
@@ -491,5 +491,20 @@ describe('activityRows', () => {
         allowSelection: true,
       },
     ])
+  })
+
+  it('should return hasCancelledSessionsToday as TRUE if sessions are cancelled `today`', async () => {
+    // Mock system date to when there are cancelled sessions (Math 3)
+    jest.useFakeTimers().setSystemTime(new Date('2023-08-22'))
+    const response = hasCancelledSessionsToday(attendanceSummaryResponse)
+
+    expect(response).toEqual(true)
+  })
+
+  it('should return hasCancelledSessionsToday as FALSE if no sessions are cancelled `today`', async () => {
+    // Mock system date to when there are no cancelled sessions
+    jest.useFakeTimers().setSystemTime(new Date('2024-01-01'))
+    const response = hasCancelledSessionsToday(attendanceSummaryResponse)
+    expect(response).toEqual(false)
   })
 })
