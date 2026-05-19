@@ -28,7 +28,7 @@
         },
         {
             text: allocation.payRate | toMoney if allocation.payRate else 'Unpaid'
-        } if not allocation.outsideWork else {
+        } if not user.externalActivitiesRolledOut or not allocation.outsideWork else {
             text: allocation.payRate | toMoney if allocation.payRate else 'None - employer-paid activity'
         },
         {
