@@ -32,6 +32,10 @@ context('Cancel Multiple Sessions', () => {
     getScheduledInstanceEnglishLevel2.date = todayStr
     getScheduledInstanceEnglishLevel2.cancelled = true
 
+    getAttendanceSummaryCancelled[0].sessionDate = todayStr
+    getAttendanceSummaryCancelled[1].sessionDate = todayStr
+    getAttendanceSummaryCancelled[2].sessionDate = todayStr
+
     cy.stubEndpoint(
       'GET',
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${todayStr}`,
@@ -132,5 +136,46 @@ context('Cancel Multiple Sessions', () => {
     uncancelConfirmSinglePage.confirm()
 
     Page.verifyOnPage(UncancelActivitiesListPage)
+  })
+
+  it('Should filter results correctly and display the correct text if none exist', () => {
+    getScheduledInstanceEnglishLevel1.date = tomorrowStr
+    getScheduledInstanceEnglishLevel2.date = tomorrowStr
+
+    cy.stubEndpoint(
+      'GET',
+      `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${tomorrowStr}`,
+      getAttendanceSummaryCancelled,
+    )
+
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.enterDate(new Date(tomorrowStr))
+    selectPeriodPage.selectAM()
+    selectPeriodPage.selectPM()
+    selectPeriodPage.selectED()
+    selectPeriodPage.continue()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesPage)
+    activitiesPage.containsActivities('English level 1', 'English level 2', 'Gym sports and fitness')
+    activitiesPage.uncancelSessionsLink().click()
+
+    const uncancelActivityPage = Page.verifyOnPage(UncancelActivitiesListPage)
+    cy.contains('No sessions to display').should('not.exist')
+    uncancelActivityPage.locationTypeRadio('IN_CELL').click()
+    uncancelActivityPage.applyFilters()
+    cy.contains('No sessions to display').should('exist')
   })
 })

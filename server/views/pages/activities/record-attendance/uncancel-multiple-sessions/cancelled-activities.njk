@@ -65,7 +65,7 @@
     </div>
 
     <div class="attendance-activities">
-      {% if activityRows.length == 0 %}
+      {% if not hasCancelledSessionsToday %}
         <P>
           There are no cancelled sessions for {{ activityDate | formatDate }}
           {% set comma = joiner(', ') %}
