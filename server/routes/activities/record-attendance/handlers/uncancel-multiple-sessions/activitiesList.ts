@@ -3,7 +3,7 @@ import { addDays, startOfDay } from 'date-fns'
 import _ from 'lodash'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { asString, convertToArray, formatDate, toDate } from '../../../../../utils/utils'
-import { activityRows, filterItems } from '../../utils/activitiesPageUtils'
+import { activityRows, filterItems, hasCancelledSessionsToday } from '../../utils/activitiesPageUtils'
 import LocationsService from '../../../../../services/locationsService'
 
 export default class UncancelMultipleSessionsRoutes {
@@ -52,6 +52,7 @@ export default class UncancelMultipleSessionsRoutes {
         true,
       ),
       locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
+      hasCancelledSessionsToday: hasCancelledSessionsToday(activityAttendanceSummary),
     })
   }
 
