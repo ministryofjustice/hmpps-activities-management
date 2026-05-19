@@ -135,75 +135,73 @@
                 {% endif %}
 
               <div class="govuk-form-group">
-                <fieldset class="govuk-fieldset">
-                  {% set probationOfficerDetailsHtml %}
-                    {{ govukInput({
-                      id: "officerFullName",
-                      name: "officerFullName",
-                      label: {
-                        text: "Full name"
-                      },
-                      errorMessage: validationErrors | findError('officerFullName'),
-                      formGroup: {
-                        classes: 'govuk-!-margin-bottom-3'
-                      },
-                      classes: "govuk-!-width-one-half",
-                      value: formResponses.officerFullName or session.bookAProbationMeetingJourney.officer.fullName
-                    }) }}
-
-                    {{ govukInput({
-                      id: "officerEmail",
-                      name: "officerEmail",
-                      label: {
-                        text: "Email address"
-                      },
-                      errorMessage: validationErrors | findError('officerEmail'),
-                      formGroup: {
-                        classes: 'govuk-!-margin-bottom-3'
-                      },
-                      classes: "govuk-!-width-one-half",
-                      value: formResponses.officerEmail or session.bookAProbationMeetingJourney.officer.email
-                    }) }}
-
-                    {{ govukInput({
-                      id: "officerTelephone",
-                      name: "officerTelephone",
-                      label: {
-                        text: "UK phone number (optional)"
-                      },
-                      errorMessage: validationErrors | findError('officerTelephone'),
-                      classes: "govuk-!-width-one-half",
-                      value: formResponses.officerTelephone or session.bookAProbationMeetingJourney.officer.telephone
-                    }) }}
-                  {% endset %}
-
-                  {{ govukRadios({
-                    idPrefix: "probationOfficerDetailsKnown",
-                    name: "probationOfficerDetailsKnown",
-                    errorMessage: validationErrors | findError('probationOfficerDetailsKnown'),
-                    fieldset: {
-                      legend: {
-                        text: "Do you know the details of the probation officer?",
-                        classes: "govuk-fieldset__legend--s"
-                      }
+                {% set probationOfficerDetailsHtml %}
+                  {{ govukInput({
+                    id: "officerFullName",
+                    name: "officerFullName",
+                    label: {
+                      text: "Full name"
                     },
-                    items: [
-                      {
-                        value: 'YES',
-                        text: "Yes",
-                        checked: formResponses.probationOfficerDetailsKnown == 'YES' or session.bookAProbationMeetingJourney.probationOfficerDetailsKnown === true,
-                        conditional: {
-                        html: probationOfficerDetailsHtml
-                      }
-                      },
-                      {
-                        value: 'NO',
-                        text: "No",
-                        checked: formResponses.probationOfficerDetailsKnown == 'NO' or (session.bookAProbationMeetingJourney.probationOfficerDetailsKnown === false and not formResponses)
-                      }
-                    ]
+                    errorMessage: validationErrors | findError('officerFullName'),
+                    formGroup: {
+                      classes: 'govuk-!-margin-bottom-3'
+                    },
+                    classes: "govuk-!-width-one-half",
+                    value: formResponses.officerFullName or session.bookAProbationMeetingJourney.officer.fullName
                   }) }}
-                </fieldset>
+
+                  {{ govukInput({
+                    id: "officerEmail",
+                    name: "officerEmail",
+                    label: {
+                      text: "Email address"
+                    },
+                    errorMessage: validationErrors | findError('officerEmail'),
+                    formGroup: {
+                      classes: 'govuk-!-margin-bottom-3'
+                    },
+                    classes: "govuk-!-width-one-half",
+                    value: formResponses.officerEmail or session.bookAProbationMeetingJourney.officer.email
+                  }) }}
+
+                  {{ govukInput({
+                    id: "officerTelephone",
+                    name: "officerTelephone",
+                    label: {
+                      text: "UK phone number (optional)"
+                    },
+                    errorMessage: validationErrors | findError('officerTelephone'),
+                    classes: "govuk-!-width-one-half",
+                    value: formResponses.officerTelephone or session.bookAProbationMeetingJourney.officer.telephone
+                  }) }}
+                {% endset %}
+
+                {{ govukRadios({
+                  idPrefix: "probationOfficerDetailsKnown",
+                  name: "probationOfficerDetailsKnown",
+                  errorMessage: validationErrors | findError('probationOfficerDetailsKnown'),
+                  fieldset: {
+                    legend: {
+                      text: "Do you know the details of the probation officer?",
+                      classes: "govuk-fieldset__legend--s"
+                    }
+                  },
+                  items: [
+                    {
+                      value: 'YES',
+                      text: "Yes",
+                      checked: formResponses.probationOfficerDetailsKnown == 'YES' or session.bookAProbationMeetingJourney.probationOfficerDetailsKnown === true,
+                      conditional: {
+                      html: probationOfficerDetailsHtml
+                    }
+                    },
+                    {
+                      value: 'NO',
+                      text: "No",
+                      checked: formResponses.probationOfficerDetailsKnown == 'NO' or (session.bookAProbationMeetingJourney.probationOfficerDetailsKnown === false and not formResponses)
+                    }
+                  ]
+                }) }}
               </div>
 
               {{ govukButton({
