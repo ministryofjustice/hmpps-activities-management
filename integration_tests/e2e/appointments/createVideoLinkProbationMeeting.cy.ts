@@ -144,7 +144,7 @@ context('Create video link probation appointment', () => {
     meetingDetailsPage.selectYesToProbationTeamKnown()
     meetingDetailsPage.selectProbationTeam('Barking - Probation')
     meetingDetailsPage.selectRadioFirstMeetingType()
-    meetingDetailsPage.checkOfficerDetailsNotKnown()
+    meetingDetailsPage.selectNoToProbationOfficerDetailsKnown()
     meetingDetailsPage.continue()
 
     // Date and time of meeting page
@@ -237,7 +237,7 @@ context('Create video link probation appointment', () => {
     meetingDetailsPage.selectYesToProbationTeamKnown()
     meetingDetailsPage.selectProbationTeam('Barking - Probation')
     meetingDetailsPage.selectMeetingType('Other')
-    meetingDetailsPage.checkOfficerDetailsNotKnown()
+    meetingDetailsPage.selectNoToProbationOfficerDetailsKnown()
     meetingDetailsPage.continue()
 
     // Date and time of meeting page
