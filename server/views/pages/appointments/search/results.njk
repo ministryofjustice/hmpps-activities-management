@@ -60,7 +60,7 @@
             text: result.appointmentName,
             attributes: { 'data-qa': 'result-appointment-name-' + index }
         }, {
-            text: showLocation(result),
+            text: showLocation(user.externalActivitiesRolledOut, result),
             attributes: { 'data-qa': 'result-location-' + index }
         }, {
             html: attendees(result.attendees, prisonersDetails),
