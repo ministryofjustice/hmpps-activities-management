@@ -11,7 +11,7 @@
 {% set pageTitle = "Edit activity details - Activities - DPS" %}
 {% set pageId = 'view-activity-page' %}
 {% set jsBackLink = true %}
-
+{% set outsideWork = user.externalActivitiesRolledOut and activity.outsideWork %}
 {% set activityEnded = schedule.endDate and schedule.endDate < now | toDateString %}
 
 {% block content %}
@@ -78,7 +78,7 @@
                                 }
                             ] if not activityEnded and activity.category.code != 'SAA_NOT_IN_WORK'
                         }
-                    } if not activity.outsideWork,
+                    } if not outsideWork,
                     {
                         key: {
                             text: "Organiser"
@@ -114,7 +114,7 @@
                         value: {
                             text: "The prison" if activity.paid else "An external employer"
                         }
-                    } if user.externalActivitiesRolledOut and activity.outsideWork
+                    } if outsideWork
                 ]
             }) }}
 
@@ -142,7 +142,7 @@
                                 }
                             ]
                         } if not activityEnded
-                    } if not activity.outsideWork else {
+                    } if not outsideWork else {
                         key: {
                             text: "Location"
                         },
@@ -171,7 +171,7 @@
                 ]
             }) }}
 
-            {% if not activity.outsideWork %}
+            {% if not outsideWork %}
                 {{ govukSummaryList({
                     card: {
                         title: {
@@ -219,7 +219,7 @@
                 }) }}
             {% endif %}
 
-            {% if not activity.outsideWork or (user.externalActivitiesRolledOut and activity.outsideWork and activity.paid) %}
+            {% if not outsideWork or (outsideWork and activity.paid) %}
                 {% set payRows = [] %}
                 {% if schedule.activity.paid %}
                     {% if displayPays | length > 0 %}
@@ -364,7 +364,7 @@
                 ), dateAndScheduleRows) %}
             {% endfor %}
 
-            {% if not activity.outsideWork %}
+            {% if not outsideWork %}
                 {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                     {
                         key: {
