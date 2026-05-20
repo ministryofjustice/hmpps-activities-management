@@ -25,6 +25,9 @@ describe('Views - Allocation dashboard', () => {
         { levelName: 'Enhanced 2' },
         { levelName: 'Enhanced 3' },
       ],
+      user: {
+        externalActivitiesRolledOut: false,
+      },
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
