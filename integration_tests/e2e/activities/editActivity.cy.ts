@@ -110,6 +110,7 @@ context('Edit activity', () => {
     cy.visit('/activities/view/2')
 
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
+    viewActivityPage.isInPrisonActivity()
     viewActivityPage.changePayLink().click()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
@@ -150,6 +151,7 @@ context('Edit activity', () => {
   it('should allow the user to change an activity - changing days/sessions if using custom times', () => {
     cy.visit('/activities/view/2')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
+    viewActivityPage.isInPrisonActivity()
     viewActivityPage.changeScheduleLink().click()
 
     const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
@@ -195,6 +197,7 @@ context('Edit activity', () => {
   it('should allow the user to change an activity - changing times if currently using custom times', () => {
     cy.visit('/activities/view/2')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
+    viewActivityPage.isInPrisonActivity()
     viewActivityPage.changeScheduleLink().click()
 
     const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
@@ -222,6 +225,7 @@ context('Edit activity', () => {
   it('should allow the user to change an activity - changing times if currently using custom times - change to regime times', () => {
     cy.visit('/activities/view/2')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
+    viewActivityPage.isInPrisonActivity()
     viewActivityPage.changeScheduleLink().click()
 
     const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
