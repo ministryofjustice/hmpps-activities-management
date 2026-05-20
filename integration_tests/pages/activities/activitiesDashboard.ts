@@ -12,9 +12,7 @@ export default class ActivitiesDashboardPage extends Page {
 
   outsideActivitiesLink = (): Cypress.Chainable => this.outsideWorkNavigation().get('a').contains('Outside activities')
 
-  inPrisonH2 = (): Cypress.Chainable => cy.get('h2').contains('In-prison activities')
-
-  outsideH2 = (): Cypress.Chainable => cy.get('h2').contains('Outside activities')
+  locationHeading = (): Cypress.Chainable => cy.get('[data-qa=location-heading]')
 
   activityTable = (): Cypress.Chainable => cy.get('[data-qa="activities-table"]')
 
@@ -27,4 +25,15 @@ export default class ActivitiesDashboardPage extends Page {
 
   noActivitiesMessage = (): Cypress.Chainable =>
     cy.get('p.govuk-body-l[data-qa="no-activities"]').contains('There are no')
+
+  hasOutsideWorkContent = () => {
+    this.locationHeading().should('exist')
+    this.locationHeading().contains(/^(In-prison|Outside) activities$/)
+    this.outsideWorkNavigation().should('exist')
+  }
+
+  hasInPrisonContent = () => {
+    this.locationHeading().should('not.exist')
+    this.outsideWorkNavigation().should('not.exist')
+  }
 }
