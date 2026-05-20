@@ -15,15 +15,7 @@ context('Activities dashboard', () => {
   it('Shows message when no activities are available', () => {
     cy.signIn()
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=false', [])
-
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.allocateToActivitiesCard().click()
-
-    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.editActivityDetailsCard().click()
+    cy.visit('/activities/dashboard')
 
     const activitiesDashboardPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesDashboardPage.noActivitiesMessage().should('exist')
@@ -32,42 +24,24 @@ context('Activities dashboard', () => {
   it('Shows correct dashboard for non EA prison', () => {
     cy.signIn()
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=false', getActivities)
-
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.allocateToActivitiesCard().click()
-
-    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.editActivityDetailsCard().click()
+    cy.visit('/activities/dashboard')
 
     const activitiesDashboardPage = Page.verifyOnPage(ActivitiesDashboardPage)
-    activitiesDashboardPage.outsideWorkNavigation().should('not.exist')
-    activitiesDashboardPage.inPrisonH2().should('not.exist')
-    activitiesDashboardPage.outsideH2().should('not.exist')
+    activitiesDashboardPage.hasInPrisonContent()
   })
 
   it('Shows correct dashboard and navigation for EA prison', () => {
     cy.signInEAEnabled()
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=false', getActivitiesWithOutsideWork)
-
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.allocateToActivitiesCard().click()
-
-    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.editActivityDetailsCard().click()
-
+    cy.visit('/activities/dashboard')
+    
     const activitiesDashboardPage = Page.verifyOnPage(ActivitiesDashboardPage)
-    activitiesDashboardPage.outsideWorkNavigation().should('exist')
-    activitiesDashboardPage.inPrisonH2().should('exist')
+    activitiesDashboardPage.hasOutsideWorkContent()
+    activitiesDashboardPage.locationHeading().should('contain', 'In-prison')
     activitiesDashboardPage.getActivitiesCount().should('be.greaterThan', 0)
 
     activitiesDashboardPage.outsideActivitiesLink().click()
-    activitiesDashboardPage.outsideH2().should('exist')
+    activitiesDashboardPage.locationHeading().should('contain', 'Outside')
     activitiesDashboardPage.getActivitiesCount().should('be.greaterThan', 0)
   })
 })
