@@ -41,8 +41,8 @@ export default class ViewActivityPage extends Page {
     this.requirementsAndSuitabilitySummaryList().should('not.exist')
     this.payRatesSummaryList().should('exist')
     this.scheduleSummaryList().should('exist')
-    this.getSummaryListValue(this.activityDetailsSummaryList(), 'Paid by').contains(/The Prison|An external employer/)
-    this.getSummaryListValue(this.locationAndCapacitySummaryList(), 'Location').should('match', 'Outside')
+    this.getSummaryListValue(this.activityDetailsSummaryList(), 'Paid by').contains(/The prison|An external employer/)
+    this.getSummaryListValue(this.locationAndCapacitySummaryList(), 'Location').contains('Outside')
     this.changeLocationLink().should('not.exist')
     this.changeBankHolidayLink().should('not.exist')
   }
