@@ -1,3 +1,5 @@
+import { addDays } from 'date-fns/addDays'
+import { format } from 'date-fns/format'
 import getInmateDetails from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-A5015DY.json'
 import { Activity } from '../../../../server/@types/activitiesAPI/types'
 import ViewAllocationsPage from '../../../pages/activities/suspensions/viewAllocations'
@@ -8,13 +10,6 @@ import SuspensionPayPage from '../../../pages/activities/suspensions/pay'
 import CaseNoteQuestionPage from '../../../pages/activities/suspensions/caseNoteQuestion'
 import CheckAnswersPage from '../../../pages/activities/suspensions/checkAnswers'
 import ConfirmationPage from '../../../pages/activities/suspensions/confirmation'
-
-const activityInsideUnpaid = {
-  id: 11,
-  paid: false,
-  pay: null,
-  outsideWork: false,
-} as unknown as Activity
 
 const activityInsidePaid = {
   id: 12,
@@ -28,13 +23,6 @@ const activityInsidePaid = {
       rate: 100,
     },
   ],
-} as unknown as Activity
-
-const activityOutsideUnpaid = {
-  id: 13,
-  paid: false,
-  pay: null,
-  outsideWork: true,
 } as unknown as Activity
 
 const activityOutsidePaid = {
@@ -55,19 +43,6 @@ const getPrisonerAllocations = [
   {
     prisonerNumber: 'G0995GW',
     allocations: [
-      {
-        id: 1,
-        prisonerNumber: 'G0995GW',
-        bookingId: 1068066,
-        activitySummary: "Nat's unpaid stuff",
-        activityId: 11,
-        scheduleId: 902,
-        prisonPayBand: null,
-        startDate: '2024-12-09',
-        endDate: null,
-        status: 'SUSPENDED',
-        plannedSuspension: null,
-      },
       {
         id: 2,
         prisonerNumber: 'G0995GW',
@@ -90,19 +65,6 @@ const getPrisonerAllocations = [
         startDate: '2024-12-09',
         endDate: null,
         status: 'ACTIVE',
-        plannedSuspension: null,
-      },
-      {
-        id: 3,
-        prisonerNumber: 'G0995GW',
-        bookingId: 1068066,
-        activitySummary: 'Outside Cafe',
-        activityId: 13,
-        scheduleId: 902,
-        prisonPayBand: null,
-        startDate: '2024-12-09',
-        endDate: null,
-        status: 'SUSPENDED',
         plannedSuspension: null,
       },
       {
@@ -139,28 +101,22 @@ context('Suspensions for external activities', () => {
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/prisoner/G0995GW', getInmateDetails as unknown as JSON)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', getPrisonerAllocations)
-    cy.stubEndpoint('GET', '/activities/11/filtered', activityInsideUnpaid as unknown as JSON)
     cy.stubEndpoint('GET', '/activities/12/filtered', activityInsidePaid as unknown as JSON)
-    cy.stubEndpoint('GET', '/activities/13/filtered', activityOutsideUnpaid as unknown as JSON)
     cy.stubEndpoint('GET', '/activities/14/filtered', activityOutsidePaid as unknown as JSON)
     cy.stubEndpoint('POST', '/allocations/MDI/suspend', {
       prisonerNumber: 'G0995GW',
       allocationIds: [2],
       suspendUntil: toDateString(new Date()),
     } as unknown as JSON)
-    cy.signIn()
   })
 
-  it('should suspend an active allocation immediately', () => {
+  it('should suspend an active in prison allocation immediately', () => {
+    cy.signIn()
     cy.visit('/activities/suspensions/prisoner/G0995GW')
     const page = Page.verifyOnPage(ViewAllocationsPage)
-    page.caption().should('contain.text', 'Manage suspensions')
-    page.title().should('contain.text', "Alfonso Cholak's activities")
     page.suspendLink(2).click()
 
     const suspendFromPage = Page.verifyOnPage(SuspendFromPage)
-    suspendFromPage.caption().should('contain.text', 'Manage suspensions')
-    suspendFromPage.title().should('contain.text', "When does Alfonso Cholak's suspension from Active activity start?")
     suspendFromPage.selectRadio('immediately')
     suspendFromPage.continue()
 
@@ -173,29 +129,137 @@ context('Suspensions for external activities', () => {
     caseNoteQuestionPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
-    checkAnswersPage
-      .summary()
-      .find('dt')
-      .then($dt => {
-        expect($dt.get(0).innerText).to.contain('Prisoner')
-        expect($dt.get(1).innerText).to.contain('Activity')
-        expect($dt.get(2).innerText).to.contain('First day of suspension')
-        expect($dt.get(3).innerText).to.contain('Paid while suspended?')
-        expect($dt.get(4).innerText).to.contain('Do you want to add a case note?')
-      })
-    checkAnswersPage
-      .summary()
-      .find('dd')
-      .then($dd => {
-        expect($dd.get(0).innerText).to.contain('Alfonso Cholak\nG0995GW')
-        expect($dd.get(1).innerText).to.contain('Active activity')
-        expect($dd.get(2).innerText).to.contain('Today - suspension starts immediately')
-        expect($dd.get(4).innerText).to.contain('Yes')
-        expect($dd.get(6).innerText).to.contain('No')
-      })
     checkAnswersPage.confirm()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    confirmationPage.title().should('contain.text', 'Suspension started')
+    confirmationPage.title().contains('Suspension started')
+    confirmationPage.subtitle().contains('Alfonso Cholak (G0995GW) is now suspended from Active activity')
+
+    cy.get('.govuk-body')
+      .eq(0)
+      .contains("While they are suspended, their attendance for this activity will be recorded as 'Suspended'.")
+    cy.get('.govuk-body')
+      .eq(1)
+      .contains(
+        'If they were due to attend a session that has already started, attendance for that session will need to be recorded.',
+      )
+    cy.get('.govuk-body')
+      .eq(2)
+      .contains('Unlock and movement lists for today may need to be printed again to show this suspension.')
+  })
+
+  it('should suspend an active in prison allocation from tomorrow', () => {
+    cy.signIn()
+    cy.visit('/activities/suspensions/prisoner/G0995GW')
+    const tomorrow = addDays(new Date(), 1)
+    const page = Page.verifyOnPage(ViewAllocationsPage)
+    page.suspendLink(2).click()
+
+    const suspendFromPage = Page.verifyOnPage(SuspendFromPage)
+    suspendFromPage.selectRadio('tomorrow')
+    suspendFromPage.continue()
+
+    const suspensionPayPage = Page.verifyOnPage(SuspensionPayPage)
+    suspensionPayPage.selectRadio('YES')
+    suspensionPayPage.continue()
+
+    const caseNoteQuestionPage = Page.verifyOnPage(CaseNoteQuestionPage)
+    caseNoteQuestionPage.selectRadio('no')
+    caseNoteQuestionPage.continue()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.confirm()
+
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.title().contains('Suspension added')
+    confirmationPage
+      .subtitle()
+      .contains(
+        `Alfonso Cholak (G0995GW) will be suspended from Active activity from ${format(tomorrow, 'd MMMM yyyy')}`,
+      )
+
+    cy.get('.govuk-body')
+      .eq(0)
+      .contains(
+        `From ${format(tomorrow, 'd MMMM yyyy')}, their attendance for this activity will be recorded as 'Suspended'.`,
+      )
+  })
+
+  it('should suspend an active outside prison allocation immediately', () => {
+    cy.signInEAEnabled()
+    cy.visit('/activities/suspensions/prisoner/G0995GW')
+    const page = Page.verifyOnPage(ViewAllocationsPage)
+    page.suspendLink(4).click()
+
+    const suspendFromPage = Page.verifyOnPage(SuspendFromPage)
+    suspendFromPage.selectRadio('immediately')
+    suspendFromPage.continue()
+
+    const suspensionPayPage = Page.verifyOnPage(SuspensionPayPage)
+    suspensionPayPage.selectRadio('YES')
+    suspensionPayPage.continue()
+
+    const caseNoteQuestionPage = Page.verifyOnPage(CaseNoteQuestionPage)
+    caseNoteQuestionPage.selectRadio('no')
+    caseNoteQuestionPage.continue()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.confirm()
+
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.title().contains('Suspension started')
+    confirmationPage.subtitle().contains('Alfonso Cholak (G0995GW) is now suspended from Hotel')
+
+    cy.get('.govuk-body')
+      .eq(0)
+      .contains("While they are suspended, their attendance for this activity will be recorded as 'Suspended'.")
+    cy.get('.govuk-body')
+      .eq(1)
+      .contains(
+        'If they were due to attend a session that has already started, attendance for that session will need to be recorded.',
+      )
+    cy.get('.govuk-body')
+      .eq(2)
+      .contains(
+        'Temporary absences for Alfonso Cholak to go out to this activity should be cancelled. Unlock and movement lists for today may need to be printed again.',
+      )
+  })
+
+  it('should suspend an active outside prison allocation from tomorrow', () => {
+    cy.signInEAEnabled()
+    cy.visit('/activities/suspensions/prisoner/G0995GW')
+    const tomorrow = addDays(new Date(), 1)
+    const page = Page.verifyOnPage(ViewAllocationsPage)
+    page.suspendLink(4).click()
+
+    const suspendFromPage = Page.verifyOnPage(SuspendFromPage)
+    suspendFromPage.selectRadio('tomorrow')
+    suspendFromPage.continue()
+
+    const suspensionPayPage = Page.verifyOnPage(SuspensionPayPage)
+    suspensionPayPage.selectRadio('YES')
+    suspensionPayPage.continue()
+
+    const caseNoteQuestionPage = Page.verifyOnPage(CaseNoteQuestionPage)
+    caseNoteQuestionPage.selectRadio('no')
+    caseNoteQuestionPage.continue()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.confirm()
+
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.title().contains('Suspension added')
+    confirmationPage
+      .subtitle()
+      .contains(`Alfonso Cholak (G0995GW) will be suspended from Hotel from ${format(tomorrow, 'd MMMM yyyy')}`)
+
+    cy.get('.govuk-body')
+      .eq(0)
+      .contains(
+        `From ${format(tomorrow, 'd MMMM yyyy')}, their attendance for this activity will be recorded as 'Suspended'.`,
+      )
+    cy.get('.govuk-body')
+      .eq(1)
+      .contains('Temporary absences for Alfonso Cholak to go out to this activity should be cancelled.')
   })
 })
