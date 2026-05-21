@@ -2,7 +2,7 @@ import { addDays, formatDate, subDays } from 'date-fns'
 import Page from '../../../pages/page'
 import getPrisonerA1350DZ from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-A1350DZ.json'
 import RequestDatePage from '../../../pages/activities/waitlist/requestDatePage'
-import getActivities from '../../../fixtures/activitiesApi/getActivities.json'
+import getActivitiesWithEA from '../../../fixtures/activitiesApi/getActivities-withExternal.json'
 import WaitlistSearchForActivityPage from '../../../pages/activities/waitlist/searchForActivityPage'
 import getActivity from '../../../fixtures/activitiesApi/getActivity.json'
 import RequesterPage from '../../../pages/activities/waitlist/requesterPage'
@@ -23,7 +23,7 @@ context('Waitlist', () => {
     cy.task('stubSignIn')
     cy.signIn()
     cy.stubEndpoint('GET', '/prisoner/A1350DZ', getPrisonerA1350DZ as unknown as JSON)
-    cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
+    cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivitiesWithEA)
     cy.stubEndpoint('GET', '/activities/1/filtered', getActivity1 as unknown as JSON)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', [])
     cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications\\?includeNonAssociationsCheck=false', [])
@@ -170,5 +170,21 @@ context('Waitlist', () => {
     searchForActivityPage.continue()
 
     searchForActivityPage.assertValidationError('activityId', 'is already allocated or on the waitlist for')
+  })
+
+  it('Should not show outsideWork activities', () => {
+    cy.visit('/activities/waitlist/2f0b204c-2d68-4c53-b581-b4d0075dd231/A1350DZ/apply')
+    const yesterday = subDays(new Date(), 1)
+    const requestDatePage = Page.verifyOnPage(RequestDatePage)
+    requestDatePage.selectDatePickerDate(yesterday)
+    requestDatePage.continue()
+
+    const searchForActivityPage = Page.verifyOnPage(WaitlistSearchForActivityPage)
+    searchForActivityPage.searchBox().type('Outside Cafe')
+    searchForActivityPage.resultsList().contains('No results found')
+    searchForActivityPage.searchBox().clear().type('Hotel')
+    searchForActivityPage.resultsList().contains('No results found')
+    searchForActivityPage.searchBox().clear().type('Maths level 1')
+    searchForActivityPage.resultsList().contains('Maths level 1')
   })
 })
