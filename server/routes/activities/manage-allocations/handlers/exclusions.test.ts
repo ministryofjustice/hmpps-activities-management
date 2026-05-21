@@ -112,7 +112,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
     req = {
       params: {},
-      routeContext: { mode: 'create' },
       journeyData: {
         allocateJourney: {
           inmate: {
@@ -207,6 +206,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
     it('should render the expected view', async () => {
       jest.useFakeTimers().setSystemTime(new Date('2024-08-30'))
       config.sameDayScheduleModificationsEnabled = false
+      req.routeContext = { mode: 'create' }
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/exclusions', {
@@ -324,7 +324,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           },
         ]
 
-        req.routeContext = { mode: 'edit' }
         req.params.allocationId = '1'
         req.body = {
           week1: {
@@ -389,7 +388,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
 
-    it('should update the exclusions in session and redirect when in create mode', async () => {
+    it('should update the exclusions in session and redirect when in edit mode', async () => {
       req.routeContext = { mode: 'edit' }
       req.params.allocationId = '1'
 
@@ -500,6 +499,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
     it('should NOT redirect to addToToday when feature flag is disabled and future same day slots exist', async () => {
       jest.useFakeTimers().setSystemTime(new Date('2024-08-21 08:00:00'))
       config.sameDayScheduleModificationsEnabled = false
+      req.routeContext = { mode: 'edit' }
 
       try {
         setupForSameDayTests()
@@ -518,6 +518,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
     it('should NOT redirect to addToToday when feature flag is enabled and slot start time has passed', async () => {
       jest.useFakeTimers().setSystemTime(new Date('2024-08-21 12:30:00'))
       config.sameDayScheduleModificationsEnabled = true
+      req.routeContext = { mode: 'edit' }
 
       try {
         setupForSameDayTests()
@@ -537,6 +538,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
       config.sameDayScheduleModificationsEnabled = true
       req.journeyData.allocateJourney.startDate = '2024-08-22'
+      req.routeContext = { mode: 'edit' }
 
       try {
         setupForSameDayTests()
@@ -556,6 +558,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
       config.sameDayScheduleModificationsEnabled = true
       req.journeyData.allocateJourney.startDate = '2024-08-20'
+      req.routeContext = { mode: 'edit' }
 
       try {
         setupForSameDayTests()
@@ -586,13 +589,31 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       }
     })
 
-    it('should redirect to addToToday when feature flag is enabled and slot is later "today"', async () => {
+    it('should redirect to addToToday for the edit journey when feature flag is enabled and slot is later "today"', async () => {
       jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
       config.sameDayScheduleModificationsEnabled = true
+      req.routeContext = { mode: 'edit' }
 
       try {
         setupForSameDayTests()
+        await handler.POST(req, res)
 
+        expect(res.redirect).toHaveBeenCalledWith('addToToday')
+        expect(res.redirect).not.toHaveBeenCalledWith('confirm-exclusions')
+        expect(req.journeyData.allocateJourney.futureSameDaySlots.length).toBeGreaterThan(0)
+        expect(req.journeyData.allocateJourney.addToSessionsToday).toBe(undefined)
+      } finally {
+        jest.useRealTimers()
+      }
+    })
+
+    it('should redirect to addToToday for the exclude journey when feature flag is enabled and slot is later "today"', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
+      config.sameDayScheduleModificationsEnabled = true
+      req.routeContext = { mode: 'exclude' }
+
+      try {
+        setupForSameDayTests()
         await handler.POST(req, res)
 
         expect(res.redirect).toHaveBeenCalledWith('addToToday')

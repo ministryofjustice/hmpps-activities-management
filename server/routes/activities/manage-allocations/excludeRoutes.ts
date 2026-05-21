@@ -3,6 +3,7 @@ import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import ExclusionRoutes, { Schedule } from './handlers/exclusions'
+import AddToSessionsToday from './handlers/addToSessionsToday'
 import ConfirmExclusionsRoutes from './handlers/confirmExclusions'
 
 export default function Index({ activitiesService }: Services): Router {
@@ -13,10 +14,13 @@ export default function Index({ activitiesService }: Services): Router {
     router.post(path, validationMiddleware(type), handler)
 
   const exclusionsHandler = new ExclusionRoutes(activitiesService)
+  const addToSessionsTodayHandler = new AddToSessionsToday()
   const confirmExclusionsHandler = new ConfirmExclusionsRoutes(activitiesService)
 
   get('/exclusions', exclusionsHandler.GET, true)
   post('/exclusions', exclusionsHandler.POST, Schedule)
+  get('/addToToday', addToSessionsTodayHandler.GET, true)
+  post('/addToToday', addToSessionsTodayHandler.POST)
   get('/confirm-exclusions', confirmExclusionsHandler.GET, true)
   post('/confirm-exclusions', confirmExclusionsHandler.POST)
 
