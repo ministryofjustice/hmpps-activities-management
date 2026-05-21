@@ -41,7 +41,6 @@ context('Allocate multiple one by one to an activity', () => {
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
-    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint(
       'GET',
       '/schedules/2/waiting-list-applications\\?includeNonAssociationsCheck=true',
@@ -51,7 +50,7 @@ context('Allocate multiple one by one to an activity', () => {
     cy.stubEndpoint('GET', '/incentive-reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
-    cy.stubEndpoint('POST', '/schedules/2/allocations')
+    cy.stubEndpoint('POST', '/schedules/2/allocations/bulk')
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=s&size=50', getInmateDetails)
     cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociations)
@@ -77,8 +76,8 @@ context('Allocate multiple one by one to an activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -186,8 +185,8 @@ context('Allocate multiple one by one to an activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -283,8 +282,8 @@ context('Allocate multiple one by one to an activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -362,8 +361,8 @@ context('Allocate multiple one by one to an activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)

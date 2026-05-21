@@ -46,6 +46,9 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
       issuePayment: sessionCancellationMultiple.issuePayment ? 'Yes' : 'No',
       activitiesRedirectUrl,
       selectedDateAndSlotsText,
+      allPaid: instances.every(a => a.activitySchedule.activity.paid),
+      paidActivities: instances.filter(a => a.activitySchedule.activity.paid).map(a => a.activitySchedule.activity),
+      allActivities: instances.map(a => a.activitySchedule.activity),
     })
   }
 

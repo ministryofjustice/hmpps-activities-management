@@ -59,6 +59,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
           scheduleId: 0,
           name: '',
           startDate: '',
+          outsideWork: false,
         },
         scheduledInstance: {
           attendances: [],

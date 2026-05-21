@@ -57,7 +57,7 @@ context('Allocate multiple via CSV to an activity', () => {
     cy.stubEndpoint('GET', '/incentive-reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
-    cy.stubEndpoint('POST', '/schedules/2/allocations')
+    cy.stubEndpoint('POST', '/schedules/2/allocations/bulk')
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
     cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociationsInvolving)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails.content)
@@ -75,8 +75,8 @@ context('Allocate multiple via CSV to an activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -154,8 +154,8 @@ context('Allocate multiple via CSV to an activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -224,8 +224,8 @@ context('Allocate multiple via CSV to an activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -269,8 +269,8 @@ context('Allocate multiple via CSV to an activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -314,8 +314,8 @@ context('Allocate multiple via CSV to an activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)

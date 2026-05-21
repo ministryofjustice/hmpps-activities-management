@@ -46,6 +46,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
         waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
       },
     } as unknown as Request
+    jest.resetAllMocks()
   })
 
   describe('GET', () => {
@@ -57,11 +58,19 @@ describe('Route Handlers - Waitlist application - Request date', () => {
             id: 1,
             activityName: 'test activity',
             category: { code: 'EDU' },
+            outsideWork: false,
           },
           {
             id: 2,
             activityName: 'filtered activity',
             category: { code: 'SAA_NOT_IN_WORK' },
+            outsideWork: false,
+          },
+          {
+            id: 3,
+            activityName: 'outside activity',
+            category: { code: 'EDU' },
+            outsideWork: true,
           },
         ] as ActivitySummary[])
 

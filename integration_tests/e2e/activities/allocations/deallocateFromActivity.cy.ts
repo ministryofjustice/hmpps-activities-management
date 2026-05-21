@@ -8,6 +8,7 @@ import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetai
 import getDeallocationReasons from '../../../fixtures/activitiesApi/getDeallocationReasons.json'
 import getMdiPrisonPayBands from '../../../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
+import getMdiPrisonRegime from '../../../fixtures/prisonApi/getMdiPrisonRegime.json'
 
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
@@ -27,6 +28,7 @@ context('Deallocation from activity', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
+    cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getMdiPrisonRegime)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations)
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true', getAllocations)
@@ -57,8 +59,8 @@ context('Deallocation from activity', () => {
       activitiesIndexPage.allocateToActivitiesCard().click()
 
       const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-      manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-      manageActivitiesPage.allocateToActivityCard().click()
+      manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+      manageActivitiesPage.manageAllocationsCard().click()
 
       const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
       activitiesPage.activityRows().should('have.length', 3)
@@ -101,8 +103,8 @@ context('Deallocation from activity', () => {
       activitiesIndexPage.allocateToActivitiesCard().click()
 
       const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-      manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-      manageActivitiesPage.allocateToActivityCard().click()
+      manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+      manageActivitiesPage.manageAllocationsCard().click()
 
       const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
       activitiesPage.activityRows().should('have.length', 3)
@@ -146,8 +148,8 @@ context('Deallocation from activity', () => {
       activitiesIndexPage.allocateToActivitiesCard().click()
 
       const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-      manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-      manageActivitiesPage.allocateToActivityCard().click()
+      manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+      manageActivitiesPage.manageAllocationsCard().click()
 
       const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
       activitiesPage.activityRows().should('have.length', 3)

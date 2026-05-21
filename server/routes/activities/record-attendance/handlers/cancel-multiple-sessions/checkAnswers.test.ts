@@ -81,6 +81,9 @@ describe('Route Handlers - Cancel Multiple Sessions Check Answers', () => {
           issuePayment: 'Yes',
           activitiesRedirectUrl,
           selectedDateAndSlotsText,
+          allActivities: [{ id: 2, paid: true }],
+          allPaid: true,
+          paidActivities: [{ id: 2, paid: true }],
         },
       )
     })
@@ -129,6 +132,15 @@ describe('Route Handlers - Cancel Multiple Sessions Check Answers', () => {
           issuePayment: 'Yes',
           activitiesRedirectUrl,
           selectedDateAndSlotsText,
+          allActivities: [
+            { id: 2, paid: true },
+            { id: 3, paid: true },
+          ],
+          allPaid: true,
+          paidActivities: [
+            { id: 2, paid: true },
+            { id: 3, paid: true },
+          ],
         },
       )
     })
@@ -188,6 +200,17 @@ describe('Route Handlers - Cancel Multiple Sessions Check Answers', () => {
           issuePayment: 'Yes',
           activitiesRedirectUrl,
           selectedDateAndSlotsText,
+          allActivities: [
+            { id: 2, paid: true },
+            { id: 4, paid: true },
+            { id: 3, paid: true },
+          ],
+          allPaid: true,
+          paidActivities: [
+            { id: 2, paid: true },
+            { id: 4, paid: true },
+            { id: 3, paid: true },
+          ],
         },
       )
     })

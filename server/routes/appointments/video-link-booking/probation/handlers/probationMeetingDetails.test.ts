@@ -91,7 +91,7 @@ describe('MeetingDetailsRoutes', () => {
       const body = {
         probationTeamCode: '',
         meetingTypeCode: '',
-        officerDetailsNotKnown: '',
+        probationOfficerDetailsKnown: '',
         officerFullName: '',
         officerEmail: '',
         officerTelephone: '',
@@ -112,8 +112,8 @@ describe('MeetingDetailsRoutes', () => {
           property: 'meetingTypeCode',
         },
         {
-          error: "Enter the probation officer's details",
-          property: 'officerDetailsOrUnknown',
+          error: 'Select if you know the details of the probation officer',
+          property: 'probationOfficerDetailsKnown',
         },
       ])
     })
@@ -122,10 +122,7 @@ describe('MeetingDetailsRoutes', () => {
       const body = {
         probationTeamRequired: 'YES',
         meetingTypeCode: 'code',
-        officerDetailsNotKnown: 'true',
-        officerFullName: '',
-        officerEmail: '',
-        officerTelephone: '',
+        probationOfficerDetailsKnown: 'NO',
       }
 
       const requestObject = plainToInstance(ProbationMeetingDetails, body)
@@ -141,15 +138,12 @@ describe('MeetingDetailsRoutes', () => {
       ])
     })
 
-    it('validation fails for an empty email', async () => {
+    it('validation fails for an empty probation officer details', async () => {
       const body = {
         probationTeamRequired: 'NO',
         probationTeamCode: 'code',
         meetingTypeCode: 'code',
-        officerDetailsNotKnown: '',
-        officerFullName: 'Joe Bloggs',
-        officerEmail: '',
-        officerTelephone: '',
+        probationOfficerDetailsKnown: 'YES',
       }
 
       const requestObject = plainToInstance(ProbationMeetingDetails, body)
@@ -158,6 +152,10 @@ describe('MeetingDetailsRoutes', () => {
       )
 
       expect(errors).toEqual([
+        {
+          error: "Enter the probation officer's full name",
+          property: 'officerFullName',
+        },
         {
           error: "Enter the probation officer's email address",
           property: 'officerEmail',
@@ -170,10 +168,9 @@ describe('MeetingDetailsRoutes', () => {
         probationTeamRequired: 'NO',
         probationTeamCode: 'code',
         meetingTypeCode: 'code',
-        officerDetailsNotKnown: '',
+        probationOfficerDetailsKnown: 'YES',
         officerFullName: 'Joe Bloggs',
         officerEmail: 'invalid',
-        officerTelephone: '',
       }
 
       const requestObject = plainToInstance(ProbationMeetingDetails, body)
@@ -194,7 +191,7 @@ describe('MeetingDetailsRoutes', () => {
         probationTeamRequired: 'NO',
         probationTeamCode: 'code',
         meetingTypeCode: 'code',
-        officerDetailsNotKnown: '',
+        probationOfficerDetailsKnown: 'YES',
         officerFullName: 'Joe Bloggs',
         officerEmail: 'test@gmail.com',
         officerTelephone: 'invalid',
@@ -209,30 +206,6 @@ describe('MeetingDetailsRoutes', () => {
         {
           error: 'Enter a valid UK phone number',
           property: 'officerTelephone',
-        },
-      ])
-    })
-
-    it('validation fails for both details entered and not known selected', async () => {
-      const body = {
-        probationTeamRequired: 'NO',
-        probationTeamCode: 'code',
-        meetingTypeCode: 'code',
-        officerDetailsNotKnown: 'true',
-        officerFullName: 'Joe Bloggs',
-        officerEmail: 'test@gmail.com',
-        officerTelephone: '',
-      }
-
-      const requestObject = plainToInstance(ProbationMeetingDetails, body)
-      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
-        errs.flatMap(associateErrorsWithProperty),
-      )
-
-      expect(errors).toEqual([
-        {
-          error: "Enter either the probation officer's details, or select 'Not yet known'",
-          property: 'officerDetailsOrUnknown',
         },
       ])
     })

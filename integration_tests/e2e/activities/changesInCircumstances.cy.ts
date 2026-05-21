@@ -53,7 +53,7 @@ context('Changes in circumstances', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.changesInCircumstancesCard().click()
+    manageActivitiesPage.viewChangesInCircumstancesCard().click()
 
     const changesInCircumstancesDatePage = Page.verifyOnPage(ChangesInCircumstancesDatePage)
     changesInCircumstancesDatePage.datePresetOption().should('exist')
@@ -95,7 +95,7 @@ context('Changes in circumstances', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.changesInCircumstancesCard().click()
+    manageActivitiesPage.viewChangesInCircumstancesCard().click()
 
     const chosenDate = new Date('2024-09-22')
     const chosenDateFormatted = format(chosenDate, 'yyyy-MM-dd')
@@ -129,7 +129,7 @@ context('Changes in circumstances', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.changesInCircumstancesCard().click()
+    manageActivitiesPage.viewChangesInCircumstancesCard().click()
 
     const changesInCircumstancesDatePage = Page.verifyOnPage(ChangesInCircumstancesDatePage)
     changesInCircumstancesDatePage.radioOtherClick()

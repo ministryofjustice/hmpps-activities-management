@@ -68,8 +68,8 @@ context('Create external activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.cardActivityCard().should('contain.text', 'Create an activity')
-    manageActivitiesPage.cardActivityCard().click()
+    manageActivitiesPage.createAnActivityCard().should('contain.text', 'Create an activity')
+    manageActivitiesPage.createAnActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
     activityTypePage.selectInsideType()
@@ -112,6 +112,7 @@ context('Create external activity', () => {
     payPage.reviewAndAddMoreRates()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
+    checkPayPage.backLink().should('contain.text', 'Back to risk level')
     checkPayPage.payRows().should('have.length', 1)
     checkPayPage.addAnother()
 
@@ -199,8 +200,8 @@ context('Create external activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.cardActivityCard().should('contain.text', 'Create an activity')
-    manageActivitiesPage.cardActivityCard().click()
+    manageActivitiesPage.createAnActivityCard().should('contain.text', 'Create an activity')
+    manageActivitiesPage.createAnActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
     activityTypePage.selectOutsideType()
@@ -269,8 +270,8 @@ context('Create external activity', () => {
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.cardActivityCard().should('contain.text', 'Create an activity')
-    manageActivitiesPage.cardActivityCard().click()
+    manageActivitiesPage.createAnActivityCard().should('contain.text', 'Create an activity')
+    manageActivitiesPage.createAnActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
     activityTypePage.selectOutsideType()
@@ -300,6 +301,7 @@ context('Create external activity', () => {
     payPage.reviewAndAddMoreRates()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
+    checkPayPage.backLink().should('not.contain.text', 'Back to risk level')
     checkPayPage.payRows().should('have.length', 1)
     checkPayPage.addAnother()
 

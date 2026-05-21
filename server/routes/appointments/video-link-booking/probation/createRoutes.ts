@@ -3,14 +3,12 @@ import validationMiddleware from '../../../../middleware/validationMiddleware'
 import SelectPrisonerRoutes, { Prisoner } from './handlers/selectPrisoner'
 import LocationRoutes, { Location } from './handlers/location'
 import { Services } from '../../../../services'
-import MeetingDetailsRoutes, { MeetingDetails } from './handlers/meetingDetails'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
 import ScheduleRoutes from './handlers/schedule'
 import CheckBookingRoutes from './handlers/checkBooking'
 import ConfirmationRoutes from './handlers/confirmation'
 import ProbationMeetingDetailsRoutes, { ProbationMeetingDetails } from './handlers/probationMeetingDetails'
-import config from '../../../../config'
 
 export default function CreateRoutes({
   bookAVideoLinkService,
@@ -43,16 +41,9 @@ export default function CreateRoutes({
   get('/location', location.GET)
   post('/location', location.POST, Location)
 
-  if (config.probationTeamRadioEnabled) {
-    const probationMeetingDetails = new ProbationMeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
-    get('/meeting-details', probationMeetingDetails.GET)
-    post('/meeting-details', probationMeetingDetails.POST, ProbationMeetingDetails)
-  } else {
-    const meetingDetails = new MeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
-    get('/meeting-details', meetingDetails.GET)
-    post('/meeting-details', meetingDetails.POST, MeetingDetails)
-  }
-
+  const probationMeetingDetails = new ProbationMeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
+  get('/meeting-details', probationMeetingDetails.GET)
+  post('/meeting-details', probationMeetingDetails.POST, ProbationMeetingDetails)
   get('/date-and-time', dateAndTime.GET)
   post('/date-and-time', dateAndTime.POST, DateAndTime)
   get('/schedule', schedule.GET)

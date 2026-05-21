@@ -4,27 +4,31 @@
     "activityName": "Maths level 1",
     "category": {
       "id": 1,
-      "code": "EDU",
+      "code": "SAA_EDUCATION",
+      "name": "Education",
       "description": "Education"
     },
     "capacity": 15,
     "allocated": 8,
     "waitlisted": 2,
     "createdTime": "2023-07-20T16:05:16",
-    "activityState": "LIVE"
+    "activityState": "LIVE",
+    "outsideWork": false
   },
   {
     "id": 2,
     "activityName": "English level 1",
     "category": {
       "id": 1,
-      "code": "EDU",
+      "code": "SAA_EDUCATION",
+      "name": "Education",
       "description": "Education"
     },
     "capacity": 15,
     "allocated": 8,
     "waitlisted": 2,
     "createdTime": "2023-07-20T16:05:16",
-    "activityState": "LIVE"
+    "activityState": "LIVE",
+    "outsideWork": false
   }
 ]

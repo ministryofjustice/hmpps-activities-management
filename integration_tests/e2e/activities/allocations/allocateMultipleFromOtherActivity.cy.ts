@@ -55,7 +55,7 @@ context('Allocate multiple people to an activity by copying from another activit
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=G4793VF', getCandidateSuitability)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=B1351RE', getCandidateSuitability2)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A1351DZ', getCandidateSuitability)
-    cy.stubEndpoint('POST', '/schedules/2/allocations')
+    cy.stubEndpoint('POST', '/schedules/2/allocations/bulk')
 
     resetActivityAndScheduleStubs({
       activityStartDate: subWeeks(new Date(), 2),
@@ -82,8 +82,8 @@ context('Allocate multiple people to an activity by copying from another activit
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -174,8 +174,8 @@ context('Allocate multiple people to an activity by copying from another activit
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
@@ -232,8 +232,8 @@ context('Allocate multiple people to an activity by copying from another activit
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
-    manageActivitiesPage.allocateToActivityCard().click()
+    manageActivitiesPage.manageAllocationsCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.manageAllocationsCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)

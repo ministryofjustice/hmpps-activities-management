@@ -57,6 +57,8 @@ export const activityRows = (
           return a.onWing
         case LocationType.OFF_WING:
           return a.offWing
+        case LocationType.OUTSIDE_WORK:
+          return a.outsideWork
         default:
           return true
       }
@@ -97,4 +99,9 @@ export const activityRows = (
       }
       return a.endTime.localeCompare(b.endTime)
     })
+}
+
+export const hasCancelledSessionsToday = (activityAttendanceSummary: ScheduledInstanceAttendanceSummary[]) => {
+  const today = formatIsoDate(new Date())
+  return activityAttendanceSummary.some(a => a.cancelled && a.sessionDate === today)
 }

@@ -19,20 +19,17 @@ export default class CheckAndConfirmMultipleRoutes {
       req.journeyData.allocateJourney
     const { user } = res.locals
 
-    await Promise.all(
-      inmates.map(inmate =>
-        this.activitiesService.allocateToSchedule(
-          activity.scheduleId,
-          inmate.prisonerNumber,
-          inmate.payBand?.id || null,
-          user,
-          startDate,
-          endDate,
-          [],
-          startDateOption === StartDateOption.NEXT_SESSION ? scheduledInstance?.id : null,
-        ),
-      ),
-    )
+    const allocationRequests = inmates.map(inmate => ({
+      prisonerNumber: inmate.prisonerNumber,
+      payBandId: inmate.payBand?.id || null,
+      startDate,
+      endDate,
+      exclusions: [],
+      scheduleInstanceId: startDateOption === StartDateOption.NEXT_SESSION ? scheduledInstance?.id : null,
+    }))
+
+    await this.activitiesService.postBulkAllocations(activity.scheduleId, { allocations: allocationRequests }, user)
+
     res.redirect('confirmation')
   }
 }

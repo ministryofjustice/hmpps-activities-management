@@ -1,0 +1,76 @@
+{
+  "id": 100,
+  "date": "2023-04-04",
+  "startTime": "14:00",
+  "endTime": "15:00",
+  "timeSlot": "PM",
+  "cancelled": false,
+  "cancelledTime": null,
+  "cancelledBy": null,
+  "attendances": [
+    {
+      "id": 2,
+      "prisonerNumber": "G5897GP",
+      "attendanceReason": { "code": "SICK" },
+      "comment": null,
+      "posted": false,
+      "recordedTime": null,
+      "recordedBy": null,
+      "status": "WAITING",
+      "payAmount": null,
+      "bonusAmount": null,
+      "pieces": null,
+      "issuePayment": true,
+      "editable": true
+    },
+    {
+      "id": 5,
+      "prisonerNumber": "G7218GI",
+      "attendanceReason": { "code": "SICK" },
+      "comment": null,
+      "posted": false,
+      "recordedTime": null,
+      "recordedBy": null,
+      "status": "WAITING",
+      "payAmount": null,
+      "bonusAmount": null,
+      "pieces": null,
+      "issuePayment": true,
+      "editable": true
+    }
+  ],
+  "activitySchedule": {
+    "id": 8,
+    "description": "Outside Prison Shop",
+    "capacity": 10,
+    "activity": {
+      "id": 3,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "inCell": false,
+      "pieceWork": false,
+      "outsideWork": true,
+      "summary": "Outside Prison Shop",
+      "description": "An externally run activity where prisoners work outside a prison boundary. Not paid by Prison",
+      "category": {
+        "id": 1,
+        "code": "Work",
+        "name": "Work",
+        "description": "Outside Work"
+      },
+      "riskLevel": null,
+      "paid": false
+    },
+    "slots": [
+      {
+        "id": 10,
+        "startTime": "14:00",
+        "endTime": "15:00",
+        "daysOfWeek": ["Thu"],
+        "timeSlot": "PM"
+      }
+    ],
+    "startDate": "2023-04-04",
+    "endDate": null
+  }
+}

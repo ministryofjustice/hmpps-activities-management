@@ -266,6 +266,5 @@ export default {
   plannedDowntimeEndTime: get('PLANNED_DOWNTIME_END_TIME', '5pm'),
   defaultCourtVideoUrl: get('DEFAULT_COURT_VIDEO_URL', 'meet.video.justice.gov.uk'),
   prisonerExtraInformationEnabled: toBoolean(get('PRISONER_EXTRA_INFORMATION_ENABLED', 'false')),
-  probationTeamRadioEnabled: toBoolean(get('PROBATION_TEAM_RADIO_ENABLED', 'false')),
   sameDayScheduleModificationsEnabled: toBoolean(get('SAME_DAY_SCHEDULE_MODIFICATIONS_ENABLED', 'false')),
 }

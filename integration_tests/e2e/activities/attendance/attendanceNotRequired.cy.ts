@@ -70,7 +70,13 @@ context('Attendance not required', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1')
+    activitiesPage.containsActivities(
+      'English level 1',
+      'English level 2',
+      'Football',
+      'Maths level 1',
+      'Outside Prison Shop',
+    )
     activitiesPage.selectActivityWithName('Football')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)

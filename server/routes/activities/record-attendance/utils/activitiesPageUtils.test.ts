@@ -1,5 +1,5 @@
 import { addDays, subDays } from 'date-fns'
-import { activityRows, filterItems } from './activitiesPageUtils'
+import { activityRows, filterItems, hasCancelledSessionsToday } from './activitiesPageUtils'
 import TimeSlot from '../../../../enum/timeSlot'
 
 const attendanceSummaryResponse = [
@@ -15,6 +15,7 @@ const attendanceSummaryResponse = [
     inCell: true,
     onWing: false,
     offWing: false,
+    outsideWork: false,
     timeSlot: TimeSlot.PM,
     attendanceRequired: true,
     cancelled: false,
@@ -40,6 +41,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: false,
     offWing: false,
+    outsideWork: false,
     attendanceRequired: false,
     internalLocation: {
       id: 100,
@@ -70,6 +72,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: true,
     offWing: false,
+    outsideWork: false,
     attendanceRequired: true,
     cancelled: false,
     attendanceSummary: {
@@ -94,6 +97,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: false,
     offWing: true,
+    outsideWork: false,
     attendanceRequired: true,
     cancelled: false,
     attendanceSummary: {
@@ -118,6 +122,7 @@ const attendanceSummaryResponse = [
     inCell: false,
     onWing: false,
     offWing: true,
+    outsideWork: false,
     attendanceRequired: true,
     cancelled: true,
     attendanceSummary: {
@@ -127,6 +132,31 @@ const attendanceSummaryResponse = [
       attended: 1,
       absences: 2,
       paid: 1,
+    },
+  },
+  {
+    scheduledInstanceId: 555,
+    activityId: 13,
+    activityScheduleId: 13,
+    summary: 'Garden Shop',
+    categoryId: 2,
+    sessionDate: '2023-08-22',
+    startTime: '18:00',
+    endTime: '19:00',
+    timeSlot: TimeSlot.ED,
+    inCell: false,
+    onWing: false,
+    offWing: false,
+    outsideWork: true,
+    attendanceRequired: true,
+    cancelled: false,
+    attendanceSummary: {
+      allocations: 3,
+      attendees: 3,
+      notRecorded: 0,
+      attended: 3,
+      absences: 0,
+      paid: 3,
     },
   },
 ]
@@ -419,6 +449,31 @@ describe('activityRows', () => {
         },
       ])
     })
+
+    it('should filter OUTSIDE_WORK activities', async () => {
+      const filterValues = {
+        categoryFilters: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+        sessionFilters: ['AM', 'PM', 'ED'],
+      }
+
+      const result = activityRows(
+        new Date(),
+        categories,
+        attendanceSummaryResponse,
+        filterValues,
+        null,
+        'OUTSIDE_WORK',
+        '',
+      )
+
+      expect(result).toEqual([
+        {
+          ...attendanceSummaryResponse[5],
+          session: 'ED',
+          allowSelection: true,
+        },
+      ])
+    })
   })
 
   it('should only return cancelled instances for uncancel page', async () => {
@@ -436,5 +491,20 @@ describe('activityRows', () => {
         allowSelection: true,
       },
     ])
+  })
+
+  it('should return hasCancelledSessionsToday as TRUE if sessions are cancelled `today`', async () => {
+    // Mock system date to when there are cancelled sessions (Math 3)
+    jest.useFakeTimers().setSystemTime(new Date('2023-08-22'))
+    const response = hasCancelledSessionsToday(attendanceSummaryResponse)
+
+    expect(response).toEqual(true)
+  })
+
+  it('should return hasCancelledSessionsToday as FALSE if no sessions are cancelled `today`', async () => {
+    // Mock system date to when there are no cancelled sessions
+    jest.useFakeTimers().setSystemTime(new Date('2024-01-01'))
+    const response = hasCancelledSessionsToday(attendanceSummaryResponse)
+    expect(response).toEqual(false)
   })
 })

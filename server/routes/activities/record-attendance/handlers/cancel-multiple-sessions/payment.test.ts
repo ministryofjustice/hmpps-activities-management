@@ -1,11 +1,18 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import CancelMultipleSessionsPayRoutes, { SessionPayMultipleForm } from './payment'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
+import ActivitiesService from '../../../../../services/activitiesService'
+import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
+
+jest.mock('../../../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Cancel Multiple Sessions Payment', () => {
-  const handler = new CancelMultipleSessionsPayRoutes()
+  const handler = new CancelMultipleSessionsPayRoutes(activitiesService)
 
   let req: Request
   let res: Response
@@ -28,6 +35,7 @@ describe('Route Handlers - Cancel Multiple Sessions Payment', () => {
       },
       journeyData: {
         recordAttendanceJourney: {
+          selectedInstanceIds: [1, 2],
           sessionCancellationMultiple: {
             issuePayment: false,
           },
@@ -42,8 +50,42 @@ describe('Route Handlers - Cancel Multiple Sessions Payment', () => {
 
   describe('GET', () => {
     it('should render with the expected view', async () => {
+      const activityInstances = [
+        {
+          id: 1,
+          timeSlot: 'AM',
+          activitySchedule: {
+            id: 2,
+            activity: {
+              id: 2,
+              paid: true,
+            },
+          },
+        },
+        {
+          id: 2,
+          timeSlot: 'PM',
+          activitySchedule: {
+            id: 3,
+            activity: {
+              id: 3,
+              paid: true,
+            },
+          },
+        },
+      ] as ScheduledActivity[]
+
+      when(activitiesService.getScheduledActivities)
+        .calledWith([1, 2], res.locals.user)
+        .mockResolvedValue(activityInstances)
+
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-multiple-sessions/payment')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-multiple-sessions/payment', {
+        allPaid: true,
+        hasExternalEmployerPaid: false,
+        paidActivities: activityInstances.map(a => a.activitySchedule.activity),
+        allActivities: activityInstances.map(a => a.activitySchedule.activity),
+      })
     })
   })
 

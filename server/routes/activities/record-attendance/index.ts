@@ -104,7 +104,7 @@ export default function Index({
   const cancelSingleSessionPayRoutes = new CancelSingleSessionPayRoutes()
   const cancelSingleSessionsCheckAnswersRoutes = new CancelSingleSessionsCheckAnswersRoutes(activitiesService)
   const cancelMultipleSessionsReasonRoutes = new CancelMultipleSessionsReasonRoutes(activitiesService)
-  const cancelMultipleSessionsPayRoutes = new CancelMultipleSessionsPayRoutes()
+  const cancelMultipleSessionsPayRoutes = new CancelMultipleSessionsPayRoutes(activitiesService)
   const cancelMultipleSessionsCheckAnswersRoutes = new CancelMultipleSessionsCheckAnswersRoutes(activitiesService)
   const uncancelMultipleSessionsRoutes = new UncancelMultipleSessionsRoutes(activitiesService, locationsService)
   const uncancelMultipleSessionsConfirmRoutes = new UncancelMultipleSessionsConfirmRoutes(activitiesService)

@@ -1,8 +1,9 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 
-{% set pageTitle = applicationName + " - Allocate to an activity - Activities" %}
+{% set pageTitle = "Allocation dashboard - Activities - DPS" %}
 {% set pageId = 'manage-allocations-activities-page' %}
 {% set hardBackLinkHref = "/activities/allocations" %}
 {% set hardBackLinkText = "Back" %}
@@ -16,14 +17,36 @@
         <div class="govuk-grid-column-one-third">
             <div class='related-tasks'>
                 <ul class='govuk-list'>
-                    <li><a href="/activities/create/start" class="govuk-link govuk-link--no-visited-state" target='_blank'>Create an activity</a></li>
-                    <li><a href="/activities/dashboard" class="govuk-link govuk-link--no-visited-state" target='_blank'>Edit activities</a></li>
+                    <li>
+                        <a href="/activities/create/start" class="govuk-link govuk-link--no-visited-state" target='_blank'>Create an activity</a>
+                    </li>
+                    <li>
+                        <a href="/activities/dashboard" class="govuk-link govuk-link--no-visited-state" target='_blank'>Edit activities</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
+
+            {% if user.externalActivitiesRolledOut %}
+                {{ mojSubNavigation({
+                    label: "Sub navigation",
+                    items: [{
+                        text: "In-prison activities",
+                        href: "allocation-dashboard?isOutsideWorkFilter=false",
+                        active: true if filters.isOutsideWorkFilter === 'false' else false
+                    }, {
+                        text: "Outside activities",
+                        href: "allocation-dashboard?isOutsideWorkFilter=true",
+                        active: true if filters.isOutsideWorkFilter === 'true' else false
+                    }]
+                }) }}
+
+                <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ 'Outside' if filters.isOutsideWorkFilter === 'true' else 'In-prison' }} activities</h2>
+            {% endif %}
+
             {% set rows = [
                 [
                     {
@@ -70,7 +93,7 @@
                         },
                         classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
                         text: total.waitlisted
-                    },
+                    } if filters.isOutsideWorkFilter === 'false',
                     {
                         attributes: {
                             id: 'percentage-allocated-total',
@@ -135,7 +158,7 @@
                         },
                         classes: 'govuk-table__cell--numeric',
                         text: activity.waitlisted
-                    },
+                    } if filters.isOutsideWorkFilter === 'false',
                     {
                         attributes: {
                             id: 'percentage-allocated-' + loop.index,
@@ -147,13 +170,15 @@
                 ]), rows) %}
             {% endfor %}
 
+            {% set captionText = "Outside activities with allocations and vacancies details" if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter === 'true' else "In-prison activities with allocations, vacancies and waitlist details" %}
+
             {{ govukTable({
                 attributes: {
                     'data-module': 'moj-sortable-table',
                     'data-table-fixed-rows': 'true'
                 },
                 classes: 'sticky-header',
-                caption: "Activities",
+                caption: captionText,
                 captionClasses: "govuk-visually-hidden",
                 head: [
                     {
@@ -195,7 +220,7 @@
                             "aria-sort": "none"
                         },
                         classes: 'govuk-table__header--numeric'
-                    },
+                    } if filters.isOutsideWorkFilter === 'false',
                     {
                         text: "Percentage allocated",
                         attributes: {

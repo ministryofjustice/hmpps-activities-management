@@ -106,12 +106,14 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
             allocationId: 2,
             activityName: 'Activity A1',
             payBand: {} as PrisonPayBand,
+            outsideWork: false,
           },
           {
             activityId: 2,
             allocationId: 3,
             activityName: 'Activity A2',
             payBand: null,
+            outsideWork: false,
           },
         ],
       }
@@ -137,6 +139,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
             allocationId: 3,
             activityName: 'Activity A2',
             payBand: null,
+            outsideWork: false,
           },
         ],
       }

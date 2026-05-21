@@ -16,6 +16,8 @@ export default class CheckPayPage extends Page {
 
   addNewPayRate = () => cy.get('a').contains('Add new pay rate').click()
 
+  backLink = () => cy.get('.govuk-back-link')
+
   changePay = () => cy.get('a').contains('Change').click()
 
   cancelPay = () => cy.get('a').contains('Cancel').click()

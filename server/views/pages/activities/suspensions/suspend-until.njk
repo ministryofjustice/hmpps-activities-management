@@ -18,7 +18,7 @@
                 {% if session.suspendJourney.allocations | length == 1 %}
                     When should {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension from {{ session.suspendJourney.allocations[0].activityName | safe }} end?
                 {% else %}
-                    When should {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension end?
+                    When should {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension from {{ session.suspendJourney.allocations | length }} activities end?
                 {% endif %}
             </h1>
 

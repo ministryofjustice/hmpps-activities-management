@@ -184,7 +184,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
     })
 
     it('should redirect to start-date page if activity is outside', async () => {
-      req.journeyData.createJourney.activityOutsidePrison = true
+      req.journeyData.createJourney.outsideWork = true
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('start-date')
     })

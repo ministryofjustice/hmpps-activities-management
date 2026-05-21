@@ -30,6 +30,7 @@ import {
   Attendance,
   AttendanceReason,
   AttendanceUpdateRequest,
+  BulkAllocationRequest,
   DeallocationReasonCode,
   EventAcknowledgeRequest,
   EventReviewSearchResults,
@@ -62,6 +63,7 @@ import {
   LocationPrefix,
   RolloutPrisonPlan,
   LocationPrefixes,
+  PrisonerAllocations,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { AttendanceStatus } from '../@types/appointments'
@@ -195,6 +197,10 @@ export default class ActivitiesService {
     )
   }
 
+  postBulkAllocations(scheduleId: number, allocationRequests: BulkAllocationRequest, user: ServiceUser) {
+    return this.activitiesApiClient.postBulkAllocations(scheduleId, allocationRequests, user)
+  }
+
   getPayBandsForPrison(user: ServiceUser): Promise<PrisonPayBand[]> {
     return this.activitiesApiClient.getPayBandsForPrison(user.activeCaseLoadId, user)
   }
@@ -245,7 +251,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAllocation(allocationId, user)
   }
 
-  async getActivePrisonPrisonerAllocations(prisonerNumbers: string[], user: ServiceUser) {
+  async getActivePrisonPrisonerAllocations(
+    prisonerNumbers: string[],
+    user: ServiceUser,
+  ): Promise<PrisonerAllocations[]> {
     return this.activitiesApiClient.getPrisonerAllocations(user.activeCaseLoadId, prisonerNumbers, user)
   }
 

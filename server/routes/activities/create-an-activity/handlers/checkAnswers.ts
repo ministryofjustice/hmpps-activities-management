@@ -27,7 +27,7 @@ export default class CheckAnswersRoutes {
     const { user } = res.locals
     const { createJourney } = req.journeyData
     const incentiveLevelPays =
-      req.journeyData.createJourney.activityOutsidePrison && req.journeyData.createJourney.whoPays === 'external'
+      req.journeyData.createJourney.outsideWork && req.journeyData.createJourney.whoPays === 'external'
         ? undefined
         : await this.helper.getPayGroupedByIncentiveLevel(createJourney.pay, createJourney.allocations, user)
 
@@ -97,7 +97,7 @@ export default class CheckAnswersRoutes {
     user: ServiceUser,
     slots: Slot[],
   ): ActivityCreateRequest => {
-    const outsideActivity = createJourney.activityOutsidePrison
+    const outsideActivity = createJourney.outsideWork
     return {
       prisonCode: user.activeCaseLoadId,
       summary: createJourney.name,

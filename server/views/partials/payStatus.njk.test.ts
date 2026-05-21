@@ -100,5 +100,22 @@ describe('show payStatus macro', () => {
 
       expect($('body').text()).toContain('Unpaid')
     })
+    it('should display Employer-paid if the activity is outside work and not payable', () => {
+      const viewContext = {
+        options: {
+          dataPresentCheck: { data: [] },
+          status: 'COMPLETED',
+          outsideWork: true,
+          payable: false,
+          user: {
+            externalActivitiesRolledOut: true,
+          },
+        },
+      }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('body').text()).toContain('Employer-paid')
+    })
   })
 })

@@ -360,7 +360,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
     })
 
     it('should create an external activity (paid by prison) and redirect to confirmation page', async () => {
-      req.journeyData.createJourney.activityOutsidePrison = true
+      req.journeyData.createJourney.outsideWork = true
       req.journeyData.createJourney.whoPays = 'prison'
       req.journeyData.createJourney.name = 'Prison driver'
       req.journeyData.createJourney.capacity = 1
@@ -407,7 +407,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
     })
 
     it('should create an external activity (paid by the employer) and redirect to confirmation page', async () => {
-      req.journeyData.createJourney.activityOutsidePrison = true
+      req.journeyData.createJourney.outsideWork = true
       req.journeyData.createJourney.whoPays = 'external'
       req.journeyData.createJourney.paid = false
       req.journeyData.createJourney.pay = []

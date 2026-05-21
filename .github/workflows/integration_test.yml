@@ -83,7 +83,7 @@ jobs:
       - name: Get wiremock
         shell: bash
         run: |
-          curl --fail --retry 2 -o wiremock.jar https://repo1.maven.org/maven2/org/wiremock/wiremock-standalone/3.9.1/wiremock-standalone-3.9.1.jar
+          curl --fail --retry 2 -o wiremock.jar https://repo.maven.apache.org/maven2/org/wiremock/wiremock-standalone/3.9.1/wiremock-standalone-3.9.1.jar
 
       - name: Prepare and run integration tests
         id: integration-tests
@@ -94,7 +94,7 @@ jobs:
           sleep 5
 
       - name: Run split Cypress tests 🧪
-        uses: cypress-io/github-action@783cb3f07983868532cabaedaa1e6c00ff4786a8 # v7.1.9
+        uses: cypress-io/github-action@dace029018fcdf86e0df89a31bc3cfa5b32570d8 # v7.3.0
         with:
           browser: chrome
         env:

@@ -11,7 +11,7 @@
 {% set pageTitle = "Edit activity details - Activities - DPS" %}
 {% set pageId = 'view-activity-page' %}
 {% set jsBackLink = true %}
-
+{% set outsideWork = user.externalActivitiesRolledOut and activity.outsideWork %}
 {% set activityEnded = schedule.endDate and schedule.endDate < now | toDateString %}
 
 {% block content %}
@@ -24,6 +24,9 @@
                     title: {
                         text: "Activity details"
                     }
+                },
+                attributes: {
+                    "data-qa": "activity-details-summary-list"
                 },
                 rows: [
                     {
@@ -39,7 +42,8 @@
                                     href: "/activities/edit/" + activity.id + "/category?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " category",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-category-link" }
                                 }
                             ]
                         } if not activityEnded
@@ -57,7 +61,8 @@
                                     href: "/activities/edit/" + activity.id + "/name?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " activity name",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-activity-name-link" }
                                 }
                             ]
                         } if not activityEnded
@@ -74,11 +79,12 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/tier?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: " tier"
+                                    visuallyHiddenText: " tier",
+                                    attributes: { "data-qa": "change-tier-link" }
                                 }
                             ] if not activityEnded and activity.category.code != 'SAA_NOT_IN_WORK'
                         }
-                    },
+                    } if not outsideWork,
                     {
                         key: {
                             text: "Organiser"
@@ -91,7 +97,8 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/organiser?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: " organiser"
+                                    visuallyHiddenText: " organiser",
+                                    attributes: { "data-qa": "change-organiser-link" }
                                 }
                             ]
                         } if not activityEnded
@@ -103,10 +110,19 @@
                             items: [{
                                 href: "/activities/edit/" + activity.id + "/attendance-required?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: " record attendance option"
+                                visuallyHiddenText: " record attendance option",
+                                attributes: { "data-qa": "change-attendance-required-link" }
                             }]
                         } if not activityEnded and not schedule.activity.paid
-                    } if activity.tier.code === 'FOUNDATION'
+                    } if activity.tier.code === 'FOUNDATION',
+                    {
+                        key: {
+                            text: "Paid by"
+                        },
+                        value: {
+                            text: "The prison" if activity.paid else "An external employer"
+                        }
+                    } if outsideWork
                 ]
             }) }}
 
@@ -116,13 +132,16 @@
                         text: "Location and capacity"
                     }
                 },
+                attributes: {
+                    "data-qa": "location-and-capacity-summary-list"
+                },
                 rows: [
                     {
                         key: {
                             text: "Location"
                         },
                         value: {
-                            text: showLocation(schedule.activity, schedule.internalLocation.description, true)
+                            text: showLocation(user.externalActivitiesRolledOut, schedule.activity, schedule.internalLocation.description, true)
                         },
                         actions: {
                             items: [
@@ -130,10 +149,18 @@
                                     href: "/activities/edit/" + activity.id + "/location?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " location",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-location-link" }
                                 }
                             ]
                         } if not activityEnded
+                    } if not outsideWork else {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: "Outside"
+                        }
                     },
                     {
                         key: {
@@ -148,7 +175,8 @@
                                     href: "/activities/edit/" + activity.id + "/capacity?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " capacity",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-capacity-link" }
                                 }
                             ]
                         } if not activityEnded
@@ -156,118 +184,130 @@
                 ]
             }) }}
 
-            {{ govukSummaryList({
-                card: {
-                    title: {
-                        text: "Requirements and suitability"
-                    }
-                },
-                rows: [
-                    {
-                        key: {
-                            text: "Suitable for workplace risk assessment level"
-                        },
-                        value: {
-                            text: riskLevel(activity)
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "/activities/edit/" + activity.id + "/risk-level?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: " risk level",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        } if not activityEnded
+            {% if not outsideWork %}
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Requirements and suitability"
+                        }
                     },
-                    {
-                        key: {
-                            text: "Education requirements"
+                    attributes: {
+                        "data-qa": "requirements-and-suitability-summary-list"
+                    },
+                    rows: [
+                        {
+                            key: {
+                                text: "Suitable for workplace risk assessment level"
+                            },
+                            value: {
+                                text: riskLevel(activity)
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "/activities/edit/" + activity.id + "/risk-level?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: " risk level",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { "data-qa": "change-risk-level-link" }
+                                    }
+                                ]
+                            } if not activityEnded
                         },
-                        value: {
-                            html: educationRequirementsContent(activity.minimumEducationLevel)
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "/activities/edit/" + activity.id + "/check-education-level?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: " education levels",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        } if not activityEnded
-                    }
-                ]
-            }) }}
+                        {
+                            key: {
+                                text: "Education requirements"
+                            },
+                            value: {
+                                html: educationRequirementsContent(activity.minimumEducationLevel)
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "/activities/edit/" + activity.id + "/check-education-level?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: " education levels",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { "data-qa": "change-education-level-link" }
+                                    }
+                                ]
+                            } if not activityEnded
+                        }
+                    ]
+                }) }}
+            {% endif %}
 
-            {% set payRows = [] %}
-            {% if schedule.activity.paid %}
-                {% if displayPays | length > 0 %}
-                    {% for displayPay in displayPays %}
-                        {% set payList %}
-                            {% for pay in displayPay.pays %}
-                                <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description }} </div>
-                            {% endfor %}
-                        {% endset %}
+            {% if not outsideWork or (outsideWork and activity.paid) %}
+                {% set payRows = [] %}
+                {% if schedule.activity.paid %}
+                    {% if displayPays | length > 0 %}
+                        {% for displayPay in displayPays %}
+                            {% set payList %}
+                                {% for pay in displayPay.pays %}
+                                    <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description }} </div>
+                                {% endfor %}
+                            {% endset %}
+                            {% set payRows = (payRows.push(
+                                {
+                                    key: {
+                                        text: displayPay.incentiveLevel + " incentive level pay"
+                                    },
+                                    value: {
+                                        html: payList
+                                    }
+                                }
+                            ), payRows) %}
+                        {% endfor %}
+                    {% else %}
                         {% set payRows = (payRows.push(
                             {
                                 key: {
-                                    text: displayPay.incentiveLevel + " incentive level pay"
-                                },
-                                value: {
-                                    html: payList
+                                    text: "None added yet"
                                 }
                             }
                         ), payRows) %}
-                    {% endfor %}
+                    {% endif %}
                 {% else %}
                     {% set payRows = (payRows.push(
                         {
                             key: {
-                                text: "None added yet"
+                                text: "People are not paid for this activity."
                             }
                         }
                     ), payRows) %}
-                {% endif %}
-            {% else %}
-                {% set payRows = (payRows.push(
-                    {
-                        key: {
-                            text: "People are not paid for this activity."
-                        }
-                    }
-                ), payRows) %}
-                {% if not payEditable %}
-                    {% set payRows = (payRows.push(
-                        {
-                            key: {
-                                text: "You cannot change this while people are allocated to the activity."
-                            }
-                        }
-                    ), payRows) %}
-                {% endif %}
-            {% endif %}
-            {{ govukSummaryList({
-                card: {
-                    title: {
-                        text: "Pay rates"
-                    },
-                    actions: {
-                        items: [
+                    {% if not payEditable %}
+                        {% set payRows = (payRows.push(
                             {
-                                href: "/activities/edit/" + activity.id + "/" + ("check-pay" if schedule.activity.paid else "pay-option") + "?preserveHistory=true",
-                                text: "Change",
-                                visuallyHiddenText: " pay",
-                                classes: "govuk-link--no-visited-state",
-                                attributes: { "data-qa": "change-pay-link" }
+                                key: {
+                                    text: "You cannot change this while people are allocated to the activity."
+                                }
                             }
-                        ]
-                    } if not activityEnded and payEditable
-                },
-                rows: payRows
-            }) }}
+                        ), payRows) %}
+                    {% endif %}
+                {% endif %}
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Pay rates"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/edit/" + activity.id + "/" + ("check-pay" if schedule.activity.paid else "pay-option") + "?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: " pay",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-pay-link" }
+                                }
+                            ]
+                        } if not activityEnded and payEditable
+                    },
+                    attributes: {
+                        "data-qa": "pay-rates-summary-list"
+                    },
+                    rows: payRows
+                }) }}
+            {% endif %}
 
             {{ govukInsetText({
                 text: 'The current week is: Week ' + currentWeek,
@@ -289,7 +329,8 @@
                             href: "/activities/edit/" + activity.id + "/start-date?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: " start date",
-                            classes: "govuk-link--no-visited-state"
+                            classes: "govuk-link--no-visited-state",
+                            attributes: { "data-qa": "change-start-date-link" }
                         }
                     ]
                 }
@@ -308,7 +349,8 @@
                             href: "/activities/edit/" + activity.id + ("/remove-end-date" if schedule.endDate else "/end-date?preserveHistory=true"),
                             text: "Change",
                             visuallyHiddenText: " end date",
-                            classes: "govuk-link--no-visited-state"
+                            classes: "govuk-link--no-visited-state",
+                            attributes: { "data-qa": "change-end-date-link" }
                         }
                     ]
                 } if not activityEnded
@@ -345,32 +387,38 @@
                 ), dateAndScheduleRows) %}
             {% endfor %}
 
-            {% set dateAndScheduleRows = (dateAndScheduleRows.push(
-                {
-                    key: {
-                        text: "Runs on bank holidays"
-                    },
-                    value: {
-                        html: runsOnBankHolidays(schedule.runsOnBankHoliday, hasAtLeastOneValidDay)
-                    },
-                    actions: {
-                        items: [
-                            {
-                                href: "/activities/edit/" + activity.id + "/bank-holiday-option?preserveHistory=true",
-                                text: "Change",
-                                visuallyHiddenText: " bank holiday",
-                                classes: "govuk-link--no-visited-state"
-                            }
-                        ]
-                    } if (not activityEnded) and hasAtLeastOneValidDay
-                }
-            ), dateAndScheduleRows) %}
+            {% if not outsideWork %}
+                {% set dateAndScheduleRows = (dateAndScheduleRows.push(
+                    {
+                        key: {
+                            text: "Runs on bank holidays"
+                        },
+                        value: {
+                            html: runsOnBankHolidays(schedule.runsOnBankHoliday, hasAtLeastOneValidDay)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/edit/" + activity.id + "/bank-holiday-option?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: " bank holiday",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-bank-holiday-link" }
+                                }
+                            ]
+                        } if (not activityEnded) and hasAtLeastOneValidDay
+                    }
+                ), dateAndScheduleRows) %}
+            {% endif %}
 
             {{ govukSummaryList({
                 card: {
                     title: {
                         text: "Schedule"
                     }
+                },
+                attributes: {
+                    "data-qa": "schedule-summary-list"
                 },
                 rows: dateAndScheduleRows
             }) }}

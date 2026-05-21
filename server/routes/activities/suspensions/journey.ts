@@ -12,6 +12,7 @@ export type SuspendJourney = {
     allocationId: number
     activityName: string
     payBand: PrisonPayBand
+    outsideWork: boolean
   }[]
   earliestAllocationEndDate?: string
   suspendFrom?: string

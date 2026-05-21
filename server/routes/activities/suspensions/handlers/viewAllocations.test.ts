@@ -97,6 +97,16 @@ describe('Route Handlers - Suspensions - View allocations', () => {
           schedules: [{ id: 1 }],
         } as Activity)
 
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(2))
+        .mockResolvedValue({
+          pay: [
+            { incentiveLevel: 'STD', rate: 100 },
+            { incentiveLevel: 'ENH', rate: 150 },
+          ],
+          schedules: [{ id: 1 }],
+        } as Activity)
+
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
         .mockResolvedValue(activitySchedule as unknown as ActivitySchedule)
@@ -144,6 +154,7 @@ describe('Route Handlers - Suspensions - View allocations', () => {
         prisonerNumber: 'ABC123',
       })
     })
+
     it('should render the correct view - all suspended together', async () => {
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith(['ABC123'], res.locals.user)
@@ -187,6 +198,16 @@ describe('Route Handlers - Suspensions - View allocations', () => {
             ],
           },
         ] as unknown as PrisonerAllocations[])
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(3))
+        .mockResolvedValue({
+          pay: [
+            { incentiveLevel: 'STD', rate: 100 },
+            { incentiveLevel: 'ENH', rate: 150 },
+          ],
+          schedules: [{ id: 1 }],
+        } as Activity)
 
       await handler.GET(req, res)
 

@@ -4,6 +4,7 @@ import activitySessionToDailyTimeSlots, {
   addNewEmptySlotsIfRequired,
   calculateExclusionSlots,
   calculateUniqueSlots,
+  calculateUniqueSlotsByDay,
   createCustomSlots,
   createSessionSlots,
   createSlot,
@@ -789,6 +790,91 @@ describe('calculateUniqueSlots', () => {
         tuesday: true,
         wednesday: true,
         weekNumber: 2,
+      },
+    ])
+  })
+})
+
+describe('calculateUniqueSlotsByDay', () => {
+  it('should not treat a time-only update as a new slot when the day already exists', () => {
+    const slotsA = [
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        customStartTime: '15:00',
+        customEndTime: '16:45',
+        daysOfWeek: ['FRIDAY'],
+      },
+    ] as Slot[]
+
+    const slotsB = [
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['FRIDAY'],
+      },
+    ] as Slot[]
+
+    expect(calculateUniqueSlotsByDay(slotsA, slotsB)).toEqual([])
+  })
+
+  it('should only return days that are genuinely new across split existing slots', () => {
+    const slotsA = [
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: true,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'TUESDAY'],
+      },
+    ] as Slot[]
+
+    const slotsB = [
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
+      },
+    ] as Slot[]
+
+    expect(calculateUniqueSlotsByDay(slotsA, slotsB)).toEqual([
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: true,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['TUESDAY'],
       },
     ])
   })

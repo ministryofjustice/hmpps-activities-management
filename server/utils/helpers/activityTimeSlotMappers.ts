@@ -341,6 +341,42 @@ export function calculateUniqueSlots(slotsA: Slot[], slotsB: Slot[]): Slot[] {
     .filter(s => s.daysOfWeek.length > 0)
 }
 
+export function calculateUniqueSlotsByDay(slotsA: Slot[], slotsB: Slot[]): Slot[] {
+  return slotsA
+    .map(slot => {
+      const existingDays = new Set(
+        slotsB
+          .filter(
+            existingSlot => existingSlot.weekNumber === slot.weekNumber && existingSlot.timeSlot === slot.timeSlot,
+          )
+          .flatMap(existingSlot => existingSlot.daysOfWeek),
+      )
+
+      if (existingDays.size === 0) {
+        return slot
+      }
+
+      const daysOfWeek = slot.daysOfWeek.filter(day => !existingDays.has(day))
+
+      if (daysOfWeek.length === 0) {
+        return null
+      }
+
+      return {
+        ...slot,
+        monday: daysOfWeek.includes(DayOfWeekEnum.MONDAY),
+        tuesday: daysOfWeek.includes(DayOfWeekEnum.TUESDAY),
+        wednesday: daysOfWeek.includes(DayOfWeekEnum.WEDNESDAY),
+        thursday: daysOfWeek.includes(DayOfWeekEnum.THURSDAY),
+        friday: daysOfWeek.includes(DayOfWeekEnum.FRIDAY),
+        saturday: daysOfWeek.includes(DayOfWeekEnum.SATURDAY),
+        sunday: daysOfWeek.includes(DayOfWeekEnum.SUNDAY),
+        daysOfWeek,
+      }
+    })
+    .filter(Boolean)
+}
+
 export function calculateExclusionSlots(exclusions: Slot[], updatedExclusions: Slot[]): Slot[] {
   const addedSlots: Slot[] = []
 

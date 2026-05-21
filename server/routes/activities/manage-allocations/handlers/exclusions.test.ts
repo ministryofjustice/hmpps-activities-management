@@ -3,13 +3,93 @@ import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import ExclusionRoutes from './exclusions'
 import atLeast from '../../../../../jest.setup'
-import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import { ActivitySchedule, PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+
+const mdiPrisonRegime = [
+  {
+    id: 127,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'MONDAY',
+  },
+  {
+    id: 128,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'TUESDAY',
+  },
+  {
+    id: 129,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'WEDNESDAY',
+  },
+  {
+    id: 130,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'THURSDAY',
+  },
+  {
+    id: 131,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'FRIDAY',
+  },
+  {
+    id: 132,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'SATURDAY',
+  },
+  {
+    id: 133,
+    prisonCode: 'MDI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'SUNDAY',
+  },
+]
 
 describe('Route Handlers - Allocation - Exclusions', () => {
   const handler = new ExclusionRoutes(activitiesService)
@@ -21,7 +101,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       locals: {
         user: {
           username: 'joebloggs',
-          activeCaseLoadId: 'LEI',
+          activeCaseLoadId: 'MDI',
         },
       },
       render: jest.fn(),
@@ -32,7 +112,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
     req = {
       params: {},
-      routeContext: { mode: 'create' },
       journeyData: {
         allocateJourney: {
           inmate: {
@@ -117,17 +196,23 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           },
         ],
       } as ActivitySchedule)
+
+    when(activitiesService.getPrisonRegime)
+      .calledWith(atLeast('MDI'))
+      .mockResolvedValue(mdiPrisonRegime as PrisonRegime[])
   })
 
   describe('GET', () => {
     it('should render the expected view', async () => {
       jest.useFakeTimers().setSystemTime(new Date('2024-08-30'))
       config.sameDayScheduleModificationsEnabled = false
+      req.routeContext = { mode: 'create' }
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/exclusions', {
         prisonerName: 'John Smith',
         disabledSlotsExist: true,
+        allocationHasStarted: true,
         sameDayScheduleModificationsEnabled: false,
         weeks: [
           {
@@ -205,6 +290,55 @@ describe('Route Handlers - Allocation - Exclusions', () => {
   })
 
   describe('POST', () => {
+    let setupForSameDayTests: () => void
+
+    beforeEach(() => {
+      setupForSameDayTests = () => {
+        req.journeyData.allocateJourney.futureSameDaySlots = [
+          {
+            weekNumber: 1,
+            timeSlot: 'PM',
+            monday: true,
+            tuesday: false,
+            wednesday: false,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
+            daysOfWeek: ['MONDAY'],
+          },
+        ]
+        req.journeyData.allocateJourney.addToSessionsToday = true
+        req.journeyData.allocateJourney.exclusions = [
+          {
+            weekNumber: 1,
+            timeSlot: 'AM',
+            monday: false,
+            tuesday: false,
+            wednesday: true,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
+            daysOfWeek: ['WEDNESDAY'],
+          },
+        ]
+
+        req.params.allocationId = '1'
+        req.body = {
+          week1: {
+            monday: [],
+            tuesday: [],
+            wednesday: ['AM'],
+            thursday: [],
+            friday: [],
+            saturday: [],
+            sunday: [],
+          },
+        }
+      }
+    })
+
     it('should update the exclusions on the allocation and redirect when in create mode', async () => {
       req.routeContext = { mode: 'create' }
       req.body = {
@@ -254,7 +388,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
 
-    it('should update the exclusions in session and redirect when in create mode', async () => {
+    it('should update the exclusions in session and redirect when in edit mode', async () => {
       req.routeContext = { mode: 'edit' }
       req.params.allocationId = '1'
 
@@ -362,98 +496,131 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
     })
 
-    it.each([
-      {
-        description: 'NOT redirect to addToToday when feature flag is disabled and future same day slots exist',
-        systemTime: '2024-08-28 08:00:00',
-        featureFlagEnabled: false,
-        expectedRedirect: 'confirm-exclusions',
-        shouldNotRedirectTo: 'addToToday',
-      },
-      {
-        description: 'redirect to addToToday when feature flag is enabled as slot is in future',
-        systemTime: '2024-08-28 07:00:00',
-        featureFlagEnabled: true,
-        expectedRedirect: 'addToToday',
-        shouldNotRedirectTo: null,
-      },
-      {
-        description: 'NOT redirect to addToToday when feature flag is enabled but slot start time has passed',
-        systemTime: '2024-08-28 12:30:00',
-        featureFlagEnabled: true,
-        expectedRedirect: 'confirm-exclusions',
-        shouldNotRedirectTo: 'addToToday',
-      },
-    ])('should $description', async ({ systemTime, featureFlagEnabled, expectedRedirect, shouldNotRedirectTo }) => {
-      jest.useFakeTimers().setSystemTime(new Date(systemTime))
-
-      const originalValue = config.sameDayScheduleModificationsEnabled
-      config.sameDayScheduleModificationsEnabled = featureFlagEnabled
+    it('should NOT redirect to addToToday when feature flag is disabled and future same day slots exist', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2024-08-21 08:00:00'))
+      config.sameDayScheduleModificationsEnabled = false
+      req.routeContext = { mode: 'edit' }
 
       try {
-        // Set non-default values to simulate user returning from later steps
-        req.journeyData.allocateJourney.futureSameDaySlots = [
-          {
-            weekNumber: 1,
-            timeSlot: 'PM',
-            monday: true,
-            tuesday: false,
-            wednesday: false,
-            thursday: false,
-            friday: false,
-            saturday: false,
-            sunday: false,
-            daysOfWeek: ['MONDAY'],
-          },
-        ]
-        req.journeyData.allocateJourney.addToSessionsToday = true
-
-        req.journeyData.allocateJourney.exclusions = [
-          {
-            weekNumber: 1,
-            timeSlot: 'AM',
-            monday: false,
-            tuesday: false,
-            wednesday: true,
-            thursday: false,
-            friday: false,
-            saturday: false,
-            sunday: false,
-            daysOfWeek: ['WEDNESDAY'],
-          },
-        ]
-
-        req.routeContext = { mode: 'edit' }
-        req.params.allocationId = '1'
-
-        req.body = {
-          week1: {
-            monday: [],
-            tuesday: [],
-            wednesday: ['AM'],
-            thursday: [],
-            friday: [],
-            saturday: [],
-            sunday: [],
-          },
-        }
+        setupForSameDayTests()
 
         await handler.POST(req, res)
 
-        expect(res.redirect).toHaveBeenCalledWith(expectedRedirect)
-        if (shouldNotRedirectTo) {
-          expect(res.redirect).not.toHaveBeenCalledWith(shouldNotRedirectTo)
-        }
-
-        // Check that futureSameDaySlots and addToSessionsToday have been reset
-        if (featureFlagEnabled && expectedRedirect === 'addToToday') {
-          expect(req.journeyData.allocateJourney.futureSameDaySlots.length).toBeGreaterThan(0)
-        } else {
-          expect(req.journeyData.allocateJourney.futureSameDaySlots).toEqual([])
-        }
+        expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
+        expect(res.redirect).not.toHaveBeenCalledWith('addToToday')
+        expect(req.journeyData.allocateJourney.futureSameDaySlots).toEqual([])
         expect(req.journeyData.allocateJourney.addToSessionsToday).toBe(undefined)
       } finally {
-        config.sameDayScheduleModificationsEnabled = originalValue
+        jest.useRealTimers()
+      }
+    })
+
+    it('should NOT redirect to addToToday when feature flag is enabled and slot start time has passed', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2024-08-21 12:30:00'))
+      config.sameDayScheduleModificationsEnabled = true
+      req.routeContext = { mode: 'edit' }
+
+      try {
+        setupForSameDayTests()
+
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
+        expect(res.redirect).not.toHaveBeenCalledWith('addToToday')
+        expect(req.journeyData.allocateJourney.futureSameDaySlots).toEqual([])
+        expect(req.journeyData.allocateJourney.addToSessionsToday).toBe(undefined)
+      } finally {
+        jest.useRealTimers()
+      }
+    })
+
+    it('should NOT redirect to addToToday when feature flag is enabled but activity has NOT started yet', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
+      config.sameDayScheduleModificationsEnabled = true
+      req.journeyData.allocateJourney.startDate = '2024-08-22'
+      req.routeContext = { mode: 'edit' }
+
+      try {
+        setupForSameDayTests()
+
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
+        expect(res.redirect).not.toHaveBeenCalledWith('addToToday')
+        expect(req.journeyData.allocateJourney.futureSameDaySlots).toEqual([])
+        expect(req.journeyData.allocateJourney.addToSessionsToday).toBe(undefined)
+      } finally {
+        jest.useRealTimers()
+      }
+    })
+
+    it('should redirect to addToToday when feature flag is enabled, future same day slots exist and activity has started', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
+      config.sameDayScheduleModificationsEnabled = true
+      req.journeyData.allocateJourney.startDate = '2024-08-20'
+      req.routeContext = { mode: 'edit' }
+
+      try {
+        setupForSameDayTests()
+
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith('addToToday')
+        expect(res.redirect).not.toHaveBeenCalledWith('confirm-exclusions')
+        expect(req.journeyData.allocateJourney.futureSameDaySlots).toEqual([
+          {
+            customEndTime: undefined,
+            customStartTime: undefined,
+            daysOfWeek: ['WEDNESDAY'],
+            friday: false,
+            monday: false,
+            saturday: false,
+            sunday: false,
+            thursday: false,
+            timeSlot: 'AM',
+            tuesday: false,
+            wednesday: true,
+            weekNumber: 1,
+          },
+        ])
+        expect(req.journeyData.allocateJourney.addToSessionsToday).toBe(undefined)
+      } finally {
+        jest.useRealTimers()
+      }
+    })
+
+    it('should redirect to addToToday for the edit journey when feature flag is enabled and slot is later "today"', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
+      config.sameDayScheduleModificationsEnabled = true
+      req.routeContext = { mode: 'edit' }
+
+      try {
+        setupForSameDayTests()
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith('addToToday')
+        expect(res.redirect).not.toHaveBeenCalledWith('confirm-exclusions')
+        expect(req.journeyData.allocateJourney.futureSameDaySlots.length).toBeGreaterThan(0)
+        expect(req.journeyData.allocateJourney.addToSessionsToday).toBe(undefined)
+      } finally {
+        jest.useRealTimers()
+      }
+    })
+
+    it('should redirect to addToToday for the exclude journey when feature flag is enabled and slot is later "today"', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
+      config.sameDayScheduleModificationsEnabled = true
+      req.routeContext = { mode: 'exclude' }
+
+      try {
+        setupForSameDayTests()
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith('addToToday')
+        expect(res.redirect).not.toHaveBeenCalledWith('confirm-exclusions')
+        expect(req.journeyData.allocateJourney.futureSameDaySlots.length).toBeGreaterThan(0)
+        expect(req.journeyData.allocateJourney.addToSessionsToday).toBe(undefined)
+      } finally {
         jest.useRealTimers()
       }
     })

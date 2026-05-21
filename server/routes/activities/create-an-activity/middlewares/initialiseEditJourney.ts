@@ -38,6 +38,7 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
       paid: activity.paid,
       pay: activity.pay,
       educationLevels: activity.minimumEducationLevel,
+      outsideWork: activity.outsideWork,
     }
 
     if (schedule.internalLocation) {

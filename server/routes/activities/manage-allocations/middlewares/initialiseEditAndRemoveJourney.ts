@@ -99,6 +99,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
           inCell: activity.inCell,
           onWing: activity.onWing,
           offWing: activity.offWing,
+          outsideWork: activity.outsideWork,
         },
         latestAllocationStartDate: allocations[allocations.length - 1].startDate,
         exclusions: [],

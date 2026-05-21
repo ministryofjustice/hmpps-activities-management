@@ -129,7 +129,7 @@
                                 text: "UK phone number"
                             },
                             value: {
-                                text: session.bookAProbationMeetingJourney.officer.telephone or ("Not yet known" if session.bookAProbationMeetingJourney.officerDetailsNotKnown else "None entered")
+                                text: session.bookAProbationMeetingJourney.officer.telephone or "Not yet known"
                             },
                             actions: {
                                 items: [

@@ -159,7 +159,8 @@
                         status: attendee.attendance.status,
                         issuePayment: attendee.attendance.issuePayment,
                         payable: attendee.instance.activitySchedule.activity.paid,
-                        marginTagClass: true
+                        marginTagClass: true,
+                        user: user
                     }) + ' ' +
                     incentiveLevelWarningTag(attendee.attendance),
                     attributes: {

@@ -21,7 +21,7 @@ export default class CategoryRoutes {
 
     let categories = await this.activitiesService.getActivityCategories(user)
 
-    if (req.journeyData.createJourney.activityOutsidePrison) {
+    if (req.journeyData.createJourney.outsideWork) {
       categories = categories.filter(
         category => category.code !== 'SAA_NOT_IN_WORK' && category.code !== 'SAA_INDUCTION',
       )

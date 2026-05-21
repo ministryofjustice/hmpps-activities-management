@@ -65,7 +65,7 @@ describe('Route Handlers - Create an activity - Category', () => {
     })
 
     it('should remove "Not in work" and "Induction" categories when activity is outside prison', async () => {
-      req.journeyData.createJourney.activityOutsidePrison = true
+      req.journeyData.createJourney.outsideWork = true
       when(activitiesService.getActivityCategories).mockResolvedValue([
         { id: 1, code: 'SAA_SERVICES', name: 'Services' },
         { id: 2, code: 'SAA_EDUCATION', name: 'Education' },

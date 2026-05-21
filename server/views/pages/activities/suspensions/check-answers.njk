@@ -30,7 +30,29 @@
                 {% if session.suspendJourney.allocations | length == 1 %}
                     {{ session.suspendJourney.allocations[0].activityName | safe }}
                 {% else %}
-                    All activities
+                    <ul class="govuk-list">
+                        {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
+                            <li>{{allocation.activityName}}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endset %}
+            {% set paidText %}
+                {% if session.suspendJourney.paid == YesNo.YES and paidCount == session.suspendJourney.allocations | length %}
+                    Yes
+                {% elif session.suspendJourney.paid == YesNo.NO %}
+                    No
+                {% elif session.suspendJourney.paid == YesNo.YES and paidCount > 0 %}
+                    Yes, for:
+                    <ul class="govuk-list govuk-list--bullet">
+                        {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
+                            {% if allocation.payBand %}
+                                <li>{{allocation.activityName}}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    Not specified
                 {% endif %}
             {% endset %}
 
@@ -45,13 +67,13 @@
                     },
                     {
                         key: { text: "Activity" },
-                        value: { text: activitiesText }
+                        value: { html: activitiesText }
                     },
                     {
                         key: { text: "First day of suspension" },
                         value: {
                             text: (
-                                ("Immediately" if session.suspendJourney.suspendFrom == now | toDateString) or
+                                ("Today - suspension starts immediately" if session.suspendJourney.suspendFrom == now | toDateString) or
                                 ("Tomorrow: " + session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom == now | addDays(1) | toDateString) or
                                 (session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom > now | addDays(1) | toDateString)
                             )
@@ -71,7 +93,7 @@
                             text: "Paid while suspended?"
                         },
                         value: {
-                            text: session.suspendJourney.paid | toTitleCase
+                            html: paidText
                         },
                         actions: {
                             items: [
@@ -83,7 +105,7 @@
                                 }
                             ]
                         }
-                    } if session.suspendJourney.paid != null,
+                    } if session.suspendJourney.paid != null and paidCount > 0,
                     {
                         key: { text: "Last day of suspension" },
                         value: {

@@ -178,6 +178,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
         endDate: null,
         scheduleWeeks: 1,
         paid: true,
+        outsideWork: false,
       }
       req.journeyData.allocateJourney.updatedExclusions = [
         {
@@ -297,6 +298,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
         endDate: null,
         scheduleWeeks: 1,
         paid: true,
+        outsideWork: false,
       }
       req.journeyData.allocateJourney.updatedExclusions = undefined
 
@@ -354,6 +356,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
           endDate: null,
           scheduleWeeks: 1,
           paid: true,
+          outsideWork: false,
         }
         req.journeyData.allocateJourney.updatedExclusions = [
           {

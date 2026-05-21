@@ -31,6 +31,11 @@ export default class ViewAllocationsRoutes {
       .filter(all => all.plannedSuspension)
       .sort((a, b) => (a.plannedSuspension.plannedStartDate < b.plannedSuspension.plannedStartDate ? -1 : 1))
 
+    const enhancedSuspendedAllocations = await this.enhanceActiveAllocations(
+      suspendedAllocations,
+      prisoner,
+      res.locals.user,
+    )
     const sortedActiveAllocations = enhancedActiveAllocations.sort((a, b) =>
       a.activitySummary < b.activitySummary ? -1 : 1,
     )
@@ -39,7 +44,7 @@ export default class ViewAllocationsRoutes {
       prisonerNumber,
       prisonerName: formatFirstLastName(prisoner.firstName, prisoner.lastName),
       allocationCount: allocations?.length,
-      suspendedAllocations,
+      suspendedAllocations: enhancedSuspendedAllocations,
       activeAllocations: sortedActiveAllocations,
       activeAllocationIdsForSuspending: activeAllocations.map(allocation => allocation.id),
     })
@@ -49,12 +54,18 @@ export default class ViewAllocationsRoutes {
     return Promise.all(
       activeAllocations.map(async allocation => {
         const activity = await this.activitiesService.getActivity(allocation.activityId, user)
-        if (!activity.paid) return allocation
+        if (!activity.paid) {
+          return {
+            ...allocation,
+            outsideWork: activity.outsideWork,
+          }
+        }
 
         const currentPay = getCurrentPay(activity, allocation, prisoner)
         return {
           ...allocation,
           payRate: currentPay?.rate,
+          outsideWork: activity.outsideWork,
         }
       }),
     )

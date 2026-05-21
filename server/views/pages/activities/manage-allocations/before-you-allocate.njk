@@ -20,7 +20,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
             <span class="govuk-caption-l">{{ allocateJourney.activity.name }}</span>
-            <h1 class="govuk-heading-xl">Before you allocate {{ prisonerName }}</h1>
+            <h1 class="govuk-heading-l">Before you allocate {{ prisonerName }}</h1>
 
             <p class="govuk-body-l">Use the information on this page to decide if <a href="{{ dpsUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}" class="govuk-link" target="_blank">{{ prisonerName }}<span class="govuk-visually-hidden"> (opens in new tab)</span></a> is suitable for {{ allocateJourney.activity.name }}.</p>
             <p class="govuk-body-l">You may need to consult with other departments before making your decision.</p>
@@ -227,7 +227,7 @@
                         fieldset: {
                             legend: {
                                 text: "Do you want to allocate " + prisonerName + " to " + allocateJourney.activity.name + "?",
-                                classes: "govuk-fieldset__legend--l"
+                                classes: "govuk-fieldset__legend--m"
                             }
                         },
                         errorMessage: validationErrors | findError('confirm'),

@@ -19,6 +19,7 @@ import prisonerSearchResponse from '../../../fixtures/prisonerSearchApi/postPris
 import pendingApplication from '../../../fixtures/activitiesApi/waitlist/pendingApplication.json'
 import declinedApplication from '../../../fixtures/activitiesApi/waitlist/declinedApplication.json'
 import withdrawnApplication from '../../../fixtures/activitiesApi/waitlist/withdrawnApplication.json'
+import getMdiPrisonRegime from '../../../fixtures/prisonApi/getMdiPrisonRegime.json'
 
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
@@ -46,7 +47,7 @@ const navigateToActivitiesDashboard = (): AllocationDashboard => {
   activitiesIndexPage.allocateToActivitiesCard().click()
 
   const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
-  manageActivitiesPage.allocateToActivityCard().click()
+  manageActivitiesPage.manageAllocationsCard().click()
 
   const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
   activitiesPage.selectActivityWithName('English level 1')
@@ -60,6 +61,7 @@ context('Allocate to activity', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
+    cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getMdiPrisonRegime)
     cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A5015DY', getCandidateSuitability)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)

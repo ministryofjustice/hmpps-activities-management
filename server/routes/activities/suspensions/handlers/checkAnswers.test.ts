@@ -67,7 +67,12 @@ describe('Route Handlers - Suspensions - Check answers', () => {
   describe('GET', () => {
     it('should render the correct view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/check-answers')
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/suspensions/check-answers',
+        expect.objectContaining({
+          paidCount: 0,
+        }),
+      )
     })
   })
 
