@@ -11,7 +11,7 @@
 {% set pageTitle = "Edit activity details - Activities - DPS" %}
 {% set pageId = 'view-activity-page' %}
 {% set jsBackLink = true %}
-
+{% set outsideWork = user.externalActivitiesRolledOut and activity.outsideWork %}
 {% set activityEnded = schedule.endDate and schedule.endDate < now | toDateString %}
 
 {% block content %}
@@ -24,6 +24,9 @@
                     title: {
                         text: "Activity details"
                     }
+                },
+                attributes: {
+                    "data-qa": "activity-details-summary-list"
                 },
                 rows: [
                     {
@@ -39,7 +42,8 @@
                                     href: "/activities/edit/" + activity.id + "/category?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " category",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-category-link" }
                                 }
                             ]
                         } if not activityEnded
@@ -57,7 +61,8 @@
                                     href: "/activities/edit/" + activity.id + "/name?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " activity name",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-activity-name-link" }
                                 }
                             ]
                         } if not activityEnded
@@ -74,11 +79,12 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/tier?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: " tier"
+                                    visuallyHiddenText: " tier",
+                                    attributes: { "data-qa": "change-tier-link" }
                                 }
                             ] if not activityEnded and activity.category.code != 'SAA_NOT_IN_WORK'
                         }
-                    } if not activity.outsideWork,
+                    } if not outsideWork,
                     {
                         key: {
                             text: "Organiser"
@@ -91,7 +97,8 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/organiser?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: " organiser"
+                                    visuallyHiddenText: " organiser",
+                                    attributes: { "data-qa": "change-organiser-link" }
                                 }
                             ]
                         } if not activityEnded
@@ -103,7 +110,8 @@
                             items: [{
                                 href: "/activities/edit/" + activity.id + "/attendance-required?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: " record attendance option"
+                                visuallyHiddenText: " record attendance option",
+                                attributes: { "data-qa": "change-attendance-required-link" }
                             }]
                         } if not activityEnded and not schedule.activity.paid
                     } if activity.tier.code === 'FOUNDATION',
@@ -114,7 +122,7 @@
                         value: {
                             text: "The prison" if activity.paid else "An external employer"
                         }
-                    } if user.externalActivitiesRolledOut and activity.outsideWork
+                    } if outsideWork
                 ]
             }) }}
 
@@ -123,6 +131,9 @@
                     title: {
                         text: "Location and capacity"
                     }
+                },
+                attributes: {
+                    "data-qa": "location-and-capacity-summary-list"
                 },
                 rows: [
                     {
@@ -138,11 +149,12 @@
                                     href: "/activities/edit/" + activity.id + "/location?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " location",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-location-link" }
                                 }
                             ]
                         } if not activityEnded
-                    } if not activity.outsideWork else {
+                    } if not outsideWork else {
                         key: {
                             text: "Location"
                         },
@@ -163,7 +175,8 @@
                                     href: "/activities/edit/" + activity.id + "/capacity?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " capacity",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-capacity-link" }
                                 }
                             ]
                         } if not activityEnded
@@ -171,12 +184,15 @@
                 ]
             }) }}
 
-            {% if not activity.outsideWork %}
+            {% if not outsideWork %}
                 {{ govukSummaryList({
                     card: {
                         title: {
                             text: "Requirements and suitability"
                         }
+                    },
+                    attributes: {
+                        "data-qa": "requirements-and-suitability-summary-list"
                     },
                     rows: [
                         {
@@ -192,7 +208,8 @@
                                         href: "/activities/edit/" + activity.id + "/risk-level?preserveHistory=true",
                                         text: "Change",
                                         visuallyHiddenText: " risk level",
-                                        classes: "govuk-link--no-visited-state"
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { "data-qa": "change-risk-level-link" }
                                     }
                                 ]
                             } if not activityEnded
@@ -210,7 +227,8 @@
                                         href: "/activities/edit/" + activity.id + "/check-education-level?preserveHistory=true",
                                         text: "Change",
                                         visuallyHiddenText: " education levels",
-                                        classes: "govuk-link--no-visited-state"
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { "data-qa": "change-education-level-link" }
                                     }
                                 ]
                             } if not activityEnded
@@ -219,7 +237,7 @@
                 }) }}
             {% endif %}
 
-            {% if not activity.outsideWork or (user.externalActivitiesRolledOut and activity.outsideWork and activity.paid) %}
+            {% if not outsideWork or (outsideWork and activity.paid) %}
                 {% set payRows = [] %}
                 {% if schedule.activity.paid %}
                     {% if displayPays | length > 0 %}
@@ -284,6 +302,9 @@
                             ]
                         } if not activityEnded and payEditable
                     },
+                    attributes: {
+                        "data-qa": "pay-rates-summary-list"
+                    },
                     rows: payRows
                 }) }}
             {% endif %}
@@ -308,7 +329,8 @@
                             href: "/activities/edit/" + activity.id + "/start-date?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: " start date",
-                            classes: "govuk-link--no-visited-state"
+                            classes: "govuk-link--no-visited-state",
+                            attributes: { "data-qa": "change-start-date-link" }
                         }
                     ]
                 }
@@ -327,7 +349,8 @@
                             href: "/activities/edit/" + activity.id + ("/remove-end-date" if schedule.endDate else "/end-date?preserveHistory=true"),
                             text: "Change",
                             visuallyHiddenText: " end date",
-                            classes: "govuk-link--no-visited-state"
+                            classes: "govuk-link--no-visited-state",
+                            attributes: { "data-qa": "change-end-date-link" }
                         }
                     ]
                 } if not activityEnded
@@ -364,7 +387,7 @@
                 ), dateAndScheduleRows) %}
             {% endfor %}
 
-            {% if not activity.outsideWork %}
+            {% if not outsideWork %}
                 {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                     {
                         key: {
@@ -379,7 +402,8 @@
                                     href: "/activities/edit/" + activity.id + "/bank-holiday-option?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " bank holiday",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-bank-holiday-link" }
                                 }
                             ]
                         } if (not activityEnded) and hasAtLeastOneValidDay
@@ -392,6 +416,9 @@
                     title: {
                         text: "Schedule"
                     }
+                },
+                attributes: {
+                    "data-qa": "schedule-summary-list"
                 },
                 rows: dateAndScheduleRows
             }) }}

@@ -59,7 +59,7 @@
                             }]
                         }) }}
 
-                        <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ 'Outside' if filters.isOutsideWorkFilter === 'true' else 'In-prison' }} activities</h2>
+                        <h2 class="govuk-heading-m govuk-!-margin-top-6" data-qa="location-heading">{{ 'Outside' if filters.isOutsideWorkFilter === 'true' else 'In-prison' }} activities</h2>
                     {% endif %}
 
                     {% if activities | length %}

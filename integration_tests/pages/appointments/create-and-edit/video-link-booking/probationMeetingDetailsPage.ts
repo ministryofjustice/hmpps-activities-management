@@ -13,5 +13,5 @@ export default class ProbationMeetingDetailsPage extends Page {
 
   selectRadioFirstMeetingType = () => this.getInputById('meetingTypeCode').click()
 
-  checkOfficerDetailsNotKnown = () => this.getInputByName('officerDetailsNotKnown').check()
+  selectNoToProbationOfficerDetailsKnown = () => this.getInputById('probationOfficerDetailsKnown-2').click()
 }

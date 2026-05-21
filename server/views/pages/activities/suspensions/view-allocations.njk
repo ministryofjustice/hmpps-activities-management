@@ -13,6 +13,7 @@
 {% set pageId = 'view-allocations-page' %}
 {% set hardBackLinkHref = "/activities/suspensions/select-prisoner?query="+prisonerNumber %}
 {% set hardBackLinkText = "Back" %}
+{% set outsideWork = user.externalActivitiesRolledOut and allocation.outsideWork %}
 
 {% set activeAllocationRows = [] %}
 {% for allocation in activeAllocations %}
@@ -28,7 +29,7 @@
         },
         {
             text: allocation.payRate | toMoney if allocation.payRate else 'Unpaid'
-        } if not allocation.outsideWork else {
+        } if not outsideWork else {
             text: allocation.payRate | toMoney if allocation.payRate else 'None - employer-paid activity'
         },
         {
@@ -40,7 +41,7 @@
 {% set suspendedAllocationRows = [] %}
 {% for allocation in suspendedAllocations %}
     {% set paid %}
-        {% if user.externalActivitiesRolledOut and allocation.outsideWork and allocation.prisonPayBand == null %}
+        {% if outsideWork and allocation.prisonPayBand == null %}
             No - employer-paid activity
         {% elif allocation.prisonPayBand and(allocation.status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY or allocation.plannedSuspension.paid) %}
             Yes

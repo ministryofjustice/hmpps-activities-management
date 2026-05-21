@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import AddToSessionsToday from './AddToSessionsToday'
+import AddToSessionsToday from './addToSessionsToday'
 import { FormValidationError } from '../../../../middleware/formValidationErrorHandler'
 import { Slot } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
