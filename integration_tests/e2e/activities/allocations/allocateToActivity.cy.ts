@@ -27,14 +27,14 @@ import PayBandPage from '../../../pages/allocateToActivity/payBand'
 import CheckAnswersPage from '../../../pages/allocateToActivity/checkAnswers'
 import CancelPage from '../../../pages/allocateToActivity/cancel'
 import ConfirmationPage from '../../../pages/allocateToActivity/confirmation'
-import AllocationDashboard from '../../../pages/allocateToActivity/allocationDashboard'
+import ManageActivityAllocations from '../../../pages/allocateToActivity/manageActivityAllocations'
 import ManageActivitiesDashboardPage from '../../../pages/activities/manageActivitiesDashboard'
 import BeforeYouAllocate from '../../../pages/allocateToActivity/beforeYouAllocate'
 import ActivitiesIndexPage from '../../../pages/activities'
 import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
 import resetActivityAndScheduleStubs from './allocationsStubHelper'
 
-const navigateToActivitiesDashboard = (): AllocationDashboard => {
+const navigateToActivitiesDashboard = (): ManageActivityAllocations => {
   const indexPage = Page.verifyOnPage(IndexPage)
   indexPage.activitiesCard().click()
 
@@ -47,7 +47,7 @@ const navigateToActivitiesDashboard = (): AllocationDashboard => {
   const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
   activitiesPage.selectActivityWithName('English level 1')
 
-  const allocatePage = Page.verifyOnPage(AllocationDashboard)
+  const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
   return allocatePage
 }
 

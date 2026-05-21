@@ -4,7 +4,7 @@ import Page from '../../../pages/page'
 import ActivitiesIndexPage from '../../../pages/activities'
 import ManageActivitiesDashboardPage from '../../../pages/activities/manageActivitiesDashboard'
 import ActivitiesDashboardPage from '../../../pages/allocateToActivity/activitiesDashboard'
-import AllocationDashboard from '../../../pages/allocateToActivity/allocationDashboard'
+import ManageActivityAllocations from '../../../pages/allocateToActivity/manageActivityAllocations'
 import BeforeYouAllocate from '../../../pages/allocateToActivity/beforeYouAllocate'
 import StartDatePage from '../../../pages/allocateToActivity/startDate'
 import EndDateOptionPage from '../../../pages/allocateToActivity/endDateOption'
@@ -110,7 +110,7 @@ context('Deallocate from activities after an allocation', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
 
     allocatePage.tabWithTitle('Other people').click()
@@ -181,7 +181,7 @@ context('Deallocate from activities after an allocation', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
 
@@ -266,7 +266,7 @@ context('Deallocate from activities after an allocation', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
 
@@ -350,7 +350,7 @@ context('Deallocate from activities after an allocation', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
 

@@ -309,7 +309,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           schedule: activitySchedule,
           dailySlots: {
@@ -559,7 +559,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           filters: expect.objectContaining({
             incentiveLevelFilter: 'Standard, Enhanced',
@@ -589,7 +589,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           suitableForWra: 'Low',
         }),
@@ -606,7 +606,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           suitableForWra: 'Low or Medium',
         }),
@@ -619,7 +619,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           suitableForWra: 'Low or Medium or High',
         }),
@@ -633,7 +633,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           filters: expect.objectContaining({
             riskLevelFilter: 'Any Workplace Risk Assessment',
@@ -659,7 +659,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           filters: expect.objectContaining({
             riskLevelFilter: 'No Workplace Risk Assessment',
@@ -685,7 +685,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           filters: expect.objectContaining({
             employmentFilter: 'In work',
@@ -717,7 +717,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           filters: expect.objectContaining({
             employmentFilter: 'Everyone',
@@ -755,7 +755,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           filters: expect.objectContaining({
             employmentFilter: 'Not allocated to any activity',
@@ -788,7 +788,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           filters: expect.objectContaining({
             employmentFilter: 'Not in work',
@@ -840,7 +840,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/allocation-dashboard/allocation-dashboard',
+        'pages/activities/allocation-dashboard/manage-activity-allocations',
         expect.objectContaining({
           filters: expect.objectContaining({
             employmentFilter: 'Everyone',

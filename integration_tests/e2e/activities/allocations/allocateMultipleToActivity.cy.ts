@@ -13,7 +13,7 @@ import getNonAssociations from '../../../fixtures/activitiesApi/non_associations
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import ActivitiesDashboardPage from '../../../pages/allocateToActivity/activitiesDashboard'
-import AllocationDashboard from '../../../pages/allocateToActivity/allocationDashboard'
+import ManageActivityAllocations from '../../../pages/allocateToActivity/manageActivityAllocations'
 import SetUpPrisonerListMethodPage from '../../../pages/allocateToActivity/setUpPrisonerListMethod'
 import SelectPrisonerPage from '../../../pages/allocateToActivity/selectPrisoner'
 import ManageActivitiesDashboardPage from '../../../pages/activities/manageActivitiesDashboard'
@@ -83,7 +83,7 @@ context('Allocate multiple one by one to an activity', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')
@@ -192,7 +192,7 @@ context('Allocate multiple one by one to an activity', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')
@@ -289,7 +289,7 @@ context('Allocate multiple one by one to an activity', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')
@@ -368,7 +368,7 @@ context('Allocate multiple one by one to an activity', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')

@@ -9,7 +9,7 @@ import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidat
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import ActivitiesDashboardPage from '../../../pages/allocateToActivity/activitiesDashboard'
-import AllocationDashboard from '../../../pages/allocateToActivity/allocationDashboard'
+import ManageActivityAllocations from '../../../pages/allocateToActivity/manageActivityAllocations'
 import SetUpPrisonerListMethodPage from '../../../pages/allocateToActivity/setUpPrisonerListMethod'
 import ManageActivitiesDashboardPage from '../../../pages/activities/manageActivitiesDashboard'
 import ActivitiesIndexPage from '../../../pages/activities'
@@ -89,7 +89,7 @@ context('Allocate multiple people to an activity by copying from another activit
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.tabWithTitle('Other people').click()
     allocatePage.allocateGroupLink()
 
@@ -181,7 +181,7 @@ context('Allocate multiple people to an activity by copying from another activit
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.tabWithTitle('Other people').click()
     allocatePage.allocateGroupLink()
 
@@ -239,7 +239,7 @@ context('Allocate multiple people to an activity by copying from another activit
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')

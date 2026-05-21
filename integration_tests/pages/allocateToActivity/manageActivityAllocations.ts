@@ -1,8 +1,8 @@
 import Page from '../page'
 
-export default class AllocationDashboard extends Page {
+export default class ManageActivityAllocations extends Page {
   constructor() {
-    super('allocation-dashboard-page')
+    super('manage-activity-allocations-page')
   }
 
   tabWithTitle = (title: string) => cy.get('.govuk-tabs__tab').contains(title)

@@ -15,7 +15,7 @@ import Page from '../../../pages/page'
 import ActivitiesDashboardPage from '../../../pages/allocateToActivity/activitiesDashboard'
 import CheckAnswersPage from '../../../pages/allocateToActivity/checkAnswers'
 import ConfirmationPage from '../../../pages/allocateToActivity/confirmation'
-import AllocationDashboard from '../../../pages/allocateToActivity/allocationDashboard'
+import ManageActivityAllocations from '../../../pages/allocateToActivity/manageActivityAllocations'
 import ManageActivitiesDashboardPage from '../../../pages/activities/manageActivitiesDashboard'
 import ActivitiesIndexPage from '../../../pages/activities'
 import DeallocateTodayOptionPage from '../../../pages/allocateToActivity/deallocateTodayOption'
@@ -66,7 +66,7 @@ context('Deallocation from activity', () => {
       activitiesPage.activityRows().should('have.length', 3)
       activitiesPage.selectActivityWithName('English level 1')
 
-      const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
+      const allocationDashboardPage = Page.verifyOnPage(ManageActivityAllocations)
       allocationDashboardPage.allocatedPeopleRows().should('have.length', 3)
       allocationDashboardPage.selectAllocatedPrisonerByName('Bloggs, Jo')
       allocationDashboardPage.selectAllocatedPrisonerByName('Body, No')
@@ -116,7 +116,7 @@ context('Deallocation from activity', () => {
         getInmateDetails.filter(f => f.prisonerNumber === 'G4793VF'),
       )
 
-      const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
+      const allocationDashboardPage = Page.verifyOnPage(ManageActivityAllocations)
       allocationDashboardPage.allocatedPeopleRows().should('have.length', 3)
       allocationDashboardPage.selectAllocatedPrisonerByName('Bloggs, Jo')
       allocationDashboardPage.deallocateSelectedPrisoners()
@@ -161,7 +161,7 @@ context('Deallocation from activity', () => {
         getInmateDetails.filter(f => f.prisonerNumber === 'G4793VF'),
       )
 
-      const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
+      const allocationDashboardPage = Page.verifyOnPage(ManageActivityAllocations)
       allocationDashboardPage.allocatedPeopleRows().should('have.length', 3)
       allocationDashboardPage.selectAllocatedPrisonerByName('Bloggs, Jo')
       allocationDashboardPage.deallocateSelectedPrisoners()

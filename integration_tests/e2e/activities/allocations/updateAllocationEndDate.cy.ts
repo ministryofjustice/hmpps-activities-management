@@ -4,7 +4,7 @@ import Page from '../../../pages/page'
 import ActivitiesIndexPage from '../../../pages/activities'
 import ManageActivitiesDashboardPage from '../../../pages/activities/manageActivitiesDashboard'
 import ActivitiesDashboardPage from '../../../pages/allocateToActivity/activitiesDashboard'
-import AllocationDashboard from '../../../pages/allocateToActivity/allocationDashboard'
+import ManageActivityAllocations from '../../../pages/allocateToActivity/manageActivityAllocations'
 import BeforeYouAllocate from '../../../pages/allocateToActivity/beforeYouAllocate'
 import StartDatePage from '../../../pages/allocateToActivity/startDate'
 import EndDateOptionPage from '../../../pages/allocateToActivity/endDateOption'
@@ -110,7 +110,7 @@ context('Update an allocation end as needed', () => {
     cy.signIn()
   })
 
-  const goToAllocationDashboard = () => {
+  const goToManageActivityAllocations = () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -124,7 +124,7 @@ context('Update an allocation end as needed', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
     allocatePage.tabWithTitle('Other people').click()
     allocatePage.selectRiskLevelOption('Any Workplace Risk Assessment')
@@ -161,11 +161,11 @@ context('Update an allocation end as needed', () => {
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.reviewAllocationsLink().click()
 
-    return Page.verifyOnPage(AllocationDashboard)
+    return Page.verifyOnPage(ManageActivityAllocations)
   }
 
   it('should allow user to change the end date (Yes path)', () => {
-    const allocationDashboard = goToAllocationDashboard()
+    const allocationDashboard = goToManageActivityAllocations()
     allocationDashboard.selectAllocatedPrisonerByName('Bloggs, Jo')
     allocationDashboard.getButton('End allocation').click()
 
@@ -190,7 +190,7 @@ context('Update an allocation end as needed', () => {
   })
 
   it('should allow user to keep the same end date (No path)', () => {
-    const allocationDashboard = goToAllocationDashboard()
+    const allocationDashboard = goToManageActivityAllocations()
 
     allocationDashboard.selectAllocatedPrisonerByName('Bloggs, Jo')
     allocationDashboard.getButton('End allocation').click()
@@ -204,11 +204,11 @@ context('Update an allocation end as needed', () => {
     confirmDeallocateExistingPage.getRadioByValue('choice', 'no').check()
     confirmDeallocateExistingPage.continue()
 
-    Page.verifyOnPage(AllocationDashboard)
+    Page.verifyOnPage(ManageActivityAllocations)
   })
 
   it('should allow user to amend end date through manage allocations path', () => {
-    const allocationDashboard = goToAllocationDashboard()
+    const allocationDashboard = goToManageActivityAllocations()
 
     allocationDashboard.selectAllocatedPrisonerByName('Bloggs, Jo')
     allocationDashboard.getButton('Manage allocation').click()

@@ -27,7 +27,7 @@ import PayBandPage from '../../../pages/allocateToActivity/payBand'
 import CheckAnswersPage from '../../../pages/allocateToActivity/checkAnswers'
 import CancelPage from '../../../pages/allocateToActivity/cancel'
 import ConfirmationPage from '../../../pages/allocateToActivity/confirmation'
-import AllocationDashboard from '../../../pages/allocateToActivity/allocationDashboard'
+import ManageActivityAllocations from '../../../pages/allocateToActivity/manageActivityAllocations'
 import ManageActivitiesDashboardPage from '../../../pages/activities/manageActivitiesDashboard'
 import ActivitiesIndexPage from '../../../pages/activities'
 import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
@@ -299,7 +299,7 @@ context('Allocate to external activities', () => {
     activitiesPage.outsideActivities().click()
     activitiesPage.selectActivityWithName('Outside Cafe')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')
@@ -355,7 +355,7 @@ context('Allocate to external activities', () => {
     activitiesPage.outsideActivities().click()
     activitiesPage.selectActivityWithName('Hotel')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')
@@ -408,7 +408,7 @@ context('Allocate to external activities', () => {
     activitiesPage.outsideActivities().click()
     activitiesPage.selectActivityWithName('Outside Cafe')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')
@@ -497,7 +497,7 @@ context('Allocate to external activities', () => {
     activitiesPage.outsideActivities().click()
     activitiesPage.selectActivityWithName('Hotel')
 
-    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    const allocatePage = Page.verifyOnPage(ManageActivityAllocations)
     allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')

@@ -1,6 +1,6 @@
 import Page from '../page'
 
-export default class ActivitiesDashboardPage extends Page {
+export default class ManageActivityAllocationsPage extends Page {
   constructor() {
     super('manage-allocations-activities-page')
   }
