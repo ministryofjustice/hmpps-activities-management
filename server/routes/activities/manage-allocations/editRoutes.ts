@@ -17,7 +17,7 @@ import DeallocationCaseNoteQuestionRoutes, {
   DeallocationCaseNoteQuestion,
 } from './handlers/deallocationCaseNoteQuestion'
 import CancelRoutes, { ConfirmCancelOptions } from './handlers/cancel'
-import AddToSessionsToday from './handlers/AddToSessionsToday'
+import AddToSessionsToday from './handlers/addToSessionsToday'
 
 export default function Index({ activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
