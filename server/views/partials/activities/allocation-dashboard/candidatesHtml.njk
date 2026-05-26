@@ -2,7 +2,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full govuk-!-margin-bottom-4">
         {% if outsideWork %}
-            <h2 class="govuk-heading-l">Allocate people to {{ schedule.description }}</h2>
+            <h2 class="govuk-heading-m">Allocate people to {{ schedule.description }}</h2>
         {% endif %}
         <p class="govuk-body">You can:</p>
         <ul class="govuk-list govuk-list--bullet">
@@ -18,7 +18,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop govuk-grid-column-one-half">
         {% if outsideWork %}
-            <p class="govuk-body">The list shows people not currently allocated to {{ schedule.description }}</p>
+            <p class="govuk-body">The list shows people not currently allocated to {{ schedule.description }}.</p>
         {% else %}
             <p class="govuk-heading-s">Find someone to allocate</p>
             <p class="govuk-body">
@@ -46,7 +46,7 @@
 </div>
 {% if outsideWork %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds-from-desktop govuk-grid-column-one-half">
             <form method='GET'>
                 <label class="govuk-label" for="candidate-search-input">Search by name or prison number:</label>
                 {{ searchBar({
