@@ -6,4 +6,6 @@ export default class WaitlistSearchForActivityPage extends Page {
   }
 
   searchBox = (): Cypress.Chainable => cy.get('#activityId')
+
+  resultsList = (): Cypress.Chainable => cy.get('#activityId__listbox')
 }
