@@ -511,6 +511,7 @@ describe('activitiesApiClient', () => {
     const prisonerNumbers = ['A1234AA', 'B1234BB']
     const date = '2022-10-01'
     const timeSlot = 'AM'
+    const includeExternalMovements = false
 
     it('should return scheduled events for a list of prisoners and single date / time slot', async () => {
       const response = {
@@ -526,7 +527,7 @@ describe('activitiesApiClient', () => {
 
       fakeActivitiesApi
         .post(`/scheduled-events/prison/${prisonCode}`, prisonerNumbers)
-        .query({ date, timeSlot })
+        .query({ date, timeSlot, includeExternalMovements })
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
@@ -537,6 +538,7 @@ describe('activitiesApiClient', () => {
         prisonerNumbers,
         user,
         timeSlot,
+        includeExternalMovements,
       )
 
       expect(result).toEqual(response)

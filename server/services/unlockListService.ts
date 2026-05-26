@@ -79,6 +79,7 @@ export default class UnlockListService {
       filteredPrisoners.map(p => p.prisonerNumber),
       user,
       timeSlot,
+      true,
     )
 
     // populate an array of prisoners with events in any searched activity
@@ -152,7 +153,6 @@ export default class UnlockListService {
           .filter(tra => !tra.cancelled || cancelledEventsFilter === YesNo.YES)
         const activities = scheduledEvents?.activities
           .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
-          .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
           .filter(act => !act.cancelled || cancelledEventsFilter === YesNo.YES)
         const allEventsForPrisoner = [
           ...appointments,
