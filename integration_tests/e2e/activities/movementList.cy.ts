@@ -303,12 +303,13 @@ context('Movement list', () => {
 
     const locationEventsPage = Page.verifyOnPage(LocationEventsPage)
     locationEventsPage.heading().contains('Outside - movement list')
-    locationEventsPage.peopleCount().contains('3 people going out')
+    locationEventsPage.peopleCount().contains('2 people going out')
     locationEventsPage
       .table()
+      .find('tbody')
       .find('tr')
       .each(row => {
-        cy.wrap(row).find('td').eq(2).should('contain.text', 'Outside')
+        cy.wrap(row).find('td').eq(4).should('contain.text', 'Outside')
       })
   })
 })

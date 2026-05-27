@@ -1,10 +1,10 @@
 [
   {
     "id": 1,
-    "dpsLocationId": "11111111-1111-1111-1111-111111111111",
+    "dpsLocationId": null,
     "prisonCode": "MDI",
-    "code": "WORK_IND-WS1-WS1",
-    "description": "Workshop 1",
+    "code": "OUTSIDE",
+    "description": "Outside",
     "events": [
       {
         "prisonCode": "MDI",
