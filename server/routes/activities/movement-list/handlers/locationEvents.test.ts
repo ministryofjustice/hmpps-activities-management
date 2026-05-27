@@ -1217,4 +1217,48 @@ describe('Movement list routes - location events', () => {
       outsideList: false,
     })
   })
+
+  it('renders with outsideList: true when isOutside is true', async () => {
+    const dateOption = DateOption.TODAY
+    const dateQueryParam = format(new Date(), 'yyyy-MM-dd')
+    const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
+    const timeSlot = TimeSlot.AM
+    req.query = {
+      dateOption,
+      timeSlot,
+      isOutside: 'true',
+    }
+
+    const externalMovements = [
+      {
+        ...internalLocation,
+        events: [
+          {
+            prisonerNumber: 'A1234BC',
+          },
+        ],
+      },
+    ] as InternalLocationEvents[]
+
+    when(activitiesService.getExternalMovements)
+      .calledWith(prisonCode, date, res.locals.user, timeSlot as string)
+      .mockResolvedValue(externalMovements)
+
+    when(activitiesService.getScheduledEventsForPrisoners)
+      .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
+      .mockResolvedValue({
+        activities: [],
+        appointments: [],
+        visits: [],
+        adjudications: [],
+        courtHearings: [],
+        externalTransfers: [],
+      })
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', expect.objectContaining({
+      outsideList: true,
+    }))
+  })
 })
