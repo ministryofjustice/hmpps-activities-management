@@ -6,6 +6,7 @@ import ActivitiesIndexPage from '../../pages/activities'
 import UnlockAndMovementIndexPage from '../../pages/unlockAndMovements/unlockAndMovementDashboard'
 import ChooseDetailsPage from '../../pages/unlockAndMovements/movement/chooseDetails'
 import LocationsPage from '../../pages/unlockAndMovements/movement/locations'
+import externalMovements from '../../fixtures/activitiesApi/externalMovements.json'
 import getScheduledEventLocations from '../../fixtures/activitiesApi/getScheduledEventLocations.json'
 import getScheduledEventLocationsAWing from '../../fixtures/activitiesApi/getScheduledEventLocations-A-wing.json'
 import getInmateDetails from '../../fixtures/prisonerSearchApi/getInmateDetailsForMovementList.json'
@@ -13,7 +14,7 @@ import getScheduledEvents from '../../fixtures/activitiesApi/getScheduleEvents-M
 import LocationEventsPage from '../../pages/unlockAndMovements/movement/locationEventsPage'
 import { CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE } from '../../pages/unlockAndMovements/abstractEventsPage'
 
-context('Create activity', () => {
+context('Movement list', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
   const tomorrow = format(addDays(startOfToday(), 1), 'yyyy-MM-dd')
 
@@ -30,6 +31,11 @@ context('Create activity', () => {
       'POST',
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
       getScheduledEventLocations,
+    )
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`,
+      externalMovements,
     )
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents)
@@ -144,6 +150,7 @@ context('Create activity', () => {
     locationEventsPage.getButton('Apply filters').eq(0).click()
     cy.get('tbody>tr').should('have.length', 1)
   })
+
   it('shows the not required tag if a prisoner has been marked as not required for unlock today, but not if the prisoner is already suspended', () => {
     const getScheduledEventsWithNotRequired = [...getScheduledEventLocations]
     getScheduledEventsWithNotRequired[0].events[0].attendanceStatus = 'COMPLETED'
@@ -187,6 +194,7 @@ context('Create activity', () => {
         expect(data.get(4).innerText).to.not.contain('Not required')
       })
   })
+
   it('shows the not required tag if a prisoner has been marked as not required for unlock tomorrow', () => {
     const getScheduledEventsWithNotRequired = [...getScheduledEventLocations]
     getScheduledEventsWithNotRequired[0].events[0].date = tomorrow
@@ -266,5 +274,35 @@ context('Create activity', () => {
     // Prisoner comments
     locationEventsPage.appointmentLinkIsPresent('2')
     locationEventsPage.extraInfoTagIsPresent('2')
+  })
+
+  it('should show outside movement list', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.unlockAndMovementCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
+    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
+    manageActivitiesPage.createMovementListsCard().click()
+
+    const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
+    chooseMovementListDetailsPage.selectToday()
+    chooseMovementListDetailsPage.selectAM()
+    chooseMovementListDetailsPage.continue()
+
+    const locationsPage = Page.verifyOnPage(LocationsPage)
+    locationsPage.selectLocation('Outside').click()
+
+    const locationEventsPage = Page.verifyOnPage(LocationEventsPage)
+    locationEventsPage.heading().contains('Outside - movement list')
+    locationEventsPage.peopleCount().contains('3 people going out')
+    locationEventsPage
+      .table()
+      .find('tr')
+      .each(row => {
+        cy.wrap(row).find('td').eq(2).should('contain.text', 'Outside')
+      })
   })
 })

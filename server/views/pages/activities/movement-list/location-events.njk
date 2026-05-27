@@ -270,9 +270,9 @@
                         <div class="govuk-grid-row movement-list__location-events">
                             <div class="govuk-grid-column-full">
                                 {% if outsideList %}
-                                    <h2 class="govuk-heading-m">{{ "1 person going out" if location.prisonerEvents | length == 1 else location.prisonerEvents | length + " people going out" }}</h2>
+                                    <h2 class="govuk-heading-m" data-qa="people-count">{{ "1 person going out" if location.prisonerEvents | length == 1 else location.prisonerEvents | length + " people going out" }}</h2>
                                 {% else %}
-                                    <h2 class="govuk-heading-m">{{ "1 person allocated" if location.prisonerEvents | length == 1 else location.prisonerEvents | length + " people allocated" }}</h2>
+                                    <h2 class="govuk-heading-m" data-qa="people-count">{{ "1 person allocated" if location.prisonerEvents | length == 1 else location.prisonerEvents | length + " people allocated" }}</h2>
                                 {% endif %}
 
                                 {% if locations | length == 1 %}
