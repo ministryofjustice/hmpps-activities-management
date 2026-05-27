@@ -229,6 +229,7 @@ describe('Movement list routes - location events', () => {
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
         movementListJourney: req.journeyData.movementListJourney,
+        outsideList: false,
       })
     })
 
@@ -408,6 +409,7 @@ describe('Movement list routes - location events', () => {
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
         movementListJourney: req.journeyData.movementListJourney,
+        outsideList: false,
       })
     })
 
@@ -522,6 +524,7 @@ describe('Movement list routes - location events', () => {
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
         movementListJourney: req.journeyData.movementListJourney,
+        outsideList: false,
       })
     })
 
@@ -588,6 +591,7 @@ describe('Movement list routes - location events', () => {
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
         movementListJourney: req.journeyData.movementListJourney,
+        outsideList: false,
       })
     })
   })
@@ -652,6 +656,7 @@ describe('Movement list routes - location events', () => {
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
       movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
     })
   })
 
@@ -765,6 +770,7 @@ describe('Movement list routes - location events', () => {
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
       movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
     })
   })
 
@@ -946,6 +952,7 @@ describe('Movement list routes - location events', () => {
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
       movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
     })
   })
 
@@ -1034,6 +1041,7 @@ describe('Movement list routes - location events', () => {
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
       movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
     })
   })
 
@@ -1206,6 +1214,7 @@ describe('Movement list routes - location events', () => {
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
       movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
     })
   })
 })

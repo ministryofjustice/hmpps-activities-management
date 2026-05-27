@@ -469,6 +469,10 @@ export default class ActivitiesService {
     )
   }
 
+  async getExternalMovements(prisonCode: string, date: Date, user: ServiceUser, timeSlot?: string) {
+    return this.activitiesApiClient.getExternalMovements(prisonCode, format(date, 'yyyy-MM-dd'), user, timeSlot)
+  }
+
   async getAppointmentAttendanceSummaries(
     prisonCode: string,
     date: Date,

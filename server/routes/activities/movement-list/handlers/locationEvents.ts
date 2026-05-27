@@ -19,21 +19,24 @@ export default class LocationEventsRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { locationIds, dateOption, date, timeSlot } = req.query
+    const { locationIds, dateOption, date, timeSlot, isOutside } = req.query
     const { movementListJourney } = req.journeyData
+    const outsideList = isOutside === 'true'
 
     const richDate = dateFromDateOption(dateOption as DateOption, date as string)
-    if (!richDate || !isValid(richDate) || !(locationIds as string)) {
+    if (!richDate || !isValid(richDate) || (!(locationIds as string) && !outsideList)) {
       return res.redirect(`choose-details`)
     }
 
-    const internalLocationEvents = await this.activitiesService.getInternalLocationEventsByDpsLocationIds(
-      user.activeCaseLoadId,
-      richDate,
-      (locationIds as string).split(',').map(id => id),
-      user,
-      timeSlot as string,
-    )
+    const internalLocationEvents = isOutside
+      ? await this.activitiesService.getExternalMovements(user.activeCaseLoadId, richDate, user, timeSlot as string)
+      : await this.activitiesService.getInternalLocationEventsByDpsLocationIds(
+          user.activeCaseLoadId,
+          richDate,
+          (locationIds as string).split(',').map(id => id),
+          user,
+          timeSlot as string,
+        )
 
     if (internalLocationEvents.length === 0) {
       const dateQuery = dateOption === DateOption.OTHER ? `&date=${formatIsoDate(richDate)}` : ''
@@ -142,6 +145,7 @@ export default class LocationEventsRoutes {
     )
 
     return res.render('pages/activities/movement-list/location-events', {
+      outsideList,
       dateOption,
       date: formatIsoDate(richDate),
       timeSlot,
