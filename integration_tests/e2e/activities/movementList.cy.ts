@@ -21,7 +21,7 @@ context('Movement list', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    
+
     cy.stubEndpoint(
       'GET',
       `/locations/prison/MDI/events-summaries\\?date=${today}&timeSlot=AM`,
