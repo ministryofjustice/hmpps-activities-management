@@ -1257,8 +1257,11 @@ describe('Movement list routes - location events', () => {
 
     await handler.GET(req, res)
 
-    expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', expect.objectContaining({
-      outsideList: true,
-    }))
+    expect(res.render).toHaveBeenCalledWith(
+      'pages/activities/movement-list/location-events',
+      expect.objectContaining({
+        outsideList: true,
+      }),
+    )
   })
 })
