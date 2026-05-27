@@ -311,5 +311,6 @@ context('Movement list', () => {
       .each(row => {
         cy.wrap(row).find('td').eq(4).should('contain.text', 'Outside')
       })
+    locationEventsPage.table().find('tbody').find('tr').contains('Cancelled')
   })
 })
