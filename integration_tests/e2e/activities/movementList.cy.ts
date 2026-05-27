@@ -21,7 +21,7 @@ context('Movement list', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.signIn()
+    
     cy.stubEndpoint(
       'GET',
       `/locations/prison/MDI/events-summaries\\?date=${today}&timeSlot=AM`,
@@ -42,6 +42,7 @@ context('Movement list', () => {
   })
 
   it('should show correct alerts', () => {
+    cy.signIn()
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -114,6 +115,7 @@ context('Movement list', () => {
   })
 
   it('should filter out cancelled sessions', () => {
+    cy.signIn()
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -152,6 +154,7 @@ context('Movement list', () => {
   })
 
   it('shows the not required tag if a prisoner has been marked as not required for unlock today, but not if the prisoner is already suspended', () => {
+    cy.signIn()
     const getScheduledEventsWithNotRequired = [...getScheduledEventLocations]
     getScheduledEventsWithNotRequired[0].events[0].attendanceStatus = 'COMPLETED'
     getScheduledEventsWithNotRequired[0].events[0].attendanceReasonCode = 'NOT_REQUIRED'
@@ -196,6 +199,7 @@ context('Movement list', () => {
   })
 
   it('shows the not required tag if a prisoner has been marked as not required for unlock tomorrow', () => {
+    cy.signIn()
     const getScheduledEventsWithNotRequired = [...getScheduledEventLocations]
     getScheduledEventsWithNotRequired[0].events[0].date = tomorrow
     getScheduledEventsWithNotRequired[0].events[0].attendanceStatus = null
@@ -241,6 +245,7 @@ context('Movement list', () => {
   })
 
   it('should show extra information tag for appointments with comments', () => {
+    cy.signIn()
     cy.stubEndpoint(
       'POST',
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
@@ -277,6 +282,7 @@ context('Movement list', () => {
   })
 
   it('should show outside movement list', () => {
+    cy.signInEAEnabled()
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
