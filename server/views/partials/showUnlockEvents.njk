@@ -51,7 +51,7 @@
                 {% endif %}
             </div>
             <div class="checkbox-container print-only">
-                {% if not event.cancelled %}
+                {% if not (event.cancelled or event.status === 'Cancelled' or event.status === 'Paused') %}
                     <div class="print-checkbox"></div>
                     <div class="print-checkbox"></div>
                     <div class="print-checkbox"></div>
