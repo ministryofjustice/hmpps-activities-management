@@ -68,6 +68,7 @@ describe('Movement list routes - location events', () => {
       locals: {
         user: {
           activeCaseLoadId: prisonCode,
+          externalActivitiesRolledOut: false,
         },
       },
       render: jest.fn(),
@@ -1218,7 +1219,8 @@ describe('Movement list routes - location events', () => {
     })
   })
 
-  it('renders with outsideList: true when isOutside is true', async () => {
+  it('renders with outsideList: true when externalActivitiesRolledOut and isOutside', async () => {
+    res.locals.user.externalActivitiesRolledOut = true
     const dateOption = DateOption.TODAY
     const dateQueryParam = format(new Date(), 'yyyy-MM-dd')
     const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())

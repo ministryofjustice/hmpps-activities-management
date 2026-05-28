@@ -21,7 +21,7 @@ export default class LocationEventsRoutes {
     const { user } = res.locals
     const { locationIds, dateOption, date, timeSlot, isOutside } = req.query
     const { movementListJourney } = req.journeyData
-    const outsideList = isOutside === 'true'
+    const outsideList = user.externalActivitiesRolledOut && isOutside === 'true'
 
     const richDate = dateFromDateOption(dateOption as DateOption, date as string)
     if (!richDate || !isValid(richDate) || (!(locationIds as string) && !outsideList)) {
