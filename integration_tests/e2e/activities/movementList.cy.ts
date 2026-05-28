@@ -1,8 +1,6 @@
 import { addDays, format, startOfToday } from 'date-fns'
-import IndexPage from '../../pages'
 import Page from '../../pages/page'
 import getInteralLocationEvents from '../../fixtures/activitiesApi/getInteralLocationEvents.json'
-import ActivitiesIndexPage from '../../pages/activities'
 import UnlockAndMovementIndexPage from '../../pages/unlockAndMovements/unlockAndMovementDashboard'
 import ChooseDetailsPage from '../../pages/unlockAndMovements/movement/chooseDetails'
 import LocationsPage from '../../pages/unlockAndMovements/movement/locations'
@@ -43,11 +41,7 @@ context('Movement list', () => {
 
   it('should show correct alerts', () => {
     cy.signIn()
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.unlockAndMovementCard().click()
+    cy.visit('/activities/unlock-list')
 
     const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
     manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
@@ -116,14 +110,9 @@ context('Movement list', () => {
 
   it('should filter out cancelled sessions', () => {
     cy.signIn()
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.unlockAndMovementCard().click()
+    cy.visit('/activities/unlock-list')
 
     const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
-    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
     manageActivitiesPage.createMovementListsCard().click()
 
     const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
@@ -154,7 +143,6 @@ context('Movement list', () => {
   })
 
   it('shows the not required tag if a prisoner has been marked as not required for unlock today, but not if the prisoner is already suspended', () => {
-    cy.signIn()
     const getScheduledEventsWithNotRequired = [...getScheduledEventLocations]
     getScheduledEventsWithNotRequired[0].events[0].attendanceStatus = 'COMPLETED'
     getScheduledEventsWithNotRequired[0].events[0].attendanceReasonCode = 'NOT_REQUIRED'
@@ -166,14 +154,11 @@ context('Movement list', () => {
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
       getScheduledEventsWithNotRequired,
     )
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
 
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.unlockAndMovementCard().click()
+    cy.signIn()
+    cy.visit('/activities/unlock-list')
 
     const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
-    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
     manageActivitiesPage.createMovementListsCard().click()
 
     const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
@@ -199,7 +184,6 @@ context('Movement list', () => {
   })
 
   it('shows the not required tag if a prisoner has been marked as not required for unlock tomorrow', () => {
-    cy.signIn()
     const getScheduledEventsWithNotRequired = [...getScheduledEventLocations]
     getScheduledEventsWithNotRequired[0].events[0].date = tomorrow
     getScheduledEventsWithNotRequired[0].events[0].attendanceStatus = null
@@ -215,14 +199,11 @@ context('Movement list', () => {
       getScheduledEventsWithNotRequired,
     )
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrow}`, getScheduledEvents)
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
 
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.unlockAndMovementCard().click()
+    cy.signIn()
+    cy.visit('/activities/unlock-list')
 
     const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
-    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
     manageActivitiesPage.createMovementListsCard().click()
 
     const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
@@ -245,21 +226,16 @@ context('Movement list', () => {
   })
 
   it('should show extra information tag for appointments with comments', () => {
-    cy.signIn()
     cy.stubEndpoint(
       'POST',
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
       getScheduledEventLocationsAWing,
     )
 
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.unlockAndMovementCard().click()
+    cy.signIn()
+    cy.visit('/activities/unlock-list')
 
     const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
-    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
     manageActivitiesPage.createMovementListsCard().click()
 
     const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
@@ -283,14 +259,9 @@ context('Movement list', () => {
 
   it('should show outside movement list', () => {
     cy.signInEAEnabled()
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.unlockAndMovementCard().click()
+    cy.visit('/activities/unlock-list')
 
     const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
-    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
     manageActivitiesPage.createMovementListsCard().click()
 
     const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
