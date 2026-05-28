@@ -34,6 +34,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
       locals: {
         user: {
           username: 'joebloggs',
+          externalActivitiesRolledOut: false,
         },
       },
       render: jest.fn(),
@@ -50,7 +51,8 @@ describe('Route Handlers - Waitlist application - Request date', () => {
   })
 
   describe('GET', () => {
-    it('should render the activity template', async () => {
+    it('should render the activity template with outside activities filtered out', async () => {
+      res.locals.user.externalActivitiesRolledOut = true
       when(activitiesService.getActivities)
         .calledWith(atLeast(true))
         .mockResolvedValue([
@@ -80,6 +82,46 @@ describe('Route Handlers - Waitlist application - Request date', () => {
           {
             id: 1,
             name: 'test activity',
+          },
+        ],
+      })
+    })
+
+    it('should not filter outside activities when externalActivitiesRolledOut is false', async () => {
+      res.locals.user.externalActivitiesRolledOut = false
+      when(activitiesService.getActivities)
+        .calledWith(atLeast(true))
+        .mockResolvedValue([
+          {
+            id: 1,
+            activityName: 'test activity',
+            category: { code: 'EDU' },
+            outsideWork: false,
+          },
+          {
+            id: 2,
+            activityName: 'filtered activity',
+            category: { code: 'SAA_NOT_IN_WORK' },
+            outsideWork: false,
+          },
+          {
+            id: 3,
+            activityName: 'outside activity',
+            category: { code: 'EDU' },
+            outsideWork: true,
+          },
+        ] as ActivitySummary[])
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/activity`, {
+        activities: [
+          {
+            id: 1,
+            name: 'test activity',
+          },
+          {
+            id: 3,
+            name: 'outside activity',
           },
         ],
       })
