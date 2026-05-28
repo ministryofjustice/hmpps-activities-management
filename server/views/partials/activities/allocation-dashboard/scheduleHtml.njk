@@ -6,10 +6,10 @@
 {% for week, slots in dailySlots %}
     {% set rows = [] %}
     {% if scheduleWeeks > 1 %}
-        <h2 class="govuk-heading-m">Week {{ week }}</h2>
+        <h2 class="govuk-heading-s">Week {{ week }}</h2>
     {% endif %}
     {{ govukTag({
-        text: "Current week", classes: 'govuk-tag--small govuk-tag--green'
+        text: "Current week", classes: 'govuk-tag--green'
     }) if scheduleWeeks > 1 and currentWeek == week }}
     {% for day in slots %}
         {% set columns = [
