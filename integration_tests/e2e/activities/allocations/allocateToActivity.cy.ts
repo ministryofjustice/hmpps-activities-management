@@ -47,7 +47,7 @@ const navigateToActivitiesDashboard = (): AllocationDashboard => {
   const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
   activitiesPage.selectActivityWithName('English level 1')
 
-  const allocatePage = Page.verifyOnPage(AllocationDashboard)
+  Page.verifyOnPage(AllocationDashboard)
   return allocatePage
 }
 
@@ -233,7 +233,6 @@ context('Allocate to activity', () => {
   })
 
   // TODO: Use commented out assertions when sameDayScheduleModificationsEnabled flag is removed
-  // We cant set t
   // it('should render the correct content in the create allocation flow', () => {
   it('with sameDayScheduleModificationsEnabled NOT enabled, content should not change.', () => {
     const allocatePage = navigateToActivitiesDashboard()
