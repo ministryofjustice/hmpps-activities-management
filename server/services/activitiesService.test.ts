@@ -994,6 +994,23 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('getExternalMovements', () => {
+    it('should call the api client to get external movements', async () => {
+      const prisonCode = 'MDI'
+      const date = new Date()
+      const timeSlot = 'AM'
+
+      await activitiesService.getExternalMovements(prisonCode, date, user, timeSlot)
+
+      expect(activitiesApiClient.getExternalMovements).toHaveBeenCalledWith(
+        prisonCode,
+        formatIsoDate(date),
+        user,
+        timeSlot,
+      )
+    })
+  })
+
   describe('getAppointmentAttendanceSummaries', () => {
     it('should call the api client to get appointment attendance summaries', async () => {
       const prisonCode = 'MDI'

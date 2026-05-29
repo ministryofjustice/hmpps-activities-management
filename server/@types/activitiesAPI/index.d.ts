@@ -647,32 +647,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/scheduled-events/prison/{prisonCode}/external-movements': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /**
-     * Get a list of external movements (TAPs) for a given prison code, list of prisoner numbers, date and an optional time slot
-     * @description Returns external movements fetched from the External Movements API for the given prison, prisoner numbers,
-     *           date and optional time slot. This endpoint supports the creation of movement lists.
-     *
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     */
-    post: operations['getExternalMovementsForMultiplePrisoners']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/rollout/prison-regime/{agencyId}': {
     parameters: {
       query?: never
@@ -1852,6 +1826,32 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     get: operations['attendanceSummary']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/scheduled-events/prison/{prisonCode}/external-movements': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get a list of external movements (TAPs) for a given prison code, date and an optional time slot
+     * @description Returns external movements fetched from the External Movements API for the given prison,
+     *           date and optional time slot. This endpoint supports the creation of movement lists.
+     *
+     *
+     *     Requires one of the following roles:
+     *     * PRISON
+     *     * ACTIVITY_ADMIN
+     */
+    get: operations['getExternalMovements']
     put?: never
     post?: never
     delete?: never
@@ -3753,9 +3753,9 @@ export interface components {
       first?: boolean
       last?: boolean
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -4908,42 +4908,6 @@ export interface components {
        */
       description: string
       /** @description Collection of scheduled events due to take place at the internal location */
-      events: components['schemas']['ScheduledEvent'][]
-    }
-    /**
-     * @description The details of locations that have scheduled events for movement lists. Used for movement lists.
-     *       For internal locations, all fields are populated.
-     *       For external movements, id and dpsLocationId will be null and the location will be represented as OUTSIDE/Outside
-     */
-    LocationEvents: {
-      /**
-       * Format: int64
-       * @description The id of the internal location. Null for external movements.
-       * @example 27723
-       */
-      id?: number | null
-      /**
-       * Format: uuid
-       * @description The DPS location UUID. Null for external movements.
-       * @example b7602cc8-e769-4cbb-8194-62d8e655992a
-       */
-      dpsLocationId?: string | null
-      /**
-       * @description The prison code/agency id.
-       * @example SKI
-       */
-      prisonCode: string
-      /**
-       * @description The code of the location. For external movements this will be 'OUTSIDE'.
-       * @example EDUC-ED1-ED1
-       */
-      code: string
-      /**
-       * @description The description of the location. For external movements this will be 'Outside'.
-       * @example Education 1
-       */
-      description: string
-      /** @description Collection of scheduled events due to take place at the location */
       events: components['schemas']['ScheduledEvent'][]
     }
     /** @description prison regime slots for a day of the week */
@@ -8377,9 +8341,9 @@ export interface components {
       first?: boolean
       last?: boolean
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Attendance summary details */
@@ -8511,6 +8475,42 @@ export interface components {
        * @example false
        */
       outsideWork: boolean
+    }
+    /**
+     * @description The details of locations that have scheduled events for movement lists. Used for movement lists.
+     *       For internal locations, all fields are populated.
+     *       For external movements, id and dpsLocationId will be null and the location will be represented as OUTSIDE/Outside
+     */
+    LocationEvents: {
+      /**
+       * Format: int64
+       * @description The id of the internal location. Null for external movements.
+       * @example 27723
+       */
+      id?: number | null
+      /**
+       * Format: uuid
+       * @description The DPS location UUID. Null for external movements.
+       * @example b7602cc8-e769-4cbb-8194-62d8e655992a
+       */
+      dpsLocationId?: string | null
+      /**
+       * @description The prison code/agency id.
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description The code of the location. For external movements this will be 'OUTSIDE'.
+       * @example EDUC-ED1-ED1
+       */
+      code: string
+      /**
+       * @description The description of the location. For external movements this will be 'Outside'.
+       * @example Education 1
+       */
+      description: string
+      /** @description Collection of scheduled events due to take place at the location */
+      events: components['schemas']['ScheduledEvent'][]
     }
     /** @description Describes the rollout plan of a prison which may or may not be rolled out */
     RolloutPrisonPlan: {
@@ -11028,65 +11028,6 @@ export interface operations {
       }
     }
   }
-  getExternalMovementsForMultiplePrisoners: {
-    parameters: {
-      query: {
-        /** @description The exact date to return movements for (required) in format YYYY-MM-DD */
-        date: string
-        /** @description Time slot of the movements (optional). If supplied, one of AM, PM or ED. */
-        timeSlot?: 'AM' | 'PM' | 'ED'
-      }
-      header?: never
-      path: {
-        /** @description The 3-character prison code. */
-        prisonCode: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': string[]
-      }
-    }
-    responses: {
-      /** @description Successful call - zero or more external movements found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['LocationEvents'][]
-        }
-      }
-      /** @description Invalid request */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   setPrisonRegimeSlots: {
     parameters: {
       query?: never
@@ -13540,6 +13481,61 @@ export interface operations {
       }
       /** @description The scheduled instance was not found. */
       404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getExternalMovements: {
+    parameters: {
+      query: {
+        /** @description The exact date to return movements for (required) in format YYYY-MM-DD */
+        date: string
+        /** @description Time slot of the movements (optional). If supplied, one of AM, PM or ED. */
+        timeSlot?: 'AM' | 'PM' | 'ED'
+      }
+      header?: never
+      path: {
+        /** @description The 3-character prison code. */
+        prisonCode: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful call - zero or more external movements found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['LocationEvents'][]
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
         headers: {
           [name: string]: unknown
         }
