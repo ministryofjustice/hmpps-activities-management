@@ -3734,10 +3734,13 @@ export interface components {
       offset?: number
       paged?: boolean
       /** Format: int32 */
+      pageSize?: number
+      /** Format: int32 */
       pageNumber?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
       pageSize?: number
+      paged?: boolean
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
@@ -3756,6 +3759,7 @@ export interface components {
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -8380,6 +8384,7 @@ export interface components {
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Attendance summary details */

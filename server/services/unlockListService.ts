@@ -79,6 +79,7 @@ export default class UnlockListService {
       filteredPrisoners.map(p => p.prisonerNumber),
       user,
       timeSlot,
+      true,
     )
 
     // populate an array of prisoners with events in any searched activity
@@ -134,6 +135,9 @@ export default class UnlockListService {
     } else {
       // Match the prisoners with their events by prisonerNumber
       unlockListItems = filteredPrisoners.map(prisoner => {
+        const isCancelled = event => event.cancelled || event.status === 'Cancelled' || event.status === 'Paused'
+        const isCancellationShown = event => !isCancelled(event) || cancelledEventsFilter === YesNo.YES
+
         const appointments = scheduledEvents?.appointments
           .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
           .filter(app => applyCancellationDisplayRule(app))
@@ -152,8 +156,7 @@ export default class UnlockListService {
           .filter(tra => !tra.cancelled || cancelledEventsFilter === YesNo.YES)
         const activities = scheduledEvents?.activities
           .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
-          .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
-          .filter(act => !act.cancelled || cancelledEventsFilter === YesNo.YES)
+          .filter(isCancellationShown)
         const allEventsForPrisoner = [
           ...appointments,
           ...courtHearings,
