@@ -47,7 +47,7 @@ const navigateToActivitiesDashboard = (): AllocationDashboard => {
   const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
   activitiesPage.selectActivityWithName('English level 1')
 
-  Page.verifyOnPage(AllocationDashboard)
+  const allocatePage = Page.verifyOnPage(AllocationDashboard)
   return allocatePage
 }
 

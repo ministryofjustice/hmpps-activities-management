@@ -730,11 +730,10 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         }
       })
 
-      it('should NOT trigger same-day logic when feature flag is enabled ad activity has NOT started yet', async () => {
+      it('should NOT trigger same-day logic when feature flag is enabled and activity has NOT started yet', async () => {
         jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
         config.sameDayScheduleModificationsEnabled = true
         req.journeyData.allocateJourney.startDate = '2024-08-22'
-        req.routeContext = { mode: 'edit' }
 
         try {
           setupForSameDayTests()
@@ -756,7 +755,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
         config.sameDayScheduleModificationsEnabled = true
         req.journeyData.allocateJourney.startDate = '2024-08-20'
-        req.routeContext = { mode: 'edit' }
 
         try {
           setupForSameDayTests()
