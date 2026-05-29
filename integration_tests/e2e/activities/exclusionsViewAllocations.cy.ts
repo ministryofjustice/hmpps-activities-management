@@ -6,6 +6,10 @@ import getScheduleMaths from '../../fixtures/activitiesApi/getScheduleMaths.json
 import getScheduleGym from '../../fixtures/activitiesApi/getScheduleGym.json'
 import getSchedulePlastering from '../../fixtures/activitiesApi/getSchedulePlastering.json'
 import Page from '../../pages/page'
+import getActivityMaths from '../../fixtures/activitiesApi/getActivityMaths.json'
+import ExclusionsPage from '../../pages/allocateToActivity/exclusions'
+import getPrisonRegime from '../../fixtures/activitiesApi/getPrisonRegime.json'
+import ConfirmExclusionsPage from '../../pages/allocateToActivity/confirmExclusionsPage'
 
 context('Exclusions', () => {
   beforeEach(() => {
@@ -16,15 +20,38 @@ context('Exclusions', () => {
     cy.stubEndpoint('GET', '/schedules/1', getScheduleGym as unknown as JSON)
     cy.stubEndpoint('GET', '/schedules/2', getScheduleMaths as unknown as JSON)
     cy.stubEndpoint('GET', '/schedules/3', getSchedulePlastering as unknown as JSON)
-
+    cy.stubEndpoint('GET', '/allocations/id/2', {
+      ...prisonerAllocationsExclusions[0].allocations[0],
+      exclusions: [],
+    })
+    cy.stubEndpoint('GET', '/activities/1/filtered', getActivityMaths)
+    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
+    cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
     cy.signIn()
   })
-  it('should render the exclusions allocation page', () => {
+  it('should render the exclusions page', () => {
     cy.visit('/activities/exclusions/prisoner/A5015DY')
 
     const exclusionsAllocationsPage = Page.verifyOnPage(ExclusionsViewAllocations)
     exclusionsAllocationsPage.suspensionBadge().should('have.lengthOf', 2)
     exclusionsAllocationsPage.viewSuspendedLinks().should('have.lengthOf', 2)
+  })
+
+  it('should take you to the edit exclusions page', () => {
+    cy.visit('/activities/exclusions/prisoner/A5015DY')
+
+    const exclusionsAllocationsPage = Page.verifyOnPage(ExclusionsViewAllocations)
+    exclusionsAllocationsPage.changeLink(1).click()
+
+    // This page is tested in editAllocationToActivity.cy.ts, we just want to check that the link takes us here.
+    const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
+    exclusionsPage.continue()
+
+    const confirmationPage = Page.verifyOnPage(ConfirmExclusionsPage)
+    confirmationPage.confirm()
+
+    // Check 'confirm' routes us back to the exclusions page
+    Page.verifyOnPage(ExclusionsViewAllocations)
   })
 
   it('should take you to the manage suspension page', () => {

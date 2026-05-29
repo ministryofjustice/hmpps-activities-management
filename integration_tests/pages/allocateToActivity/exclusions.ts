@@ -7,5 +7,7 @@ export default class ExclusionsPage extends Page {
 
   pageTitle = (): Cypress.Chainable => cy.get('h1.govuk-heading-l')
 
-  detailsSummary = (): Cypress.Chainable => cy.get('details summary')
+  detailsSummary = (): Cypress.Chainable => cy.get('.govuk-details__summary-text')
+
+  continue = () => cy.get('button').contains('Continue').click()
 }

@@ -47,6 +47,10 @@ export default class AllocationDashboard extends Page {
     cy.get('#currently-allocated-tab').find('button').contains('End allocation').click()
   }
 
+  manageAllocationForSelectedPrisoner = (): void => {
+    cy.get('#currently-allocated-tab').find('button').contains('Manage allocation').click()
+  }
+
   activeTimeSlots = () => cy.get('.govuk-table__cell > .govuk-tag').contains('Yes')
 
   selectRiskLevelOption = (option: string) =>

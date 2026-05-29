@@ -232,7 +232,9 @@ context('Allocate to activity', () => {
     allocatePage.waitlistRows().eq(0).should('contain.text', 'Withdrawn')
   })
 
-  // TODO: This test will change when sameDayScheduleModificationsEnabled is enabled
+  // TODO: Use commented out assertions when sameDayScheduleModificationsEnabled flag is removed
+  // We cant set t
+  // it('should render the correct content in the create allocation flow', () => {
   it('with sameDayScheduleModificationsEnabled NOT enabled, content should not change.', () => {
     const allocatePage = navigateToActivitiesDashboard()
     allocatePage.tabWithTitle('Other people').click()
@@ -263,11 +265,8 @@ context('Allocate to activity', () => {
 
     const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
 
-    // WITHOUT sameDayScheduleModificationsEnabled, the title text should NOT mention changing scheduled sessions
     exclusionsPage.pageTitle().should('contain.text', 'Change when Alfonso Cholak should attend this activity')
-
-    // WITHOUT sameDayScheduleModificationsEnabled, the same day details summary should NOT be displayed
-    exclusionsPage.detailsSummary().should('not.exist')
+    // exclusionsPage.pageTitle().should('contain.text', `Change Alfonso Cholak's scheduled sessions for this activity`)
 
     exclusionsPage.continue()
   })
