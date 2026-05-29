@@ -136,6 +136,78 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
         sameDayScheduleModificationsEnabled: false,
       })
     })
+
+    it('should render with addToTodayText for a single slot', async () => {
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(1))
+        .mockResolvedValue(activitySchedule as unknown as ActivitySchedule)
+
+      req.journeyData.allocateJourney.futureSameDaySlots = [
+        {
+          weekNumber: 1,
+          timeSlot: 'AM',
+          monday: true,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['MONDAY'],
+        },
+      ]
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/confirm-exclusions',
+        expect.objectContaining({
+          addToTodayText: "today's AM session",
+        }),
+      )
+    })
+
+    it('should render with addToTodayText for multiple slots', async () => {
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(1))
+        .mockResolvedValue(activitySchedule as unknown as ActivitySchedule)
+
+      req.journeyData.allocateJourney.futureSameDaySlots = [
+        {
+          weekNumber: 1,
+          timeSlot: 'AM',
+          monday: true,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['MONDAY'],
+        },
+        {
+          weekNumber: 1,
+          timeSlot: 'PM',
+          monday: true,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['MONDAY'],
+        },
+      ]
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/confirm-exclusions',
+        expect.objectContaining({
+          addToTodayText: "today's AM and PM sessions",
+        }),
+      )
+    })
   })
 
   describe('POST', () => {
