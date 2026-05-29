@@ -46,7 +46,7 @@
                     <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ event.summary | trim }}</div>
                 {% endif %}
 
-                {% if event.cancelled %}
+                {% if event.cancelled or event.status === 'Cancelled' or event.status === 'Paused'  %}
                     <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red', attributes: { "data-qa": "cancelled-badge" } }) }}</div>
                 {% endif %}
 
@@ -102,7 +102,7 @@
                 <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ event.summary | trim }}</div>
             {% endif %}
 
-            {% if event.cancelled %}
+            {% if event.cancelled or event.status === 'Cancelled' or event.status === 'Paused'  %}
                 <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red', attributes: { "data-qa": "cancelled-badge" } }) }}</div>
             {% endif %}
 
