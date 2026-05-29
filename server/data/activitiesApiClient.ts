@@ -75,6 +75,7 @@ import {
   WaitingListApplicationHistory,
   LocationPrefixes,
   BulkAllocationRequest,
+  LocationEvents,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -313,12 +314,13 @@ export default class ActivitiesApiClient extends RestClient {
     prisonerNumbers: string[],
     user: ServiceUser,
     timeSlot?: string,
+    includeExternalMovements?: boolean,
   ): Promise<PrisonerScheduledEvents> {
     return this.post(
       {
         path: `/scheduled-events/prison/${prisonCode}`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
-        query: { date, timeSlot },
+        query: { date, timeSlot, includeExternalMovements },
         data: prisonerNumbers,
       },
       asUser(user.token),
@@ -915,6 +917,22 @@ export default class ActivitiesApiClient extends RestClient {
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
         query: { date, timeSlot },
         data: dpsLocationIds,
+      },
+      asUser(user.token),
+    )
+  }
+
+  async getExternalMovements(
+    prisonCode: string,
+    date: string,
+    user: ServiceUser,
+    timeSlot?: string,
+  ): Promise<LocationEvents[]> {
+    return this.get(
+      {
+        path: `/scheduled-events/prison/${prisonCode}/external-movements`,
+        headers: CASELOAD_HEADER(user.activeCaseLoadId),
+        query: { date, timeSlot },
       },
       asUser(user.token),
     )

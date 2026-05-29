@@ -270,6 +270,7 @@ describe('Unlock list service', () => {
         ['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'],
         user,
         'AM',
+        true,
       )
     })
 
@@ -302,6 +303,7 @@ describe('Unlock list service', () => {
         [],
         user,
         'AM',
+        true,
       )
     })
   })
@@ -1056,6 +1058,15 @@ describe('Unlock list service', () => {
               cancelled: false,
               date: toDateString(subDays(new Date(), 2)),
               eventType: 'EXTERNAL_TRANSFER',
+              prisonerNumber: 'A2222AA',
+              startTime: '',
+              summary: '',
+            },
+            {
+              appointmentId: 12,
+              cancelled: false,
+              date: toDateString(subDays(new Date(), 2)),
+              eventType: 'ACTIVITY',
               prisonerNumber: 'A2222AA',
               startTime: '',
               summary: '',

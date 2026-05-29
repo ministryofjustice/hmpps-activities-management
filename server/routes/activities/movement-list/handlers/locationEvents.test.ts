@@ -68,6 +68,7 @@ describe('Movement list routes - location events', () => {
       locals: {
         user: {
           activeCaseLoadId: prisonCode,
+          externalActivitiesRolledOut: false,
         },
       },
       render: jest.fn(),
@@ -229,6 +230,7 @@ describe('Movement list routes - location events', () => {
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
         movementListJourney: req.journeyData.movementListJourney,
+        outsideList: false,
       })
     })
 
@@ -408,6 +410,7 @@ describe('Movement list routes - location events', () => {
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
         movementListJourney: req.journeyData.movementListJourney,
+        outsideList: false,
       })
     })
 
@@ -522,6 +525,7 @@ describe('Movement list routes - location events', () => {
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
         movementListJourney: req.journeyData.movementListJourney,
+        outsideList: false,
       })
     })
 
@@ -588,6 +592,7 @@ describe('Movement list routes - location events', () => {
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
         movementListJourney: req.journeyData.movementListJourney,
+        outsideList: false,
       })
     })
   })
@@ -652,6 +657,7 @@ describe('Movement list routes - location events', () => {
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
       movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
     })
   })
 
@@ -765,6 +771,7 @@ describe('Movement list routes - location events', () => {
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
       movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
     })
   })
 
@@ -946,6 +953,7 @@ describe('Movement list routes - location events', () => {
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
       movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
     })
   })
 
@@ -1034,6 +1042,7 @@ describe('Movement list routes - location events', () => {
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
       movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
     })
   })
 
@@ -1206,6 +1215,55 @@ describe('Movement list routes - location events', () => {
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
       movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
     })
+  })
+
+  it('renders with outsideList: true when externalActivitiesRolledOut and isOutside', async () => {
+    res.locals.user.externalActivitiesRolledOut = true
+    const dateOption = DateOption.TODAY
+    const dateQueryParam = format(new Date(), 'yyyy-MM-dd')
+    const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
+    const timeSlot = TimeSlot.AM
+    req.query = {
+      dateOption,
+      timeSlot,
+      isOutside: 'true',
+    }
+
+    const externalMovements = [
+      {
+        ...internalLocation,
+        events: [
+          {
+            prisonerNumber: 'A1234BC',
+          },
+        ],
+      },
+    ] as InternalLocationEvents[]
+
+    when(activitiesService.getExternalMovements)
+      .calledWith(prisonCode, date, res.locals.user, timeSlot as string)
+      .mockResolvedValue(externalMovements)
+
+    when(activitiesService.getScheduledEventsForPrisoners)
+      .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
+      .mockResolvedValue({
+        activities: [],
+        appointments: [],
+        visits: [],
+        adjudications: [],
+        courtHearings: [],
+        externalTransfers: [],
+      })
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'pages/activities/movement-list/location-events',
+      expect.objectContaining({
+        outsideList: true,
+      }),
+    )
   })
 })

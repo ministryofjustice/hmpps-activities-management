@@ -22,6 +22,7 @@ import {
   EventAcknowledgeRequest,
   EventReview,
   EventReviewSearchResults,
+  LocationEvents,
   LocationGroup,
   LocationPrefix,
   PrisonerAllocations,
@@ -38,6 +39,7 @@ import { AppointmentApplyTo } from '../@types/appointments'
 import { formatIsoDate } from '../utils/datePickerUtils'
 import AttendanceAction from '../enum/attendanceAction'
 import ReasonForDeallocation from '../enum/reasonForDeallocation'
+import { EventType } from '../@types/activities'
 
 const user = { token: 'token', activeCaseLoadId: 'MDI' } as ServiceUser
 
@@ -511,6 +513,7 @@ describe('activitiesApiClient', () => {
     const prisonerNumbers = ['A1234AA', 'B1234BB']
     const date = '2022-10-01'
     const timeSlot = 'AM'
+    const includeExternalMovements = false
 
     it('should return scheduled events for a list of prisoners and single date / time slot', async () => {
       const response = {
@@ -526,7 +529,7 @@ describe('activitiesApiClient', () => {
 
       fakeActivitiesApi
         .post(`/scheduled-events/prison/${prisonCode}`, prisonerNumbers)
-        .query({ date, timeSlot })
+        .query({ date, timeSlot, includeExternalMovements })
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
@@ -537,6 +540,7 @@ describe('activitiesApiClient', () => {
         prisonerNumbers,
         user,
         timeSlot,
+        includeExternalMovements,
       )
 
       expect(result).toEqual(response)
@@ -1006,6 +1010,39 @@ describe('activitiesApiClient', () => {
 
       await activitiesApiClient.getInternalLocationEventsByDpsLocationIds('MDI', date, dpsLocationIds, user, timeSlot)
 
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getExternalMovements', () => {
+    it('should call endpoint to get external movements', async () => {
+      const prisonCode = 'MDI'
+      const date = formatIsoDate(new Date())
+      const timeSlot = 'AM'
+      const response = [
+        {
+          id: 1,
+          description: 'Outside location',
+          events: [
+            {
+              prisonerNumber: 'A1234BC',
+              summary: 'Court hearing',
+              eventType: EventType.ACTIVITY,
+            },
+          ],
+        },
+      ] as LocationEvents[]
+
+      fakeActivitiesApi
+        .get(`/scheduled-events/prison/${prisonCode}/external-movements`)
+        .query({ date, timeSlot })
+        .matchHeader('authorization', 'Bearer token')
+        .matchHeader('Caseload-Id', prisonCode)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getExternalMovements(prisonCode, date, user, timeSlot)
+
+      expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
   })
