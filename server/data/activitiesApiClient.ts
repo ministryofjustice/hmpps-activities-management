@@ -313,12 +313,13 @@ export default class ActivitiesApiClient extends RestClient {
     prisonerNumbers: string[],
     user: ServiceUser,
     timeSlot?: string,
+    includeExternalMovements?: boolean,
   ): Promise<PrisonerScheduledEvents> {
     return this.post(
       {
         path: `/scheduled-events/prison/${prisonCode}`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
-        query: { date, timeSlot },
+        query: { date, timeSlot, includeExternalMovements },
         data: prisonerNumbers,
       },
       asUser(user.token),

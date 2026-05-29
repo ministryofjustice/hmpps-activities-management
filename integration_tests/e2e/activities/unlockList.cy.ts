@@ -97,7 +97,11 @@ context('Create activity', () => {
       '/prison/MDI/prisoners\\?page=0&size=1024&cellLocationPrefix=MDI-1-&sort=cellLocation',
       getPrisonPrisoners,
     )
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}&timeSlot=AM`, getScheduledEvents)
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI\\?date=${today}&timeSlot=AM&includeExternalMovements=true`,
+      getScheduledEvents,
+    )
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
   })
 
@@ -152,6 +156,7 @@ context('Create activity', () => {
     plannedEventsPage.getButton('Apply filters').eq(0).click()
     plannedEventsPage.assertBadges(0, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE)
     plannedEventsPage.assertBadges(1, CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE)
+    plannedEventsPage.cancelledBadge().should('have.lengthOf', 1)
 
     plannedEventsPage.getButton('Hide filter').should('be.visible')
     plannedEventsPage.selectAllAlerts().click()
@@ -208,7 +213,7 @@ context('Create activity', () => {
     getScheduledEventsWithNotRequired.activities[0].suspended = true
     cy.stubEndpoint(
       'POST',
-      `/scheduled-events/prison/MDI\\?date=${today}&timeSlot=AM`,
+      `/scheduled-events/prison/MDI\\?date=${today}&timeSlot=AM&includeExternalMovements=true`,
       getScheduledEventsWithNotRequired,
     )
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -249,7 +254,7 @@ context('Create activity', () => {
 
     cy.stubEndpoint(
       'POST',
-      `/scheduled-events/prison/MDI\\?date=${tomorrow}&timeSlot=AM`,
+      `/scheduled-events/prison/MDI\\?date=${tomorrow}&timeSlot=AM&includeExternalMovements=true`,
       getScheduledEventsWithNotRequired,
     )
     const indexPage = Page.verifyOnPage(IndexPage)
