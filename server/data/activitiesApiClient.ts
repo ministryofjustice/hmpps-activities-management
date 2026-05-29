@@ -928,12 +928,11 @@ export default class ActivitiesApiClient extends RestClient {
     user: ServiceUser,
     timeSlot?: string,
   ): Promise<LocationEvents[]> {
-    return this.post(
+    return this.get(
       {
         path: `/scheduled-events/prison/${prisonCode}/external-movements`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
         query: { date, timeSlot },
-        data: [],
       },
       asUser(user.token),
     )

@@ -31,7 +31,7 @@ context('Movement list', () => {
       getScheduledEventLocations,
     )
     cy.stubEndpoint(
-      'POST',
+      'GET',
       `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`,
       externalMovements,
     )

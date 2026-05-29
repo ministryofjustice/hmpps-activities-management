@@ -1034,7 +1034,7 @@ describe('activitiesApiClient', () => {
       ] as LocationEvents[]
 
       fakeActivitiesApi
-        .post(`/scheduled-events/prison/${prisonCode}/external-movements`)
+        .get(`/scheduled-events/prison/${prisonCode}/external-movements`)
         .query({ date, timeSlot })
         .matchHeader('authorization', 'Bearer token')
         .matchHeader('Caseload-Id', prisonCode)
