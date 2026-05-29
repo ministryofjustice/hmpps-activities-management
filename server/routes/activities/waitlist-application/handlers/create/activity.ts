@@ -20,7 +20,9 @@ export default class ActivityRoutes {
     const activities = await this.activitiesService
       .getActivities(true, user)
       .then(act => act.filter(a => a.category.code !== 'SAA_NOT_IN_WORK'))
-      .then(act => act.filter(a => !a.outsideWork))
+      .then(act =>
+        act.filter(a => !user.externalActivitiesRolledOut || (user.externalActivitiesRolledOut && !a.outsideWork)),
+      )
       .then(act => act.map(a => ({ id: a.id, name: a.activityName })))
 
     return res.render(`pages/activities/waitlist-application/activity`, { activities })

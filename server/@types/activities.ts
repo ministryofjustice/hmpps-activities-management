@@ -74,4 +74,5 @@ export enum EventType {
 export enum EventSource {
   SCHEDULING_AND_ALLOCATION = 'SAA',
   NOMIS = 'NOMIS',
+  EXTERNAL_MOVEMENTS = 'EXTERNAL_MOVEMENTS_API',
 }
