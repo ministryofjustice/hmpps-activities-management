@@ -6,4 +6,6 @@ export default class CheckAllocationPage extends Page {
   }
 
   changeEndDateLink = () => cy.get('[data-qa=change-end-date-link]').first().click()
+
+  changeSchedule = () => cy.get('[data-qa=change-schedule-link]').first().click()
 }

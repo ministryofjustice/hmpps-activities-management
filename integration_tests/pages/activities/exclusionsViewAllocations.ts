@@ -9,5 +9,7 @@ export default class ExclusionsViewAllocations extends Page {
 
   suspensionBadge = (): Cypress.Chainable => cy.get('[data-qa=suspension-badge]')
 
+  changeLink = (index: number): Cypress.Chainable => cy.get('a').filter(':contains("Change")').eq(index)
+
   firstSuspensionLink = (): Cypress.Chainable => cy.contains('View suspension').click()
 }

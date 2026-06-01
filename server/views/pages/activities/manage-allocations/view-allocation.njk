@@ -158,7 +158,8 @@
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         <a href="../edit/{{ allocation.id }}/exclusions"
-                           class="govuk-link govuk-link--no-visited-state">
+                           class="govuk-link govuk-link--no-visited-state"
+                            data-qa="change-schedule-link">
                             Change
                         </a>
                     </dd>
@@ -175,12 +176,12 @@
             <div class="govuk-body">
                 <a href="/activities/allocation-dashboard/{{ allocation.activityId }}" class="govuk-link--no-visited-state">
                     Go to current allocations for {{ allocation.activitySummary }}
-                </a>   
+                </a>
             </div>
             <div class="govuk-body">
                 <a href="/activities/prisoner-allocations/{{ allocation.prisonerNumber }}" class="govuk-link--no-visited-state">
                     Go to {{ prisonerName | possessive }} allocations
-                </a>   
+                </a>
             </div>
         </div>
     </div>

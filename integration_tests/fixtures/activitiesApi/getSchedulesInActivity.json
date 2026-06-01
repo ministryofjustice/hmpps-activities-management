@@ -48,6 +48,13 @@
         "endTime": "11:00",
         "daysOfWeek": ["Tue"],
         "timeSlot": "AM"
+      },
+      {
+        "id": 6,
+        "startTime": "15:00",
+        "endTime": "16:00",
+        "daysOfWeek": ["Tue"],
+        "timeSlot": "PM"
       }
     ],
     "startDate": "2022-10-10",

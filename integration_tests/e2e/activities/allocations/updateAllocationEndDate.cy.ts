@@ -211,7 +211,7 @@ context('Update an allocation end as needed', () => {
     const allocationDashboard = goToAllocationDashboard()
 
     allocationDashboard.selectAllocatedPrisonerByName('Bloggs, Jo')
-    allocationDashboard.getButton('Manage allocation').click()
+    allocationDashboard.manageAllocationForSelectedPrisoner()
 
     const checkAllocationPage = Page.verifyOnPage(CheckAllocationPage)
 

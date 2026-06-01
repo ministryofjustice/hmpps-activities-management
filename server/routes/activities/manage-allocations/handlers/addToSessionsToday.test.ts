@@ -173,7 +173,33 @@ describe('Route Handlers - Allocation - Add To Sessions Today', () => {
       },
     )
 
-    it('should redirect to exclusions when feature flag is disabled', async () => {
+    it('should set addToTodaySession as YES when addToSessionsToday is true', async () => {
+      req.journeyData.allocateJourney.addToSessionsToday = true
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/addToSessionsToday',
+        expect.objectContaining({
+          addToTodaySession: YesNo.YES,
+        }),
+      )
+    })
+
+    it('should set addToTodaySession as NO when addToSessionsToday is false', async () => {
+      req.journeyData.allocateJourney.addToSessionsToday = false
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/addToSessionsToday',
+        expect.objectContaining({
+          addToTodaySession: YesNo.NO,
+        }),
+      )
+    })
+
+    it('should redirect to exclusions when sameDayScheduleModificationsEnabled is disabled', async () => {
       config.sameDayScheduleModificationsEnabled = false
 
       await handler.GET(req, res)
