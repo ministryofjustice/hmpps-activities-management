@@ -30,11 +30,6 @@ context('Movement list', () => {
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
       getScheduledEventLocations,
     )
-    cy.stubEndpoint(
-      'GET',
-      `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`,
-      externalMovements,
-    )
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents)
   })
@@ -258,6 +253,11 @@ context('Movement list', () => {
   })
 
   it('should show outside movement list', () => {
+    cy.stubEndpoint(
+      'GET',
+      `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`,
+      externalMovements,
+    )
     cy.signInEAEnabled()
     cy.visit('/activities/unlock-list')
 
@@ -283,5 +283,26 @@ context('Movement list', () => {
         cy.wrap(row).find('td').eq(4).should('contain.text', 'Outside')
       })
     locationEventsPage.table().find('tbody').find('tr').contains('Cancelled')
+  })
+
+  it('should message if no outside movements are scheduled', () => {
+    cy.stubEndpoint('GET', `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`, [])
+    cy.signInEAEnabled()
+    cy.visit('/activities/unlock-list')
+
+    const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
+    manageActivitiesPage.createMovementListsCard().click()
+
+    const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
+    chooseMovementListDetailsPage.selectToday()
+    chooseMovementListDetailsPage.selectAM()
+    chooseMovementListDetailsPage.continue()
+
+    const locationsPage = Page.verifyOnPage(LocationsPage)
+    locationsPage.selectLocation('Outside').click()
+
+    const locationEventsPage = Page.verifyOnPage(LocationEventsPage)
+    locationEventsPage.heading().contains('Outside - movement list')
+    locationEventsPage.noOutsideMovementsMessage().should('be.visible')
   })
 })
