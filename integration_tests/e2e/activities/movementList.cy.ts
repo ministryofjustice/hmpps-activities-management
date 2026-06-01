@@ -30,11 +30,6 @@ context('Movement list', () => {
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
       getScheduledEventLocations,
     )
-    cy.stubEndpoint(
-      'GET',
-      `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`,
-      externalMovements,
-    )
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents)
   })
@@ -258,6 +253,11 @@ context('Movement list', () => {
   })
 
   it('should show outside movement list', () => {
+    cy.stubEndpoint(
+      'GET',
+      `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`,
+      externalMovements,
+    )
     cy.signInEAEnabled()
     cy.visit('/activities/unlock-list')
 
@@ -289,7 +289,7 @@ context('Movement list', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`,
-      externalMovements,
+      [],
     )
     cy.signInEAEnabled()
     cy.visit('/activities/unlock-list')
