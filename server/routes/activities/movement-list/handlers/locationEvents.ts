@@ -129,7 +129,9 @@ export default class LocationEventsRoutes {
 
               const visibleEvents =
                 movementListJourney.cancelledEventsFilter === YesNo.NO
-                  ? filteredEvents.filter(event => !event.cancelled)
+                  ? filteredEvents.filter(
+                      event => !event.cancelled && event.status !== 'Cancelled' && event.status !== 'Paused',
+                    )
                   : filteredEvents
 
               return {
