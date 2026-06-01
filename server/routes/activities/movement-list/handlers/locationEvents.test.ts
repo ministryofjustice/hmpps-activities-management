@@ -7,7 +7,7 @@ import PrisonService from '../../../../services/prisonService'
 import DateOption from '../../../../enum/dateOption'
 import TimeSlot from '../../../../enum/timeSlot'
 import { InternalLocationEvents, PrisonerScheduledEvents, ScheduledEvent } from '../../../../@types/activitiesAPI/types'
-import { EventType, MovementListLocation } from '../../../../@types/activities'
+import { EventType, MovementListLocation, YesNo } from '../../../../@types/activities'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { PrisonerStatus } from '../../../../@types/prisonApiImportCustom'
 import AlertsFilterService from '../../../../services/alertsFilterService'
@@ -1237,6 +1237,13 @@ describe('Movement list routes - location events', () => {
         events: [
           {
             prisonerNumber: 'A1234BC',
+            summary: 'External movement - Scheduled',
+            status: 'Scheduled',
+          },
+          {
+            prisonerNumber: 'A1234BC',
+            summary: 'External movement - Cancelled',
+            status: 'Cancelled',
           },
         ],
       },
@@ -1265,5 +1272,85 @@ describe('Movement list routes - location events', () => {
         outsideList: true,
       }),
     )
+  })
+
+  it('filters out events with status Cancelled and Paused when cancelledEventsFilter is NO', async () => {
+    const dateOption = DateOption.TODAY
+    const dateQueryParam = format(today, 'yyyy-MM-dd')
+    const date = parse(dateQueryParam, 'yyyy-MM-dd', today)
+    const timeSlot = TimeSlot.AM
+    req.query = {
+      locationIds: `${internalLocation.dpsLocationId}`,
+      dateOption,
+      timeSlot,
+    }
+    req.journeyData.movementListJourney.cancelledEventsFilter = YesNo.NO
+
+    const internalLocationEvents = [
+      {
+        ...internalLocation,
+        events: [
+          {
+            scheduledInstanceId: 1,
+            eventType: EventType.ACTIVITY,
+            summary: 'Activity scheduled',
+            prisonerNumber: 'A1234BC',
+            status: 'Scheduled',
+          },
+          {
+            scheduledInstanceId: 2,
+            eventType: EventType.ACTIVITY,
+            summary: 'Activity cancelled',
+            prisonerNumber: 'A1234BC',
+            status: 'Cancelled',
+          },
+          {
+            scheduledInstanceId: 3,
+            eventType: EventType.ACTIVITY,
+            summary: 'Activity paused',
+            prisonerNumber: 'A1234BC',
+            status: 'Paused',
+          },
+        ],
+      },
+    ] as InternalLocationEvents[]
+
+    when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+      .calledWith(prisonCode, date, [internalLocation.dpsLocationId], res.locals.user, timeSlot as string)
+      .mockResolvedValue(internalLocationEvents)
+
+    when(activitiesService.getScheduledEventsForPrisoners)
+      .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
+      .mockResolvedValue({
+        activities: [],
+        appointments: [],
+        visits: [],
+        adjudications: [],
+        courtHearings: [],
+        externalTransfers: [],
+      } as PrisonerScheduledEvents)
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
+      dateOption,
+      date: dateQueryParam,
+      timeSlot,
+      locations: [
+        {
+          ...internalLocationEvents[0],
+          prisonerEvents: [
+            {
+              ...prisoner,
+              events: [internalLocationEvents[0].events[0]],
+              clashingEvents: [] as ScheduledEvent[],
+            },
+          ],
+        },
+      ] as MovementListLocation[],
+      alertOptions: alertFilterOptions,
+      movementListJourney: req.journeyData.movementListJourney,
+      outsideList: false,
+    })
   })
 })
