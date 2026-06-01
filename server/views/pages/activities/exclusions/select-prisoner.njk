@@ -7,7 +7,8 @@
 
 {% set pageTitle = "Whose schedule to change - Activities - DPS" %}
 {% set pageId = 'exclusions-select-prisoner-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkHref = "/activities/allocations" %}
+{% set hardBackLinkText = "Back" %}
 
 {% block content %}
 
@@ -49,7 +50,7 @@
                             {{ ("There is 1 matching person" if prisoners.length == 1 else "Select the correct person from the list (maximum 50 results shown)") }}
                         </p>
                     {% else %}
-                        <p class="govuk-body" id="prisoner-results-text">No people found matching that name or prison number.</p> 
+                        <p class="govuk-body" id="prisoner-results-text">No people found matching that name or prison number.</p>
                     {% endif %}
                 </form>
             </div>

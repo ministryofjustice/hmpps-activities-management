@@ -6,7 +6,8 @@
 
 {% set pageTitle = "Search for someone to manage suspensions - Activities - DPS" %}
 {% set pageId = 'suspensions-select-prisoner-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkHref = "/activities/allocations" %}
+{% set hardBackLinkText = "Back" %}
 
 {% block content %}
 
@@ -48,7 +49,7 @@
                             {{ ("There is 1 matching person" if prisoners.length == 1 else "Select the correct person from the list (maximum 50 results shown)") }}
                         </h2>
                     {% else %}
-                        <p class="govuk-body" id="prisoner-results-text">No people found matching that name or prison number.</p>                      
+                        <p class="govuk-body" id="prisoner-results-text">No people found matching that name or prison number.</p>
                     {% endif %}
                 </form>
             </div>
