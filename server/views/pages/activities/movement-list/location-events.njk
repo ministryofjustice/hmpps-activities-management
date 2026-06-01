@@ -142,7 +142,7 @@
                 <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot }} session</span>
                 <span class="govuk-caption-l" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
                 <p class="govuk-body govuk-!-margin-top-4" data-qa="no-outside-movements">No-one is due to go out in this session.</p>
-                <p class="govuk-body"><a href="locations?dateOption={{ movementListJourney.dateOption }}&date={{ movementListJourney.date }}&timeSlot={{ movementListJourney.timeSlot }}" class="govuk-link">Select a different date or session</a></p>
+                <p class="govuk-body"><a href="locations?dateOption={{ movementListJourney.dateOption }}&date={{ movementListJourney.date }}&timeSlot={{ movementListJourney.timeSlot }}" class="govuk-link govuk-link--no-visited-state">Select a different date or session</a></p>
             </div>
         </div>
     {% else %}
