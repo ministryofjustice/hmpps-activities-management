@@ -93,7 +93,7 @@ export default class LocationEventsRoutes {
                       !events
                         .filter(event => event.eventType === EventType.ACTIVITY)
                         .map(e => e.scheduledInstanceId)
-                        .filter(id => !!id)
+                        .filter(id => id !== null)
                         .includes(clash.scheduledInstanceId),
                   )
                   .filter(
