@@ -7,6 +7,8 @@ export default class LocationEventsPage extends AbstractEventsPage {
 
   heading = (): Cypress.Chainable => cy.get('h1')
 
+  noOutsideMovementsMessage = (): Cypress.Chainable => cy.get('[data-qa="no-outside-movements"]')
+
   peopleCount = (): Cypress.Chainable => cy.get('[data-qa="people-count"]')
 
   table = (): Cypress.Chainable => cy.get('[data-qa="location-1-prisoner-events"]')
