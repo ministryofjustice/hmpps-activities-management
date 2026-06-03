@@ -18,6 +18,10 @@ type CancelledActivity = {
   activityId: number
 }
 
+const isInPrison = (attendance: AllAttendance) => !attendance.outsideWork
+const isOutsidePaidByPrison = (attendance: AllAttendance) => attendance.outsideWork && attendance.paid
+const isOutsidePaidByEmployer = (attendance: AllAttendance) => attendance.outsideWork && !attendance.paid
+
 export default class DailySummaryRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
@@ -37,13 +41,24 @@ export default class DailySummaryRoutes {
     // Set the default filter values if they are not set
     req.journeyData.attendanceSummaryJourney ??= {}
     req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
+    req.journeyData.attendanceSummaryJourney.locationFilters ??= ['inPrison', 'outsidePrison', 'outsideEmployer']
 
-    const { categoryFilters } = req.journeyData.attendanceSummaryJourney
+    const { categoryFilters, locationFilters } = req.journeyData.attendanceSummaryJourney
 
     const cancelledSessionsForFilters = await this.getCancelledActivitiesAtPrison(activityDate, user).then(r =>
       r.filter(a => categoryFilters.includes(a.category)),
     )
-    const attendancesForFilters = allAttendances.filter(a => categoryFilters.includes(a.categoryName))
+
+    let attendancesForFilters = allAttendances.filter(a => categoryFilters.includes(a.categoryName))
+
+    if (user.externalActivitiesRolledOut) {
+      attendancesForFilters = attendancesForFilters.filter(
+        a =>
+          (locationFilters.includes('inPrison') && isInPrison(a)) ||
+          (locationFilters.includes('outsidePrison') && isOutsidePaidByPrison(a)) ||
+          (locationFilters.includes('outsideEmployer') && isOutsidePaidByEmployer(a)),
+      )
+    }
 
     res.locals.attendanceSummaryJourney = req.journeyData.attendanceSummaryJourney
     return res.render('pages/activities/daily-attendance-summary/daily-summary', {
