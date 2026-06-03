@@ -25,7 +25,7 @@ export default class ReviewNonAssociationRoutes {
 
     // If there is only one prisoner added to the appointment, non-associations are impossible so there is no point calling the endpoint
     // But if the user has just removed a non-association and now there's only one person left,
-    // we don't want to redirect straight away - but istead display the alternative message
+    // we don't want to redirect straight away - but instead display the alternative message
     if (prisoners.length < 2) {
       if (prisonerRemoved) {
         return res.render('pages/appointments/create-and-edit/review-non-associations', {
