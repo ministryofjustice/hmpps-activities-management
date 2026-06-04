@@ -10,10 +10,13 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "partials/showLocation.njk" import showLocation %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% set pageTitle = "Attendance overview - Appointments - DPS" %}
 {% set pageId = 'appointment-attendance-summaries-page' %}
 {% set jsBackLink = true %}
+
+{% set attendanceHint = "You can not record attendance until " + date | formatDate %}
 
 {% block meta %}
     <meta name="autocompleteElements" content="locationId"/>
@@ -97,20 +100,40 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
-                <h1 class="govuk-heading-l govuk-!-margin-0">{{ 'Find an appointment to view attendance' if isOlderThanSevenDays else 'Find an appointment to record or edit attendance' }}</h1>
+                
+                <h1 class="govuk-heading-l govuk-!-margin-0">
+                    {% if isOlderThanSevenDays %}
+                        Find an appointment to view attendance
+                    {% elif isFutureDate %}
+                        Find an appointment to view attendees
+                    {% else %}
+                        Find an appointment to record or edit attendance
+                    {% endif %}
+                </h1>
+
                 <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ date | formatDate }}</span>
             </div>
         </div>
 
-        <p class="govuk-body">
-            <a href="/appointments/attendance-summary/dashboard?date={{ date | toDateString }}" data-qa="summary-link" target='_blank'>Go to daily attendance summary</a>
-        </p>
+                         
+        {% if isFutureDate %}
+            {{ govukInsetText({
+                text: attendanceHint,
+                attributes: { 'data-qa': 'attendance-hint' }
+            }) }}
+        {% endif %}
+    
+        {% if not isFutureDate %}
+            <p class="govuk-body">
+                <a href="/appointments/attendance-summary/dashboard?date={{ date | toDateString }}" data-qa="summary-link" target='_blank'>Go to daily attendance summary</a>
+            </p>
+        {% endif %}
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h2 class="govuk-heading-s">Showing {{ summaries | length }} appointment{{ "s" if summaries | length != 1 }}</h2>
 
-                {% if attendanceSummary.attendeeCount > 1 %}
+                {% if attendanceSummary.attendeeCount > 1 and not isFutureDate %}
                     <ul class="govuk-list govuk-!-margin-bottom-4">
                         <li data-qa="summary-attended">
                             <span>Attended:</span>
@@ -255,9 +278,12 @@
                                 ],
                                 rows: summariesTableRows,
                                 actions: [
-                                    {
-                                        text: 'View attendance' if isOlderThanSevenDays else 'Record or edit attendance',
-                                        formAction: 'summaries/select-appointments'
+                                    {                                   
+                                text: ('View attendance' if isOlderThanSevenDays
+                                    else ('View attendees' if isFutureDate
+                                    else 'Record or edit attendance')
+                                ),
+                                formAction: 'summaries/select-appointments'
                                     }
                                 ],
                                 itemsDescription: 'appointment',
