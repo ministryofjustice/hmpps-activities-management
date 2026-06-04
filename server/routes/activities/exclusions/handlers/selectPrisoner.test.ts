@@ -31,6 +31,8 @@ describe('Route Handlers - Exclusions - Select Prisoner', () => {
     req = {
       body: {},
       query: {},
+      session: {},
+      get: jest.fn(),
     } as unknown as Request
   })
 
@@ -41,7 +43,7 @@ describe('Route Handlers - Exclusions - Select Prisoner', () => {
   describe('GET', () => {
     it('should render the default select-prisoner view if no search term entered', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/exclusions/select-prisoner')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/exclusions/select-prisoner', expect.any(Object))
     })
 
     it('should render with a prisoners list if search term is entered', async () => {
@@ -61,8 +63,71 @@ describe('Route Handlers - Exclusions - Select Prisoner', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/exclusions/select-prisoner', {
+        backLinkHref: '/activities/allocations',
         prisoners: prisonersResult,
         query: 'John',
+      })
+    })
+
+    describe('Back link', () => {
+      const setReferrer = (referrer?: string) => {
+        ;(req.get as jest.Mock).mockReturnValue(referrer)
+      }
+
+      const expectBackLink = async (expected: string) => {
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith(
+          'pages/activities/exclusions/select-prisoner',
+          expect.objectContaining({ backLinkHref: expected }),
+        )
+      }
+
+      it('should default to allocations and clear the session when referrer is undefined', async () => {
+        req.session.prisonerSearchBackLinkHref = '/activities/exclusions/prisoner/A1234CD'
+        setReferrer(undefined)
+
+        await expectBackLink('/activities/allocations')
+
+        expect(req.session.prisonerSearchBackLinkHref).toBeNull()
+      })
+
+      it('should default to allocations and clear the session when referrer is allocations page', async () => {
+        req.session.prisonerSearchBackLinkHref = '/activities/exclusions/prisoner/A1234CD'
+        setReferrer('http://localhost:3000/activities/allocations')
+
+        await expectBackLink('/activities/allocations')
+
+        expect(req.session.prisonerSearchBackLinkHref).toBeNull()
+      })
+
+      it('should default to allocations on the search results page', async () => {
+        req.query = { query: 'John' }
+        req.session.prisonerSearchBackLinkHref = '/activities/exclusions/prisoner/A1234CD'
+        setReferrer('http://localhost:3000/activities/exclusions/prisoner/A1234CD')
+
+        when(prisonService.searchPrisonInmates).calledWith('John', res.locals.user).mockResolvedValue({ content: [] })
+
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith(
+          'pages/activities/exclusions/select-prisoner',
+          expect.objectContaining({ backLinkHref: '/activities/allocations' }),
+        )
+      })
+
+      it('should use the prisoner exclusions page back link when referrer regex matches and session value exists', async () => {
+        req.session.prisonerSearchBackLinkHref = '/activities/exclusions/prisoner/A1234CD'
+        setReferrer('http://localhost:3000/activities/exclusions/prisoner/A1234CD')
+
+        await expectBackLink('/activities/exclusions/prisoner/A1234CD')
+      })
+
+      it('should fall back to allocations when referrer matches but prisonerSearchBackLinkHref is undefined', async () => {
+        req.session.prisonerSearchBackLinkHref = undefined
+        setReferrer('http://localhost:3000/activities/exclusions/prisoner/A1234CD')
+
+        await expectBackLink('/activities/allocations')
       })
     })
   })
