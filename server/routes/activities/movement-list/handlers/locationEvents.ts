@@ -72,53 +72,53 @@ export default class LocationEventsRoutes {
     const selectedAlerts = movementListJourney.alertFilters
 
     const locations = internalLocationEvents.map(
-      l =>
+      location =>
         ({
-          ...l,
+          ...location,
           prisonerEvents: prisoners
-            .map(p => {
-              const events = scheduledEventSort(l.events.filter(e => e.prisonerNumber === p.prisonerNumber))
+            .map(currentPrisoner => {
+              const events = scheduledEventSort(
+                location.events.filter(e => e.prisonerNumber === currentPrisoner.prisonerNumber),
+              )
 
               if (events.length === 0) {
                 return null
               }
-
               const clashingEvents = scheduledEventSort(
                 allEvents
-                  .filter(ce => ce.prisonerNumber === p.prisonerNumber)
-                  // Exclude any activities for the prisoner scheduled at the current location
+                  .filter(clash => clash.prisonerNumber === currentPrisoner.prisonerNumber)
+                  // Prevent showing clashing with activities if the clashing event is already shown as an activity
                   .filter(
-                    ce =>
+                    clash =>
                       !events
-                        .filter(e => e.eventType === EventType.ACTIVITY)
+                        .filter(event => event.eventType === EventType.ACTIVITY)
                         .map(e => e.scheduledInstanceId)
-                        .includes(ce.scheduledInstanceId),
+                        .filter(id => id !== null)
+                        .includes(clash.scheduledInstanceId),
                   )
-                  // Exclude any appointments for the prisoner scheduled at the current location
                   .filter(
-                    ce =>
+                    clash =>
                       !events
                         .filter(e => e.eventType === EventType.APPOINTMENT)
                         .map(e => e.appointmentId)
-                        .includes(ce.appointmentId),
+                        .includes(clash.appointmentId),
                   )
-                  // Exclude any visits for the prisoner scheduled at the current location
                   .filter(
-                    ce =>
+                    clash =>
                       !events
                         .filter(e => e.eventType === EventType.VISIT)
                         .map(e => e.eventId)
-                        .includes(ce.eventId),
+                        .includes(clash.eventId),
                   )
                   .filter(
-                    ce =>
+                    clash =>
                       !events
                         .filter(e => e.eventType === EventType.ADJUDICATION_HEARING)
                         .map(e => e.oicHearingId)
-                        .includes(ce.oicHearingId),
+                        .includes(clash.oicHearingId),
                   )
                   // Exclude any event not considered a clash
-                  .filter(ce => events.filter(e => eventClashes(ce, e)).length > 0)
+                  .filter(clash => events.filter(e => eventClashes(clash, e)).length > 0)
                   // Exclude cancelled appointments that have expired
                   .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e)),
               )
@@ -135,9 +135,9 @@ export default class LocationEventsRoutes {
                   : filteredEvents
 
               return {
-                ...p,
-                alerts: this.alertsFilterService.getFilteredAlerts(selectedAlerts, p?.alerts),
-                category: this.alertsFilterService.getFilteredCategory(selectedAlerts, p?.category),
+                ...currentPrisoner,
+                alerts: this.alertsFilterService.getFilteredAlerts(selectedAlerts, currentPrisoner?.alerts),
+                category: this.alertsFilterService.getFilteredCategory(selectedAlerts, currentPrisoner?.category),
                 events: visibleEvents,
                 clashingEvents,
               } as MovementListPrisonerEvents

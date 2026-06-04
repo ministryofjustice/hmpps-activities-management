@@ -1353,4 +1353,89 @@ describe('Movement list routes - location events', () => {
       outsideList: false,
     })
   })
+
+  it('includes clashing events when external movement has null scheduledInstanceId', async () => {
+    res.locals.user.externalActivitiesRolledOut = true
+    const dateOption = DateOption.TODAY
+    const dateQueryParam = format(today, 'yyyy-MM-dd')
+    const date = parse(dateQueryParam, 'yyyy-MM-dd', today)
+    const timeSlot = TimeSlot.AM
+    req.query = {
+      dateOption,
+      timeSlot,
+      isOutside: 'true',
+    }
+
+    const externalMovements = [
+      {
+        ...internalLocation,
+        events: [
+          {
+            scheduledInstanceId: null,
+            eventType: EventType.ACTIVITY,
+            summary: 'External movement without ID',
+            prisonerNumber: 'A1234BC',
+            startTime: '09:00',
+            endTime: '12:30',
+          },
+        ],
+      },
+    ] as InternalLocationEvents[]
+
+    when(activitiesService.getExternalMovements)
+      .calledWith(prisonCode, date, res.locals.user, timeSlot as string)
+      .mockResolvedValue(externalMovements)
+
+    when(activitiesService.getScheduledEventsForPrisoners)
+      .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
+      .mockResolvedValue({
+        activities: [
+          {
+            scheduledInstanceId: null,
+            appointmentId: 1,
+            summary: 'Clashing appointment',
+            prisonerNumber: 'A1234BC',
+            startTime: '10:00',
+            endTime: '11:00',
+          },
+        ],
+        appointments: [],
+        visits: [],
+        adjudications: [],
+        courtHearings: [],
+        externalTransfers: [],
+      } as PrisonerScheduledEvents)
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
+      dateOption,
+      date: dateQueryParam,
+      timeSlot,
+      locations: [
+        {
+          ...externalMovements[0],
+          prisonerEvents: [
+            {
+              ...prisoner,
+              events: externalMovements[0].events,
+              clashingEvents: [
+                {
+                  scheduledInstanceId: null,
+                  appointmentId: 1,
+                  summary: 'Clashing appointment',
+                  prisonerNumber: 'A1234BC',
+                  startTime: '10:00',
+                  endTime: '11:00',
+                },
+              ] as ScheduledEvent[],
+            },
+          ],
+        },
+      ] as MovementListLocation[],
+      alertOptions: alertFilterOptions,
+      movementListJourney: req.journeyData.movementListJourney,
+      outsideList: true,
+    })
+  })
 })
