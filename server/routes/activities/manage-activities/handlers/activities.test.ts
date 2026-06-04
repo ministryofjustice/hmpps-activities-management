@@ -83,7 +83,7 @@ describe('Route Handlers - Activities dashboard', () => {
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/activities-dashboard', {
-        activities: [maths, english, gym],
+        activities: [english, gym, maths],
         filters: { categoryFilter: 'all', stateFilter: 'all', isOutsideWorkFilter: 'false' },
       })
     })
@@ -93,7 +93,7 @@ describe('Route Handlers - Activities dashboard', () => {
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/activities-dashboard', {
-        activities: [maths, english],
+        activities: [english, maths],
         filters: {
           stateFilter: 'live',
           isOutsideWorkFilter: 'false',

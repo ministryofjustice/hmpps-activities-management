@@ -25,6 +25,8 @@ export default class ActivitiesRoutes {
       activities = activities.filter(a => a.outsideWork === (filters.isOutsideWorkFilter === 'true'))
     }
 
+    activities.sort((a, b) => (a.activityName || '').localeCompare(b.activityName || ''))
+
     res.render('pages/activities/manage-activities/activities-dashboard', {
       activities,
       filters,
