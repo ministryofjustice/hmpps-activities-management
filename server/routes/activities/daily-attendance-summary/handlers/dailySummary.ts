@@ -9,6 +9,7 @@ import TimeSlot from '../../../../enum/timeSlot'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../../../@types/express'
 import EventTier from '../../../../enum/eventTiers'
+import filterByLocation from '../utils/utils'
 
 type CancelledActivity = {
   id: number
@@ -17,10 +18,6 @@ type CancelledActivity = {
   cancelledReason: string
   activityId: number
 }
-
-const isInPrison = (attendance: AllAttendance) => !attendance.outsideWork
-const isOutsidePaidByPrison = (attendance: AllAttendance) => attendance.outsideWork && attendance.paid
-const isOutsidePaidByEmployer = (attendance: AllAttendance) => attendance.outsideWork && !attendance.paid
 
 export default class DailySummaryRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -52,12 +49,7 @@ export default class DailySummaryRoutes {
     let attendancesForFilters = allAttendances.filter(a => categoryFilters.includes(a.categoryName))
 
     if (user.externalActivitiesRolledOut) {
-      attendancesForFilters = attendancesForFilters.filter(
-        a =>
-          (locationFilters.includes('inPrison') && isInPrison(a)) ||
-          (locationFilters.includes('outsidePrison') && isOutsidePaidByPrison(a)) ||
-          (locationFilters.includes('outsideEmployer') && isOutsidePaidByEmployer(a)),
-      )
+      attendancesForFilters = filterByLocation(attendancesForFilters, locationFilters)
     }
 
     res.locals.attendanceSummaryJourney = req.journeyData.attendanceSummaryJourney
