@@ -97,7 +97,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
-                <h1 class="govuk-heading-l govuk-!-margin-0">Find an appointment to record or edit attendance</h1>
+                <h1 class="govuk-heading-l govuk-!-margin-0">{{ 'Find an appointment to view attendance' if isOlderThanSevenDays else 'Find an appointment to record or edit attendance' }}</h1>
                 <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ date | formatDate }}</span>
             </div>
         </div>
@@ -121,7 +121,7 @@
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
                         </li>
                         <li data-qa="summary-not-recorded">
-                            <span>Not recorded yet:</span>
+                            <span>{{ 'Not recorded:' if isOlderThanSevenDays else 'Not recorded yet:' }}</span>
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
                         </li>
                     </ul>
@@ -249,14 +249,14 @@
                                         text: "Did not attend",
                                         attributes: { "aria-sort": "none" }
                                     }, {
-                                        text: "Not recorded yet",
+                                        text: "Not recorded" if isOlderThanSevenDays else "Not recorded yet",
                                         attributes: { "aria-sort": "none" }
                                     }
                                 ],
                                 rows: summariesTableRows,
                                 actions: [
                                     {
-                                        text: 'Record or edit attendance',
+                                        text: 'View attendance' if isOlderThanSevenDays else 'Record or edit attendance',
                                         formAction: 'summaries/select-appointments'
                                     }
                                 ],
