@@ -1,4 +1,4 @@
-import { format, subDays, subWeeks } from 'date-fns'
+import { addDays, format, subDays, subWeeks } from 'date-fns'
 import Page from '../../../pages/page'
 import IndexPage from '../../../pages'
 import AppointmentsManagementPage from '../../../pages/appointments/appointmentsManagementPage'
@@ -20,6 +20,8 @@ import AttendanceDetailsPage from '../../../pages/appointments/attendance/attend
 context('Record appointment attendance', () => {
   const today = new Date()
   const todayFormatted = format(today, 'yyyy-MM-dd')
+  const tomorrow = addDays(today, 1)
+  const tomorrowFormatted = format(tomorrow, 'yyyy-MM-dd')
   const yesterday = subDays(today, 1)
   const yesterdayFormatted = format(yesterday, 'yyyy-MM-dd')
   const weekAgo = subWeeks(today, 1)
@@ -535,5 +537,84 @@ context('Record appointment attendance', () => {
     summariesPage.stickyTable().find('thead th').should('contain.text', 'Not recorded')
     summariesPage.stickyTable().find('thead th').should('not.contain.text', 'Not recorded yet')
     summariesPage.getButton('View attendance').should('exist')
+  })
+
+  it('Should restrict attendance for future appointments', () => {
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/attendance-summaries\\?date=${tomorrowFormatted}`,
+      getAppointmentAttendanceSummaries,
+    )
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
+    cy.stubEndpoint('POST', '/appointments/details', getAppointmentsDetailsMultiple)
+
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.recordAppointmentsAttendanceCard().click()
+
+    const selectDatePage = Page.verifyOnPage(SelectDatePage)
+    selectDatePage.enterDate(tomorrow)
+    selectDatePage.continue()
+
+    const summariesPage = Page.verifyOnPage(SummariesPage)
+    summariesPage.mainCaption().should('contain.text', 'Record appointment attendance')
+    summariesPage.title().should('contain.text', 'Find an appointment to view attendees')
+    summariesPage.dateCaption().should('contain.text', formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
+
+    summariesPage.assertNumRows(3)
+    summariesPage.assertRow(0, 'Gym', 'Gym', '11:00 to 13:30', '3', '1', '0', '2')
+    summariesPage.assertRow(
+      1,
+      'Prayer',
+      'In cell',
+      '12:30 to 13:00',
+      'Jarullah, Ytialel\nG4085VK\nOut of prison',
+      '0',
+      '0',
+      '1',
+    )
+    summariesPage.assertRow(2, 'Chaplaincy', 'Chapel', '15:00 to 16:00', '2', '0', '0', '2')
+    summariesPage.selectAppointmentsWithNames('Chaplaincy')
+    summariesPage.getButton('View attendees').click()
+
+    const attendeesPage = Page.verifyOnPage(AttendeesPage)
+    attendeesPage.assertNumRows(5)
+    attendeesPage.assertRowForMultipleAppointments(
+      0,
+      'Adalie, Izrmonntas',
+      'A-N-3-43S',
+      'Gym\n02:20 to 06:30\nIn cell',
+      'Not recorded yet',
+    )
+    attendeesPage.assertRowForMultipleAppointments(
+      1,
+      'Alfres, Bumahwaju',
+      'Out of prison',
+      'Gym\n02:20 to 06:30\nIn cell',
+      'Attended',
+    )
+    attendeesPage.assertRowForMultipleAppointments(
+      2,
+      'Alfres, Bumahwaju',
+      'Out of prison',
+      'Chaplaincy\n15:00 to 16:00\nMulti Faith',
+      'Not recorded yet',
+    )
+    attendeesPage.assertRowForMultipleAppointments(
+      3,
+      'Augevieve, Uhohew',
+      'UNKNOWN',
+      'Chaplaincy\n15:00 to 16:00\nMulti Faith',
+      'Not recorded yet',
+    )
+    attendeesPage.assertRowForMultipleAppointments(
+      4,
+      'Palabert, Ussalwe',
+      'A-N-2-37N',
+      'Gym\n02:20 to 06:30\nIn cell',
+      'Not recorded yet',
+    )
   })
 })

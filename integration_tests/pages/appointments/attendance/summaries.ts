@@ -13,6 +13,8 @@ export default class SummariesPage extends Page {
 
   summaryAttended = (): Cypress.Chainable => cy.get('[data-qa=summary-attended]')
 
+  attendanceHint = (): Cypress.Chainable => cy.get('[data-qa=attendance-hint]')
+
   showingCaption = (): Cypress.Chainable => cy.get('.govuk-heading-s')
 
   summaryAbsent = (): Cypress.Chainable => cy.get('[data-qa=summary-absent]')
