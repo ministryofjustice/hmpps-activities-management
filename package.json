@@ -73,7 +73,7 @@
     "nunjucks": "^3.2.4",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",
-    "redis": "^5.12.1",
+    "redis": "^6.0.0",
     "reflect-metadata": "^0.2.2",
     "superagent": "^10.3.0"
   },
