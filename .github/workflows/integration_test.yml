@@ -98,6 +98,7 @@ jobs:
         with:
           browser: chrome
         env:
+          DEBUG: cypress:server:util:process_profiler
           SPEC: ${{ inputs.spec-file-patterns }}
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
