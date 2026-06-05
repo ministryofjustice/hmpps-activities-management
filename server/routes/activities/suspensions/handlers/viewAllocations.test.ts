@@ -37,6 +37,7 @@ describe('Route Handlers - Suspensions - View allocations', () => {
       params: {
         prisonerNumber: 'ABC123',
       },
+      session: {},
     } as unknown as Request
   })
 
@@ -254,6 +255,8 @@ describe('Route Handlers - Suspensions - View allocations', () => {
         prisonerName: 'John Smith',
         prisonerNumber: 'ABC123',
       })
+
+      expect(req.session.prisonerSearchBackLinkHref).toEqual('/activities/suspensions/prisoner/ABC123')
     })
   })
 })

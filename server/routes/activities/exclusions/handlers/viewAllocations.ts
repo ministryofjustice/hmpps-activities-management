@@ -15,6 +15,8 @@ export default class ViewAllocationsRoutes {
     const { prisonerNumber } = req.params as { prisonerNumber: string }
     const { user } = res.locals
 
+    req.session.prisonerSearchBackLinkHref = `/activities/exclusions/prisoner/${prisonerNumber}`
+
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
 
     const allocations = await this.activitiesService
