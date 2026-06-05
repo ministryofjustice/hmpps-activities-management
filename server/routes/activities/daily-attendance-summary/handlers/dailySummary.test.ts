@@ -690,5 +690,385 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         },
       })
     })
+
+    it('should filter the activities based on location when externalActivitiesRolledOut is true and only inPrison is selected', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      const mockAttendanceWithLocations = [
+        {
+          attendanceId: 1,
+          scheduledInstanceId: 1,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC123',
+          activityId: 1,
+          activitySummary: 'Maths Level 1',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.FOUNDATION,
+          outsideWork: false,
+        },
+        {
+          attendanceId: 2,
+          scheduledInstanceId: 2,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC321',
+          activityId: 2,
+          activitySummary: 'Education',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+          outsideWork: true,
+          paid: true,
+        },
+        {
+          attendanceId: 3,
+          scheduledInstanceId: 3,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'XYZ123',
+          activityId: 3,
+          activitySummary: 'Education',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+          outsideWork: true,
+          paid: false,
+        },
+      ] as AllAttendance[]
+
+      res.locals.user.externalActivitiesRolledOut = true
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockAttendanceWithLocations)
+
+      when(activitiesService.getCancelledScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue([])
+
+      req = {
+        query: { date: dateString },
+        journeyData: {
+          attendanceSummaryJourney: {
+            categoryFilters: ['Education'],
+            locationFilters: ['inPrison'],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/daily-attendance-summary/daily-summary',
+        expect.objectContaining({
+          totalAllocated: {
+            AM: 1,
+            DAY: 1,
+            ED: 0,
+            PM: 0,
+          },
+        }),
+      )
+    })
+
+    it('should filter the activities based on location when only outsidePrison is selected', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      const mockAttendanceWithLocations = [
+        {
+          attendanceId: 1,
+          scheduledInstanceId: 1,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC123',
+          activityId: 1,
+          activitySummary: 'Maths Level 1',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.FOUNDATION,
+          outsideWork: false,
+        },
+        {
+          attendanceId: 2,
+          scheduledInstanceId: 2,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC321',
+          activityId: 2,
+          activitySummary: 'Education',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+          outsideWork: true,
+          paid: true,
+        },
+        {
+          attendanceId: 3,
+          scheduledInstanceId: 3,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'XYZ123',
+          activityId: 3,
+          activitySummary: 'Education',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+          outsideWork: true,
+          paid: false,
+        },
+      ] as AllAttendance[]
+
+      res.locals.user.externalActivitiesRolledOut = true
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockAttendanceWithLocations)
+
+      when(activitiesService.getCancelledScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue([])
+
+      req = {
+        query: { date: dateString },
+        journeyData: {
+          attendanceSummaryJourney: {
+            categoryFilters: ['Education'],
+            locationFilters: ['outsidePrison'],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/daily-attendance-summary/daily-summary',
+        expect.objectContaining({
+          totalAllocated: {
+            AM: 1,
+            DAY: 1,
+            ED: 0,
+            PM: 0,
+          },
+        }),
+      )
+    })
+
+    it('should filter the activities based on location when only outsideEmployer is selected', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      const mockAttendanceWithLocations = [
+        {
+          attendanceId: 1,
+          scheduledInstanceId: 1,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC123',
+          activityId: 1,
+          activitySummary: 'Maths Level 1',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.FOUNDATION,
+          outsideWork: false,
+        },
+        {
+          attendanceId: 2,
+          scheduledInstanceId: 2,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC321',
+          activityId: 2,
+          activitySummary: 'Education',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+          outsideWork: true,
+          paid: true,
+        },
+        {
+          attendanceId: 3,
+          scheduledInstanceId: 3,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'XYZ123',
+          activityId: 3,
+          activitySummary: 'Education',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+          outsideWork: true,
+          paid: false,
+        },
+      ] as AllAttendance[]
+
+      res.locals.user.externalActivitiesRolledOut = true
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockAttendanceWithLocations)
+
+      when(activitiesService.getCancelledScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue([])
+
+      req = {
+        query: { date: dateString },
+        journeyData: {
+          attendanceSummaryJourney: {
+            categoryFilters: ['Education'],
+            locationFilters: ['outsideEmployer'],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/daily-attendance-summary/daily-summary',
+        expect.objectContaining({
+          totalAllocated: {
+            AM: 1,
+            DAY: 1,
+            ED: 0,
+            PM: 0,
+          },
+        }),
+      )
+    })
+
+    it('should include all locations when externalActivitiesRolledOut is false', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      const mockAttendanceWithLocations = [
+        {
+          attendanceId: 1,
+          scheduledInstanceId: 1,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC123',
+          activityId: 1,
+          activitySummary: 'Maths Level 1',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.FOUNDATION,
+          outsideWork: false,
+        },
+        {
+          attendanceId: 2,
+          scheduledInstanceId: 2,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC321',
+          activityId: 2,
+          activitySummary: 'Education',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+          outsideWork: true,
+          paid: true,
+        },
+        {
+          attendanceId: 3,
+          scheduledInstanceId: 3,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'XYZ123',
+          activityId: 3,
+          activitySummary: 'Education',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+          outsideWork: true,
+          paid: false,
+        },
+      ] as AllAttendance[]
+
+      res.locals.user.externalActivitiesRolledOut = false
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockAttendanceWithLocations)
+
+      when(activitiesService.getCancelledScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue([])
+
+      req = {
+        query: { date: dateString },
+        journeyData: {
+          attendanceSummaryJourney: {
+            categoryFilters: ['Education'],
+            locationFilters: ['inPrison'],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/daily-attendance-summary/daily-summary',
+        expect.objectContaining({
+          totalAllocated: {
+            AM: 3,
+            DAY: 3,
+            ED: 0,
+            PM: 0,
+          },
+        }),
+      )
+    })
   })
 })

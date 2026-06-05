@@ -8,6 +8,7 @@ import AttendanceReason from '../../../../enum/attendanceReason'
 import EventTier from '../../../../enum/eventTiers'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import { PayNoPay } from '../../../../@types/activities'
+import filterByLocation from '../utils/utils'
 
 export default class DailyAttendanceRoutes {
   constructor(
@@ -41,14 +42,17 @@ export default class DailyAttendanceRoutes {
     // Set the default filter values if they are not set
     req.journeyData.attendanceSummaryJourney ??= {}
     req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
+    req.journeyData.attendanceSummaryJourney.locationFilters ??= ['inPrison', 'outsidePrison', 'outsideEmployer']
     req.journeyData.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
     req.journeyData.attendanceSummaryJourney.payFilters ??= [PayNoPay.PAID, PayNoPay.NO_PAY]
 
-    const { categoryFilters, searchTerm, absenceReasonFilters, payFilters } = req.journeyData.attendanceSummaryJourney
+    const { categoryFilters, searchTerm, absenceReasonFilters, payFilters, locationFilters } =
+      req.journeyData.attendanceSummaryJourney
 
     const attendancesMatchingFilter = this.filterAttendances(
       attendancesForStatus,
       categoryFilters,
+      user.externalActivitiesRolledOut ? locationFilters : ['inPrison', 'outsidePrison', 'outsideEmployer'],
       status === 'Absences',
       payFilters,
       absenceReasonFilters,
@@ -59,25 +63,23 @@ export default class DailyAttendanceRoutes {
     const inmates = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
     const attendees = attendancesMatchingFilter
-      .map(a => ({
-        inmate: inmates.find(i => i.prisonerNumber === a.prisonerNumber),
-        prisonerNumber: a.prisonerNumber,
-        attendance: a,
-      }))
-      .map(a => ({
-        firstName: a.inmate.firstName,
-        lastName: a.inmate.lastName,
-        prisonerNumber: a.prisonerNumber,
-        location: a.inmate.cellLocation,
-        attendance: a.attendance,
-        status: a.inmate.status,
-        prisonCode: a.inmate.prisonId,
-      }))
+      .map(attendance => {
+        const selectedInmate = inmates.find(inmate => inmate.prisonerNumber === attendance.prisonerNumber)
+        return {
+          firstName: selectedInmate?.firstName,
+          lastName: selectedInmate?.lastName,
+          prisonerNumber: attendance.prisonerNumber,
+          location: selectedInmate?.cellLocation,
+          attendance,
+          status: selectedInmate?.status,
+          prisonCode: selectedInmate?.prisonId,
+        }
+      })
       .filter(
-        a =>
+        attendee =>
           !searchTerm ||
-          this.includesSearchTerm(`${a.firstName} ${a.lastName}`, searchTerm) ||
-          this.includesSearchTerm(a.prisonerNumber, searchTerm),
+          this.includesSearchTerm(`${attendee.firstName} ${attendee.lastName}`, searchTerm) ||
+          this.includesSearchTerm(attendee.prisonerNumber, searchTerm),
       )
 
     const showRefusalsLink =
@@ -106,12 +108,14 @@ export default class DailyAttendanceRoutes {
   private filterAttendances = (
     attendancesForStatus: AllAttendance[],
     categoryFilters: string[],
+    locationFilters: string[],
     absencesPage: boolean,
     payFilters: PayNoPay[],
     absenceReasonFilters: string | string[],
   ) => {
     let attendancesMatchingAllFilters
-    const attendancesMatchingCategoryFilter = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
+    let attendancesMatchingCategoryFilter = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
+    attendancesMatchingCategoryFilter = filterByLocation(attendancesMatchingCategoryFilter, locationFilters)
     if (absencesPage) {
       const attendancesMatchingPayFilter = attendancesMatchingCategoryFilter.filter(a =>
         this.payFilter(a.issuePayment, payFilters),
