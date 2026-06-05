@@ -3734,10 +3734,10 @@ export interface components {
       offset?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
-      pageSize?: number
-      /** Format: int32 */
       pageNumber?: number
       paged?: boolean
+      /** Format: int32 */
+      pageSize?: number
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
@@ -9080,6 +9080,16 @@ export interface components {
        * @example true
        */
       attendanceRequired: boolean
+      /**
+       * @description Determines whether the activity takes place outside of the prison
+       * @example true
+       */
+      outsideWork: boolean
+      /**
+       * @description Determines whether the activity is a paid activity
+       * @example true
+       */
+      paid: boolean
       /**
        * @description event tier
        * @enum {string|null}
