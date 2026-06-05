@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { uniq } from 'lodash'
-import { isValid } from 'date-fns'
+import { isValid, differenceInDays, startOfDay } from 'date-fns'
 import DateOption from '../../../../enum/dateOption'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
@@ -67,6 +67,8 @@ export default class SummariesRoutes {
 
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
+    const isOlderThanSevenDays = differenceInDays(startOfDay(new Date()), startOfDay(dateOptionDate)) > 7
+
     return res.render('pages/appointments/attendance/summaries', {
       date: dateOptionDate,
       summaries,
@@ -74,6 +76,7 @@ export default class SummariesRoutes {
       prisonersDetails,
       locations,
       filterItems: filterItems(asString(locationId), locationTypeFilter),
+      isOlderThanSevenDays,
     })
   }
 

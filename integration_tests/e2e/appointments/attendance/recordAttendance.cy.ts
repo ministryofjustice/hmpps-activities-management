@@ -24,6 +24,8 @@ context('Record appointment attendance', () => {
   const yesterdayFormatted = format(yesterday, 'yyyy-MM-dd')
   const weekAgo = subWeeks(today, 1)
   const weekAgoFormatted = format(weekAgo, 'yyyy-MM-dd')
+  const eightDaysAgo = subDays(today, 8)
+  const eightDaysAgoFormatted = format(eightDaysAgo, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -70,6 +72,7 @@ context('Record appointment attendance', () => {
     summariesPage.summaryAttended().should('contain.text', '1 (17%)')
     summariesPage.summaryAbsent().should('contain.text', '0 (0%)')
     summariesPage.summaryNotRecorded().should('contain.text', '5 (83%)')
+    summariesPage.stickyTable().find('thead th').should('contain.text', 'Not recorded yet')
 
     summariesPage.assertNumRows(3)
     summariesPage.assertRow(0, 'Gym', 'Gym', '11:00 to 13:30', '3', '1', '0', '2')
@@ -504,5 +507,33 @@ context('Record appointment attendance', () => {
     cy.visit('/appointments/attendance/1/attendees')
 
     Page.verifyOnPage(AttendeesPage)
+  })
+
+  it('Should show view-only content when appointment is more than 7 days ago', () => {
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/attendance-summaries\\?date=${eightDaysAgoFormatted}`,
+      getAppointmentAttendanceSummaries,
+    )
+    cy.stubEndpoint('POST', '/appointments/details', getAppointmentsDetailsMultiple)
+
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.recordAppointmentsAttendanceCard().click()
+
+    const selectDatePage = Page.verifyOnPage(SelectDatePage)
+    selectDatePage.enterDate(new Date(eightDaysAgo))
+    selectDatePage.continue()
+
+    const summariesPage = Page.verifyOnPage(SummariesPage)
+    summariesPage.title().should('contain.text', 'Find an appointment to view attendance')
+    summariesPage.title().should('not.contain.text', 'Find an appointment to record or edit attendance')
+    summariesPage.summaryNotRecorded().should('contain.text', 'Not recorded:')
+    summariesPage.summaryNotRecorded().should('not.contain.text', 'Not recorded yet:')
+    summariesPage.stickyTable().find('thead th').should('contain.text', 'Not recorded')
+    summariesPage.stickyTable().find('thead th').should('not.contain.text', 'Not recorded yet')
+    summariesPage.getButton('View attendance').should('exist')
   })
 })
