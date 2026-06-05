@@ -9,6 +9,7 @@ import TimeSlot from '../../../../enum/timeSlot'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../../../@types/express'
 import EventTier from '../../../../enum/eventTiers'
+import filterByLocation from '../utils/utils'
 
 type CancelledActivity = {
   id: number
@@ -37,13 +38,19 @@ export default class DailySummaryRoutes {
     // Set the default filter values if they are not set
     req.journeyData.attendanceSummaryJourney ??= {}
     req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
+    req.journeyData.attendanceSummaryJourney.locationFilters ??= ['inPrison', 'outsidePrison', 'outsideEmployer']
 
-    const { categoryFilters } = req.journeyData.attendanceSummaryJourney
+    const { categoryFilters, locationFilters } = req.journeyData.attendanceSummaryJourney
 
     const cancelledSessionsForFilters = await this.getCancelledActivitiesAtPrison(activityDate, user).then(r =>
       r.filter(a => categoryFilters.includes(a.category)),
     )
-    const attendancesForFilters = allAttendances.filter(a => categoryFilters.includes(a.categoryName))
+
+    let attendancesForFilters = allAttendances.filter(a => categoryFilters.includes(a.categoryName))
+
+    if (user.externalActivitiesRolledOut) {
+      attendancesForFilters = filterByLocation(attendancesForFilters, locationFilters)
+    }
 
     res.locals.attendanceSummaryJourney = req.journeyData.attendanceSummaryJourney
     return res.render('pages/activities/daily-attendance-summary/daily-summary', {

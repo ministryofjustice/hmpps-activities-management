@@ -141,6 +141,12 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         },
       },
     } as unknown as Request
+    config.sameDayScheduleModificationsEnabled = false
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+    config.sameDayScheduleModificationsEnabled = false
   })
 
   beforeEach(() => {
