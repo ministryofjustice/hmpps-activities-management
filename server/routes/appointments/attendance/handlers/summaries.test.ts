@@ -110,6 +110,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationId: null,
         },
         locations,
+        isOlderThanSevenDays: false,
       })
     })
 
@@ -176,6 +177,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationId: null,
         },
         locations,
+        isOlderThanSevenDays: false,
       })
     })
 
@@ -261,6 +263,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationId: null,
         },
         locations,
+        isOlderThanSevenDays: true,
       })
     })
 
@@ -368,6 +371,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationId: null,
         },
         locations,
+        isOlderThanSevenDays: true,
       })
     })
 
@@ -438,6 +442,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationId: null,
         },
         locations,
+        isOlderThanSevenDays: false,
       })
     })
 
@@ -513,6 +518,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationId: null,
         },
         locations,
+        isOlderThanSevenDays: false,
       })
     })
 
@@ -593,6 +599,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationId: '123',
         },
         locations,
+        isOlderThanSevenDays: false,
       })
     })
 
@@ -640,6 +647,89 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationId: null,
         },
         locations,
+        isOlderThanSevenDays: false,
+      })
+    })
+
+    it('should set isOlderThanSevenDays to true when date is more than 7 days ago', async () => {
+      const eightDaysAgo = subDays(today, 8)
+      req.query = {
+        dateOption: DateOption.OTHER,
+        date: toDateString(eightDaysAgo),
+      }
+
+      const summaries = [] as AppointmentAttendanceSummary[]
+      const prisonersDetails = {} as Prisoner
+
+      when(activitiesService.getAppointmentAttendanceSummaries)
+        .calledWith(prisonCode, eightDaysAgo, res.locals.user)
+        .mockResolvedValue(summaries)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries', {
+        date: eightDaysAgo,
+        summaries,
+        attendanceSummary: {
+          attendeeCount: 0,
+          attended: 0,
+          notAttended: 0,
+          notRecorded: 0,
+          attendedPercentage: 0,
+          notAttendedPercentage: 0,
+          notRecordedPercentage: 0,
+          foundationCount: 0,
+          tier1Count: 0,
+          tier2Count: 0,
+        },
+        prisonersDetails,
+        filterItems: {
+          locationType: 'ALL',
+          locationId: null,
+        },
+        locations,
+        isOlderThanSevenDays: true,
+      })
+    })
+
+    it('should set isOlderThanSevenDays to false when date is exactly 7 days ago', async () => {
+      const sevenDaysAgo = subDays(today, 7)
+      req.query = {
+        dateOption: DateOption.OTHER,
+        date: toDateString(sevenDaysAgo),
+      }
+
+      const summaries = [] as AppointmentAttendanceSummary[]
+      const prisonersDetails = {} as Prisoner
+
+      when(activitiesService.getAppointmentAttendanceSummaries)
+        .calledWith(prisonCode, sevenDaysAgo, res.locals.user)
+        .mockResolvedValue(summaries)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries', {
+        date: sevenDaysAgo,
+        summaries,
+        attendanceSummary: {
+          attendeeCount: 0,
+          attended: 0,
+          notAttended: 0,
+          notRecorded: 0,
+          attendedPercentage: 0,
+          notAttendedPercentage: 0,
+          notRecordedPercentage: 0,
+          foundationCount: 0,
+          tier1Count: 0,
+          tier2Count: 0,
+        },
+        prisonersDetails,
+        filterItems: {
+          locationType: 'ALL',
+          locationId: null,
+        },
+        locations,
+        isOlderThanSevenDays: false,
       })
     })
   })
