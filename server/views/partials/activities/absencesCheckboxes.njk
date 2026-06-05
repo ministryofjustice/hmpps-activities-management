@@ -26,16 +26,21 @@
         }
     },
     items: [
-    {
-        value: PayNoPay.PAID,
-        text: 'Pay',
-        checked: PayNoPay.PAID in attendanceSummaryJourney.payFilters
-    },
-    {
-        value: PayNoPay.NO_PAY,
-        text: 'No pay',
-        checked: PayNoPay.NO_PAY in attendanceSummaryJourney.payFilters
-    }
+        {
+            value: PayNoPay.PAID,
+            text: 'Pay',
+            checked: PayNoPay.PAID in attendanceSummaryJourney.payFilters
+        },
+        {
+            value: PayNoPay.NO_PAY,
+            text: 'No pay',
+            checked: PayNoPay.NO_PAY in attendanceSummaryJourney.payFilters
+        },
+        {
+            value: PayNoPay.EMPLOYER_PAID,
+            text: 'Employer paid',
+            checked: PayNoPay.EMPLOYER_PAID in attendanceSummaryJourney.payFilters
+        } if user.externalActivitiesRolledOut
     ]
 }) }}
 <input type="hidden" name="isAbsencesFilter" value="true" />

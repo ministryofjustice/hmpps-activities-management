@@ -6,5 +6,5 @@ export type AttendanceSummaryJourney = {
   absenceReasonFilters?: string[]
   reasonFilter?: string
   payFilters?: PayNoPay[]
-  locationFilters?: string[]
+  activityTypeFilters?: string[]
 }

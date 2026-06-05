@@ -1,15 +1,13 @@
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 
-const isInPrison = (attendance: AllAttendance) => !attendance.outsideWork
-const isOutsidePaidByPrison = (attendance: AllAttendance) => attendance.outsideWork && attendance.paid
-const isOutsidePaidByEmployer = (attendance: AllAttendance) => attendance.outsideWork && !attendance.paid
+export const isInPrison = (attendance: AllAttendance) => !attendance.outsideWork
+export const isOutsidePaidByPrison = (attendance: AllAttendance) => attendance.outsideWork && attendance.paid
+export const isOutsidePaidByEmployer = (attendance: AllAttendance) => attendance.outsideWork && !attendance.paid
 
-const filterByLocation = (attendanceArray: AllAttendance[], locationFilters: string[]) =>
+export const filterAttendancesByActivityType = (attendanceArray: AllAttendance[], activityTypeFilters: string[]) =>
   attendanceArray.filter(
     a =>
-      (locationFilters.includes('inPrison') && isInPrison(a)) ||
-      (locationFilters.includes('outsidePrison') && isOutsidePaidByPrison(a)) ||
-      (locationFilters.includes('outsideEmployer') && isOutsidePaidByEmployer(a)),
+      (activityTypeFilters.includes('inPrison') && isInPrison(a)) ||
+      (activityTypeFilters.includes('outsidePrison') && isOutsidePaidByPrison(a)) ||
+      (activityTypeFilters.includes('outsideEmployer') && isOutsidePaidByEmployer(a)),
   )
-
-export default filterByLocation

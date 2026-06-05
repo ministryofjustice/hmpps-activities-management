@@ -8,7 +8,7 @@ import AttendanceReason from '../../../../enum/attendanceReason'
 import EventTier from '../../../../enum/eventTiers'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import { PayNoPay } from '../../../../@types/activities'
-import filterByLocation from '../utils/utils'
+import { filterAttendancesByActivityType } from '../utils/utils'
 
 export default class DailyAttendanceRoutes {
   constructor(
@@ -42,17 +42,17 @@ export default class DailyAttendanceRoutes {
     // Set the default filter values if they are not set
     req.journeyData.attendanceSummaryJourney ??= {}
     req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
-    req.journeyData.attendanceSummaryJourney.locationFilters ??= ['inPrison', 'outsidePrison', 'outsideEmployer']
+    req.journeyData.attendanceSummaryJourney.activityTypeFilters ??= ['inPrison', 'outsidePrison', 'outsideEmployer']
     req.journeyData.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
     req.journeyData.attendanceSummaryJourney.payFilters ??= [PayNoPay.PAID, PayNoPay.NO_PAY]
 
-    const { categoryFilters, searchTerm, absenceReasonFilters, payFilters, locationFilters } =
+    const { categoryFilters, searchTerm, absenceReasonFilters, payFilters, activityTypeFilters } =
       req.journeyData.attendanceSummaryJourney
 
     const attendancesMatchingFilter = this.filterAttendances(
       attendancesForStatus,
       categoryFilters,
-      user.externalActivitiesRolledOut ? locationFilters : ['inPrison', 'outsidePrison', 'outsideEmployer'],
+      user.externalActivitiesRolledOut ? activityTypeFilters : ['inPrison', 'outsidePrison', 'outsideEmployer'],
       status === 'Absences',
       payFilters,
       absenceReasonFilters,
@@ -108,14 +108,19 @@ export default class DailyAttendanceRoutes {
   private filterAttendances = (
     attendancesForStatus: AllAttendance[],
     categoryFilters: string[],
-    locationFilters: string[],
+    activityTypeFilters: string[],
     absencesPage: boolean,
     payFilters: PayNoPay[],
     absenceReasonFilters: string | string[],
   ) => {
     let attendancesMatchingAllFilters
     let attendancesMatchingCategoryFilter = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
-    attendancesMatchingCategoryFilter = filterByLocation(attendancesMatchingCategoryFilter, locationFilters)
+    if (!absencesPage) {
+      attendancesMatchingCategoryFilter = filterAttendancesByActivityType(
+        attendancesMatchingCategoryFilter,
+        activityTypeFilters,
+      )
+    }
     if (absencesPage) {
       const attendancesMatchingPayFilter = attendancesMatchingCategoryFilter.filter(a =>
         this.payFilter(a.issuePayment, payFilters),

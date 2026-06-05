@@ -15,19 +15,19 @@
     {% set filterOptionsHtml %}
         {% if user.externalActivitiesRolledOut %}
             {{ govukCheckboxes({
-                idPrefix: 'locationFilters',
-                name: 'locationFilters',
+                idPrefix: 'activityTypeFilters',
+                name: 'activityTypeFilters',
                 classes: "govuk-radios--small",
                 fieldset: {
                     legend: {
-                        text: 'Locations',
+                        text: 'Activity type',
                         classes: 'govuk-fieldset__legend--m'
                     }
                 },
                 items: [
-                    {value: 'inPrison', text: 'In-prison', checked: 'inPrison' in attendanceSummaryJourney.locationFilters},
-                    {value: 'outsidePrison', text: 'Outside - prison-paid', checked: 'outsidePrison' in attendanceSummaryJourney.locationFilters},
-                    {value: 'outsideEmployer', text: 'Outside - employer-paid', checked: 'outsideEmployer' in attendanceSummaryJourney.locationFilters}
+                    {value: 'inPrison', text: 'In-prison', checked: 'inPrison' in attendanceSummaryJourney.activityTypeFilters},
+                    {value: 'outsidePrison', text: 'Outside - prison-paid', checked: 'outsidePrison' in attendanceSummaryJourney.activityTypeFilters},
+                    {value: 'outsideEmployer', text: 'Outside - employer-paid', checked: 'outsideEmployer' in attendanceSummaryJourney.activityTypeFilters}
                 ]
             }) }}
         {% endif %}
