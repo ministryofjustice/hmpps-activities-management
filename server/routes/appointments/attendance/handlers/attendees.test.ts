@@ -534,6 +534,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
           notAttendedPercentage: 0,
           notRecordedPercentage: 100,
         },
+        isFutureDate: false,
         isOlderThanSevenDays: true,
       })
     })
