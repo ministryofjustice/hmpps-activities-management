@@ -12,7 +12,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {%  set numAppointments = appointments | length %}
-{% set attendanceHint = "You can not record attendance until " + appointments[0].startDate | toDate | formatDate %}
+{% set attendanceHint = "You cannot record attendance until " + appointments[0].startDate | toDate | formatDate %}
 
 
 {% if numAppointments == 1 %}

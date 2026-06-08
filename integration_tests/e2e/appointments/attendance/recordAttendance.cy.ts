@@ -564,7 +564,7 @@ context('Record appointment attendance', () => {
     summariesPage.title().should('contain.text', 'Find an appointment to view attendees')
     summariesPage
       .attendanceHint()
-      .should('contain.text', `You can not record attendance until ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
+      .should('contain.text', `You cannot record attendance until ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
 
     summariesPage.dateCaption().should('contain.text', formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
 
@@ -587,7 +587,7 @@ context('Record appointment attendance', () => {
     const attendeesPage = Page.verifyOnPage(AttendeesPage)
     attendeesPage
       .attendanceHint()
-      .should('contain.text', `You can not record attendance until ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
+      .should('contain.text', `You cannot record attendance until ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
     attendeesPage.assertNumRows(3)
     attendeesPage.assertRowForSingleFutureAppointment(0, 'Adalie, Izrmonntas', 'A-N-3-43S', 'Not recorded yet')
     attendeesPage.assertRowForSingleFutureAppointment(1, 'Alfres, Bumahwaju', 'Out of prison', 'Not recorded yet')
