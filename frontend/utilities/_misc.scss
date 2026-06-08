@@ -56,7 +56,7 @@ body {
 .alternating-row-shading {
   tr:nth-child(even) {
     @media not print {
-      background-color: govuk-tint(govuk-colour("light-grey"), 30);
+      background-color: govuk-colour("black", $variant: "tint-25");
     }
   }
 }
