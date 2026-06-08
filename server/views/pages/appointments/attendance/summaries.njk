@@ -100,7 +100,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
-                
+
                 <h1 class="govuk-heading-l govuk-!-margin-0">
                     {% if isOlderThanSevenDays %}
                         Find an appointment to view attendance
@@ -115,14 +115,14 @@
             </div>
         </div>
 
-                         
+
         {% if isFutureDate %}
             {{ govukInsetText({
                 text: attendanceHint,
                 attributes: { 'data-qa': 'attendance-hint' }
             }) }}
         {% endif %}
-    
+
         {% if not isFutureDate %}
             <p class="govuk-body">
                 <a href="/appointments/attendance-summary/dashboard?date={{ date | toDateString }}" data-qa="summary-link" target='_blank'>Go to daily attendance summary</a>
@@ -278,7 +278,7 @@
                                 ],
                                 rows: summariesTableRows,
                                 actions: [
-                                    {                                   
+                                    {
                                 text: ('View attendance' if isOlderThanSevenDays
                                     else ('View attendees' if isFutureDate
                                     else 'Record or edit attendance')
