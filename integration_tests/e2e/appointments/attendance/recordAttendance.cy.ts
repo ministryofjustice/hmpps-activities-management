@@ -252,9 +252,6 @@ context('Record appointment attendance', () => {
 
   it('Should mark attendance for single appointment', () => {
     cy.stubEndpoint('POST', '/appointments/details', getAppointmentsDetailsGym)
-    // cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2024-11-05', getScheduledEvents)
-
-    // getAppointmentsDetailsGym[0].startDate = todayFormatted
 
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
@@ -268,7 +265,7 @@ context('Record appointment attendance', () => {
 
     const summariesPage = Page.verifyOnPage(SummariesPage)
     summariesPage.assertNumRows(3)
-    summariesPage.selectAppointmentsWithNames('Chaplaincy')
+    summariesPage.selectAppointmentsWithNames('Gym')
     summariesPage.getButton('Record or edit attendance').click()
 
     const attendeesPage = Page.verifyOnPage(AttendeesPage)
@@ -545,8 +542,12 @@ context('Record appointment attendance', () => {
       `/appointments/MDI/attendance-summaries\\?date=${tomorrowFormatted}`,
       getAppointmentAttendanceSummaries,
     )
+
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
-    cy.stubEndpoint('POST', '/appointments/details', getAppointmentsDetailsMultiple)
+    cy.stubEndpoint('POST', '/appointments/details', getAppointmentsDetailsGym)
+
+    getAppointmentsDetailsGym[0].startDate = tomorrowFormatted
+    getAppointmentsDetailsGym[0].attendees[0].attended = null
 
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
@@ -561,6 +562,10 @@ context('Record appointment attendance', () => {
     const summariesPage = Page.verifyOnPage(SummariesPage)
     summariesPage.mainCaption().should('contain.text', 'Record appointment attendance')
     summariesPage.title().should('contain.text', 'Find an appointment to view attendees')
+    summariesPage
+      .attendanceHint()
+      .should('contain.text', `You cannot record attendance until ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
+
     summariesPage.dateCaption().should('contain.text', formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
 
     summariesPage.assertNumRows(3)
@@ -575,46 +580,17 @@ context('Record appointment attendance', () => {
       '0',
       '1',
     )
-    summariesPage.assertRow(2, 'Chaplaincy', 'Chapel', '15:00 to 16:00', '2', '0', '0', '2')
-    summariesPage.selectAppointmentsWithNames('Chaplaincy')
+    summariesPage.assertRow(0, 'Gym', 'Gym', '11:00 to 13:30', '3', '1', '0', '2')
+    summariesPage.selectAppointmentsWithNames('Gym')
     summariesPage.getButton('View attendees').click()
 
     const attendeesPage = Page.verifyOnPage(AttendeesPage)
-    attendeesPage.assertNumRows(5)
-    attendeesPage.assertRowForMultipleAppointments(
-      0,
-      'Adalie, Izrmonntas',
-      'A-N-3-43S',
-      'Gym\n02:20 to 06:30\nIn cell',
-      'Not recorded yet',
-    )
-    attendeesPage.assertRowForMultipleAppointments(
-      1,
-      'Alfres, Bumahwaju',
-      'Out of prison',
-      'Gym\n02:20 to 06:30\nIn cell',
-      'Attended',
-    )
-    attendeesPage.assertRowForMultipleAppointments(
-      2,
-      'Alfres, Bumahwaju',
-      'Out of prison',
-      'Chaplaincy\n15:00 to 16:00\nMulti Faith',
-      'Not recorded yet',
-    )
-    attendeesPage.assertRowForMultipleAppointments(
-      3,
-      'Augevieve, Uhohew',
-      'UNKNOWN',
-      'Chaplaincy\n15:00 to 16:00\nMulti Faith',
-      'Not recorded yet',
-    )
-    attendeesPage.assertRowForMultipleAppointments(
-      4,
-      'Palabert, Ussalwe',
-      'A-N-2-37N',
-      'Gym\n02:20 to 06:30\nIn cell',
-      'Not recorded yet',
-    )
+    attendeesPage
+      .attendanceHint()
+      .should('contain.text', `You cannot record attendance until ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
+    attendeesPage.assertNumRows(3)
+    attendeesPage.assertRowForSingleFutureAppointment(0, 'Adalie, Izrmonntas', 'A-N-3-43S', 'Not recorded yet')
+    attendeesPage.assertRowForSingleFutureAppointment(1, 'Alfres, Bumahwaju', 'Out of prison', 'Not recorded yet')
+    attendeesPage.assertRowForSingleFutureAppointment(2, 'Augevieve, Uhohew', 'A-N-2-37N', 'Not recorded yet')
   })
 })

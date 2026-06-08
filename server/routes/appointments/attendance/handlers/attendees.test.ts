@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
+import { addDays } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { AppointmentDetails, PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
 import AttendeesRoutes from './attendees'
 import AttendanceAction from '../../../../enum/attendanceAction'
-import { toDate } from '../../../../utils/utils'
+import { toDate, toDateString } from '../../../../utils/utils'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { AppointmentFrequency } from '../../../../@types/appointments'
 
@@ -62,23 +63,26 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       })
     })
 
-    it('should render the attendance page with appointments', async () => {
+    it('should render the attendance page with future appointments', async () => {
       req.journeyData.recordAppointmentAttendanceJourney = {
         appointmentIds: [1, 2],
       }
+      const today = new Date()
+      const tomorrow = addDays(today, 1)
+      const formattedTomorrow = toDateString(tomorrow)
 
       const appointments = [
         {
           id: 1,
           appointmentName: 'Chaplaincy',
-          startDate: '2024-02-25',
+          startDate: formattedTomorrow,
           startTime: '15:00',
           attendees: [{ prisoner: { prisonerNumber: 'A1234BC' } }, { prisoner: { prisonerNumber: 'D4444DD' } }],
         },
         {
           id: 2,
           appointmentName: 'Gym',
-          startDate: '2024-02-25',
+          startDate: formattedTomorrow,
           attendees: [{ prisoner: { prisonerNumber: 'A1234BC' } }],
         },
       ] as AppointmentDetails[]
@@ -106,6 +110,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       ]
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
+        isFutureDate: true,
         attendeeRows,
         appointments,
         attendanceSummary: {
@@ -196,6 +201,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       ]
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
+        isFutureDate: false,
         attendeeRows,
         appointments,
         attendanceSummary: {
@@ -370,6 +376,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       ]
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
+        isFutureDate: false,
         attendeeRows,
         appointments,
         attendanceSummary: {
@@ -466,6 +473,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       ]
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
+        isFutureDate: false,
         attendeeRows,
         appointments,
         attendanceSummary: {
