@@ -24,6 +24,8 @@ export default class SummariesRoutes {
       return res.redirect('select-date')
     }
 
+    const isFutureDate = new Date(dateOptionDate) > new Date()
+
     const locationTypeFilter = locationType !== undefined ? asString(locationType) : 'ALL'
 
     const summaries = (
@@ -71,6 +73,7 @@ export default class SummariesRoutes {
 
     return res.render('pages/appointments/attendance/summaries', {
       date: dateOptionDate,
+      isFutureDate,
       summaries,
       attendanceSummary,
       prisonersDetails,

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { subDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import { when } from 'jest-when'
 import SummariesRoutes from './summaries'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -25,6 +25,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const yesterday = subDays(today, 1)
+  const tomorrow = addDays(today, 1)
   const prisonCode = 'RSI'
 
   const locations = [
@@ -109,6 +110,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationType: 'ALL',
           locationId: null,
         },
+        isFutureDate: false,
         locations,
         isOlderThanSevenDays: false,
       })
@@ -176,6 +178,75 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationType: 'ALL',
           locationId: null,
         },
+        isFutureDate: false,
+        isOlderThanSevenDays: false,
+        locations,
+      })
+    })
+
+    it('should render the appointment attendance summaries page with future appointment attendance summaries ', async () => {
+      const dateOption = DateOption.TOMORROW
+      req.query = {
+        dateOption,
+      }
+      const prisonersDetails = {} as Prisoner
+
+      const summaries = [
+        {
+          attendeeCount: 1,
+          attendedCount: 0,
+          nonAttendedCount: 0,
+          notRecordedCount: 1,
+          attendees: [],
+          eventTierType: 'TIER_1',
+        },
+        {
+          attendeeCount: 3,
+          attendedCount: 2,
+          nonAttendedCount: 1,
+          notRecordedCount: 0,
+          attendees: [],
+          eventTierType: 'TIER_1',
+        },
+        {
+          attendeeCount: 6,
+          attendedCount: 3,
+          nonAttendedCount: 2,
+          notRecordedCount: 1,
+          attendees: [],
+          eventTierType: 'TIER_2',
+        },
+      ] as AppointmentAttendanceSummary[]
+
+      when(activitiesService.getAppointmentAttendanceSummaries)
+        .calledWith(prisonCode, tomorrow, res.locals.user)
+        .mockResolvedValue(summaries)
+
+      await handler.GET(req, res)
+
+      expect(req.journeyData.recordAppointmentAttendanceJourney).toEqual({ date: toDateString(addDays(new Date(), 1)) })
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries', {
+        date: tomorrow,
+        summaries,
+        attendanceSummary: {
+          attendeeCount: 10,
+          attended: 5,
+          notAttended: 3,
+          notRecorded: 2,
+          attendedPercentage: 50,
+          notAttendedPercentage: 30,
+          notRecordedPercentage: 20,
+          foundationCount: 0,
+          tier1Count: 2,
+          tier2Count: 3,
+        },
+        prisonersDetails,
+        filterItems: {
+          locationType: 'ALL',
+          locationId: null,
+        },
+        isFutureDate: true,
         locations,
         isOlderThanSevenDays: false,
       })
@@ -262,6 +333,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationType: 'ALL',
           locationId: null,
         },
+        isFutureDate: false,
         locations,
         isOlderThanSevenDays: true,
       })
@@ -370,6 +442,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationType: 'ALL',
           locationId: null,
         },
+        isFutureDate: false,
         locations,
         isOlderThanSevenDays: true,
       })
@@ -441,6 +514,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationType: 'ALL',
           locationId: null,
         },
+        isFutureDate: false,
         locations,
         isOlderThanSevenDays: false,
       })
@@ -517,6 +591,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationType: 'IN_CELL',
           locationId: null,
         },
+        isFutureDate: false,
         locations,
         isOlderThanSevenDays: false,
       })
@@ -598,6 +673,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationType: 'OUT_OF_CELL',
           locationId: '123',
         },
+        isFutureDate: false,
         locations,
         isOlderThanSevenDays: false,
       })
@@ -646,6 +722,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationType: 'ALL',
           locationId: null,
         },
+        isFutureDate: false,
         locations,
         isOlderThanSevenDays: false,
       })
@@ -688,6 +765,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationId: null,
         },
         locations,
+        isFutureDate: false,
         isOlderThanSevenDays: true,
       })
     })
@@ -729,6 +807,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           locationId: null,
         },
         locations,
+        isFutureDate: false,
         isOlderThanSevenDays: false,
       })
     })
