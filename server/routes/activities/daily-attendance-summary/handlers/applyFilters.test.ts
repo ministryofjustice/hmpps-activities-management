@@ -37,7 +37,7 @@ describe('Route Handlers - applyFilters', () => {
         reasonFilter: 'BOTH',
         searchTerm: undefined,
         absenceReasonFilters: [AttendanceReason.CLASH],
-        payFilters: [PayNoPay.PAID],
+        payFilters: PayNoPay.PAID,
       }
     })
 

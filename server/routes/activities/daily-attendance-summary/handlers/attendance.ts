@@ -44,7 +44,7 @@ export default class DailyAttendanceRoutes {
     req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
     req.journeyData.attendanceSummaryJourney.activityTypeFilters ??= ['inPrison', 'outsidePrison', 'outsideEmployer']
     req.journeyData.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
-    req.journeyData.attendanceSummaryJourney.payFilters ??= [PayNoPay.PAID, PayNoPay.NO_PAY]
+    req.journeyData.attendanceSummaryJourney.payFilters ??= PayNoPay.PAID
 
     const { categoryFilters, searchTerm, absenceReasonFilters, payFilters, activityTypeFilters } =
       req.journeyData.attendanceSummaryJourney
@@ -101,29 +101,23 @@ export default class DailyAttendanceRoutes {
   private includesSearchTerm = (propertyValue: string, searchTerm: string) =>
     !searchTerm || propertyValue.toLowerCase().includes(searchTerm.toLowerCase())
 
-  private payFilter = (issuePayment: boolean, payFilters: PayNoPay[]) => {
-    return issuePayment ? payFilters.includes(PayNoPay.PAID) : payFilters.includes(PayNoPay.NO_PAY)
-  }
-
   private filterAttendances = (
     attendancesForStatus: AllAttendance[],
     categoryFilters: string[],
     activityTypeFilters: string[],
     absencesPage: boolean,
-    payFilters: PayNoPay[],
+    payFilters: PayNoPay,
     absenceReasonFilters: string | string[],
   ) => {
     let attendancesMatchingAllFilters
-    let attendancesMatchingCategoryFilter = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
-    if (!absencesPage) {
-      attendancesMatchingCategoryFilter = filterAttendancesByActivityType(
-        attendancesMatchingCategoryFilter,
-        activityTypeFilters,
-      )
-    }
+    const attendancesFilteredByCategory = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
+    const attendancesFilteredByActivityType = filterAttendancesByActivityType(
+      attendancesFilteredByCategory,
+      activityTypeFilters,
+    )
     if (absencesPage) {
-      const attendancesMatchingPayFilter = attendancesMatchingCategoryFilter.filter(a =>
-        this.payFilter(a.issuePayment, payFilters),
+      const attendancesMatchingPayFilter = attendancesFilteredByActivityType.filter(a =>
+        a.issuePayment ? payFilters === PayNoPay.PAID : payFilters === PayNoPay.NO_PAY,
       )
       attendancesMatchingAllFilters = attendancesMatchingPayFilter.filter(a => {
         if (Array.isArray(absenceReasonFilters)) {
@@ -132,6 +126,6 @@ export default class DailyAttendanceRoutes {
         return a.attendanceReasonCode === absenceReasonFilters
       })
     }
-    return attendancesMatchingAllFilters || attendancesMatchingCategoryFilter
+    return attendancesMatchingAllFilters || attendancesFilteredByActivityType
   }
 }

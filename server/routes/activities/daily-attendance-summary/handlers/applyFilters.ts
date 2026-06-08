@@ -52,7 +52,7 @@ export default class ApplyFiltersRoutes {
 
     if (isAbsencesFilter) {
       req.journeyData.attendanceSummaryJourney.absenceReasonFilters = absenceReasonFilters ?? []
-      req.journeyData.attendanceSummaryJourney.payFilters = payFilters ?? []
+      req.journeyData.attendanceSummaryJourney.payFilters = payFilters ?? undefined
     } else {
       req.journeyData.attendanceSummaryJourney.absenceReasonFilters = undefined
       req.journeyData.attendanceSummaryJourney.payFilters = undefined
