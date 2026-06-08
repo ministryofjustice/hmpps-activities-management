@@ -537,6 +537,26 @@ context('Record appointment attendance', () => {
     summariesPage.stickyTable().find('thead th').should('contain.text', 'Not recorded')
     summariesPage.stickyTable().find('thead th').should('not.contain.text', 'Not recorded yet')
     summariesPage.getButton('View attendance').should('exist')
+
+    summariesPage.selectAppointmentsWithNames('Chaplaincy')
+    summariesPage.getButton('View attendance').click()
+
+    const attendeesPage = Page.verifyOnPage(AttendeesPage)
+    attendeesPage.title().should('contain.text', 'View attendance at 2 appointments')
+    attendeesPage.summaryNotRecorded().should('contain.text', 'Not recorded:')
+    attendeesPage.summaryNotRecorded().should('not.contain.text', 'Not recorded yet:')
+    cy.get('input[type=checkbox]').should('not.exist')
+    attendeesPage.getButton('Mark as attended').should('not.exist')
+    attendeesPage.getButton('Mark as not attended').should('not.exist')
+    attendeesPage.stickyTableRows().eq(0).should('contain.text', 'Not recorded')
+    attendeesPage.stickyTableRows().eq(0).should('not.contain.text', 'Not recorded yet')
+    attendeesPage.viewOrEdit(1, 'G8438VW').should('contain.text', 'View')
+    attendeesPage.viewOrEdit(1, 'G8438VW').should('not.contain.text', 'View or edit')
+
+    attendeesPage.viewOrEdit(1, 'G8438VW').click()
+
+    const attendanceDetailsPage = Page.verifyOnPage(AttendanceDetailsPage)
+    attendanceDetailsPage.getLinkByText('Change').should('not.exist')
   })
 
   it('Should restrict attendance for future appointments', () => {

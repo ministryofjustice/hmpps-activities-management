@@ -44,11 +44,15 @@ describe('Route Handlers - Record Appointment Attendance', () => {
   })
 
   afterEach(() => {
+    jest.useRealTimers()
     jest.resetAllMocks()
   })
 
   describe('GET_MULTIPLE', () => {
     beforeEach(() => {
+      jest.useFakeTimers()
+      jest.setSystemTime(new Date('2024-03-01T12:00:00Z'))
+
       const scheduledEvents = {
         activities: [],
         appointments: [],
@@ -117,6 +121,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
           notAttendedPercentage: 0,
           notRecordedPercentage: 100,
         },
+        isOlderThanSevenDays: false,
       })
     })
 
@@ -207,6 +212,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
           notAttendedPercentage: 29,
           notRecordedPercentage: 43,
         },
+        isOlderThanSevenDays: false,
       })
     })
 
@@ -381,6 +387,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
           notAttendedPercentage: 0,
           notRecordedPercentage: 100,
         },
+        isOlderThanSevenDays: false,
       })
     })
 
@@ -477,6 +484,49 @@ describe('Route Handlers - Record Appointment Attendance', () => {
           notAttendedPercentage: 33,
           notRecordedPercentage: 33,
         },
+        isOlderThanSevenDays: false,
+      })
+    })
+
+    it('Should return isOlderThanSevenDays as TRUE if appointment was over seven days ago', async () => {
+      req.journeyData.recordAppointmentAttendanceJourney = {
+        appointmentIds: [1],
+        date: '2024-02-20',
+      }
+
+      const appointments = [
+        {
+          id: 1,
+          appointmentName: 'Chaplaincy',
+          startDate: '2024-02-20',
+          startTime: '15:00',
+          attendees: [{ prisoner: { prisonerNumber: 'A1234BC' } }],
+        },
+      ] as AppointmentDetails[]
+
+      when(activitiesService.getAppointments).calledWith([1], res.locals.user).mockResolvedValue(appointments)
+
+      await handler.GET_MULTIPLE(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
+        attendeeRows: [
+          {
+            prisoner: { prisonerNumber: 'A1234BC' },
+            appointment: appointments[0],
+            otherEvents: [],
+          },
+        ],
+        appointments,
+        attendanceSummary: {
+          attendeeCount: 1,
+          attended: 0,
+          notAttended: 0,
+          notRecorded: 1,
+          attendedPercentage: 0,
+          notAttendedPercentage: 0,
+          notRecordedPercentage: 100,
+        },
+        isOlderThanSevenDays: true,
       })
     })
   })

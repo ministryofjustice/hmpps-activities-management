@@ -20,6 +20,9 @@ describe('Route Handlers - Edit Appointment Attendance', () => {
   let res: Response
 
   beforeEach(() => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2024-12-05T12:00:00Z'))
+
     res = {
       locals: {
         user: {
@@ -38,6 +41,7 @@ describe('Route Handlers - Edit Appointment Attendance', () => {
   })
 
   afterEach(() => {
+    jest.useRealTimers()
     jest.resetAllMocks()
   })
 
@@ -91,6 +95,50 @@ describe('Route Handlers - Edit Appointment Attendance', () => {
           prisonerNumber: 'ZB1123S',
         },
         userMap: new Map([['jsmith', { name: 'John Smith' }]]) as Map<string, UserDetails>,
+        isOlderThanSevenDays: false,
+      })
+    })
+
+    it('Should return isOlderThanSevenDays as TRUE if appointment was over seven days ago', async () => {
+      const appointment = {
+        id: 123,
+        appointmentName: 'Chaplaincy',
+        startDate: '2024-11-20',
+        attendees: [
+          {
+            attendanceRecordedBy: 'jsmith',
+            attendanceRecordedTime: '2025-01-01T12:00:00',
+            attended: true,
+            prisoner: {
+              prisonerNumber: 'ZB1123S',
+              firstName: 'Joe',
+              lastName: 'Bloggs',
+            },
+          },
+        ],
+      } as AppointmentDetails
+
+      when(activitiesService.getAppointmentDetails).calledWith(123, res.locals.user).mockResolvedValue(appointment)
+
+      when(userService.getUserMap)
+        .calledWith(atLeast(['jsmith']))
+        .mockResolvedValue(new Map([['jsmith', { name: 'John Smith' }]]) as Map<string, UserDetails>)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendance-details', {
+        attendanceDetails: {
+          appointmentId: 123,
+          appointmentName: 'Chaplaincy',
+          appointmentDate: '2024-11-20',
+          recordedBy: 'jsmith',
+          recordedTime: '2025-01-01T12:00:00',
+          attended: true,
+          prisonerName: 'Joe Bloggs',
+          prisonerNumber: 'ZB1123S',
+        },
+        userMap: new Map([['jsmith', { name: 'John Smith' }]]) as Map<string, UserDetails>,
+        isOlderThanSevenDays: true,
       })
     })
   })
