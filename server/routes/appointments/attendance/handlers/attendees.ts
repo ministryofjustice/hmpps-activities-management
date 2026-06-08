@@ -32,11 +32,13 @@ export default class AttendeesRoutes {
       appointments.flatMap(appointment => appointment.attendees.map(att => att.prisoner.prisonerNumber)),
     )
 
-    const events = await this.activitiesService.getScheduledEventsForPrisoners(
-      toDate(appointments[0].startDate),
-      prisonerNumbers,
-      user,
-    )
+    const now = new Date()
+
+    const startDate = toDate(appointments[0].startDate)
+
+    const isFutureDate = startDate > now
+
+    const events = await this.activitiesService.getScheduledEventsForPrisoners(startDate, prisonerNumbers, user)
 
     const allEvents = [
       ...events.activities,
@@ -81,6 +83,7 @@ export default class AttendeesRoutes {
     })
 
     return res.render('pages/appointments/attendance/attendees', {
+      isFutureDate,
       attendeeRows,
       appointments,
       attendanceSummary: getAttendanceSummaryFromAppointmentDetails(attendeeRows),

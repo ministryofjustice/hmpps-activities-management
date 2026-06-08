@@ -9,8 +9,11 @@
 {% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {%  set numAppointments = appointments | length %}
+{% set attendanceHint = "You cannot record attendance until " + appointments[0].startDate | toDate | formatDate %}
+
 
 {% if numAppointments == 1 %}
     {% set singleAppointment = appointments[0] %}
@@ -87,7 +90,14 @@
             </div>
         </div>
 
-        {% if attendanceSummary.attendeeCount > 1 %}
+        {% if isFutureDate %}
+            {{ govukInsetText({
+                text: attendanceHint,
+                attributes: { 'data-qa': 'attendance-hint' }
+            }) }}
+        {% endif %}
+
+        {% if attendanceSummary.attendeeCount > 1 and not isFutureDate %}
             <div class="govuk-grid-row govuk-!-margin-bottom-4">
                 <div class="govuk-grid-column-two-thirds">
                     <ul class="govuk-list">
@@ -181,7 +191,8 @@
             {% set attendeeListRows = attendeeListRows.concat({
                 visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase,
                 value: attendee.appointment.id + '-' + prisoner.prisonerNumber,
-                selectable: attendee.attended === null and not isOlderThanSevenDays,
+                selectable: (false if isFutureDate else attendee.attended === null),
+                selectable: attendee.attended === null and not isOlderThanSevenDays and not isFutureDate,
                 items: items
             }) %}
         {% endfor %}
