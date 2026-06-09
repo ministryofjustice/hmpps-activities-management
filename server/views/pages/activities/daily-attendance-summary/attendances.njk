@@ -63,14 +63,14 @@
                 },
                 items: [
                     {
-                        value: PayNoPay.PAID,
-                        text: 'Any Pay',
-                        checked: PayNoPay.PAID in attendanceSummaryJourney.payFilters
+                        value: AnyPayNoPay.ANY_PAY,
+                        text: 'Any pay',
+                        checked: AnyPayNoPay.ANY_PAY in attendanceSummaryJourney.payFilters
                     },
                     {
-                        value: PayNoPay.NO_PAY,
-                        text: 'No pay',
-                        checked: PayNoPay.NO_PAY in attendanceSummaryJourney.payFilters
+                        value: AnyPayNoPay.NO_PAY,
+                        text: 'No pay only',
+                        checked: AnyPayNoPay.NO_PAY in attendanceSummaryJourney.payFilters
                     }
                 ]
             }) }}

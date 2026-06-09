@@ -57,10 +57,9 @@ export enum YesNo {
   NO = 'NO',
 }
 
-export enum PayNoPay {
-  PAID = 'PAID',
+export enum AnyPayNoPay {
+  ANY_PAY = 'ANY_PAY',
   NO_PAY = 'NO_PAY',
-  EMPLOYER_PAID = 'EMPLOYER_PAID',
 }
 
 export enum EventType {

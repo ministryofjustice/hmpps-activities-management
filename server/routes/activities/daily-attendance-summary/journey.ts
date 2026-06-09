@@ -1,10 +1,10 @@
-import { PayNoPay } from '../../../@types/activities'
+import { AnyPayNoPay } from '../../../@types/activities'
 
 export type AttendanceSummaryJourney = {
   searchTerm?: string
   categoryFilters?: string[]
   absenceReasonFilters?: string[]
   reasonFilter?: string
-  payFilters?: PayNoPay
+  payFilters?: AnyPayNoPay
   activityTypeFilters?: string[]
 }

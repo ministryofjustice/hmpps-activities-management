@@ -9,7 +9,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import EventTier from '../../../../enum/eventTiers'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
-import { PayNoPay } from '../../../../@types/activities'
+import { AnyPayNoPay } from '../../../../@types/activities'
 import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
@@ -671,7 +671,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         },
         journeyData: {
           attendanceSummaryJourney: {
-            payFilters: PayNoPay.PAID,
+            payFilters: AnyPayNoPay.NO_PAY,
           },
         },
       } as unknown as Request
@@ -690,19 +690,19 @@ describe('Route Handlers - Daily Attendance List', () => {
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
             attendance: {
-              attendanceId: 3,
-              prisonCode: 'MDI',
-              sessionDate: '2022-10-10',
-              timeSlot: 'AM',
-              status: AttendanceStatus.COMPLETED,
-              attendanceReasonCode: AttendanceReason.OTHER,
-              issuePayment: true,
-              prisonerNumber: 'ABC321',
               activityId: 2,
               activitySummary: 'Woodworking',
+              attendanceId: 2,
+              attendanceReasonCode: AttendanceReason.CANCELLED,
               categoryName: 'Prison Jobs',
+              issuePayment: false,
+              prisonCode: 'MDI',
+              prisonerNumber: 'ABC321',
+              sessionDate: '2022-10-10',
+              status: AttendanceStatus.COMPLETED,
+              timeSlot: 'AM',
               attendanceRequired: true,
-              eventTier: EventTier.TIER_1,
+              eventTier: EventTier.FOUNDATION,
               startTime: '09:00',
               endTime: '12:30',
             },

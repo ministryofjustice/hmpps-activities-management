@@ -38,7 +38,7 @@ import {
 import config from '../config'
 import { ApplicationInfo } from '../applicationInfo'
 import { Services } from '../services'
-import { EventSource, EventType, PayNoPay, YesNo } from '../@types/activities'
+import { AnyPayNoPay, EventSource, EventType, YesNo } from '../@types/activities'
 import { AppointmentJourneyMode, AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import {
   AppointmentApplyTo,
@@ -210,7 +210,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('AttendanceStatus', AttendanceStatus)
   njkEnv.addGlobal('AttendanceReason', AttendanceReason)
   njkEnv.addGlobal('EventTier', EventTier)
-  njkEnv.addGlobal('PayNoPay', PayNoPay)
+  njkEnv.addGlobal('AnyPayNoPay', AnyPayNoPay)
   njkEnv.addGlobal('EventOrganiser', EventOrganiser)
   njkEnv.addGlobal('getAppointmentEditMessage', getAppointmentEditMessage)
   njkEnv.addGlobal('getAppointmentEditHintMessage', getAppointmentEditHintMessage)

@@ -7,7 +7,7 @@ import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import EventTier from '../../../../enum/eventTiers'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
-import { PayNoPay } from '../../../../@types/activities'
+import { AnyPayNoPay } from '../../../../@types/activities'
 import { filterAttendancesByActivityType } from '../utils/utils'
 
 export default class DailyAttendanceRoutes {
@@ -44,7 +44,7 @@ export default class DailyAttendanceRoutes {
     req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
     req.journeyData.attendanceSummaryJourney.activityTypeFilters ??= ['inPrison', 'outsidePrison', 'outsideEmployer']
     req.journeyData.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
-    req.journeyData.attendanceSummaryJourney.payFilters ??= PayNoPay.PAID
+    req.journeyData.attendanceSummaryJourney.payFilters ??= AnyPayNoPay.ANY_PAY
 
     const { categoryFilters, searchTerm, absenceReasonFilters, payFilters, activityTypeFilters } =
       req.journeyData.attendanceSummaryJourney
@@ -58,7 +58,7 @@ export default class DailyAttendanceRoutes {
       absenceReasonFilters,
     )
 
-    const prisonerNumbers = attendancesMatchingFilter.map(a => a.prisonerNumber)
+    const prisonerNumbers = _.uniq<string>(attendancesMatchingFilter.map(a => a.prisonerNumber))
 
     const inmates = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
@@ -106,7 +106,7 @@ export default class DailyAttendanceRoutes {
     categoryFilters: string[],
     activityTypeFilters: string[],
     absencesPage: boolean,
-    payFilters: PayNoPay,
+    payFilters: AnyPayNoPay,
     absenceReasonFilters: string | string[],
   ) => {
     let attendancesMatchingAllFilters
@@ -116,9 +116,10 @@ export default class DailyAttendanceRoutes {
       activityTypeFilters,
     )
     if (absencesPage) {
-      const attendancesMatchingPayFilter = attendancesFilteredByActivityType.filter(a =>
-        a.issuePayment ? payFilters === PayNoPay.PAID : payFilters === PayNoPay.NO_PAY,
-      )
+      const attendancesMatchingPayFilter =
+        payFilters === AnyPayNoPay.ANY_PAY
+          ? attendancesFilteredByActivityType
+          : attendancesFilteredByActivityType.filter(a => payFilters === AnyPayNoPay.NO_PAY && a.issuePayment === false)
       attendancesMatchingAllFilters = attendancesMatchingPayFilter.filter(a => {
         if (Array.isArray(absenceReasonFilters)) {
           return absenceReasonFilters.some(reason => reason === a.attendanceReasonCode)
