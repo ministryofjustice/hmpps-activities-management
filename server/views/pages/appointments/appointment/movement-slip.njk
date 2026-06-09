@@ -9,7 +9,7 @@
 {% block header %}
 {% endblock %}
 
-{% block beforeContent %}
+{% block containerStart %}
     <span class="govuk-visually-hidden" id="{{ pageId }}"></span>
 {% endblock %}
 
@@ -37,5 +37,5 @@
     {{ appointmentMovementSlip(appointment, user.activeCaseLoad.description, now) }}
 {% endblock %}
 
-{% block footer %}
+{% block govukFooter %}
 {% endblock %}

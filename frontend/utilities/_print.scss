@@ -119,7 +119,7 @@
   }
 
   .printable-textarea {
-    color: govuk-colour('dark-grey');
+    color: govuk-colour("black", $variant: "tint-25");
     border: 1px solid govuk-colour('black');
     padding: govuk-spacing(2);
     width: 90%;
@@ -127,7 +127,7 @@
   }
 
   .govuk-tag {
-    background-color: govuk-colour("dark-grey");
+    background-color: govuk-colour("black", $variant: "tint-25");
     font-size: 6pt;
     padding: 4px 5px 2px 5px;
     margin-bottom: 1px;
@@ -150,9 +150,9 @@
     margin-right: 17px;
     width: $_checkbox-size;
     height: $_checkbox-size;
-    border: $govuk-border-width-form-element solid $govuk-input-border-colour;
+    border: $govuk-border-width-form-element solid govuk-functional-colour(input-border);
     background: govuk-colour("white");
-    color: govuk-colour("mid-grey");
+    color: govuk-colour("black", $variant: "tint-80");
     line-height: $_checkbox-size;
     text-align: center;
   }

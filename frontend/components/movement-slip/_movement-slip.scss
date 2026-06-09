@@ -1,11 +1,11 @@
 .separate-slip-print:not(:last-child){
   page-break-after: always;
-} 
+}
 
 .movement-slip {
   margin-bottom: govuk-spacing(6);
   padding: govuk-spacing(4);
-  border: 2px dashed $govuk-border-colour;
+  border: 2px dashed govuk-functional-colour(border);
   page-break-inside: avoid;
 
   .movement-slip-header {
@@ -18,7 +18,7 @@
 
   .movement-slip-footer {
     text-align: right;
-    color: $govuk-secondary-text-colour;
+    color: govuk-functional-colour(secondary-text);
     margin-bottom: govuk-spacing(0);
 
     @media print {
@@ -35,7 +35,7 @@
     &__row {
       @extend .govuk-body;
       display: table-row;
-      border-bottom: 1px solid $govuk-border-colour;
+      border-bottom: 1px solid govuk-functional-colour(border);
 
       &--no-border {
         border-bottom: 0;
