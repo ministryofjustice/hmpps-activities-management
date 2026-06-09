@@ -230,17 +230,16 @@ context('Daily Attendance', () => {
     attendancePage.refusalsLink().should('exist')
 
     attendancePage.getButton('Show filter').click()
-    attendancePage.payRadios().find('input[value="PAID"]').should('be.checked')
-    attendancePage.payRadios().find('input[value="NO_PAY"]').should('be.checked')
+    attendancePage.payRadios().find('input[value="ANY_PAY"]').should('be.checked')
+    attendancePage.payRadios().find('input[value="NO_PAY"]').should('not.be.checked')
 
-    attendancePage.payRadios().find('input[value="NO_PAY"]').uncheck()
+    attendancePage.payRadios().find('input[value="NO_PAY"]').check()
     attendancePage.getButton('Apply filters').first().click()
 
     attendancePage.count().contains('2 absences')
-    attendancePage.refusalsLink().should('not.exist')
-    attendancePage.payRadios().find('input[value="PAID"]').should('be.checked')
-    attendancePage.payRadios().find('input[value="NO_PAY"]').should('not.be.checked')
-    cy.get('[data-qa="attendance"]').should('not.contain.text', 'No pay')
+    attendancePage.payRadios().find('input[value="ANY_PAY"]').should('not.be.checked')
+    attendancePage.payRadios().find('input[value="NO_PAY"]').should('be.checked')
+    cy.get('[data-qa="attendance"]').should('contain.text', 'No pay')
   })
   it('should show the session times on the not attended page', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
