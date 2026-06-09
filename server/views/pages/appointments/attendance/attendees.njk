@@ -20,9 +20,11 @@
 {% endif %}
 
 {% if singleAppointment %}
-    {% set pageTitle = "Record attendance for " + singleAppointment.appointmentName + " - " + singleAppointment.startDate | toDate | formatDate + " " +  singleAppointment.startTime + (" to " + singleAppointment.endTime if singleAppointment.endTime) + " - Appointments - DPS" %}
+    {% set action = "View" if isOlderThanSevenDays else "Record" %}
+    {% set pageTitle = action + " attendance for " + singleAppointment.appointmentName + " - " + singleAppointment.startDate | toDate | formatDate + " " +  singleAppointment.startTime + (" to " + singleAppointment.endTime if singleAppointment.endTime) + " - Appointments - DPS" %}
 {% else %}
-    {% set pageTitle = "Record attendance for " + numAppointments + " appointments - Appointments - DPS" %}
+    {% set action = "View" if isOlderThanSevenDays else "Record" %}
+    {% set pageTitle = action + " attendance for " + numAppointments + " appointments - Appointments - DPS" %}
 {% endif %}
 {% set pageId = 'appointment-attendees-page' %}
 
@@ -33,7 +35,7 @@
 
 {% macro attendanceTag(attendee) %}
     {% if attendee.attended === null %}
-        Not recorded yet
+        {{ 'Not recorded' if isOlderThanSevenDays else 'Not recorded yet' }}
     {% else %}
         {% if attendee.attended === true %}
             {{ govukTag({ text: 'Attended', classes: 'govuk-tag--green' }) }}
@@ -49,10 +51,12 @@
     <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ showLocation(user.externalActivitiesRolledOut, appointment) }}</div>
 {% endmacro %}
 
-{% macro renderViewLink(attendee) %}
+{% macro renderViewLink(attendee, isOlderThanSevenDays) %}
     {% if attendee.attended !== null %}
+        {% set linkText = "View" if isOlderThanSevenDays else "View or edit" %}
         <a href="attendees/{{ attendee.appointment.id }}/{{ attendee.prisoner.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-or-edit-{{ attendee.appointment.id }}-{{ attendee.prisoner.prisonerNumber }}">
-            View or edit
+            {{ linkText }}
+            <span class="govuk-visually-hidden">{{ linkText }} attendance for {{ attendeeRows[0].prisoner.firstName | toTitleCase }} {{ attendeeRows[0].prisoner.lastName | toTitleCase }}</span>
         </a>
     {% endif %}
 {% endmacro %}
@@ -78,7 +82,7 @@
                     <span class="govuk-caption-l" data-qa="date-caption">{{ singleAppointment.startDate | toDate | formatDate }}</span>
                     <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="location">{{ showLocation(user.externalActivitiesRolledOut, singleAppointment) }}</span>
                 {% else %}
-                    <h1 class="govuk-heading-l govuk-!-margin-0">Record attendance at {{ numAppointments }} appointments</h1>
+                    <h1 class="govuk-heading-l govuk-!-margin-0">{{ "View" if isOlderThanSevenDays else "Record" }} attendance at {{ numAppointments }} appointments</h1>
                     <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ recordAppointmentAttendanceJourney.date | toDate | formatDate }}</span>
                 {% endif %}
 
@@ -92,7 +96,7 @@
                 attributes: { 'data-qa': 'attendance-hint' }
             }) }}
         {% endif %}
-        
+
         {% if attendanceSummary.attendeeCount > 1 and not isFutureDate %}
             <div class="govuk-grid-row govuk-!-margin-bottom-4">
                 <div class="govuk-grid-column-two-thirds">
@@ -106,7 +110,7 @@
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
                         </li>
                         <li data-qa="summary-not-recorded">
-                            <span>Not recorded yet:</span>
+                            <span>{{ 'Not recorded:' if isOlderThanSevenDays else 'Not recorded yet:' }}</span>
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
                         </li>
                     </ul>
@@ -180,15 +184,17 @@
                     attributes: { 'data-qa': 'prisoner-' + loop.index + '-attendance' }
                 },
                 {
-                    html: renderViewLink(attendee)
+                    html: renderViewLink(attendee, isOlderThanSevenDays)
                 }
             ) %}
+
             {% set attendeeListRows = attendeeListRows.concat({
                 visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase,
                 value: attendee.appointment.id + '-' + prisoner.prisonerNumber,
                 selectable: (false if isFutureDate else attendee.attended === null),
+                selectable: attendee.attended === null and not isOlderThanSevenDays and not isFutureDate,
                 items: items
-            }) %} 
+            }) %}
         {% endfor %}
 
         {% set head = [
@@ -219,6 +225,7 @@
                 attributes: { "aria-sort": "none" }
             }
         ) %}
+
         {{ stickySelect({
             type: 'check',
             selectAllAvailable: true,
@@ -228,7 +235,7 @@
             name: 'attendanceIds',
             head: head,
             rows: attendeeListRows,
-            actions: [
+            actions: [] if isOlderThanSevenDays else [
                 {
                     text: 'Mark as attended',
                     formAction: 'attendees/attend'

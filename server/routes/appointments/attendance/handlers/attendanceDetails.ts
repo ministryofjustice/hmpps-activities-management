@@ -1,4 +1,6 @@
 import { Request, Response } from 'express'
+import { differenceInDays, startOfDay } from 'date-fns'
+import { toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import UserService from '../../../../services/userService'
 
@@ -18,6 +20,8 @@ export default class AttendanceDetailsRoutes {
 
     const userMap = await this.userService.getUserMap([attendee.attendanceRecordedBy], user)
 
+    const isOlderThanSevenDays = differenceInDays(startOfDay(new Date()), startOfDay(toDate(appointment.startDate))) > 7
+
     const attendanceDetails = {
       appointmentId: appointment.id,
       appointmentName: appointment.appointmentName,
@@ -31,6 +35,7 @@ export default class AttendanceDetailsRoutes {
 
     res.render('pages/appointments/attendance/attendance-details', {
       attendanceDetails,
+      isOlderThanSevenDays,
       userMap,
     })
   }
