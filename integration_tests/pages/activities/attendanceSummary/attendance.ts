@@ -15,6 +15,8 @@ export default class AttendancePage extends Page {
 
   absenceRadios = () => cy.get('[data-qa="absence-reasons-radio-buttons"]')
 
+  activityTypeCheckbox = (value: string) => cy.get(`input[name="activityTypeFilters"][value="${value}"]`)
+
   payRadios = () => cy.get('[data-qa="pay-radio-buttons"]')
 
   categoriesRadios = () => cy.get('[data-qa="category-radio-buttons"]')

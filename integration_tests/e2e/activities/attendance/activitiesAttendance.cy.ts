@@ -92,6 +92,10 @@ context('Daily Attendance', () => {
     selectPeriodPage.continue()
 
     const dailySummaryPage = Page.verifyOnPage(DailySummaryPage)
+    dailySummaryPage.showFiltersButton().click()
+    dailySummaryPage.activityTypeCheckbox('inPrison').should('not.exist')
+    dailySummaryPage.activityTypeCheckbox('outsidePrison').should('not.exist')
+    dailySummaryPage.activityTypeCheckbox('outsideEmployer').should('not.exist')
     dailySummaryPage.tier1AttendanceStat().contains(0)
     dailySummaryPage.tier2AttendanceStat().contains(2)
     dailySummaryPage.routineAttendanceStat().contains(1)
@@ -309,5 +313,29 @@ context('Daily Attendance - external activities rolled out', () => {
     const activitiesPage = navigateToActivitiesPage()
     activitiesPage.locationTypeRadio('OUTSIDE_WORK').should('exist')
     activitiesPage.locationTypeRadio('ALL').should('exist')
+  })
+
+  it('should show activity type checkboxes when externalActivitiesRolledOut is true', () => {
+    cy.visit('/activities/attendance')
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.attendanceSummaryCard().click()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.selectToday()
+    selectPeriodPage.continue()
+
+    const dailySummaryPage = Page.verifyOnPage(DailySummaryPage)
+    dailySummaryPage.showFiltersButton().click()
+    dailySummaryPage.activityTypeCheckbox('inPrison').should('exist')
+    dailySummaryPage.activityTypeCheckbox('outsidePrison').should('exist')
+    dailySummaryPage.activityTypeCheckbox('outsideEmployer').should('exist')
+    dailySummaryPage.absencesLink()
+
+    const absencesPage = Page.verifyOnPage(AttendancePage)
+
+    absencesPage.activityTypeCheckbox('inPrison').should('exist')
+    absencesPage.activityTypeCheckbox('outsidePrison').should('exist')
+    absencesPage.activityTypeCheckbox('outsideEmployer').should('exist')
   })
 })
