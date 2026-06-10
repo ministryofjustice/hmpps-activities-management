@@ -36,4 +36,6 @@ export default class DashboardPage extends Page {
   cancelledStat = (): Cypress.Chainable => cy.get('[data-qa="cancelled"]')
 
   cancelledStatLink = (): Cypress.Chainable => cy.get('[data-qa="cancelled-link"]')
+
+  refreshButton = (): Cypress.Chainable => cy.get('[data-qa="refresh-button"]')
 }

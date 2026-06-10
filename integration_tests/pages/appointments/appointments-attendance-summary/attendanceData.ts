@@ -18,4 +18,6 @@ export default class AttendanceData extends Page {
   appointmentName = (appId: number): Cypress.Chainable => cy.get(`[data-qa="appointmentName-${appId}"]`)
 
   customNameFilter = (): Cypress.Chainable => cy.get('[name="customAppointmentName"]')
+
+  refreshButton = (): Cypress.Chainable => cy.get('[data-qa="refresh-button"]')
 }

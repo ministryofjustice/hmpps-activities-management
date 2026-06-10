@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { differenceInDays, startOfDay } from 'date-fns'
 import { datePickerDateToIsoDate, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AttendanceStatus } from '../../../../@types/appointments'
@@ -67,6 +68,8 @@ export default class AttendanceDataRoutes {
       })
     }
 
+    const isOlderThanSevenDays = differenceInDays(startOfDay(new Date()), startOfDay(new Date(date as string))) > 7
+
     return res.render('pages/appointments/attendance-summary-stats/attendanceData', {
       date,
       categories,
@@ -74,12 +77,17 @@ export default class AttendanceDataRoutes {
       customAppointmentName: customAppointmentName ?? '',
       attendanceState,
       appointments: enhancedAppointmentsForSearchedPrisoner || enhancedAppointments,
-      title: getAttendanceDataTitle(AttendanceStatus[attendanceState as string], EventTier[eventTier as string]),
+      title: getAttendanceDataTitle(
+        AttendanceStatus[attendanceState as string],
+        EventTier[eventTier as string],
+        isOlderThanSevenDays,
+      ),
       subTitle: getAttendanceDataSubTitle(
         AttendanceStatus[attendanceState as string],
         EventTier[eventTier as string],
         enhancedAppointmentsForSearchedPrisoner?.length || enhancedAppointments.length,
         getSpecificAppointmentCount(appointments),
+        isOlderThanSevenDays,
       ),
       showHostsFilter:
         AttendanceStatus[attendanceState as string] === AttendanceStatus.EVENT_TIER &&
@@ -87,6 +95,7 @@ export default class AttendanceDataRoutes {
       eventTier: eventTier ?? '',
       organiserCode: organiserCode ?? '',
       searchTerm: searchTerm ?? '',
+      isOlderThanSevenDays,
     })
   }
 
