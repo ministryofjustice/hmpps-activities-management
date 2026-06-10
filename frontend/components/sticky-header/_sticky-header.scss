@@ -3,18 +3,18 @@
       @media print {
         position: revert;
       }
-  
+
       position: sticky;
       z-index: 999;
-      top: 0px;
+      top: 0;
     }
 
     .govuk-table__header {
       background: govuk-colour("white");
-      border-bottom: 2px govuk-colour("mid-grey") solid;
+      border-bottom: 2px govuk-colour("black", $variant: "tint-80") solid;
     }
-  
-  // This is required to override a style added by govuk-frontend 
+
+  // This is required to override a style added by govuk-frontend
   // which sets the S-P-T to 0 when sticky is used
   @supports (position: sticky) {
     .govuk-template {

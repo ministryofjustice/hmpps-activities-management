@@ -1,5 +1,5 @@
 .secondary-text-colour {
-    color: $govuk-secondary-text-colour;
+    color: govuk-functional-colour(secondary-text);
 }
 
 // There's not a good way(?) to rotate text 45 degrees and force the parent
@@ -47,5 +47,5 @@
 }
 
 .grey-text {
-   color: govuk-colour("dark-grey")
+   color: govuk-colour("black", $variant: "tint-25")
 }

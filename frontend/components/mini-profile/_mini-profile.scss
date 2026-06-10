@@ -1,7 +1,7 @@
 .mini-profile {
   @include govuk-responsive-padding(3);
   @include govuk-font($size: 19);
-  background-color: govuk-colour("light-grey");
+  background-color: govuk-colour("black", $variant: "tint-95");
   display: flex;
   flex-direction: row;
   align-items: start;
