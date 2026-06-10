@@ -1,4 +1,4 @@
-import { format, subDays, subWeeks } from 'date-fns'
+import { addDays, format, subDays, subWeeks } from 'date-fns'
 import Page from '../../../pages/page'
 import IndexPage from '../../../pages'
 import AppointmentsManagementPage from '../../../pages/appointments/appointmentsManagementPage'
@@ -20,6 +20,8 @@ import AttendanceDetailsPage from '../../../pages/appointments/attendance/attend
 context('Record appointment attendance', () => {
   const today = new Date()
   const todayFormatted = format(today, 'yyyy-MM-dd')
+  const tomorrow = addDays(today, 1)
+  const tomorrowFormatted = format(tomorrow, 'yyyy-MM-dd')
   const yesterday = subDays(today, 1)
   const yesterdayFormatted = format(yesterday, 'yyyy-MM-dd')
   const weekAgo = subWeeks(today, 1)
@@ -44,15 +46,24 @@ context('Record appointment attendance', () => {
     cy.stubEndpoint('GET', '/prisoner/G0256VF', getPrisonerG0256VF)
     cy.stubEndpoint('POST', `/prisoner-search/prisoner-numbers`, getPrisoners)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
-    cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2024-11-05', getScheduledEvents)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=2024-11-05`, getScheduledEvents)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${todayFormatted}`, getScheduledEvents)
     cy.stubEndpoint('PUT', `/appointments/updateAttendances\\?action=ATTENDED`)
     cy.stubEndpoint('PUT', `/appointments/updateAttendances\\?action=NOT_ATTENDED`)
     cy.stubEndpoint('PUT', `/appointments/updateAttendances\\?action=RESET`)
-    cy.stubEndpoint('GET', '/appointments/1/details', getSingleAppointmentGym)
+    const singleAppointmentWithTodayDate = {
+      ...getSingleAppointmentGym,
+      startDate: todayFormatted,
+    }
+    cy.stubEndpoint('GET', '/appointments/1/details', singleAppointmentWithTodayDate)
   })
 
   it('Should mark attendance for multiple appointment', () => {
-    cy.stubEndpoint('POST', '/appointments/details', getAppointmentsDetailsMultiple)
+    const appointmentsDetailsWithTodayDate = getAppointmentsDetailsMultiple.map(apt => ({
+      ...apt,
+      startDate: todayFormatted,
+    }))
+    cy.stubEndpoint('POST', '/appointments/details', appointmentsDetailsWithTodayDate)
 
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
@@ -180,7 +191,7 @@ context('Record appointment attendance', () => {
     let attendanceDetails = Page.verifyOnPage(AttendanceDetailsPage)
     attendanceDetails.mainCaption().should('contain.text', 'Gym')
     attendanceDetails.title().should('contain.text', 'Attendance record for Bumahwaju Alfres')
-    attendanceDetails.summary().should('contain.text', 'Gym on Tuesday, 5 November 2024')
+    attendanceDetails.summary().should('contain.text', `Gym on ${formatDate(today, 'EEEE, d MMMM yyyy')}`)
     attendanceDetails
       .appointmentDetails()
       .find('dt')
@@ -202,8 +213,10 @@ context('Record appointment attendance', () => {
     let editAttendancePage = Page.verifyOnPage(EditAttendancePage)
     editAttendancePage.mainCaption().should('contain.text', 'Gym')
     editAttendancePage.title().should('contain.text', 'Change attendance details for Bumahwaju Alfres')
-    editAttendancePage.summary().should('contain.text', 'Gym on Tuesday, 5 November 2024')
-    editAttendancePage.question().should('contain.text', 'Did Bumahwaju Alfres attend Gym on Tuesday, 5 November 2024?')
+    editAttendancePage.summary().should('contain.text', `Gym on ${formatDate(today, 'EEEE, d MMMM yyyy')}`)
+    editAttendancePage
+      .question()
+      .should('contain.text', `Did Bumahwaju Alfres attend Gym on ${formatDate(today, 'EEEE, d MMMM yyyy')}?`)
 
     cy.log('Edit attendance - non-attended')
 
@@ -250,9 +263,11 @@ context('Record appointment attendance', () => {
 
   it('Should mark attendance for single appointment', () => {
     cy.stubEndpoint('POST', '/appointments/details', getAppointmentsDetailsGym)
-    // cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2024-11-05', getScheduledEvents)
-
-    // getAppointmentsDetailsGym[0].startDate = todayFormatted
+    const appointmentsDetailsGymWithTodayDate = getAppointmentsDetailsGym.map(appt => ({
+      ...appt,
+      startDate: todayFormatted,
+    }))
+    cy.stubEndpoint('POST', '/appointments/details', appointmentsDetailsGymWithTodayDate)
 
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
@@ -266,14 +281,14 @@ context('Record appointment attendance', () => {
 
     const summariesPage = Page.verifyOnPage(SummariesPage)
     summariesPage.assertNumRows(3)
-    summariesPage.selectAppointmentsWithNames('Chaplaincy')
+    summariesPage.selectAppointmentsWithNames('Gym')
     summariesPage.getButton('Record or edit attendance').click()
 
     const attendeesPage = Page.verifyOnPage(AttendeesPage)
     attendeesPage.mainCaption().should('contain.text', 'Record appointment attendance')
     attendeesPage.title().should('contain.text', 'Gym')
     attendeesPage.timeRangeCaption().should('contain.text', '02:20 to 06:30')
-    attendeesPage.dateCaption().should('contain.text', 'Tuesday, 5 November 2024')
+    attendeesPage.dateCaption().should('contain.text', `${formatDate(today, 'EEEE, d MMMM yyyy')}`)
     attendeesPage.location().should('contain.text', 'Gym')
     attendeesPage.summaryAttended().should('contain.text', '1 (33%)')
     attendeesPage.summaryNotAttended().should('contain.text', '0 (0%)')
@@ -515,6 +530,11 @@ context('Record appointment attendance', () => {
       `/appointments/MDI/attendance-summaries\\?date=${eightDaysAgoFormatted}`,
       getAppointmentAttendanceSummaries,
     )
+    const singleAppointmentWithTodayDate = {
+      ...getSingleAppointmentGym,
+      startDate: eightDaysAgoFormatted,
+    }
+    cy.stubEndpoint('GET', '/appointments/1/details', singleAppointmentWithTodayDate)
     cy.stubEndpoint('POST', '/appointments/details', getAppointmentsDetailsMultiple)
 
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -535,5 +555,83 @@ context('Record appointment attendance', () => {
     summariesPage.stickyTable().find('thead th').should('contain.text', 'Not recorded')
     summariesPage.stickyTable().find('thead th').should('not.contain.text', 'Not recorded yet')
     summariesPage.getButton('View attendance').should('exist')
+
+    summariesPage.selectAppointmentsWithNames('Chaplaincy')
+    summariesPage.getButton('View attendance').click()
+
+    const attendeesPage = Page.verifyOnPage(AttendeesPage)
+    attendeesPage.title().should('contain.text', 'View attendance at 2 appointments')
+    attendeesPage.summaryNotRecorded().should('contain.text', 'Not recorded:')
+    attendeesPage.summaryNotRecorded().should('not.contain.text', 'Not recorded yet:')
+    cy.get('input[type=checkbox]').should('not.exist')
+    attendeesPage.getButton('Mark as attended').should('not.exist')
+    attendeesPage.getButton('Mark as not attended').should('not.exist')
+    attendeesPage.stickyTableRows().eq(0).should('contain.text', 'Not recorded')
+    attendeesPage.stickyTableRows().eq(0).should('not.contain.text', 'Not recorded yet')
+    attendeesPage.viewOrEdit(1, 'G8438VW').should('contain.text', 'View')
+    attendeesPage.viewOrEdit(1, 'G8438VW').should('not.contain.text', 'View or edit')
+
+    attendeesPage.viewOrEdit(1, 'G8438VW').click()
+
+    const attendanceDetailsPage = Page.verifyOnPage(AttendanceDetailsPage)
+    attendanceDetailsPage.getLinkByText('Change').should('not.exist')
+  })
+
+  it('Should restrict attendance for future appointments', () => {
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/attendance-summaries\\?date=${tomorrowFormatted}`,
+      getAppointmentAttendanceSummaries,
+    )
+
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
+    cy.stubEndpoint('POST', '/appointments/details', getAppointmentsDetailsGym)
+
+    getAppointmentsDetailsGym[0].startDate = tomorrowFormatted
+    getAppointmentsDetailsGym[0].attendees[0].attended = null
+
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.recordAppointmentsAttendanceCard().click()
+
+    const selectDatePage = Page.verifyOnPage(SelectDatePage)
+    selectDatePage.enterDate(tomorrow)
+    selectDatePage.continue()
+
+    const summariesPage = Page.verifyOnPage(SummariesPage)
+    summariesPage.mainCaption().should('contain.text', 'Record appointment attendance')
+    summariesPage.title().should('contain.text', 'Find an appointment to view attendees')
+    summariesPage
+      .attendanceHint()
+      .should('contain.text', `You cannot record attendance until ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
+
+    summariesPage.dateCaption().should('contain.text', formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
+
+    summariesPage.assertNumRows(3)
+    summariesPage.assertRow(0, 'Gym', 'Gym', '11:00 to 13:30', '3', '1', '0', '2')
+    summariesPage.assertRow(
+      1,
+      'Prayer',
+      'In cell',
+      '12:30 to 13:00',
+      'Jarullah, Ytialel\nG4085VK\nOut of prison',
+      '0',
+      '0',
+      '1',
+    )
+    summariesPage.assertRow(0, 'Gym', 'Gym', '11:00 to 13:30', '3', '1', '0', '2')
+    summariesPage.selectAppointmentsWithNames('Gym')
+    summariesPage.getButton('View attendees').click()
+
+    const attendeesPage = Page.verifyOnPage(AttendeesPage)
+    attendeesPage
+      .attendanceHint()
+      .should('contain.text', `You cannot record attendance until ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
+    attendeesPage.assertNumRows(3)
+    attendeesPage.assertRowForSingleFutureAppointment(0, 'Adalie, Izrmonntas', 'A-N-3-43S', 'Not recorded yet')
+    attendeesPage.assertRowForSingleFutureAppointment(1, 'Alfres, Bumahwaju', 'Out of prison', 'Not recorded yet')
+    attendeesPage.assertRowForSingleFutureAppointment(2, 'Augevieve, Uhohew', 'A-N-2-37N', 'Not recorded yet')
   })
 })

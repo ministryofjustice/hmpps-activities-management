@@ -59,6 +59,17 @@ export default class AttendeesPage extends Page {
       })
   }
 
+  assertRowForSingleFutureAppointment(rowNum, prisonerName, cellLocation, attendance) {
+    this.stickyTableRows()
+      .eq(rowNum)
+      .find('td')
+      .then($data => {
+        expect($data.get(0).innerText).to.contain(prisonerName)
+        expect($data.get(1).innerText).to.contain(cellLocation)
+        expect($data.get(3).innerText).to.contain(attendance)
+      })
+  }
+
   attendeeRows = (): Cypress.Chainable =>
     this.stickyTableRows()
       .get('.govuk-table__body')
@@ -75,6 +86,8 @@ export default class AttendeesPage extends Page {
           cy.wrap(e).parents('tr').find('input[type=checkbox]').click({ force: true })
         })
     })
+
+  attendanceHint = (): Cypress.Chainable => cy.get('[data-qa=attendance-hint]')
 
   notificationHeading = (): Cypress.Chainable => cy.get('.govuk-notification-banner__content h3')
 

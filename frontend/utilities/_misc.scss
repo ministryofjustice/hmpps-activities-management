@@ -56,14 +56,14 @@ body {
 .alternating-row-shading {
   tr:nth-child(even) {
     @media not print {
-      background-color: govuk-tint(govuk-colour("light-grey"), 30);
+      background-color: govuk-colour("black", $variant: "tint-25");
     }
   }
 }
 
 .mid-grey-tint-20-hr {
   border: none;
-  border-top: 1px solid govuk-colour("mid-grey");
+  border-top: 1px solid govuk-colour("black", $variant: "tint-80");
 }
 
 .dash-border {
@@ -97,7 +97,7 @@ body {
 
 .dashed-mid-grey-tint-20-hr {
   border: none;
-  border-top: 1px dashed govuk-tint(govuk-colour("mid-grey"), 20);
+  border-top: 1px dashed govuk-colour("black", $variant: "tint-80");
 }
 
 .govuk-list {
@@ -149,7 +149,7 @@ body {
 
 .govuk-hint {
   a {
-    color: $govuk-link-colour;
+    color: govuk-functional-colour(link);
   }
 }
 

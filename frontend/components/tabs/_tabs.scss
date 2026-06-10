@@ -18,10 +18,10 @@
 
     .govuk-tabs__tab {
       text-decoration: none;
-      color: $govuk-link-colour;
+      color: govuk-functional-colour(link);
 
       &:hover {
-        color: govuk-colour('dark-blue') !important;
+        color: govuk-colour("blue", $variant: "shade-50") !important;
       }
       &:focus {
         color: #000 !important;
@@ -35,7 +35,7 @@
 
       .govuk-tabs__tab {
         &, &:visited, &:hover {
-          color: $govuk-link-active-colour;
+          color: govuk-functional-colour(link-active);
         }
       }
     }

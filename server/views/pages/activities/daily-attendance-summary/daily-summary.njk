@@ -13,12 +13,31 @@
 
 {% block content %}
     {% set filterOptionsHtml %}
-    {% set categoryFilters = [] %}
-    {% for category in uniqueCategories %}
-        {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
-    {% endfor %}
+        {% if user.externalActivitiesRolledOut %}
+            {{ govukCheckboxes({
+                idPrefix: 'locationFilters',
+                name: 'locationFilters',
+                classes: "govuk-radios--small",
+                fieldset: {
+                    legend: {
+                        text: 'Locations',
+                        classes: 'govuk-fieldset__legend--m'
+                    }
+                },
+                items: [
+                    {value: 'inPrison', text: 'In-prison', checked: 'inPrison' in attendanceSummaryJourney.locationFilters},
+                    {value: 'outsidePrison', text: 'Outside - prison-paid', checked: 'outsidePrison' in attendanceSummaryJourney.locationFilters},
+                    {value: 'outsideEmployer', text: 'Outside - employer-paid', checked: 'outsideEmployer' in attendanceSummaryJourney.locationFilters}
+                ]
+            }) }}
+        {% endif %}
 
-    {{ govukCheckboxes({
+        {% set categoryFilters = [] %}
+        {% for category in uniqueCategories %}
+            {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
+        {% endfor %}
+
+        {{ govukCheckboxes({
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
             classes: "govuk-radios--small",
@@ -33,10 +52,10 @@
             },
             items: categoryFilters
         }) }}
-    <div class="govuk-!-margin-bottom-4">
-        <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
-    </div>
-    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
+        <div class="govuk-!-margin-bottom-4">
+            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
+        </div>
+        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters
         </button>
     {% endset %}
@@ -48,11 +67,11 @@
                     <form id="filter-form" method="POST" action="update-filters" novalidate>
                         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                         {{ mojFilter({
-                    heading: {
-                        text: 'Filter'
-                    },
-                    optionsHtml: filterOptionsHtml
-                }) }}
+                            heading: {
+                                text: 'Filter'
+                            },
+                            optionsHtml: filterOptionsHtml
+                        }) }}
                     </form>
                 </div>
                 <div class="moj-filter-layout__content">
@@ -60,38 +79,38 @@
                         <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
                     </div>
                     {{ govukTabs({
-                    classes: "govuk-tabs--borderless",
-                    items: [
-                        {
-                            label: "Daily summary",
-                            id: "day-tab",
-                            panel: {
-                                html: summaryHtml("DAY", "Daily", activityDate)
+                        classes: "govuk-tabs--borderless",
+                        items: [
+                            {
+                                label: "Daily summary",
+                                id: "day-tab",
+                                panel: {
+                                    html: summaryHtml("DAY", "Daily", activityDate)
+                                }
+                            },
+                            {
+                                label: "AM session",
+                                id: "am-tab",
+                                panel: {
+                                    html: summaryHtml("AM", "Morning", activityDate)
+                                }
+                            },
+                            {
+                                label: "PM session",
+                                id: "pm-tab",
+                                panel: {
+                                    html: summaryHtml("PM", "Afternoon", activityDate)
+                                }
+                            },
+                            {
+                                label: "ED session",
+                                id: "ed-tab",
+                                panel: {
+                                    html: summaryHtml("ED", "Evening", activityDate)
+                                }
                             }
-                        },
-                        {
-                            label: "AM session",
-                            id: "am-tab",
-                            panel: {
-                                html: summaryHtml("AM", "Morning", activityDate)
-                            }
-                        },
-                        {
-                            label: "PM session",
-                            id: "pm-tab",
-                            panel: {
-                                html: summaryHtml("PM", "Afternoon", activityDate)
-                            }
-                        },
-                        {
-                            label: "ED session",
-                            id: "ed-tab",
-                            panel: {
-                                html: summaryHtml("ED", "Evening", activityDate)
-                            }
-                        }
-                    ]
-                }) }}
+                        ]
+                    }) }}
                 </div>
 
             </div>

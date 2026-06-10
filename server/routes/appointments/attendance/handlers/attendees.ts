@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
+import { differenceInDays, startOfDay } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { MultipleAppointmentAttendanceRequest } from '../../../../@types/activitiesAPI/types'
@@ -17,7 +18,7 @@ export default class AttendeesRoutes {
   ) {}
 
   GET_MULTIPLE = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentIds } = req.journeyData.recordAppointmentAttendanceJourney
+    const { appointmentIds, date: appointmentDate } = req.journeyData.recordAppointmentAttendanceJourney
     const { user } = res.locals
     const { searchTerm } = req.query
 
@@ -25,15 +26,19 @@ export default class AttendeesRoutes {
 
     const appointments = await this.activitiesService.getAppointments(appointmentIds, user)
 
+    const isOlderThanSevenDays = differenceInDays(startOfDay(new Date()), startOfDay(appointmentDate)) > 7
+
     const prisonerNumbers = _.uniq(
       appointments.flatMap(appointment => appointment.attendees.map(att => att.prisoner.prisonerNumber)),
     )
 
-    const events = await this.activitiesService.getScheduledEventsForPrisoners(
-      toDate(appointments[0].startDate),
-      prisonerNumbers,
-      user,
-    )
+    const now = new Date()
+
+    const startDate = toDate(appointments[0].startDate)
+
+    const isFutureDate = startDate > now
+
+    const events = await this.activitiesService.getScheduledEventsForPrisoners(startDate, prisonerNumbers, user)
 
     const allEvents = [
       ...events.activities,
@@ -78,9 +83,11 @@ export default class AttendeesRoutes {
     })
 
     return res.render('pages/appointments/attendance/attendees', {
+      isFutureDate,
       attendeeRows,
       appointments,
       attendanceSummary: getAttendanceSummaryFromAppointmentDetails(attendeeRows),
+      isOlderThanSevenDays,
     })
   }
 

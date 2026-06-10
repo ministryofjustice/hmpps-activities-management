@@ -13,7 +13,7 @@
 
   &__location-events {
     &__secondary-information {
-      color: $govuk-secondary-text-colour;
+      color: govuk-functional-colour(secondary-text);
     }
   }
 }
@@ -77,11 +77,11 @@
     }
 
     .dashed-mid-grey-tint-20-hr {
-      border-top: 1px dashed govuk-tint(govuk-colour("mid-grey"), 6);
+      border-top: 1px dashed govuk-colour("black", $variant: "tint-80");
     }
 
     .alerts-list > li {
-      border: 2px solid govuk-colour("mid-grey") !important;
+      border: 2px solid govuk-colour("black", $variant: "tint-80") !important;
       font-size: 7pt;
       align-items: center;
       justify-content: center;
