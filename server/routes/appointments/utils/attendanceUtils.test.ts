@@ -1,7 +1,13 @@
 import { AppointmentAttendanceSummary, AppointmentAttendeeByStatus } from '../../../@types/activitiesAPI/types'
 import EventTier from '../../../enum/eventTiers'
-import { enhanceAppointment, getEventTierCounts } from './attendanceUtils'
+import {
+  enhanceAppointment,
+  getAttendanceDataSubTitle,
+  getAttendanceDataTitle,
+  getEventTierCounts,
+} from './attendanceUtils'
 import { Prisoner } from '../../../@types/activities'
+import { AttendanceStatus } from '../../../@types/appointments'
 
 describe('getEventTierCounts', () => {
   it('should calculate the tier summaries correctly', () => {
@@ -65,5 +71,33 @@ describe('enhanceAppointment', () => {
       timeDateSortingValue: new Date(`2023-02-22T11:23`),
       appointmentHref: '/appointments/attendance/4567/select-appointment',
     })
+  })
+})
+
+describe('getAttendanceDataTitle', () => {
+  it('should return "All not recorded yet" when isOlderThanSevenDays is false', () => {
+    expect(getAttendanceDataTitle(AttendanceStatus.NOT_RECORDED, null, false)).toEqual('All not recorded yet')
+  })
+
+  it('should return "All not recorded yet" when isOlderThanSevenDays is not provided', () => {
+    expect(getAttendanceDataTitle(AttendanceStatus.NOT_RECORDED, null)).toEqual('All not recorded yet')
+  })
+
+  it('should return "All not recorded" when isOlderThanSevenDays is true', () => {
+    expect(getAttendanceDataTitle(AttendanceStatus.NOT_RECORDED, null, true)).toEqual('All not recorded')
+  })
+})
+
+describe('getAttendanceDataSubTitle', () => {
+  it('should return "X not recorded yet" when isOlderThanSevenDays is false', () => {
+    expect(getAttendanceDataSubTitle(AttendanceStatus.NOT_RECORDED, null, 5, 3, false)).toEqual('5 not recorded yet')
+  })
+
+  it('should return "X not recorded yet" when isOlderThanSevenDays is not provided', () => {
+    expect(getAttendanceDataSubTitle(AttendanceStatus.NOT_RECORDED, null, 5, 3)).toEqual('5 not recorded yet')
+  })
+
+  it('should return "X not recorded" when isOlderThanSevenDays is true', () => {
+    expect(getAttendanceDataSubTitle(AttendanceStatus.NOT_RECORDED, null, 5, 3, true)).toEqual('5 not recorded')
   })
 })

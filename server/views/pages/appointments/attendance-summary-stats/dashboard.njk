@@ -74,17 +74,20 @@
       <h1 class="govuk-heading-xl">Appointments attendance summary</h1>
     </div>
     <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
-      <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
-      {{ govukButton({
-          text: "Refresh",
-          classes: "govuk-button--blue",
-          attributes: {
-            form: 'filter-form'
-          }
-      }) }}
+      {% if not isOlderThanSevenDays %}
+        <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
+        {{ govukButton({
+            text: "Refresh",
+            classes: "govuk-button--blue",
+            attributes: {
+              form: 'filter-form',
+              'data-qa': 'refresh-button'
+            }
+        }) }}
+      {% endif %}
     </div>
     <div class="govuk-grid-column-full">
-      <p class="govuk-body-l" data-qa="appointmentsNotCancelledTotal">{{ attendanceSummary.attendeeCount }} attendees for 
+      <p class="govuk-body-l" data-qa="appointmentsNotCancelledTotal">{{ attendanceSummary.attendeeCount }} attendees for
           <a href="/appointments/attendance/summaries?date={{ date | formatDate('yyyy-MM-dd') }}&appointmentName={{appointmentName}}&customAppointmentName={{customAppointmentName}}">{{ summariesNotCancelled | length }} appointment{{ "s" if summariesNotCancelled | length != 1 }}</a>
       </p>
     </div>
@@ -137,7 +140,7 @@
           }
         }) }}
         {{ stat({
-          heading: "Not recorded yet",
+          heading: "Not recorded" if isOlderThanSevenDays else "Not recorded yet",
           number: attendanceSummary.notRecorded,
           visuallyHiddenText: "prisoner, which is" if attendanceSummary.notRecorded === 1 else "prisoners, which is",
           percentage: attendanceSummary.notRecordedPercentage,
@@ -146,7 +149,7 @@
           forceDisplay: true,
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.NOT_RECORDED ,
-            text: 'All not recorded yet',
+            text: 'All not recorded' if isOlderThanSevenDays else 'All not recorded yet',
             dataQa: 'notRecorded-link'
           }
         }) }}

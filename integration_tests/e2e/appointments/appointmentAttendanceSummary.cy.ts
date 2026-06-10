@@ -24,6 +24,9 @@ context('Appointment attendancy summary statistics', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   const tomorrowFormattedLong = formatDate(tomorrow)
+  const eightDaysAgo = subDays(new Date(), 8)
+  const eightDaysAgoFormatted = formatDate(eightDaysAgo, 'yyyy-MM-dd')
+  const eightDaysAgoFormattedLong = formatDate(eightDaysAgo)
 
   beforeEach(() => {
     cy.task('reset')
@@ -76,6 +79,16 @@ context('Appointment attendancy summary statistics', () => {
       getAttendanceByStatus.slice(0, 12),
     )
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/attendance-summaries\\?date=${eightDaysAgoFormatted}`,
+      getAppointmentAttendanceSummaries1,
+    )
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/${AttendanceStatus.NOT_RECORDED}/attendance\\?date=${eightDaysAgoFormatted}`,
+      getAttendanceByStatus.slice(0, 12),
+    )
   })
 
   it('should follow validation rules', () => {
@@ -298,5 +311,51 @@ context('Appointment attendancy summary statistics', () => {
     const attendancePage = Page.verifyOnPage(AttendanceData)
     attendancePage.title().contains('Tier 1 appointments')
     attendancePage.subTitle().contains('3 attendances recorded at 1 Tier 1 appointments')
+  })
+
+  it('should show "Not recorded" and hide refresh button when date is more than 7 days ago - dashboard', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.viewAppointmentsAttendanceSummaryCard().click()
+
+    const selectDatePage = Page.verifyOnPage(SelectDatePage)
+    selectDatePage.dateChoice().find('input[value="other"]').check()
+    selectDatePage.selectDatePickerDate(eightDaysAgo)
+
+    selectDatePage.confirmButton().click()
+    const dashboardPage = Page.verifyOnPage(DashboardPage)
+    cy.location().should(loc => {
+      expect(loc.pathname).to.eq('/appointments/attendance-summary/dashboard')
+    })
+    dashboardPage.dateCaption().contains(eightDaysAgoFormattedLong)
+    dashboardPage.notRecordedStat().should('contain.text', 'Not recorded')
+    dashboardPage.notRecordedStat().should('not.contain.text', 'Not recorded yet')
+    dashboardPage.notRecordedStatLink().should('contain.text', 'All not recorded')
+    dashboardPage.notRecordedStatLink().should('not.contain.text', 'All not recorded yet')
+    dashboardPage.refreshButton().should('not.exist')
+  })
+
+  it('should show "All not recorded" and hide refresh button on attendance data page when date is more than 7 days ago', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.viewAppointmentsAttendanceSummaryCard().click()
+
+    const selectDatePage = Page.verifyOnPage(SelectDatePage)
+    selectDatePage.dateChoice().find('input[value="other"]').check()
+    selectDatePage.selectDatePickerDate(eightDaysAgo)
+
+    selectDatePage.confirmButton().click()
+    const dashboardPage = Page.verifyOnPage(DashboardPage)
+    dashboardPage.notRecordedStatLink().click()
+    const attendancePage = Page.verifyOnPage(AttendanceData)
+    attendancePage.title().should('contain.text', 'All not recorded')
+    attendancePage.title().should('not.contain.text', 'All not recorded yet')
+    attendancePage.subTitle().should('contain.text', '12 not recorded')
+    attendancePage.subTitle().should('not.contain.text', '12 not recorded yet')
+    attendancePage.refreshButton().should('not.exist')
   })
 })
