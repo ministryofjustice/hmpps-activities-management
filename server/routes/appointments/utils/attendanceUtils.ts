@@ -89,14 +89,14 @@ export const getEventTierCounts = (summaries: AppointmentAttendanceSummary[]) =>
   }
 }
 
-export const getAttendanceDataTitle = (page: AttendanceStatus, eventTier: EventTier) => {
+export const getAttendanceDataTitle = (page: AttendanceStatus, eventTier: EventTier, isOlderThanSevenDays = false) => {
   switch (page) {
     case AttendanceStatus.ATTENDED:
       return 'All attended'
     case AttendanceStatus.NOT_ATTENDED:
       return 'All not attended'
     case AttendanceStatus.NOT_RECORDED:
-      return 'All not recorded yet'
+      return isOlderThanSevenDays ? 'All not recorded' : 'All not recorded yet'
     case AttendanceStatus.CANCELLED:
       return 'All cancelled appointments'
     case AttendanceStatus.EVENT_TIER:
@@ -113,6 +113,7 @@ export const getAttendanceDataSubTitle = (
   eventTier: EventTier,
   attendanceCount: number,
   appointmentCount: number,
+  isOlderThanSevenDays = false,
 ) => {
   switch (page) {
     case AttendanceStatus.ATTENDED:
@@ -120,7 +121,7 @@ export const getAttendanceDataSubTitle = (
     case AttendanceStatus.NOT_ATTENDED:
       return `${attendanceCount} not attended`
     case AttendanceStatus.NOT_RECORDED:
-      return `${attendanceCount} not recorded yet`
+      return isOlderThanSevenDays ? `${attendanceCount} not recorded` : `${attendanceCount} not recorded yet`
     case AttendanceStatus.CANCELLED:
       return `${attendanceCount} cancelled appointments`
     case AttendanceStatus.EVENT_TIER:

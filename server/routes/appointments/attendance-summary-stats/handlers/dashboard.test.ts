@@ -138,6 +138,7 @@ describe('Route Handlers - Dashboard', () => {
         ],
         customAppointmentName: 'Custom Medical & Doctor',
         date: req.query.date,
+        isOlderThanSevenDays: false,
         summariesNotCancelled: [
           {
             appointmentName: 'Gym',
@@ -178,6 +179,32 @@ describe('Route Handlers - Dashboard', () => {
           },
         ],
       })
+    })
+
+    it('should set isOlderThanSevenDays to true when date is more than 7 days ago', async () => {
+      const eightDaysAgo = new Date()
+      eightDaysAgo.setDate(eightDaysAgo.getDate() - 8)
+      req.query.date = eightDaysAgo.toISOString().slice(0, 10)
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/attendance-summary-stats/dashboard',
+        expect.objectContaining({
+          isOlderThanSevenDays: true,
+        }),
+      )
+    })
+
+    it('should set isOlderThanSevenDays to false when date is today', async () => {
+      req.query.date = new Date().toISOString()
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/attendance-summary-stats/dashboard',
+        expect.objectContaining({
+          isOlderThanSevenDays: false,
+        }),
+      )
     })
   })
 

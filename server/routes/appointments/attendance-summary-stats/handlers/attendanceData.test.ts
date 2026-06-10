@@ -192,7 +192,52 @@ describe('Route Handlers - Attendance data', () => {
         showHostsFilter: false,
         subTitle: '1 attendances recorded at 1 Tier 1 appointments',
         title: 'Tier 1 appointments',
+        isOlderThanSevenDays: false,
       })
+    })
+
+    it('should set isOlderThanSevenDays to true when date is more than 7 days ago', async () => {
+      const eightDaysAgo = new Date()
+      eightDaysAgo.setDate(eightDaysAgo.getDate() - 8)
+      req.query.date = eightDaysAgo.toISOString().slice(0, 10)
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/attendance-summary-stats/attendanceData',
+        expect.objectContaining({
+          isOlderThanSevenDays: true,
+        }),
+      )
+    })
+
+    it('should show "All not recorded" title when date is more than 7 days ago and status is NOT_RECORDED', async () => {
+      const eightDaysAgo = new Date()
+      eightDaysAgo.setDate(eightDaysAgo.getDate() - 8)
+      req.query.date = eightDaysAgo.toISOString().slice(0, 10)
+      req.query.attendanceState = 'NOT_RECORDED'
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/attendance-summary-stats/attendanceData',
+        expect.objectContaining({
+          title: 'All not recorded',
+          isOlderThanSevenDays: true,
+        }),
+      )
+    })
+
+    it('should show "All not recorded yet" title when date is today and status is NOT_RECORDED', async () => {
+      req.query.date = new Date().toISOString()
+      req.query.attendanceState = 'NOT_RECORDED'
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/attendance-summary-stats/attendanceData',
+        expect.objectContaining({
+          title: 'All not recorded yet',
+          isOlderThanSevenDays: false,
+        }),
+      )
     })
   })
 

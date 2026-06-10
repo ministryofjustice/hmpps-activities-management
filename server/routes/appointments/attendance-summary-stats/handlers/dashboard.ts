@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { differenceInDays, startOfDay } from 'date-fns'
 import { datePickerDateToIsoDate, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
 import ActivitiesService from '../../../../services/activitiesService'
 import { getAttendanceSummaryFromAttendanceSummaries } from '../../utils/attendanceUtils'
@@ -27,6 +28,7 @@ export default class DashboardRoutes {
 
     const summariesNotCancelled = summaries.filter(s => !s.isCancelled)
     const attendanceSummary = getAttendanceSummaryFromAttendanceSummaries(summariesNotCancelled)
+    const isOlderThanSevenDays = differenceInDays(startOfDay(new Date()), startOfDay(new Date(date as string))) > 7
 
     return res.render('pages/appointments/attendance-summary-stats/dashboard', {
       date,
@@ -36,6 +38,7 @@ export default class DashboardRoutes {
       cancelledCount: summaries.length - summariesNotCancelled.length,
       appointmentName: appointmentName ?? '',
       customAppointmentName: customAppointmentName ?? '',
+      isOlderThanSevenDays,
     })
   }
 
