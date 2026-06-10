@@ -1,6 +1,6 @@
 .related-tasks {
   padding: 10px 10px 20px 20px;
-  border: 2px solid govuk-colour("light-grey");
+  border: 2px solid govuk-colour("black", $variant: "tint-95");
 
   &::before {
     @include govuk-font($size: 19, $weight: bold);

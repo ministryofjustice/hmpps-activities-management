@@ -1,8 +1,8 @@
 $button-shadow-size: 2px;
 $govuk-white-button-colour: govuk-colour("white");
-$govuk-white-button-hover-colour: lighten(govuk-colour('blue'), 50%);
-$govuk-white-button-shadow-colour: govuk-shade(govuk-colour('blue'), 50%);
-$govuk-white-button-text-colour: govuk-shade(govuk-colour('blue'), 50%);
+$govuk-white-button-hover-colour: govuk-colour('blue', $variant: 'shade-25');
+$govuk-white-button-shadow-colour: govuk-colour('blue', $variant: 'shade-50');
+$govuk-white-button-text-colour: govuk-colour('blue', $variant: 'shade-50');
 
 .govuk-button--white {
   background-color: $govuk-white-button-colour;
@@ -17,7 +17,7 @@ $govuk-white-button-text-colour: govuk-shade(govuk-colour('blue'), 50%);
   }
 
   &:hover {
-    background-color: $govuk-white-button-hover-colour;
+    background-color: govuk-functional-colour(hover);
 
     &[disabled] {
       background-color: $govuk-white-button-colour;
@@ -28,8 +28,8 @@ $govuk-white-button-text-colour: govuk-shade(govuk-colour('blue'), 50%);
 .govuk-button--blue {
   background-color: govuk-colour('blue');
 
-  $govuk-blue-button-shadow-colour: govuk-shade(govuk-colour('blue'), 40%);
-  $govuk-blue-button-hover-colour: govuk-shade(govuk-colour('blue'), 20%);
+  $govuk-blue-button-shadow-colour: govuk-colour('blue', $variant: 'shade-50');
+  $govuk-blue-button-hover-colour: govuk-colour('blue', $variant: 'shade-25');
   box-shadow: 0 $button-shadow-size 0 $govuk-blue-button-shadow-colour;
 
   &,

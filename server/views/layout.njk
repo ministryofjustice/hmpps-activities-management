@@ -29,18 +29,17 @@
 
 {% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
 
-{% block header %}
+{% block govukHeader %}
   {{ feComponents.header | safe }}
   {% block meta %}{% endblock %}
 {% endblock %}
 
-
-{% block main %}
+{% block container %}
   {% if liveIssueOutageBannerEnabled or plannedDowntimeOutageBannerEnabled %}
     {% include 'partials/serviceOutageBanner.njk' %}
   {% endif %}
   <div class="govuk-width-container {%- if containerClasses %} {{ containerClasses }}{% endif %}">
-  {% block beforeContent %}
+  {% block containerStart %}
     {% include 'partials/beforeContent.njk' %}
   {% endblock %}
     <main class="govuk-main-wrapper {%- if mainClasses %} {{ mainClasses }}{% endif %}" id="main-content" {%- if mainLang %} lang="{{ mainLang }}"{% endif %}>
@@ -50,8 +49,7 @@
 {% endblock %}
 
 
-
-{% block footer %}
+{% block govukFooter %}
   {{ feComponents.footer | safe }}
 {% endblock %}
 
