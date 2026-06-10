@@ -57,7 +57,7 @@ export enum YesNo {
   NO = 'NO',
 }
 
-export enum AnyPayNoPay {
+export enum AbsencePayFilter {
   ANY_PAY = 'ANY_PAY',
   NO_PAY = 'NO_PAY',
 }

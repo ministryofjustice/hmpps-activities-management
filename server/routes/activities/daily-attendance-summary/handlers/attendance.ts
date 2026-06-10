@@ -7,7 +7,7 @@ import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import EventTier from '../../../../enum/eventTiers'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
-import { AnyPayNoPay } from '../../../../@types/activities'
+import { AbsencePayFilter } from '../../../../@types/activities'
 import { filterAttendancesByActivityType } from '../utils/utils'
 
 export default class DailyAttendanceRoutes {
@@ -44,7 +44,7 @@ export default class DailyAttendanceRoutes {
     req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
     req.journeyData.attendanceSummaryJourney.activityTypeFilters ??= ['inPrison', 'outsidePrison', 'outsideEmployer']
     req.journeyData.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
-    req.journeyData.attendanceSummaryJourney.payFilters ??= AnyPayNoPay.ANY_PAY
+    req.journeyData.attendanceSummaryJourney.payFilters ??= AbsencePayFilter.ANY_PAY
 
     const { categoryFilters, searchTerm, absenceReasonFilters, payFilters, activityTypeFilters } =
       req.journeyData.attendanceSummaryJourney
@@ -106,7 +106,7 @@ export default class DailyAttendanceRoutes {
     categoryFilters: string[],
     activityTypeFilters: string[],
     absencesPage: boolean,
-    payFilters: AnyPayNoPay,
+    payFilters: AbsencePayFilter,
     absenceReasonFilters: string | string[],
   ) => {
     let attendancesMatchingAllFilters
@@ -117,9 +117,11 @@ export default class DailyAttendanceRoutes {
     )
     if (absencesPage) {
       const attendancesMatchingPayFilter =
-        payFilters === AnyPayNoPay.ANY_PAY
+        payFilters === AbsencePayFilter.ANY_PAY
           ? attendancesFilteredByActivityType
-          : attendancesFilteredByActivityType.filter(a => payFilters === AnyPayNoPay.NO_PAY && a.issuePayment === false)
+          : attendancesFilteredByActivityType.filter(
+              a => payFilters === AbsencePayFilter.NO_PAY && a.issuePayment === false,
+            )
       attendancesMatchingAllFilters = attendancesMatchingPayFilter.filter(a => {
         if (Array.isArray(absenceReasonFilters)) {
           return absenceReasonFilters.some(reason => reason === a.attendanceReasonCode)

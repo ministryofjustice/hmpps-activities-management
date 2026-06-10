@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import ApplyFiltersRoutes from './applyFilters'
 import AttendanceReason from '../../../../enum/attendanceReason'
-import { AnyPayNoPay } from '../../../../@types/activities'
+import { AbsencePayFilter } from '../../../../@types/activities'
 
 describe('Route Handlers - applyFilters', () => {
   const handler = new ApplyFiltersRoutes()
@@ -37,7 +37,7 @@ describe('Route Handlers - applyFilters', () => {
         reasonFilter: 'BOTH',
         searchTerm: undefined,
         absenceReasonFilters: [AttendanceReason.CLASH],
-        payFilters: AnyPayNoPay.ANY_PAY,
+        payFilters: AbsencePayFilter.ANY_PAY,
       }
     })
 
@@ -49,7 +49,7 @@ describe('Route Handlers - applyFilters', () => {
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
           absenceReasonFilters: [AttendanceReason.SICK],
-          payFilters: AnyPayNoPay.ANY_PAY,
+          payFilters: AbsencePayFilter.ANY_PAY,
           isAbsencesFilter: undefined,
         }
 
@@ -96,7 +96,7 @@ describe('Route Handlers - applyFilters', () => {
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
           absenceReasonFilters: [AttendanceReason.SICK],
-          payFilters: AnyPayNoPay.ANY_PAY,
+          payFilters: AbsencePayFilter.ANY_PAY,
           isAbsencesFilter: true,
         }
 
@@ -107,7 +107,7 @@ describe('Route Handlers - applyFilters', () => {
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
           absenceReasonFilters: [AttendanceReason.SICK],
-          payFilters: AnyPayNoPay.ANY_PAY,
+          payFilters: AbsencePayFilter.ANY_PAY,
           activityTypeFilters: ['inPrison'],
         })
       })
