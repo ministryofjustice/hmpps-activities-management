@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import ApplyFiltersRoutes from './applyFilters'
 import AttendanceReason from '../../../../enum/attendanceReason'
-import { PayNoPay } from '../../../../@types/activities'
+import { AbsencePayFilter } from '../../../../@types/activities'
 
 describe('Route Handlers - applyFilters', () => {
   const handler = new ApplyFiltersRoutes()
@@ -20,7 +20,7 @@ describe('Route Handlers - applyFilters', () => {
       get: jest.fn(),
       journeyData: {
         attendanceSummaryJourney: {
-          locationFilters: ['inPrison'],
+          activityTypeFilters: ['inPrison'],
           categoryFilters: ['Original category'],
           reasonFilter: 'Original reason',
           searchTerm: 'Original search',
@@ -32,24 +32,24 @@ describe('Route Handlers - applyFilters', () => {
   describe('APPLY', () => {
     beforeEach(() => {
       req.journeyData.attendanceSummaryJourney = {
-        locationFilters: ['inPrison'],
+        activityTypeFilters: ['inPrison'],
         categoryFilters: ['Education'],
         reasonFilter: 'BOTH',
         searchTerm: undefined,
         absenceReasonFilters: [AttendanceReason.CLASH],
-        payFilters: [PayNoPay.PAID],
+        payFilters: AbsencePayFilter.ANY_PAY,
       }
     })
 
     describe('when view is not absences', () => {
       it('should apply populated list of filter', async () => {
         req.body = {
-          locationFilters: ['inPrison'],
+          activityTypeFilters: ['inPrison'],
           categoryFilters: ['Prison Jobs'],
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
           absenceReasonFilters: [AttendanceReason.SICK],
-          payFilters: ['true'],
+          payFilters: AbsencePayFilter.ANY_PAY,
           isAbsencesFilter: undefined,
         }
 
@@ -59,7 +59,7 @@ describe('Route Handlers - applyFilters', () => {
           categoryFilters: ['Prison Jobs'],
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
-          locationFilters: ['inPrison'],
+          activityTypeFilters: ['inPrison'],
           absenceReasonFilters: undefined,
           payFilters: undefined,
         })
@@ -67,7 +67,7 @@ describe('Route Handlers - applyFilters', () => {
 
       it('should apply empty filters', async () => {
         req.body = {
-          locationFilters: [],
+          activityTypeFilters: [],
           categoryFilters: [],
           reasonFilter: '',
           searchTerm: '',
@@ -78,7 +78,7 @@ describe('Route Handlers - applyFilters', () => {
         await handler.APPLY(req, res)
 
         expect(req.journeyData.attendanceSummaryJourney).toStrictEqual({
-          locationFilters: [],
+          activityTypeFilters: [],
           categoryFilters: [],
           reasonFilter: '',
           searchTerm: '',
@@ -91,12 +91,12 @@ describe('Route Handlers - applyFilters', () => {
     describe('when view is absences', () => {
       it('should apply populated list of filter', async () => {
         req.body = {
-          locationFilters: ['inPrison'],
+          activityTypeFilters: ['inPrison'],
           categoryFilters: ['Prison Jobs'],
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
           absenceReasonFilters: [AttendanceReason.SICK],
-          payFilters: ['true'],
+          payFilters: AbsencePayFilter.ANY_PAY,
           isAbsencesFilter: true,
         }
 
@@ -107,8 +107,8 @@ describe('Route Handlers - applyFilters', () => {
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
           absenceReasonFilters: [AttendanceReason.SICK],
-          payFilters: ['true'],
-          locationFilters: ['inPrison'],
+          payFilters: AbsencePayFilter.ANY_PAY,
+          activityTypeFilters: ['inPrison'],
         })
       })
 
@@ -119,7 +119,7 @@ describe('Route Handlers - applyFilters', () => {
           searchTerm: '',
           absenceReasonFilters: [],
           payFilters: [],
-          locationFilters: [],
+          activityTypeFilters: [],
           isAbsencesFilter: true,
         }
         await handler.APPLY(req, res)
@@ -130,7 +130,7 @@ describe('Route Handlers - applyFilters', () => {
           searchTerm: '',
           absenceReasonFilters: [],
           payFilters: [],
-          locationFilters: [],
+          activityTypeFilters: [],
         })
       })
     })

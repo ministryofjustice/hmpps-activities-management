@@ -92,6 +92,10 @@ context('Daily Attendance', () => {
     selectPeriodPage.continue()
 
     const dailySummaryPage = Page.verifyOnPage(DailySummaryPage)
+    dailySummaryPage.showFiltersButton().click()
+    dailySummaryPage.activityTypeCheckbox('inPrison').should('not.exist')
+    dailySummaryPage.activityTypeCheckbox('outsidePrison').should('not.exist')
+    dailySummaryPage.activityTypeCheckbox('outsideEmployer').should('not.exist')
     dailySummaryPage.tier1AttendanceStat().contains(0)
     dailySummaryPage.tier2AttendanceStat().contains(2)
     dailySummaryPage.routineAttendanceStat().contains(1)
@@ -230,17 +234,16 @@ context('Daily Attendance', () => {
     attendancePage.refusalsLink().should('exist')
 
     attendancePage.getButton('Show filter').click()
-    attendancePage.payRadios().find('input[value="PAID"]').should('be.checked')
-    attendancePage.payRadios().find('input[value="NO_PAY"]').should('be.checked')
+    attendancePage.payRadios().find('input[value="ANY_PAY"]').should('be.checked')
+    attendancePage.payRadios().find('input[value="NO_PAY"]').should('not.be.checked')
 
-    attendancePage.payRadios().find('input[value="NO_PAY"]').uncheck()
+    attendancePage.payRadios().find('input[value="NO_PAY"]').check()
     attendancePage.getButton('Apply filters').first().click()
 
     attendancePage.count().contains('2 absences')
-    attendancePage.refusalsLink().should('not.exist')
-    attendancePage.payRadios().find('input[value="PAID"]').should('be.checked')
-    attendancePage.payRadios().find('input[value="NO_PAY"]').should('not.be.checked')
-    cy.get('[data-qa="attendance"]').should('not.contain.text', 'No pay')
+    attendancePage.payRadios().find('input[value="ANY_PAY"]').should('not.be.checked')
+    attendancePage.payRadios().find('input[value="NO_PAY"]').should('be.checked')
+    cy.get('[data-qa="attendance"]').should('contain.text', 'No pay')
   })
   it('should show the session times on the not attended page', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -310,5 +313,29 @@ context('Daily Attendance - external activities rolled out', () => {
     const activitiesPage = navigateToActivitiesPage()
     activitiesPage.locationTypeRadio('OUTSIDE_WORK').should('exist')
     activitiesPage.locationTypeRadio('ALL').should('exist')
+  })
+
+  it('should show activity type checkboxes when externalActivitiesRolledOut is true', () => {
+    cy.visit('/activities/attendance')
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.attendanceSummaryCard().click()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.selectToday()
+    selectPeriodPage.continue()
+
+    const dailySummaryPage = Page.verifyOnPage(DailySummaryPage)
+    dailySummaryPage.showFiltersButton().click()
+    dailySummaryPage.activityTypeCheckbox('inPrison').should('exist')
+    dailySummaryPage.activityTypeCheckbox('outsidePrison').should('exist')
+    dailySummaryPage.activityTypeCheckbox('outsideEmployer').should('exist')
+    dailySummaryPage.absencesLink()
+
+    const absencesPage = Page.verifyOnPage(AttendancePage)
+
+    absencesPage.activityTypeCheckbox('inPrison').should('exist')
+    absencesPage.activityTypeCheckbox('outsidePrison').should('exist')
+    absencesPage.activityTypeCheckbox('outsideEmployer').should('exist')
   })
 })
