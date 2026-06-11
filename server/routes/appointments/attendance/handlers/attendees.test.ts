@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { addDays } from 'date-fns'
+import { addDays, subDays, format } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { AppointmentDetails, PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
@@ -554,14 +554,53 @@ describe('Route Handlers - Record Appointment Attendance', () => {
 
   describe('GET_SINGLE', () => {
     it('should update session and redirect', async () => {
+      const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd')
+
       req.params = {
         appointmentId: '33',
       }
+
+      const appointment = {
+        id: 33,
+        appointmentName: 'Single appointment yesterday',
+        startDate: yesterday,
+        startTime: '10:00',
+        endTime: '11:00',
+        attendees: [],
+      } as AppointmentDetails
+
+      when(activitiesService.getAppointmentDetails).calledWith(33, res.locals.user).mockResolvedValue(appointment)
 
       await handler.GET_SINGLE(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('../attendees')
       expect(req.journeyData.recordAppointmentAttendanceJourney.appointmentIds).toEqual([33])
+      expect(req.journeyData.recordAppointmentAttendanceJourney.date).toEqual(yesterday)
+    })
+
+    it('should set date to calculate isOlderThanSevenDays correctly', async () => {
+      const eightDaysAgo = format(subDays(new Date(), 8), 'yyyy-MM-dd')
+
+      req.params = {
+        appointmentId: '33',
+      }
+
+      const appointmentEightDaysAgo = {
+        id: 33,
+        appointmentName: 'Single appointment over a week ago',
+        startDate: eightDaysAgo,
+        startTime: '10:00',
+        endTime: '11:00',
+        attendees: [],
+      } as AppointmentDetails
+
+      when(activitiesService.getAppointmentDetails)
+        .calledWith(33, res.locals.user)
+        .mockResolvedValue(appointmentEightDaysAgo)
+
+      await handler.GET_SINGLE(req, res)
+
+      expect(req.journeyData.recordAppointmentAttendanceJourney.date).toEqual(eightDaysAgo)
     })
   })
 
