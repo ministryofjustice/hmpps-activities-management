@@ -402,6 +402,9 @@ describe('Route Handlers - Create an activity - Check answers', () => {
 
       await handler.POST(req, res)
 
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_OUTSIDE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).addJourneyCompletedMetrics(req),
+      )
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
     })

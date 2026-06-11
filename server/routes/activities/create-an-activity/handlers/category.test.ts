@@ -88,7 +88,7 @@ describe('Route Handlers - Create an activity - Category', () => {
 
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.CREATE_EXTERNAL_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+        MetricsEvent.CREATE_OUTSIDE_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
       )
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/category', {
         categories: [

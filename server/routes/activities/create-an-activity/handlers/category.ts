@@ -25,7 +25,7 @@ export default class CategoryRoutes {
     const { user } = res.locals
     if (req.journeyData.createJourney.outsideWork) {
       this.metricsService.trackEvent(
-        MetricsEvent.CREATE_EXTERNAL_ACTIVITY_JOURNEY_STARTED(user).addJourneyStartedMetrics(req),
+        MetricsEvent.CREATE_OUTSIDE_ACTIVITY_JOURNEY_STARTED(user).addJourneyStartedMetrics(req),
       )
     } else {
       this.metricsService.trackEvent(MetricsEvent.CREATE_ACTIVITY_JOURNEY_STARTED(user).addJourneyStartedMetrics(req))

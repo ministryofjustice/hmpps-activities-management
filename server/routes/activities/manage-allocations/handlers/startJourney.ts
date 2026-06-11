@@ -68,9 +68,15 @@ export default class StartJourneyRoutes {
     }
 
     initJourneyMetrics(req, asString(source))
-    this.metricsServices.trackEvent(
-      MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
-    )
+    if (schedule.activity.outsideWork) {
+      this.metricsServices.trackEvent(
+        MetricsEvent.CREATE_OUTSIDE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+      )
+    } else {
+      this.metricsServices.trackEvent(
+        MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+      )
+    }
 
     if (user.externalActivitiesRolledOut && req.journeyData.allocateJourney.activity.outsideWork) {
       return res.redirect('../start-date')

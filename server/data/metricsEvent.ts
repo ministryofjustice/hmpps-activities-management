@@ -75,16 +75,20 @@ export default class MetricsEvent {
     return new MetricsEvent(MetricsEventType.CREATE_ACTIVITY_JOURNEY_COMPLETED, user)
   }
 
-  static CREATE_EXTERNAL_ACTIVITY_JOURNEY_STARTED(user: ServiceUser) {
-    return new MetricsEvent(MetricsEventType.CREATE_EXTERNAL_ACTIVITY_JOURNEY_STARTED, user)
+  static CREATE_OUTSIDE_ACTIVITY_JOURNEY_STARTED(user: ServiceUser) {
+    return new MetricsEvent(MetricsEventType.CREATE_OUTSIDE_ACTIVITY_JOURNEY_STARTED, user)
   }
 
-  static CREATE_EXTERNAL_ACTIVITY_JOURNEY_COMPLETED(user: ServiceUser) {
-    return new MetricsEvent(MetricsEventType.CREATE_EXTERNAL_ACTIVITY_JOURNEY_COMPLETED, user)
+  static CREATE_OUTSIDE_ACTIVITY_JOURNEY_COMPLETED(user: ServiceUser) {
+    return new MetricsEvent(MetricsEventType.CREATE_OUTSIDE_ACTIVITY_JOURNEY_COMPLETED, user)
   }
 
   static CREATE_ALLOCATION_JOURNEY_STARTED(user: ServiceUser) {
     return new MetricsEvent(MetricsEventType.CREATE_ALLOCATION_JOURNEY_STARTED, user)
+  }
+
+  static CREATE_OUTSIDE_ALLOCATION_JOURNEY_STARTED(user: ServiceUser) {
+    return new MetricsEvent(MetricsEventType.CREATE_OUTSIDE_ALLOCATION_JOURNEY_STARTED, user)
   }
 
   static CREATE_MULTIPLE_ALLOCATION_JOURNEY_STARTED(user: ServiceUser) {
