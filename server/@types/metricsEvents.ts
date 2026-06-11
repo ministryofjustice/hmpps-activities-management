@@ -2,6 +2,8 @@
 export enum MetricsEventType {
   CREATE_ACTIVITY_JOURNEY_STARTED = 'SAA-Create-Activity-Journey-Started',
   CREATE_ACTIVITY_JOURNEY_COMPLETED = 'SAA-Create-Activity-Journey-Completed',
+  CREATE_EXTERNAL_ACTIVITY_JOURNEY_STARTED = 'SAA-Create-External-Activity-Journey-Started',
+  CREATE_EXTERNAL_ACTIVITY_JOURNEY_COMPLETED = 'SAA-Create-External-Activity-Journey-Completed',
   CREATE_ALLOCATION_JOURNEY_STARTED = 'SAA-Create-Allocation-Journey-Started',
   CREATE_MULTIPLE_ALLOCATION_JOURNEY_STARTED = 'SAA-Create-Multiple-Allocation-Journey-Started',
   CREATE_ALLOCATION_JOURNEY_COMPLETED = 'SAA-Create-Allocation-Journey-Completed',

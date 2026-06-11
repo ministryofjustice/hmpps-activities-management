@@ -14,7 +14,7 @@ export default function Index({ activitiesService, prisonService, metricsService
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
-  const startHandler = new StartJourneyRoutes(metricsService)
+  const startHandler = new StartJourneyRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, prisonService, metricsService)
   const confirmationHandler = new ConfirmationRoutes()
 
