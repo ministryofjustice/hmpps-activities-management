@@ -37,7 +37,7 @@ export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
     const {
       categoryFilters,
-      locationFilters,
+      activityTypeFilters,
       reasonFilter,
       searchTerm,
       absenceReasonFilters,
@@ -46,13 +46,13 @@ export default class ApplyFiltersRoutes {
     } = req.body
 
     req.journeyData.attendanceSummaryJourney.categoryFilters = categoryFilters ?? []
-    req.journeyData.attendanceSummaryJourney.locationFilters = locationFilters ?? []
+    req.journeyData.attendanceSummaryJourney.activityTypeFilters = activityTypeFilters ?? []
     req.journeyData.attendanceSummaryJourney.reasonFilter = reasonFilter ?? 'BOTH'
     req.journeyData.attendanceSummaryJourney.searchTerm = searchTerm ?? null
 
     if (isAbsencesFilter) {
       req.journeyData.attendanceSummaryJourney.absenceReasonFilters = absenceReasonFilters ?? []
-      req.journeyData.attendanceSummaryJourney.payFilters = payFilters ?? []
+      req.journeyData.attendanceSummaryJourney.payFilters = payFilters ?? undefined
     } else {
       req.journeyData.attendanceSummaryJourney.absenceReasonFilters = undefined
       req.journeyData.attendanceSummaryJourney.payFilters = undefined

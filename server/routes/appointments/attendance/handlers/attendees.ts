@@ -92,8 +92,10 @@ export default class AttendeesRoutes {
   }
 
   GET_SINGLE = async (req: Request, res: Response): Promise<void> => {
+    const appointment = await this.activitiesService.getAppointmentDetails(+req.params.appointmentId, res.locals.user)
     req.journeyData.recordAppointmentAttendanceJourney = {
       appointmentIds: [+req.params.appointmentId],
+      date: appointment.startDate,
     }
     return res.redirect('../attendees')
   }

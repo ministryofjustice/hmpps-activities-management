@@ -1,5 +1,5 @@
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
-import filterByLocation from './utils'
+import { filterAttendancesByActivityType } from './utils'
 
 describe('daily attendance summary utils', () => {
   const mockAttendances: AllAttendance[] = [
@@ -37,7 +37,7 @@ describe('daily attendance summary utils', () => {
 
   describe('with single location filter', () => {
     it('should filter by inPrison location', () => {
-      const result = filterByLocation(mockAttendances, ['inPrison'])
+      const result = filterAttendancesByActivityType(mockAttendances, ['inPrison'])
 
       expect(result).toHaveLength(2)
       expect(result[0].outsideWork).toBe(false)
@@ -45,7 +45,7 @@ describe('daily attendance summary utils', () => {
     })
 
     it('should filter by outsidePrison location (paid by prison)', () => {
-      const result = filterByLocation(mockAttendances, ['outsidePrison'])
+      const result = filterAttendancesByActivityType(mockAttendances, ['outsidePrison'])
 
       expect(result).toHaveLength(2)
       expect(result[0].outsideWork).toBe(true)
@@ -55,7 +55,7 @@ describe('daily attendance summary utils', () => {
     })
 
     it('should filter by outsideEmployer location (paid by employer)', () => {
-      const result = filterByLocation(mockAttendances, ['outsideEmployer'])
+      const result = filterAttendancesByActivityType(mockAttendances, ['outsideEmployer'])
 
       expect(result).toHaveLength(2)
       expect(result[0].outsideWork).toBe(true)
@@ -67,7 +67,7 @@ describe('daily attendance summary utils', () => {
 
   describe('with multiple location filters', () => {
     it('should filter by inPrison and outsidePrison', () => {
-      const result = filterByLocation(mockAttendances, ['inPrison', 'outsidePrison'])
+      const result = filterAttendancesByActivityType(mockAttendances, ['inPrison', 'outsidePrison'])
 
       expect(result).toHaveLength(4)
       expect(result.filter(a => !a.outsideWork)).toHaveLength(2)
@@ -75,7 +75,7 @@ describe('daily attendance summary utils', () => {
     })
 
     it('should filter by inPrison and outsideEmployer', () => {
-      const result = filterByLocation(mockAttendances, ['inPrison', 'outsideEmployer'])
+      const result = filterAttendancesByActivityType(mockAttendances, ['inPrison', 'outsideEmployer'])
 
       expect(result).toHaveLength(4)
       expect(result.filter(a => !a.outsideWork)).toHaveLength(2)
@@ -83,7 +83,7 @@ describe('daily attendance summary utils', () => {
     })
 
     it('should filter by all location types', () => {
-      const result = filterByLocation(mockAttendances, ['inPrison', 'outsidePrison', 'outsideEmployer'])
+      const result = filterAttendancesByActivityType(mockAttendances, ['inPrison', 'outsidePrison', 'outsideEmployer'])
 
       expect(result).toHaveLength(mockAttendances.length)
     })
@@ -91,7 +91,7 @@ describe('daily attendance summary utils', () => {
 
   describe('with empty filters', () => {
     it('should return an empty array when no filters are provided', () => {
-      const result = filterByLocation(mockAttendances, [])
+      const result = filterAttendancesByActivityType(mockAttendances, [])
 
       expect(result).toHaveLength(0)
     })
@@ -99,7 +99,7 @@ describe('daily attendance summary utils', () => {
 
   describe('with empty attendance array', () => {
     it('should return an empty array when attendance array is empty', () => {
-      const result = filterByLocation([], ['inPrison', 'outsidePrison', 'outsideEmployer'])
+      const result = filterAttendancesByActivityType([], ['inPrison', 'outsidePrison', 'outsideEmployer'])
 
       expect(result).toHaveLength(0)
     })
@@ -107,13 +107,13 @@ describe('daily attendance summary utils', () => {
 
   describe('with invalid filters', () => {
     it('should return an empty array when filters do not match any attendance', () => {
-      const result = filterByLocation(mockAttendances, ['invalidFilter'])
+      const result = filterAttendancesByActivityType(mockAttendances, ['invalidFilter'])
 
       expect(result).toHaveLength(0)
     })
 
     it('should ignore invalid filters and apply valid ones', () => {
-      const result = filterByLocation(mockAttendances, ['inPrison', 'invalidFilter'])
+      const result = filterAttendancesByActivityType(mockAttendances, ['inPrison', 'invalidFilter'])
 
       expect(result).toHaveLength(2)
       expect(result[0].outsideWork).toBe(false)
@@ -129,8 +129,8 @@ describe('daily attendance summary utils', () => {
       expect(paidOutsideWork).toHaveLength(2)
       expect(unpaidOutsideWork).toHaveLength(2)
 
-      const paidResult = filterByLocation(mockAttendances, ['outsidePrison'])
-      const unpaidResult = filterByLocation(mockAttendances, ['outsideEmployer'])
+      const paidResult = filterAttendancesByActivityType(mockAttendances, ['outsidePrison'])
+      const unpaidResult = filterAttendancesByActivityType(mockAttendances, ['outsideEmployer'])
 
       expect(paidResult).toEqual(paidOutsideWork)
       expect(unpaidResult).toEqual(unpaidOutsideWork)
@@ -139,7 +139,7 @@ describe('daily attendance summary utils', () => {
 
   describe('filter combinations that cover all attendance types', () => {
     it('should return all records when all filter types are selected', () => {
-      const result = filterByLocation(mockAttendances, ['inPrison', 'outsidePrison', 'outsideEmployer'])
+      const result = filterAttendancesByActivityType(mockAttendances, ['inPrison', 'outsidePrison', 'outsideEmployer'])
 
       expect(result).toHaveLength(mockAttendances.length)
     })
