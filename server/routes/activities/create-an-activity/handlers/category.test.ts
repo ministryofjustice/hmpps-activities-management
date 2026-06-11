@@ -87,6 +87,9 @@ describe('Route Handlers - Create an activity - Category', () => {
       ] as ActivityCategory[])
 
       await handler.GET(req, res)
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_EXTERNAL_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+      )
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/category', {
         categories: [
           { id: 1, code: 'SAA_SERVICES', name: 'Services' },
