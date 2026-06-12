@@ -14,10 +14,15 @@ export default class ConfirmationRoutes {
     const { inmate, activity, activitiesToDeallocate } = req.journeyData.allocateJourney
 
     if (req.routeContext.mode === 'create') {
-      const allocationEvent = MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(
-        req.journeyData.allocateJourney,
-        res.locals.user,
-      ).addJourneyCompletedMetrics(req)
+      const allocationEvent = activity.outsideWork
+        ? MetricsEvent.CREATE_OUTSIDE_ALLOCATION_JOURNEY_COMPLETED(
+            req.journeyData.allocateJourney,
+            res.locals.user,
+          ).addJourneyCompletedMetrics(req)
+        : MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(
+            req.journeyData.allocateJourney,
+            res.locals.user,
+          ).addJourneyCompletedMetrics(req)
       this.metricsService.trackEvent(allocationEvent)
     }
 
