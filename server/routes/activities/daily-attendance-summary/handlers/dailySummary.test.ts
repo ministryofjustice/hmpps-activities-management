@@ -766,7 +766,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         journeyData: {
           attendanceSummaryJourney: {
             categoryFilters: ['Education'],
-            locationFilters: ['inPrison'],
+            activityTypeFilters: ['inPrison'],
           },
         },
       } as unknown as Request
@@ -861,7 +861,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         journeyData: {
           attendanceSummaryJourney: {
             categoryFilters: ['Education'],
-            locationFilters: ['outsidePrison'],
+            activityTypeFilters: ['outsidePrison'],
           },
         },
       } as unknown as Request
@@ -956,7 +956,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         journeyData: {
           attendanceSummaryJourney: {
             categoryFilters: ['Education'],
-            locationFilters: ['outsideEmployer'],
+            activityTypeFilters: ['outsideEmployer'],
           },
         },
       } as unknown as Request
@@ -1051,7 +1051,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         journeyData: {
           attendanceSummaryJourney: {
             categoryFilters: ['Education'],
-            locationFilters: ['inPrison'],
+            activityTypeFilters: ['inPrison'],
           },
         },
       } as unknown as Request

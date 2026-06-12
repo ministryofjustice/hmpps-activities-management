@@ -9,7 +9,7 @@ import TimeSlot from '../../../../enum/timeSlot'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../../../@types/express'
 import EventTier from '../../../../enum/eventTiers'
-import filterByLocation from '../utils/utils'
+import { filterAttendancesByActivityType, isOutsidePaidByEmployer, isOutsidePaidByPrison } from '../utils/utils'
 
 type CancelledActivity = {
   id: number
@@ -17,6 +17,16 @@ type CancelledActivity = {
   timeSlot: TimeSlot
   cancelledReason: string
   activityId: number
+}
+
+const getActivityTypeString = (attendance: AllAttendance) => {
+  if (isOutsidePaidByPrison(attendance)) {
+    return 'outsidePrison'
+  }
+  if (isOutsidePaidByEmployer(attendance)) {
+    return 'outsideEmployer'
+  }
+  return 'inPrison'
 }
 
 export default class DailySummaryRoutes {
@@ -34,13 +44,16 @@ export default class DailySummaryRoutes {
 
     const allAttendances = await this.activitiesService.getAllAttendance(activityDate, user)
     const uniqueCategories = _.uniq(allAttendances.map(c => c.categoryName))
+    const uniqueActivityTypes = user.externalActivitiesRolledOut
+      ? _.uniq(allAttendances.map(getActivityTypeString))
+      : ['inPrison', 'outsidePrison', 'outsideEmployer']
 
     // Set the default filter values if they are not set
     req.journeyData.attendanceSummaryJourney ??= {}
     req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
-    req.journeyData.attendanceSummaryJourney.locationFilters ??= ['inPrison', 'outsidePrison', 'outsideEmployer']
+    req.journeyData.attendanceSummaryJourney.activityTypeFilters ??= uniqueActivityTypes
 
-    const { categoryFilters, locationFilters } = req.journeyData.attendanceSummaryJourney
+    const { categoryFilters, activityTypeFilters } = req.journeyData.attendanceSummaryJourney
 
     const cancelledSessionsForFilters = await this.getCancelledActivitiesAtPrison(activityDate, user).then(r =>
       r.filter(a => categoryFilters.includes(a.category)),
@@ -49,7 +62,7 @@ export default class DailySummaryRoutes {
     let attendancesForFilters = allAttendances.filter(a => categoryFilters.includes(a.categoryName))
 
     if (user.externalActivitiesRolledOut) {
-      attendancesForFilters = filterByLocation(attendancesForFilters, locationFilters)
+      attendancesForFilters = filterAttendancesByActivityType(attendancesForFilters, activityTypeFilters)
     }
 
     res.locals.attendanceSummaryJourney = req.journeyData.attendanceSummaryJourney
