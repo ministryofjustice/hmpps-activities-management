@@ -35,6 +35,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
       scheduleId: 1,
       name: 'Maths',
       location: 'Education room 1',
+      outsideWork: false,
     },
     startDate: '01/01/2023',
   } as AllocateToActivityJourney
