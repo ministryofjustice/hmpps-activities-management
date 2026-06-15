@@ -86,7 +86,11 @@ export default class CheckAnswersRoutes {
     }
 
     const createdActivity = await this.activitiesService.createActivity(activity, user)
-    const metricEvent = MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).addJourneyCompletedMetrics(req)
+
+    const metricEvent = createdActivity.outsideWork
+      ? MetricsEvent.CREATE_OUTSIDE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).addJourneyCompletedMetrics(req)
+      : MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).addJourneyCompletedMetrics(req)
+
     this.metricsService.trackEvent(metricEvent)
 
     res.redirect(`confirmation/${createdActivity.id}`)
