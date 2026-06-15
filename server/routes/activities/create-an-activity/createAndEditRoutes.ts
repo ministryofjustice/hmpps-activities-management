@@ -44,7 +44,6 @@ import WhoPaysRoutes, { WhoPays } from './handlers/whoPays'
 
 export default function Index({
   activitiesService,
-  metricsService,
   prisonService,
   locationsService,
   ukBankHolidayService,
@@ -56,7 +55,7 @@ export default function Index({
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
-  const categoryHandler = new CategoryRoutes(activitiesService, metricsService)
+  const categoryHandler = new CategoryRoutes(activitiesService)
   const nameHandler = new NameRoutes(activitiesService)
   const tierHandler = new TierRoutes(activitiesService)
   const organiserHandler = new OrganiserRoutes(activitiesService)
