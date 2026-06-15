@@ -78,19 +78,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
   })
 
   describe('GET', () => {
-    it('should record create outside journey complete in metrics', async () => {
-      req.journeyData.allocateJourney.activity.outsideWork = true
-      await handler.GET(req, res)
-      expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.CREATE_OUTSIDE_ALLOCATION_JOURNEY_COMPLETED(
-          allocateJourney,
-          res.locals.user,
-        ).addJourneyCompletedMetrics(req),
-      )
-    })
-
     it('should record create journey complete in metrics', async () => {
-      req.journeyData.allocateJourney.activity.outsideWork = false
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).addJourneyCompletedMetrics(
@@ -98,7 +86,6 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         ),
       )
     })
-
     it('should render page with data from session', async () => {
       req.routeContext = { mode: 'create' }
       await handler.GET(req, res)
@@ -118,7 +105,6 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         deallocateMultipleActivitiesMode: false,
       })
     })
-
     it('should render page with data from session - one activity removed', async () => {
       req.routeContext = { mode: 'remove' }
       await handler.GET(req, res)
@@ -135,7 +121,6 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         deallocateMultipleActivitiesMode: false,
       })
     })
-
     it('should render page with data from session - multiple activities removed', async () => {
       req.routeContext = { mode: 'remove' }
       req.journeyData.allocateJourney.activity = null

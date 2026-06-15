@@ -38,6 +38,7 @@ import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOptio
 import ActivityTypePage from '../../pages/createActivity/activityType'
 import WhoPaysPage from '../../pages/createActivity/whoPays'
 import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
+import getActivity from '../../fixtures/activitiesApi/getActivity.json'
 
 context('Create external activity', () => {
   beforeEach(() => {
@@ -57,7 +58,7 @@ context('Create external activity', () => {
       getNonResidentialActivityLocations,
     )
     cy.stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile)
-    cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
+    cy.stubEndpoint('POST', '/activities', getActivity)
   })
 
   it('should remain the same journey for internal activity journey for EA enabled prison', () => {

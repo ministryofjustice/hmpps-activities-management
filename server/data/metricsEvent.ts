@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { AppointmentDetails, AppointmentSetDetails } from '../@types/activitiesAPI/types'
+import { Activity, AppointmentDetails, AppointmentSetDetails } from '../@types/activitiesAPI/types'
 import { ServiceUser } from '../@types/express'
 import { AllocateToActivityJourney } from '../routes/activities/manage-allocations/journey'
 import { WaitListApplicationJourney } from '../routes/activities/waitlist-application/journey'
@@ -71,24 +71,16 @@ export default class MetricsEvent {
     return new MetricsEvent(MetricsEventType.CREATE_ACTIVITY_JOURNEY_STARTED, user)
   }
 
-  static CREATE_ACTIVITY_JOURNEY_COMPLETED(user: ServiceUser) {
-    return new MetricsEvent(MetricsEventType.CREATE_ACTIVITY_JOURNEY_COMPLETED, user)
-  }
-
-  static CREATE_OUTSIDE_ACTIVITY_JOURNEY_STARTED(user: ServiceUser) {
-    return new MetricsEvent(MetricsEventType.CREATE_OUTSIDE_ACTIVITY_JOURNEY_STARTED, user)
-  }
-
-  static CREATE_OUTSIDE_ACTIVITY_JOURNEY_COMPLETED(user: ServiceUser) {
-    return new MetricsEvent(MetricsEventType.CREATE_OUTSIDE_ACTIVITY_JOURNEY_COMPLETED, user)
+  static CREATE_ACTIVITY_JOURNEY_COMPLETED(activity: Activity, user: ServiceUser) {
+    const event = new MetricsEvent(MetricsEventType.CREATE_ACTIVITY_JOURNEY_COMPLETED, user)
+    return event.addProperties({
+      activityId: activity.id?.toString(),
+      outsideWork: activity.outsideWork.toString(),
+    })
   }
 
   static CREATE_ALLOCATION_JOURNEY_STARTED(user: ServiceUser) {
     return new MetricsEvent(MetricsEventType.CREATE_ALLOCATION_JOURNEY_STARTED, user)
-  }
-
-  static CREATE_OUTSIDE_ALLOCATION_JOURNEY_STARTED(user: ServiceUser) {
-    return new MetricsEvent(MetricsEventType.CREATE_OUTSIDE_ALLOCATION_JOURNEY_STARTED, user)
   }
 
   static CREATE_MULTIPLE_ALLOCATION_JOURNEY_STARTED(user: ServiceUser) {
@@ -101,15 +93,7 @@ export default class MetricsEvent {
       prisonerNumber: allocation.inmate.prisonerNumber,
       activityId: allocation.activity.activityId?.toString(),
       startDate: allocation.startDate,
-    })
-  }
-
-  static CREATE_OUTSIDE_ALLOCATION_JOURNEY_COMPLETED(allocation: AllocateToActivityJourney, user: ServiceUser) {
-    const event = new MetricsEvent(MetricsEventType.CREATE_OUTSIDE_ALLOCATION_JOURNEY_COMPLETED, user)
-    return event.addProperties({
-      prisonerNumber: allocation.inmate.prisonerNumber,
-      activityId: allocation.activity.activityId?.toString(),
-      startDate: allocation.startDate,
+      outsideWork: allocation.activity.outsideWork.toString(),
     })
   }
 

@@ -4,8 +4,6 @@ import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import EventTier from '../../../../enum/eventTiers'
-import MetricsEvent from '../../../../data/metricsEvent'
-import MetricsService from '../../../../services/metricsService'
 
 export class Category {
   @Expose()
@@ -16,20 +14,10 @@ export class Category {
 }
 
 export default class CategoryRoutes {
-  constructor(
-    private readonly activitiesService: ActivitiesService,
-    private readonly metricsService: MetricsService,
-  ) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    if (req.journeyData.createJourney.outsideWork) {
-      this.metricsService.trackEvent(
-        MetricsEvent.CREATE_OUTSIDE_ACTIVITY_JOURNEY_STARTED(user).addJourneyStartedMetrics(req),
-      )
-    } else {
-      this.metricsService.trackEvent(MetricsEvent.CREATE_ACTIVITY_JOURNEY_STARTED(user).addJourneyStartedMetrics(req))
-    }
 
     let categories = await this.activitiesService.getActivityCategories(user)
 
