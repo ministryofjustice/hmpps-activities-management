@@ -9,13 +9,17 @@ import { Activity, ActivityCategory } from '../../../../@types/activitiesAPI/typ
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import EventTier from '../../../../enum/eventTiers'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/metricsService')
 
+const metricsService = new MetricsService(null)
 const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Create an activity - Category', () => {
-  const handler = new CategoryRoutes(activitiesService)
+  const handler = new CategoryRoutes(activitiesService, metricsService)
   let req: Request
   let res: Response
 
@@ -36,6 +40,11 @@ describe('Route Handlers - Create an activity - Category', () => {
       journeyData: {
         createJourney: {},
       },
+      session: {
+        user: {
+          externalActivitiesRolledOut: false,
+        },
+      },
       routeContext: { mode: 'create' },
     } as unknown as Request
   })
@@ -54,6 +63,10 @@ describe('Route Handlers - Create an activity - Category', () => {
       ] as ActivityCategory[])
 
       await handler.GET(req, res)
+
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+      )
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/category', {
         categories: [
           { id: 1, code: 'SAA_SERVICES', name: 'Services' },
@@ -74,6 +87,9 @@ describe('Route Handlers - Create an activity - Category', () => {
       ] as ActivityCategory[])
 
       await handler.GET(req, res)
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_OUTSIDE_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+      )
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/category', {
         categories: [
           { id: 1, code: 'SAA_SERVICES', name: 'Services' },
