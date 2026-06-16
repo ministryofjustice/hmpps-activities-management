@@ -43,6 +43,15 @@ generic-service:
     PLANNED_DOWNTIME_END_TIME: "11am"
     JOURNEY_DATA_TOKEN_DURATION_HOURS: 8
 
+  namespace_secrets:
+    hmpps-envoy-https-proxy-env:
+      HTTP_PROXY: "HTTP_PROXY"
+      HTTPS_PROXY: "HTTPS_PROXY"
+      NO_PROXY: "NO_PROXY"
+      http_proxy: "HTTP_PROXY"
+      https_proxy: "HTTPS_PROXY"
+      no_proxy: "NO_PROXY"
+
   allowlist: null
 
 generic-prometheus-alerts:
