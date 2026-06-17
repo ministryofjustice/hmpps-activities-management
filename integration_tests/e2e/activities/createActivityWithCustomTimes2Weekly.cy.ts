@@ -36,6 +36,7 @@ import ActivityOrganiserPage from '../../pages/createActivity/organiser'
 import PayOptionPage from '../../pages/createActivity/pay-option'
 import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOption'
 import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
+import getActivity from '../../fixtures/activitiesApi/getActivity.json'
 
 context('Create activity with custom times for a 2 weekly schedule', () => {
   beforeEach(() => {
@@ -55,7 +56,7 @@ context('Create activity with custom times for a 2 weekly schedule', () => {
       getNonResidentialActivityLocations,
     )
     cy.stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile)
-    cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
+    cy.stubEndpoint('POST', '/activities', getActivity)
   })
 
   it('should click through create activity journey', () => {

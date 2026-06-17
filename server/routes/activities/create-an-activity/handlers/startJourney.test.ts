@@ -1,8 +1,14 @@
 import { Request, Response } from 'express'
 import StartJourneyRoutes from './startJourney'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
+
+jest.mock('../../../../services/metricsService')
+
+const metricsService = new MetricsService(null)
 
 describe('Route Handlers - Create an activity - Start', () => {
-  const handler = new StartJourneyRoutes()
+  const handler = new StartJourneyRoutes(metricsService)
   let req: Request
   let res: Response
 
@@ -36,6 +42,9 @@ describe('Route Handlers - Create an activity - Start', () => {
       expect(req.journeyData.createJourney).toEqual({
         outsideWork: false,
       })
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+      )
       expect(res.redirect).toHaveBeenCalledWith('category?preserveHistory=true')
     })
   })

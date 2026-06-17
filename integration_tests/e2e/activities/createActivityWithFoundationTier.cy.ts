@@ -27,6 +27,7 @@ import ActivitiesIndexPage from '../../pages/activities'
 import PayOptionPage from '../../pages/createActivity/pay-option'
 import AttendanceRequired from '../../pages/createActivity/recordAttendance'
 import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOption'
+import getActivity from '../../fixtures/activitiesApi/getActivity.json'
 
 context('Create activity', () => {
   beforeEach(() => {
@@ -45,7 +46,7 @@ context('Create activity', () => {
       getNonResidentialActivityLocations,
     )
     cy.stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile)
-    cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
+    cy.stubEndpoint('POST', '/activities', getActivity)
   })
 
   const whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen = () => {

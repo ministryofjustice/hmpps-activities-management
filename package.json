@@ -40,7 +40,7 @@
   "dependencies": {
     "@microsoft/applicationinsights-web": "3.4.1",
     "@ministryofjustice/frontend": "^9.0.0",
-    "@ministryofjustice/hmpps-auth-clients": "2.0.0",
+    "@ministryofjustice/hmpps-auth-clients": "3.0.0",
     "@ministryofjustice/hmpps-connect-dps-components": "6.1.0",
     "@ministryofjustice/hmpps-rest-client": "2.1.0",
     "@types/express-serve-static-core": "5.1.1",
@@ -106,7 +106,7 @@
     "cypress-file-upload": "^5.0.8",
     "cypress-multi-reporters": "^2.0.5",
     "cypress-split": "1.24.31",
-    "esbuild": "0.28.0",
+    "esbuild": "0.28.1",
     "esbuild-plugin-clean": "^1.0.1",
     "esbuild-plugin-copy": "^2.1.1",
     "esbuild-plugin-manifest": "^1.0.5",
