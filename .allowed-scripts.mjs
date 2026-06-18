@@ -6,6 +6,7 @@ export default configureAllowedScripts({
     'node_modules/cypress@15.17.0': 'ALLOW',
     'node_modules/dtrace-provider@0.8.8': 'ALLOW',
     'node_modules/esbuild@0.28.1': 'ALLOW',
+    'node_modules/tsx/node_modules/esbuild@0.27.7': 'ALLOW',
     'node_modules/unrs-resolver@1.9.1': 'ALLOW',
   },
 })
