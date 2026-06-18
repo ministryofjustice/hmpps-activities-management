@@ -922,6 +922,23 @@ export default class ActivitiesApiClient extends RestClient {
     )
   }
 
+  async getInternalLocationEventsByDpsLocationId(
+    prisonCode: string,
+    date: string,
+    dpsLocationId: string,
+    user: ServiceUser,
+    timeSlot?: string,
+  ): Promise<InternalLocationEvents> {
+    return this.get(
+      {
+        path: `/scheduled-events/prison/${prisonCode}/location-events`,
+        headers: CASELOAD_HEADER(user.activeCaseLoadId),
+        query: { date, timeSlot, dpsLocationId },
+      },
+      asUser(user.token),
+    )
+  }
+
   async getExternalMovements(
     prisonCode: string,
     date: string,

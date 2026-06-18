@@ -64,6 +64,8 @@ import {
   RolloutPrisonPlan,
   LocationPrefixes,
   PrisonerAllocations,
+  InternalLocationEvents,
+  LocationEvents,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { AttendanceStatus } from '../@types/appointments'
@@ -469,7 +471,28 @@ export default class ActivitiesService {
     )
   }
 
-  async getExternalMovements(prisonCode: string, date: Date, user: ServiceUser, timeSlot?: string) {
+  async getInternalLocationEventsByDpsLocationId(
+    prisonCode: string,
+    date: Date,
+    dpsLocationId: string,
+    user: ServiceUser,
+    timeSlot?: string,
+  ): Promise<InternalLocationEvents> {
+    return this.activitiesApiClient.getInternalLocationEventsByDpsLocationId(
+      prisonCode,
+      format(date, 'yyyy-MM-dd'),
+      dpsLocationId,
+      user,
+      timeSlot,
+    )
+  }
+
+  async getExternalMovements(
+    prisonCode: string,
+    date: Date,
+    user: ServiceUser,
+    timeSlot?: string,
+  ): Promise<LocationEvents[]> {
     return this.activitiesApiClient.getExternalMovements(prisonCode, format(date, 'yyyy-MM-dd'), user, timeSlot)
   }
 
