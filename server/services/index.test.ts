@@ -16,8 +16,6 @@ import CourtBookingService from './courtBookingService'
 import ProbationBookingService from './probationBookingService'
 import TokenStore from '../data/tokenStore'
 
-jest.mock('applicationinsights')
-
 describe('Services', () => {
   test('The correct services are instantiated', () => {
     const servicesList = services()

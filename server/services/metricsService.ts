@@ -1,4 +1,4 @@
-import { TelemetryClient } from 'applicationinsights'
+import { telemetry } from '@ministryofjustice/hmpps-azure-telemetry'
 
 type Event = {
   name: string
@@ -7,11 +7,17 @@ type Event = {
 }
 
 export default class MetricsService {
-  constructor(private readonly appInsightsClient: TelemetryClient) {}
-
   trackEvent(event: Event) {
-    if (this.appInsightsClient) {
-      this.appInsightsClient.trackEvent(event)
+    const attributes = {
+      ...event.properties,
+      ...event.measurements,
     }
+
+    if (Object.keys(attributes).length > 0) {
+      telemetry.trackEvent(event.name, attributes)
+      return
+    }
+
+    telemetry.trackEvent(event.name)
   }
 }
