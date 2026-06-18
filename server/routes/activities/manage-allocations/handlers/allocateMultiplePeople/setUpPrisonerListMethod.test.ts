@@ -12,7 +12,7 @@ jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const metricsService = new MetricsService() as jest.Mocked<MetricsService>
 
 describe('Allocate multiple people to an activity - method for adding list', () => {
   const tomorrow = startOfTomorrow()

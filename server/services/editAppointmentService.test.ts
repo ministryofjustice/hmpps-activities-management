@@ -29,7 +29,7 @@ jest.mock('./activitiesService')
 jest.mock('./metricsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const metricsService = new MetricsService() as jest.Mocked<MetricsService>
 
 describe('Edit Appointment Service', () => {
   const service = new EditAppointmentService(activitiesService, metricsService)

@@ -11,7 +11,7 @@ import { PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 jest.mock('../../../../services/metricsService')
 jest.mock('../../../../services/activitiesService')
 
-const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const metricsService = new MetricsService() as jest.Mocked<MetricsService>
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Allocate - Confirmation', () => {
