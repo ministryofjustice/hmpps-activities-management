@@ -43,6 +43,7 @@ import {
   RolloutPrisonPlan,
   AdvanceAttendance,
   ActivityPayHistory,
+  InternalLocationEvents,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import activityPayHistory from './fixtures/activity_pay_history_1.json'
@@ -969,25 +970,41 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('getInternalLocationEventsByDpsLocationIds', () => {
-    it('should call the api client to get internal locations events', async () => {
+  describe('getInternalLocationEventsByDpsLocationId', () => {
+    it('should call the api client to get internal location events for a single location', async () => {
       const prisonCode = 'MDI'
       const date = new Date()
-      const dpsLocationIds = ['11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222']
+      const dpsLocationId = '11111111-1111-1111-1111-111111111111'
       const timeSlot = 'AM'
+      const expectedResult = {
+        id: 1,
+        description: 'Location 1',
+        events: [
+          {
+            prisonerNumber: 'A1234BC',
+            summary: 'Activity',
+            eventType: 'ACTIVITY',
+          },
+        ],
+      } as InternalLocationEvents
 
-      await activitiesService.getInternalLocationEventsByDpsLocationIds(
+      when(activitiesApiClient.getInternalLocationEventsByDpsLocationId)
+        .calledWith(prisonCode, formatIsoDate(date), dpsLocationId, user, timeSlot)
+        .mockResolvedValue(expectedResult)
+
+      const result = await activitiesService.getInternalLocationEventsByDpsLocationId(
         prisonCode,
         date,
-        dpsLocationIds,
+        dpsLocationId,
         user,
         timeSlot,
       )
 
-      expect(activitiesApiClient.getInternalLocationEventsByDpsLocationIds).toHaveBeenCalledWith(
+      expect(result).toEqual(expectedResult)
+      expect(activitiesApiClient.getInternalLocationEventsByDpsLocationId).toHaveBeenCalledWith(
         prisonCode,
         formatIsoDate(date),
-        dpsLocationIds,
+        dpsLocationId,
         user,
         timeSlot,
       )

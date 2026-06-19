@@ -22,6 +22,7 @@ import {
   EventAcknowledgeRequest,
   EventReview,
   EventReviewSearchResults,
+  InternalLocationEvents,
   LocationEvents,
   LocationGroup,
   LocationPrefix,
@@ -995,21 +996,40 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('getInternalLocationEventsByDpsLocationIds', () => {
-    it('should call endpoint to get internal locations events', async () => {
+  describe('getInternalLocationEventsByDpsLocationId', () => {
+    it('should call endpoint to get internal location events for a single location', async () => {
       const prisonCode = 'MDI'
       const date = formatIsoDate(new Date())
-      const dpsLocationIds = ['11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222']
+      const dpsLocationId = '11111111-1111-1111-1111-111111111111'
       const timeSlot = 'AM'
+      const response = {
+        id: 1,
+        description: 'Location 1',
+        events: [
+          {
+            prisonerNumber: 'A1234BC',
+            summary: 'Activity',
+            eventType: 'ACTIVITY',
+          },
+        ],
+      } as InternalLocationEvents
+
       fakeActivitiesApi
-        .post(`/scheduled-events/prison/${prisonCode}/location-events`)
-        .query({ date, timeSlot })
+        .get(`/scheduled-events/prison/${prisonCode}/location-events`)
+        .query({ date, timeSlot, dpsLocationId })
         .matchHeader('authorization', 'Bearer token')
         .matchHeader('Caseload-Id', prisonCode)
-        .reply(200)
+        .reply(200, response)
 
-      await activitiesApiClient.getInternalLocationEventsByDpsLocationIds('MDI', date, dpsLocationIds, user, timeSlot)
+      const output = await activitiesApiClient.getInternalLocationEventsByDpsLocationId(
+        prisonCode,
+        date,
+        dpsLocationId,
+        user,
+        timeSlot,
+      )
 
+      expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
   })
