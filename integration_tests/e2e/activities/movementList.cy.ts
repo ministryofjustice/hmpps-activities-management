@@ -11,6 +11,7 @@ import getInmateDetails from '../../fixtures/prisonerSearchApi/getInmateDetailsF
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduleEvents-MDI-A1350DZ-A8644DY.json'
 import LocationEventsPage from '../../pages/unlockAndMovements/movement/locationEventsPage'
 import { CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE } from '../../pages/unlockAndMovements/abstractEventsPage'
+import { InternalLocationEvents } from '../../../server/@types/activitiesAPI/types'
 
 context('Movement list', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -28,10 +29,10 @@ context('Movement list', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM&dpsLocationId=11111111-1111-1111-1111-111111111111`,
-      getInternalLocationEventsByDpsLocationId,
+      getInternalLocationEventsByDpsLocationId as unknown as JSON,
     )
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents as unknown as JSON)
   })
 
   it('should show correct alerts', () => {
@@ -138,7 +139,7 @@ context('Movement list', () => {
   })
 
   it('shows the not required tag if a prisoner has been marked as not required for unlock today, but not if the prisoner is already suspended', () => {
-    const getScheduledEventsWithNotRequired = { ...getInternalLocationEventsByDpsLocationId }
+    const getScheduledEventsWithNotRequired: InternalLocationEvents = { ...getInternalLocationEventsByDpsLocationId }
     getScheduledEventsWithNotRequired.events[0].attendanceStatus = 'COMPLETED'
     getScheduledEventsWithNotRequired.events[0].attendanceReasonCode = 'NOT_REQUIRED'
     getScheduledEventsWithNotRequired.events[1].attendanceStatus = 'COMPLETED'
@@ -147,7 +148,7 @@ context('Movement list', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM&dpsLocationId=11111111-1111-1111-1111-111111111111`,
-      getScheduledEventsWithNotRequired,
+      getScheduledEventsWithNotRequired as unknown as JSON,
     )
 
     cy.signIn()
@@ -179,7 +180,7 @@ context('Movement list', () => {
   })
 
   it('shows the not required tag if a prisoner has been marked as not required for unlock tomorrow', () => {
-    const getScheduledEventsWithNotRequired = { ...getInternalLocationEventsByDpsLocationId }
+    const getScheduledEventsWithNotRequired: InternalLocationEvents = { ...getInternalLocationEventsByDpsLocationId }
     getScheduledEventsWithNotRequired.events[0].date = tomorrow
     getScheduledEventsWithNotRequired.events[0].attendanceStatus = null
     getScheduledEventsWithNotRequired.events[0].attendanceReasonCode = 'NOT_REQUIRED'
@@ -191,9 +192,9 @@ context('Movement list', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-events/prison/MDI/location-events\\?date=${tomorrow}&timeSlot=AM&dpsLocationId=11111111-1111-1111-1111-111111111111`,
-      getScheduledEventsWithNotRequired,
+      getScheduledEventsWithNotRequired as unknown as JSON,
     )
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrow}`, getScheduledEvents)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrow}`, getScheduledEvents as unknown as JSON)
 
     cy.signIn()
     cy.visit('/activities/unlock-list')
@@ -224,7 +225,7 @@ context('Movement list', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM&dpsLocationId=33333333-3333-3333-3333-333333333333`,
-      getScheduledEventLocationsAWing,
+      getScheduledEventLocationsAWing as unknown as JSON,
     )
 
     cy.signIn()
