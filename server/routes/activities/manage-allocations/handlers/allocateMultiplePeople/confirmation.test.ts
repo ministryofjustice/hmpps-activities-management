@@ -4,7 +4,7 @@ import ConfirmMultipleAllocationsRoutes from './confirmation'
 import { AllocateToActivityJourney } from '../../journey'
 import MetricsEvent from '../../../../../data/metricsEvent'
 
-const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const metricsService = new MetricsService() as jest.Mocked<MetricsService>
 
 jest.mock('../../../../../services/metricsService')
 

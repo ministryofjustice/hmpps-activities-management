@@ -18,7 +18,7 @@ jest.mock('../../../../utils/helpers/nextScheduledInstanceCalculator')
 
 const prisonService = new PrisonService(null, null, null)
 const activitiesService = new ActivitiesService(null)
-const metricsService = new MetricsService(null)
+const metricsService = new MetricsService()
 
 describe('Route Handlers - Allocate - Start', () => {
   const handler = new StartJourneyRoutes(prisonService, activitiesService, metricsService)

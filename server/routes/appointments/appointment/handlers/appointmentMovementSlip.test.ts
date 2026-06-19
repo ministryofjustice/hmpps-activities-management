@@ -7,7 +7,7 @@ import MetricsEvent from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/metricsService')
 
-const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const metricsService = new MetricsService() as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Movement Slip', () => {
   const handler = new AppointmentMovementSlipRoutes(metricsService)

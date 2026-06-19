@@ -6,7 +6,7 @@ import { SuspendJourney } from '../journey'
 
 jest.mock('../../../../services/metricsService')
 
-const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const metricsService = new MetricsService() as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Suspensions - Confirmation', () => {
   const handler = new ConfirmationRoutes(metricsService)
