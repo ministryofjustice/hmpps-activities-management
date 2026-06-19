@@ -62,6 +62,11 @@ context('Uncancel appointment', () => {
       '/users/jsmith',
       JSON.parse('{"name": "John Smith", "username": "jsmith", "authSource": "nomis"}'),
     )
+    cy.stubEndpoint(
+      'GET',
+      '/users/AAA01U',
+      JSON.parse('{"name": "John Smith", "username": "AAA01U", "authSource": "nomis"}'),
+    )
     cy.stubEndpoint('GET', '/appointment-series/10/details', getGroupAppointmentSeriesDetails)
     cy.stubEndpoint('POST', '/search/alerts/prison-numbers\\?includeInactive=false', getPrisonerAlerts)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
