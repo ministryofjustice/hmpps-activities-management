@@ -11,7 +11,7 @@ export default class LocationEventsPage extends AbstractEventsPage {
 
   peopleCount = (): Cypress.Chainable => cy.get('[data-qa="people-count"]')
 
-  table = (): Cypress.Chainable => cy.get('[data-qa="location-1-prisoner-events"]')
+  table = (): Cypress.Chainable => cy.get('[data-qa="location-prisoner-events"]')
 
   appointmentLinkIsPresent = (identifier: string) => cy.get(`a[href="/appointments/${identifier}"]`).should('exist')
 
