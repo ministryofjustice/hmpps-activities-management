@@ -5,7 +5,7 @@ import MetricsEvent from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/metricsService')
 
-const metricsService = new MetricsService(null)
+const metricsService = new MetricsService()
 
 describe('Route Handlers - Create an activity - Start', () => {
   const handler = new StartJourneyRoutes(metricsService)

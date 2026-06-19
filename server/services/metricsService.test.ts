@@ -1,13 +1,16 @@
-import { TelemetryClient } from 'applicationinsights'
+import { telemetry } from '@ministryofjustice/hmpps-azure-telemetry'
 import { ServiceUser } from '../@types/express'
 import MetricsService from './metricsService'
 import MetricsEvent from '../data/metricsEvent'
 
-jest.mock('applicationinsights')
+jest.mock('@ministryofjustice/hmpps-azure-telemetry', () => ({
+  telemetry: {
+    trackEvent: jest.fn(),
+  },
+}))
 
 describe('Metrics Service', () => {
-  const telemetryClient = new TelemetryClient()
-  const metricsService = new MetricsService(telemetryClient)
+  const metricsService = new MetricsService()
 
   const user = {
     activeCaseLoadId: 'MDI',
@@ -16,6 +19,9 @@ describe('Metrics Service', () => {
   it('trackEvent', () => {
     const event = new MetricsEvent('event-name', user)
     metricsService.trackEvent(event)
-    expect(telemetryClient.trackEvent).toHaveBeenCalledWith(event)
+    expect(telemetry.trackEvent).toHaveBeenCalledWith(event.name, {
+      ...event.properties,
+      ...event.measurements,
+    })
   })
 })

@@ -41,13 +41,13 @@
     "@microsoft/applicationinsights-web": "3.4.1",
     "@ministryofjustice/frontend": "^9.0.0",
     "@ministryofjustice/hmpps-auth-clients": "3.0.0",
+    "@ministryofjustice/hmpps-azure-telemetry": "^1.0.0",
     "@ministryofjustice/hmpps-connect-dps-components": "6.1.0",
     "@ministryofjustice/hmpps-rest-client": "2.1.0",
     "@types/express-serve-static-core": "5.1.1",
     "@types/lodash": "4.17.24",
     "accessible-autocomplete": "^3.0.1",
     "agentkeepalive": "^4.6.0",
-    "applicationinsights": "^2.9.8",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
     "class-transformer": "^0.5.1",
@@ -130,6 +130,7 @@
     "typescript": "^5.9.3"
   },
   "overrides": {
+    "@opentelemetry/core": "2.8.0",
     "serialize-javascript": "~7.0.5",
     "js-yaml": "^4.2.0",
     "validator": "~13.15.35",
