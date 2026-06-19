@@ -36,7 +36,9 @@ export function serviceCheckFactory(
           retryHandler: () => err => {
             if (err) {
               const maybeError = err as Error & { code?: string }
-              logger.info(`Retry handler found API error with ${maybeError.code} ${maybeError.message} when calling ${name}`)
+              logger.info(
+                `Retry handler found API error with ${maybeError.code} ${maybeError.message} when calling ${name}`,
+              )
             }
             return undefined
           },
