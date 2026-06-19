@@ -17,12 +17,23 @@ interface HealthCheckResult extends Record<string, unknown> {
 export type HealthCheckService = () => Promise<HealthCheckStatus>
 export type HealthCheckCallback = (result: HealthCheckResult) => void
 
+function normaliseHealthErrorDetails(error: unknown): unknown {
+  if (error && typeof error === 'object') {
+    const details = error as Record<string, unknown>
+    if (typeof details.status !== 'number' && typeof details.responseStatus === 'number') {
+      return { ...details, status: details.responseStatus }
+    }
+  }
+
+  return error
+}
+
 function service(name: string, url: string, agentConfig: AgentConfig): HealthCheckService {
   const check = serviceCheckFactory(name, url, agentConfig)
   return () =>
     check()
       .then(result => ({ name, status: 'UP', message: result }))
-      .catch(err => ({ name, status: 'DOWN', message: err }))
+      .catch(err => ({ name, status: 'DOWN', message: normaliseHealthErrorDetails(err) }))
 }
 
 function addAppInfo(result: HealthCheckResult, applicationInfo: ApplicationInfo): HealthCheckResult {
