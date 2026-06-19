@@ -35,7 +35,10 @@
       "date": "2024-04-11",
       "startTime": "08:30",
       "endTime": "11:45",
-      "priority": 6
+      "priority": 6,
+      "attendanceStatus": null,
+      "attendanceReasonCode": null,
+      "prisonerComments": null
     },
     {
       "prisonCode": "MDI",
@@ -67,7 +70,10 @@
       "date": "2024-04-11",
       "startTime": "08:30",
       "endTime": "11:45",
-      "priority": 6
+      "priority": 6,
+      "attendanceStatus": null,
+      "attendanceReasonCode": null,
+      "prisonerComments": null
     }
   ]
 }

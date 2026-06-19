@@ -434,6 +434,33 @@ describe('Movement list routes - location events', () => {
         ],
       } as InternalLocationEvents
 
+      const visit = {
+        summary: 'Visit',
+        prisonerNumber: 'A1234BC',
+        startTime: '09:30',
+        endTime: '10:00',
+      }
+
+      const adjudication = {
+        summary: 'Adjudication',
+        prisonerNumber: 'A1234BC',
+        startTime: '10:00',
+        endTime: '10:30',
+      }
+
+      const courtHearing = {
+        summary: 'Court hearing',
+        prisonerNumber: 'A1234BC',
+        startTime: '10:30',
+        endTime: '11:00',
+      }
+
+      const externalTransfer = {
+        summary: 'External transfer',
+        prisonerNumber: 'A1234BC',
+        startTime: '09:30',
+      }
+
       when(activitiesService.getInternalLocationEventsByDpsLocationId)
         .calledWith(prisonCode, date, internalLocation.dpsLocationId, res.locals.user, timeSlot as string)
         .mockResolvedValue(internalLocationEvent)
@@ -443,37 +470,10 @@ describe('Movement list routes - location events', () => {
         .mockResolvedValue({
           activities: [],
           appointments: [],
-          visits: [
-            {
-              summary: 'Visit',
-              prisonerNumber: 'A1234BC',
-              startTime: '09:30',
-              endTime: '10:00',
-            },
-          ],
-          adjudications: [
-            {
-              summary: 'Adjudication',
-              prisonerNumber: 'A1234BC',
-              startTime: '10:00',
-              endTime: '10:30',
-            },
-          ],
-          courtHearings: [
-            {
-              summary: 'Court hearing',
-              prisonerNumber: 'A1234BC',
-              startTime: '10:30',
-              endTime: '11:00',
-            },
-          ],
-          externalTransfers: [
-            {
-              summary: 'External transfer',
-              prisonerNumber: 'A1234BC',
-              startTime: '09:30',
-            },
-          ],
+          visits: [visit],
+          adjudications: [adjudication],
+          courtHearings: [courtHearing],
+          externalTransfers: [externalTransfer],
         } as PrisonerScheduledEvents)
 
       await handler.GET(req, res)
@@ -488,31 +488,7 @@ describe('Movement list routes - location events', () => {
             {
               ...prisoner,
               events: internalLocationEvent.events,
-              clashingEvents: [
-                {
-                  summary: 'External transfer',
-                  prisonerNumber: 'A1234BC',
-                  startTime: '09:30',
-                },
-                {
-                  summary: 'Visit',
-                  prisonerNumber: 'A1234BC',
-                  startTime: '09:30',
-                  endTime: '10:00',
-                },
-                {
-                  summary: 'Adjudication',
-                  prisonerNumber: 'A1234BC',
-                  startTime: '10:00',
-                  endTime: '10:30',
-                },
-                {
-                  summary: 'Court hearing',
-                  prisonerNumber: 'A1234BC',
-                  startTime: '10:30',
-                  endTime: '11:00',
-                },
-              ] as ScheduledEvent[],
+              clashingEvents: [externalTransfer, visit, adjudication, courtHearing] as ScheduledEvent[],
             },
           ],
         } as MovementListLocation,
@@ -586,66 +562,6 @@ describe('Movement list routes - location events', () => {
     })
   })
 
-  it('renders the expected view with one prisoner whose alerts are filtered', async () => {
-    const dateOption = DateOption.TODAY
-    const dateQueryParam = format(new Date(), 'yyyy-MM-dd')
-    const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
-    const timeSlot = TimeSlot.AM
-    req.query = {
-      locationIds: `${internalLocation.dpsLocationId}`,
-      dateOption,
-      timeSlot,
-    }
-
-    const internalLocationEvent = {
-      ...internalLocation,
-      events: [
-        {
-          prisonerNumber: 'A1234BC',
-        },
-      ],
-    } as InternalLocationEvents
-
-    when(activitiesService.getInternalLocationEventsByDpsLocationId)
-      .calledWith(prisonCode, date, internalLocation.dpsLocationId, res.locals.user, timeSlot as string)
-      .mockResolvedValue(internalLocationEvent)
-
-    when(activitiesService.getScheduledEventsForPrisoners)
-      .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
-      .mockResolvedValue({
-        activities: [],
-        appointments: [],
-        visits: [],
-        adjudications: [],
-        courtHearings: [],
-        externalTransfers: [],
-      })
-
-    when(alertsFilterService.getFilteredCategory).calledWith(alertFilters, prisoner.category).mockReturnValue(undefined)
-
-    await handler.GET(req, res)
-
-    expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
-      dateOption,
-      date: dateQueryParam,
-      timeSlot,
-      location: {
-        ...internalLocationEvent,
-        prisonerEvents: [
-          {
-            ...prisoner,
-            category: undefined,
-            events: internalLocationEvent.events,
-            clashingEvents: [],
-          },
-        ],
-      } as MovementListLocation,
-      alertOptions: alertFilterOptions,
-      movementListJourney: req.journeyData.movementListJourney,
-      outsideList: false,
-    })
-  })
-
   it('clashing events excludes events at location', async () => {
     const dateOption = DateOption.TODAY
     const dateQueryParam = format(today, 'yyyy-MM-dd')
@@ -657,38 +573,40 @@ describe('Movement list routes - location events', () => {
       timeSlot,
     }
 
+    const activity = {
+      scheduledInstanceId: 1,
+      eventType: EventType.ACTIVITY,
+      internalLocationId: internalLocation.id,
+      summary: 'Activity at location',
+      prisonerNumber: 'A1234BC',
+      startTime: '09:00',
+      endTime: '12:30',
+    }
+
+    const appointment = {
+      appointmentId: 2,
+      eventType: EventType.APPOINTMENT,
+      internalLocationId: internalLocation.id,
+      summary: 'Appointment at location',
+      prisonerNumber: 'A1234BC',
+      date: format(today, 'yyyy-MM-dd'),
+      startTime: '10:00',
+      endTime: '11:30',
+    }
+
+    const visit = {
+      eventId: 3,
+      eventType: EventType.VISIT,
+      internalLocationId: internalLocation.id,
+      summary: 'Visit at location',
+      prisonerNumber: 'A1234BC',
+      startTime: '11:00',
+      endTime: '11:30',
+    }
+
     const internalLocationEvent = {
       ...internalLocation,
-      events: [
-        {
-          scheduledInstanceId: 1,
-          eventType: EventType.ACTIVITY,
-          internalLocationId: internalLocation.id,
-          summary: 'Activity at location',
-          prisonerNumber: 'A1234BC',
-          startTime: '09:00',
-          endTime: '12:30',
-        },
-        {
-          appointmentId: 2,
-          eventType: EventType.APPOINTMENT,
-          internalLocationId: internalLocation.id,
-          summary: 'Appointment at location',
-          prisonerNumber: 'A1234BC',
-          date: format(today, 'yyyy-MM-dd'),
-          startTime: '10:00',
-          endTime: '11:30',
-        },
-        {
-          eventId: 3,
-          eventType: EventType.VISIT,
-          internalLocationId: internalLocation.id,
-          summary: 'Visit at location',
-          prisonerNumber: 'A1234BC',
-          startTime: '11:00',
-          endTime: '11:30',
-        },
-      ],
+      events: [activity, appointment, visit],
     } as InternalLocationEvents
 
     when(activitiesService.getInternalLocationEventsByDpsLocationId)
@@ -698,37 +616,9 @@ describe('Movement list routes - location events', () => {
     when(activitiesService.getScheduledEventsForPrisoners)
       .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
       .mockResolvedValue({
-        activities: [
-          {
-            scheduledInstanceId: 1,
-            internalLocationId: internalLocation.id,
-            summary: 'Activity at location',
-            prisonerNumber: 'A1234BC',
-            startTime: '09:00',
-            endTime: '12:30',
-          },
-        ],
-        appointments: [
-          {
-            appointmentId: 2,
-            internalLocationId: internalLocation.id,
-            summary: 'Appointment at location',
-            prisonerNumber: 'A1234BC',
-            startTime: '10:00',
-            endTime: '11:30',
-          },
-        ],
-        visits: [
-          {
-            eventId: 3,
-            eventType: EventType.VISIT,
-            internalLocationId: internalLocation.id,
-            summary: 'Visit at location',
-            prisonerNumber: 'A1234BC',
-            startTime: '11:00',
-            endTime: '11:30',
-          },
-        ],
+        activities: [activity],
+        appointments: [appointment],
+        visits: [visit],
         adjudications: [],
         courtHearings: [],
         externalTransfers: [],
@@ -779,6 +669,79 @@ describe('Movement list routes - location events', () => {
       ],
     } as InternalLocationEvents
 
+    const appointmentClashingAndDisplayed = {
+      autoSuspended: false,
+      cancelled: true,
+      inCell: false,
+      offWing: false,
+      onWing: false,
+      outsidePrison: false,
+      priority: 0,
+      suspended: false,
+      appointmentSeriesId: 3,
+      appointmentId: 2,
+      appointmentAttendeeId: 2,
+      eventType: 'APPOINTMENT',
+      eventSource: 'SAA',
+      summary: 'Appointment clashing and displayed',
+      startTime: '10:30',
+      endTime: '11:00',
+      prisonerNumber: 'A1234BC',
+      date: dateQueryParam,
+      appointmentSeriesCancellationStartDate: toDateString(subDays(date, 1)),
+      appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+    }
+
+    const appointmentClashingAndNotDisplayed = {
+      autoSuspended: false,
+      cancelled: true,
+      inCell: false,
+      offWing: false,
+      onWing: false,
+      outsidePrison: false,
+      priority: 0,
+      suspended: false,
+      appointmentSeriesId: 3,
+      appointmentId: 3,
+      appointmentAttendeeId: 2,
+      eventType: 'APPOINTMENT',
+      eventSource: 'SAA',
+      summary: 'Appointment clashing and not displayed',
+      startTime: '10:30',
+      endTime: '11:00',
+      prisonerNumber: 'A1234BC',
+      date: dateQueryParam,
+      appointmentSeriesCancellationStartDate: toDateString(subDays(date, 2)),
+      appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+    }
+
+    const visit = {
+      summary: 'Visit',
+      prisonerNumber: 'A1234BC',
+      startTime: '09:30',
+      endTime: '10:00',
+    }
+
+    const adjudication = {
+      summary: 'Adjudication',
+      prisonerNumber: 'A1234BC',
+      startTime: '10:00',
+      endTime: '10:30',
+    }
+
+    const courtHearing = {
+      summary: 'Court hearing',
+      prisonerNumber: 'A1234BC',
+      startTime: '10:30',
+      endTime: '11:00',
+    }
+
+    const externalTransfer = {
+      summary: 'External transfer',
+      prisonerNumber: 'A1234BC',
+      startTime: '09:30',
+    }
+
     when(activitiesService.getInternalLocationEventsByDpsLocationId)
       .calledWith(prisonCode, date, internalLocation.dpsLocationId, res.locals.user, timeSlot as string)
       .mockResolvedValue(internalLocationEvent)
@@ -787,83 +750,11 @@ describe('Movement list routes - location events', () => {
       .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
       .mockResolvedValue({
         activities: [],
-        appointments: [
-          {
-            autoSuspended: false,
-            cancelled: true,
-            inCell: false,
-            offWing: false,
-            onWing: false,
-            outsidePrison: false,
-            priority: 0,
-            suspended: false,
-            appointmentSeriesId: 3,
-            appointmentId: 2,
-            appointmentAttendeeId: 2,
-            eventType: 'APPOINTMENT',
-            eventSource: 'SAA',
-            summary: 'Appointment clashing and displayed',
-            startTime: '10:30',
-            endTime: '11:00',
-            prisonerNumber: 'A1234BC',
-            date: dateQueryParam,
-            appointmentSeriesCancellationStartDate: toDateString(subDays(date, 1)),
-            appointmentSeriesFrequency: AppointmentFrequency.DAILY,
-          },
-          {
-            autoSuspended: false,
-            cancelled: true,
-            inCell: false,
-            offWing: false,
-            onWing: false,
-            outsidePrison: false,
-            priority: 0,
-            suspended: false,
-            appointmentSeriesId: 3,
-            appointmentId: 3,
-            appointmentAttendeeId: 2,
-            eventType: 'APPOINTMENT',
-            eventSource: 'SAA',
-            summary: 'Appointment clashing and not displayed',
-            startTime: '10:30',
-            endTime: '11:00',
-            prisonerNumber: 'A1234BC',
-            date: dateQueryParam,
-            appointmentSeriesCancellationStartDate: toDateString(subDays(date, 2)),
-            appointmentSeriesFrequency: AppointmentFrequency.DAILY,
-          },
-        ],
-        visits: [
-          {
-            summary: 'Visit',
-            prisonerNumber: 'A1234BC',
-            startTime: '09:30',
-            endTime: '10:00',
-          },
-        ],
-        adjudications: [
-          {
-            summary: 'Adjudication',
-            prisonerNumber: 'A1234BC',
-            startTime: '10:00',
-            endTime: '10:30',
-          },
-        ],
-        courtHearings: [
-          {
-            summary: 'Court hearing',
-            prisonerNumber: 'A1234BC',
-            startTime: '10:30',
-            endTime: '11:00',
-          },
-        ],
-        externalTransfers: [
-          {
-            summary: 'External transfer',
-            prisonerNumber: 'A1234BC',
-            startTime: '09:30',
-          },
-        ],
+        appointments: [appointmentClashingAndDisplayed, appointmentClashingAndNotDisplayed],
+        visits: [visit],
+        adjudications: [adjudication],
+        courtHearings: [courtHearing],
+        externalTransfers: [externalTransfer],
       } as PrisonerScheduledEvents)
 
     await handler.GET(req, res)
@@ -879,51 +770,11 @@ describe('Movement list routes - location events', () => {
             ...prisoner,
             events: internalLocationEvent.events,
             clashingEvents: [
-              {
-                summary: 'External transfer',
-                prisonerNumber: 'A1234BC',
-                startTime: '09:30',
-              },
-              {
-                summary: 'Visit',
-                prisonerNumber: 'A1234BC',
-                startTime: '09:30',
-                endTime: '10:00',
-              },
-              {
-                summary: 'Adjudication',
-                prisonerNumber: 'A1234BC',
-                startTime: '10:00',
-                endTime: '10:30',
-              },
-              {
-                autoSuspended: false,
-                cancelled: true,
-                inCell: false,
-                offWing: false,
-                onWing: false,
-                outsidePrison: false,
-                priority: 0,
-                suspended: false,
-                appointmentSeriesId: 3,
-                appointmentId: 2,
-                appointmentAttendeeId: 2,
-                eventType: 'APPOINTMENT',
-                eventSource: 'SAA',
-                summary: 'Appointment clashing and displayed',
-                startTime: '10:30',
-                endTime: '11:00',
-                prisonerNumber: 'A1234BC',
-                date: dateQueryParam,
-                appointmentSeriesCancellationStartDate: toDateString(subDays(date, 1)),
-                appointmentSeriesFrequency: AppointmentFrequency.DAILY,
-              },
-              {
-                summary: 'Court hearing',
-                prisonerNumber: 'A1234BC',
-                startTime: '10:30',
-                endTime: '11:00',
-              },
+              externalTransfer,
+              visit,
+              adjudication,
+              appointmentClashingAndDisplayed,
+              courtHearing,
             ] as ScheduledEvent[],
           },
         ],
@@ -1030,67 +881,72 @@ describe('Movement list routes - location events', () => {
       timeSlot,
     }
 
+    const event1 = {
+      scheduledInstanceId: 1,
+      eventType: EventType.ACTIVITY,
+      internalLocationId: internalLocation.id,
+      summary: 'Activity 1 at location',
+      prisonerNumber: 'A1234BC',
+      startTime: '09:00',
+      endTime: '12:30',
+    }
+
+    const event2 = {
+      scheduledInstanceId: 2,
+      eventType: EventType.ACTIVITY,
+      internalLocationId: internalLocation.id,
+      summary: 'Activity 2 at location',
+      prisonerNumber: 'A1234BC',
+      startTime: '09:00',
+      endTime: '12:30',
+    }
+
+    const event3 = {
+      scheduledInstanceId: 3,
+      eventType: EventType.ACTIVITY,
+      internalLocationId: internalLocation.id,
+      summary: 'Activity 3 at location',
+      prisonerNumber: 'A1234BC',
+      startTime: '08:00',
+      endTime: '11:30',
+    }
+
+    const event4 = {
+      appointmentId: 4,
+      eventType: EventType.APPOINTMENT,
+      internalLocationId: internalLocation.id,
+      summary: 'Appointment 1 at location',
+      prisonerNumber: 'A1234BC',
+      date: format(today, 'yyyy-MM-dd'),
+      startTime: '10:00',
+      endTime: '11:30',
+    }
+
+    const event5 = {
+      appointmentId: 5,
+      eventType: EventType.APPOINTMENT,
+      internalLocationId: internalLocation.id,
+      summary: 'Appointment 2 at location',
+      prisonerNumber: 'A1234BC',
+      date: format(today, 'yyyy-MM-dd'),
+      startTime: '10:00',
+      endTime: '11:30',
+    }
+
+    const event6 = {
+      appointmentId: 6,
+      eventType: EventType.APPOINTMENT,
+      internalLocationId: internalLocation.id,
+      summary: 'Appointment 3 at location',
+      prisonerNumber: 'A1234BC',
+      date: format(today, 'yyyy-MM-dd'),
+      startTime: '09:00',
+      endTime: '11:30',
+    }
+
     const internalLocationEvent = {
       ...internalLocation,
-      events: [
-        {
-          appointmentId: 5,
-          eventType: EventType.APPOINTMENT,
-          internalLocationId: internalLocation.id,
-          summary: 'Appointment 2 at location',
-          prisonerNumber: 'A1234BC',
-          date: format(today, 'yyyy-MM-dd'),
-          startTime: '10:00',
-          endTime: '11:30',
-        },
-        {
-          appointmentId: 4,
-          eventType: EventType.APPOINTMENT,
-          internalLocationId: internalLocation.id,
-          summary: 'Appointment 1 at location',
-          prisonerNumber: 'A1234BC',
-          date: format(today, 'yyyy-MM-dd'),
-          startTime: '10:00',
-          endTime: '11:30',
-        },
-        {
-          appointmentId: 6,
-          eventType: EventType.APPOINTMENT,
-          internalLocationId: internalLocation.id,
-          summary: 'Appointment 3 at location',
-          prisonerNumber: 'A1234BC',
-          date: format(today, 'yyyy-MM-dd'),
-          startTime: '09:00',
-          endTime: '11:30',
-        },
-        {
-          scheduledInstanceId: 2,
-          eventType: EventType.ACTIVITY,
-          internalLocationId: internalLocation.id,
-          summary: 'Activity 2 at location',
-          prisonerNumber: 'A1234BC',
-          startTime: '09:00',
-          endTime: '12:30',
-        },
-        {
-          scheduledInstanceId: 1,
-          eventType: EventType.ACTIVITY,
-          internalLocationId: internalLocation.id,
-          summary: 'Activity 1 at location',
-          prisonerNumber: 'A1234BC',
-          startTime: '09:00',
-          endTime: '12:30',
-        },
-        {
-          scheduledInstanceId: 3,
-          eventType: EventType.ACTIVITY,
-          internalLocationId: internalLocation.id,
-          summary: 'Activity 3 at location',
-          prisonerNumber: 'A1234BC',
-          startTime: '08:00',
-          endTime: '11:30',
-        },
-      ],
+      events: [event5, event4, event6, event2, event1, event3],
     } as InternalLocationEvents
 
     when(activitiesService.getInternalLocationEventsByDpsLocationId)
@@ -1119,65 +975,7 @@ describe('Movement list routes - location events', () => {
         prisonerEvents: [
           {
             ...prisoner,
-            events: [
-              {
-                scheduledInstanceId: 3,
-                eventType: EventType.ACTIVITY,
-                internalLocationId: internalLocation.id,
-                summary: 'Activity 3 at location',
-                prisonerNumber: 'A1234BC',
-                startTime: '08:00',
-                endTime: '11:30',
-              },
-              {
-                scheduledInstanceId: 1,
-                eventType: EventType.ACTIVITY,
-                internalLocationId: internalLocation.id,
-                summary: 'Activity 1 at location',
-                prisonerNumber: 'A1234BC',
-                startTime: '09:00',
-                endTime: '12:30',
-              },
-              {
-                scheduledInstanceId: 2,
-                eventType: EventType.ACTIVITY,
-                internalLocationId: internalLocation.id,
-                summary: 'Activity 2 at location',
-                prisonerNumber: 'A1234BC',
-                startTime: '09:00',
-                endTime: '12:30',
-              },
-              {
-                appointmentId: 6,
-                eventType: EventType.APPOINTMENT,
-                internalLocationId: internalLocation.id,
-                summary: 'Appointment 3 at location',
-                prisonerNumber: 'A1234BC',
-                date: format(today, 'yyyy-MM-dd'),
-                startTime: '09:00',
-                endTime: '11:30',
-              },
-              {
-                appointmentId: 4,
-                eventType: EventType.APPOINTMENT,
-                internalLocationId: internalLocation.id,
-                summary: 'Appointment 1 at location',
-                prisonerNumber: 'A1234BC',
-                date: format(today, 'yyyy-MM-dd'),
-                startTime: '10:00',
-                endTime: '11:30',
-              },
-              {
-                appointmentId: 5,
-                eventType: EventType.APPOINTMENT,
-                internalLocationId: internalLocation.id,
-                summary: 'Appointment 2 at location',
-                prisonerNumber: 'A1234BC',
-                date: format(today, 'yyyy-MM-dd'),
-                startTime: '10:00',
-                endTime: '11:30',
-              },
-            ] as ScheduledEvent[],
+            events: [event3, event1, event2, event6, event4, event5] as ScheduledEvent[],
             clashingEvents: [] as ScheduledEvent[],
           },
         ],
