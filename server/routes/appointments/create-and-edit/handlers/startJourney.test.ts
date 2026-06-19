@@ -21,7 +21,7 @@ jest.mock('../../../../services/metricsService')
 jest.mock('../../../../services/appointeeAttendeeService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const metricsService = new MetricsService() as jest.Mocked<MetricsService>
 const appointeeAttendeeService = new AppointeeAttendeeService(null) as jest.Mocked<AppointeeAttendeeService>
 
 describe('Route Handlers - Create Appointment - Start', () => {

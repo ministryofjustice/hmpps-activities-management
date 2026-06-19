@@ -10,7 +10,7 @@ import AlertsService, { PrisonerAlertResults } from '../../../../services/alerts
 jest.mock('../../../../services/metricsService')
 jest.mock('../../../../services/alertsService')
 
-const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const metricsService = new MetricsService() as jest.Mocked<MetricsService>
 const alertsService = new AlertsService(null) as jest.Mocked<AlertsService>
 
 describe('Route Handlers - Create Appointment - Review Prisoners', () => {
