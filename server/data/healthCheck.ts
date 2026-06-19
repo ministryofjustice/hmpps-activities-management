@@ -1,5 +1,4 @@
-import superagent from 'superagent'
-import Agent, { HttpsAgent } from 'agentkeepalive'
+import { RestClient } from '@ministryofjustice/hmpps-rest-client'
 import logger from '../../logger'
 import { AgentConfig } from '../config'
 
@@ -17,27 +16,43 @@ export function serviceCheckFactory(
   agentOptions: AgentConfig,
   serviceTimeout: ServiceTimeout = new ServiceTimeout(),
 ): ServiceCheck {
-  const keepaliveAgent = url.startsWith('https') ? new HttpsAgent(agentOptions) : new Agent(agentOptions)
+  const client = new RestClient(
+    name,
+    {
+      url,
+      timeout: serviceTimeout,
+      agent: agentOptions,
+    },
+    logger,
+  )
 
-  return () =>
-    new Promise((resolve, reject) => {
-      superagent
-        .get(url)
-        .agent(keepaliveAgent)
-        .retry(2, err => {
-          if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message} when calling ${name}`)
-          return undefined // retry handler only for logging retries, not to influence retry logic
-        })
-        .timeout(serviceTimeout)
-        .end((error, result) => {
-          if (error) {
-            logger.error(error.stack, `Error calling ${name}`)
-            reject(error)
-          } else if (result.status === 200) {
-            resolve('OK')
-          } else {
-            reject(result.status)
-          }
-        })
-    })
+  return async () => {
+    try {
+      const result = await client.get(
+        {
+          path: '',
+          raw: true,
+          retries: 2,
+          retryHandler: () => err => {
+            if (err) {
+              const maybeError = err as Error & { code?: string }
+              logger.info(`Retry handler found API error with ${maybeError.code} ${maybeError.message} when calling ${name}`)
+            }
+            return undefined
+          },
+        },
+        undefined,
+      )
+
+      if (result && typeof result === 'object' && 'status' in result && result.status === 200) {
+        return 'OK'
+      }
+
+      throw new Error(`Health check for ${name} did not return HTTP 200`)
+    } catch (error) {
+      const maybeError = error as Error
+      logger.error(maybeError.stack, `Error calling ${name}`)
+      throw error
+    }
+  }
 }

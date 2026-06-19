@@ -1,10 +1,7 @@
-import superagent, { SuperAgentRequest } from 'superagent'
-import Agent, { HttpsAgent } from 'agentkeepalive'
-
-import { Readable } from 'stream'
+import { ApiConfig, RestClient, asSystem } from '@ministryofjustice/hmpps-rest-client'
 import logger from '../../logger'
+import config from '../config'
 import sanitiseError from '../sanitisedError'
-import config, { ApiConfig } from '../config'
 import TokenStore from './tokenStore'
 import { createRedisClient } from './redisClient'
 import generateOauthClientToken from '../authentication/clientCredentials'
@@ -23,16 +20,21 @@ interface SendDataRequest extends Request {
 }
 
 export default abstract class AbstractHmppsRestClient {
-  private agent: Agent
-
   private tokenStore: TokenStore
+
+  private restClient: RestClient
+
+  private hmppsAuthClient: RestClient
 
   protected constructor(
     private readonly name: string,
     private readonly apiConfig: ApiConfig,
   ) {
-    this.agent = apiConfig.url.startsWith('https') ? new HttpsAgent(apiConfig.agent) : new Agent(apiConfig.agent)
     this.tokenStore = new TokenStore(createRedisClient())
+    this.restClient = new RestClient(name, apiConfig, logger, {
+      getToken: this.getSystemToken.bind(this),
+    })
+    this.hmppsAuthClient = new RestClient('HMPPS Auth', config.apis.hmppsAuth as ApiConfig, logger)
   }
 
   private async getSystemToken(username: string): Promise<string> {
@@ -55,12 +57,14 @@ export default abstract class AbstractHmppsRestClient {
       `HMPPS Auth request '${authRequest}' for client id '${config.apis.hmppsAuth.systemClientId}' and user '${key}'`,
     )
 
-    const response = await superagent
-      .post(`${config.apis.hmppsAuth.url}/oauth/token`)
-      .set('Authorization', clientToken)
-      .set('Content-Type', 'application/x-www-form-urlencoded')
-      .send(authRequest)
-      .timeout(config.apis.hmppsAuth.timeout)
+    const response = await this.hmppsAuthClient.makeRestClientCall('', ({ superagent, agent }) =>
+      superagent
+        .post(`${config.apis.hmppsAuth.url}/oauth/token`)
+        .agent(agent)
+        .set('Authorization', clientToken)
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .send(authRequest),
+    )
 
     // Set the TTL slightly less than expiry of token
     await this.tokenStore.setToken(key, response.body.access_token, response.body.expires_in - 60)
@@ -68,98 +72,113 @@ export default abstract class AbstractHmppsRestClient {
   }
 
   private async makeRequest<T>(
-    request: SuperAgentRequest,
+    method: 'GET' | 'DELETE',
     { path = null, query = {}, headers = {}, responseType = '', authToken = null }: Request,
     user: Express.User,
   ): Promise<T> {
     logger.info(
-      `${request.method.toUpperCase()} using ${authToken ? 'service' : 'admin'} client credentials: calling ${
+      `${method} using ${authToken ? 'service' : 'admin'} client credentials: calling ${
         this.name
       }: ${path}?${new URLSearchParams(query as Record<string, string>).toString()}`,
     )
 
-    const token = authToken || (await this.getSystemToken(user?.username))
+    const auth = authToken || asSystem(user?.username)
 
-    return request
-      .query(query)
-      .agent(this.agent)
-      .set('Content-Type', 'application/json')
-      .auth(token, { type: 'bearer' })
-      .set(headers)
-      .responseType(responseType)
-      .timeout(this.apiConfig.timeout)
-      .then(response => {
-        return response.body
-      })
-      .catch(error => {
-        const sanitisedError = sanitiseError(error)
-        logger.warn(
-          { ...sanitisedError, query },
-          `Error calling ${this.name}, path: '${path}', verb: '${request.method}'`,
-        )
-        throw sanitisedError
-      }) as T
-  }
+    const requestConfig = {
+      path,
+      query,
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json',
+      },
+      responseType,
+      errorHandler: (_path: string, _verb: string, error: unknown) => {
+        throw sanitiseError(error as never)
+      },
+    }
 
-  private async makeStreamRequest(
-    request: SuperAgentRequest,
-    { path = null, query = {}, headers = {}, responseType = '', authToken = null }: Request,
-    user: Express.User,
-  ): Promise<unknown> {
-    logger.info(
-      `${request.method.toUpperCase()} using ${authToken ? 'service' : 'admin'} client credentials: calling ${
-        this.name
-      }: ${path}?${new URLSearchParams(query as Record<string, string>).toString()}`,
-    )
+    if (method === 'GET') {
+      return this.restClient.get<T>(requestConfig, auth)
+    }
 
-    const token = authToken || (await this.getSystemToken(user?.username))
-
-    return new Promise((resolve, reject) => {
-      request
-        .query(query)
-        .agent(this.agent)
-        .set('Content-Type', 'application/json')
-        .auth(token, { type: 'bearer' })
-        .set(headers)
-        .responseType(responseType)
-        .timeout(this.apiConfig.timeout)
-        .end((error, response) => {
-          if (error) {
-            logger.warn(sanitiseError(error), `Error calling ${this.name}`)
-            reject(error)
-          } else if (response) {
-            const s = new Readable()
-            // eslint-disable-next-line no-underscore-dangle
-            s._read = () => {}
-            s.push(response.body)
-            s.push(null)
-            resolve(s)
-          }
-        })
-    })
+    return this.restClient.delete<T>(requestConfig, auth)
   }
 
   protected async get<T>(request: Request, user?: ServiceUser): Promise<T> {
-    return this.makeRequest(superagent.get(`${this.apiConfig.url}${request.path}`), request, user)
+    return this.makeRequest('GET', request, user)
   }
 
   protected async post<T>(request: SendDataRequest, user?: ServiceUser): Promise<T> {
-    return this.makeRequest(superagent.post(`${this.apiConfig.url}${request.path}`).send(request.data), request, user)
+    return this.restClient.post<T>(
+      {
+        path: request.path,
+        query: request.query,
+        headers: {
+          ...request.headers,
+          'Content-Type': 'application/json',
+        },
+        responseType: request.responseType,
+        data: request.data,
+        errorHandler: (_path: string, _verb: string, error: unknown) => {
+          throw sanitiseError(error as never)
+        },
+      },
+      request.authToken || asSystem(user?.username),
+    )
   }
 
   protected async put<T>(request: SendDataRequest, user?: ServiceUser): Promise<T> {
-    return this.makeRequest(superagent.put(`${this.apiConfig.url}${request.path}`).send(request.data), request, user)
+    return this.restClient.put<T>(
+      {
+        path: request.path,
+        query: request.query,
+        headers: {
+          ...request.headers,
+          'Content-Type': 'application/json',
+        },
+        responseType: request.responseType,
+        data: request.data,
+        errorHandler: (_path: string, _verb: string, error: unknown) => {
+          throw sanitiseError(error as never)
+        },
+      },
+      request.authToken || asSystem(user?.username),
+    )
   }
 
   protected async patch<T>(request: SendDataRequest, user?: ServiceUser): Promise<T> {
-    return this.makeRequest(superagent.patch(`${this.apiConfig.url}${request.path}`).send(request.data), request, user)
+    return this.restClient.patch<T>(
+      {
+        path: request.path,
+        query: request.query,
+        headers: {
+          ...request.headers,
+          'Content-Type': 'application/json',
+        },
+        responseType: request.responseType,
+        data: request.data,
+        errorHandler: (_path: string, _verb: string, error: unknown) => {
+          throw sanitiseError(error as never)
+        },
+      },
+      request.authToken || asSystem(user?.username),
+    )
   }
 
   protected async delete<T>(request: Request, user?: ServiceUser): Promise<T> {
-    return this.makeRequest(superagent.delete(`${this.apiConfig.url}${request.path}`), request, user)
+    return this.makeRequest('DELETE', request, user)
   }
 
   protected async stream(request: Request, user?: ServiceUser): Promise<unknown> {
-    return this.makeStreamRequest(superagent.get(`${this.apiConfig.url}${request.path}`), request, user)
+    return this.restClient.stream(
+      {
+        path: request.path,
+        headers: {
+          ...request.headers,
+          'Content-Type': 'application/json',
+        },
+      },
+      request.authToken || asSystem(user?.username),
+    )
   }
 }

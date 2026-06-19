@@ -1,15 +1,21 @@
-import superagent from 'superagent'
+import { RestClient } from '@ministryofjustice/hmpps-rest-client'
 import type { Request } from 'express'
 import getSanitisedError from '../sanitisedError'
 import config from '../config'
 import logger from '../../logger'
 
+const tokenVerificationClient = new RestClient('tokenVerificationApi', config.apis.tokenVerification, logger)
+
 function getApiClientToken(token: string) {
-  return superagent
-    .post(`${config.apis.tokenVerification.url}/token/verify`)
-    .auth(token, { type: 'bearer' })
-    .timeout(config.apis.tokenVerification.timeout)
-    .then(response => Boolean(response.body && response.body.active))
+  return tokenVerificationClient
+    .post<{ active?: boolean }>(
+      {
+        path: '/token/verify',
+        data: '',
+      },
+      token || '',
+    )
+    .then(response => Boolean(response && response.active))
     .catch(error => {
       logger.error(getSanitisedError(error), 'Error calling tokenVerificationApi')
     })
