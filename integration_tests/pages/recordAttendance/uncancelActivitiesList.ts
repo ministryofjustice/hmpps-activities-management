@@ -63,5 +63,5 @@ export default class UncancelActivitiesListPage extends Page {
 
   sessionPMCheckbox = () => cy.get(`[name=sessionFilters][value="PM"]`)
 
-  uncancelSessions = () => cy.get('button').contains('Uncancel activity sessions').click()
+  uncancelSessions = () => cy.get('button').contains('Uncancel').click()
 }
