@@ -363,10 +363,7 @@
 
             {% for week, slots in slots %}
 
-                {% set showCurrentWeekTag =
-                  (schedule.scheduleWeeks == 2 and week == currentWeek)
-                  or (schedule.scheduleWeeks > 2 and currentWeek)
-                %}
+                {% set showCurrentWeekTag = schedule.scheduleWeeks == 2 and week == currentWeek %}
 
                 {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                     {
