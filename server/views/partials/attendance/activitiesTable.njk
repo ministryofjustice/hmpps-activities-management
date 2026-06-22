@@ -6,7 +6,7 @@
     {% set formActions = [] %}
     {% if not ((activityDate | toDateString) < (now | toDateString)) %}
       {% set formActions = (formActions.push({
-        text: 'Cancel sessions',
+        text: 'Mark as cancelled',
         formAction: 'activities/cancel-multiple'
       }), formActions) %}
     {% endif %}
@@ -18,7 +18,7 @@
     {% endif %}
     {% if isUncancelPage and not ((activityDate | toDateString) < (now | toDateString)) %}
       {% set formActions = [{
-        text: 'Uncancel activity sessions',
+        text: 'Uncancel',
         formAction: 'uncancel-multiple/next'
       }]%}
     {% endif %}

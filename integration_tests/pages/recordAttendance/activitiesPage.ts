@@ -65,5 +65,5 @@ export default class ActivitiesPage extends Page {
 
   recordEditAttendance = () => cy.get('button').contains('Record or edit attendance').click()
 
-  cancelSessions = () => cy.get('button').contains('Cancel sessions').click()
+  cancelSessions = () => cy.get('button').contains('Mark as cancelled').click()
 }
