@@ -309,10 +309,6 @@
                 }) }}
             {% endif %}
 
-            {{ govukInsetText({
-                text: 'The current week is: Week ' + currentWeek,
-                classes: 'govuk-!-margin-top-0 govuk-!-margin-bottom-0'
-            }) if schedule.scheduleWeeks > 1 and currentWeek }}
             {% set dateAndScheduleRows = [{
                 key: {
                     text: "Start date"
@@ -366,10 +362,13 @@
             }), dateAndScheduleRows) %}
 
             {% for week, slots in slots %}
+
+                {% set showCurrentWeekTag = schedule.scheduleWeeks == 2 and week == currentWeek %}
+
                 {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                     {
                         key: {
-                        text: "Week " + week
+                          html: '<span class="govuk-!-margin-right-2">Week ' + week + '</span>' + (govukTag({ text: "Current week", classes: "govuk-tag--small govuk-tag--green" }) if showCurrentWeekTag),                        classes: 'govuk-!-padding-top-4'
                     },
                         value: { html: daysAndCustomTimes(slots) },
                         actions: {
@@ -381,7 +380,8 @@
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { "data-qa": "change-schedule-link" }
                                 }
-                            ]
+                            ],
+                            classes: "govuk-!-padding-top-4"
                             } if not activityEnded
                     }
                 ), dateAndScheduleRows) %}
