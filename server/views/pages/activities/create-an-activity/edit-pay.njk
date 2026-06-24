@@ -68,8 +68,6 @@
                 <p class="govuk-body">You must set at least one pay rate or <a href="pay-option?preserveHistoryText=true" class="govuk-link">change the activity to unpaid</a>.</p>
             {% endif %}
 
-            {% set isSinglePayRate = displayPays | length == 1 and displayPays[0].pays | length == 1 %}
-
             {% for displayPay in displayPays %}
                 <h2 class="govuk-heading-m">{{ displayPay.incentiveLevel }} incentive level pay rates</h2>
                 {% for pay in displayPay.pays %}
@@ -117,7 +115,10 @@
                         ), cardItems) %}
                     {% endif %}
 
-                    {% if not pay.allocationCount and (isOutsidePrisonPaid and not isSinglePayRate) %}
+                    {% set isSinglePayRate = displayPays | length == 1 and displayPays[0].pays | length == 1 %}
+                    {% set hasNoAllocations = not pay.allocationCount %}
+
+                    {% if (hasNoAllocations and not isOutsidePrisonPaid) or (isOutsidePrisonPaid and not isSinglePayRate) %}
                         {% set cardItems = (cardItems.push(
                             {
                                 href: "../remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
