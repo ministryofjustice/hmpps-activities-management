@@ -37,6 +37,10 @@ export default class CheckPayRoutes {
         displayPays,
         activityName,
         activityPayHistory,
+        isOutsidePrisonPaid:
+          user.externalActivitiesRolledOut &&
+          req.journeyData.createJourney.outsideWork &&
+          req.journeyData.createJourney.paid,
       })
     } else {
       res.render(`pages/activities/create-an-activity/check-pay`, {

@@ -47,8 +47,20 @@
                 classes: 'govuk-!-margin-0'
             }) }}
 
+            {% set insetText %}
+                {% if isOutsidePrisonPaid %}
+                    <p class="govuk-body">You can add pay rates or edit them. You can only delete a pay rate if:</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>no one is allocated to it</li>
+                        <li>there's at least one other pay rate for the activity</li>
+                    </ul>
+                {% else %}
+                    <p class="govuk-body">You can add pay rates or edit them. You can only delete pay rates if no one is allocated to them.</p>
+                {% endif %}
+            {% endset %}
+
             {{ govukInsetText({
-                text: 'You can add pay rates or edit them. You can only delete pay rates if no one is allocated to them.'
+                html: insetText
             }) }}
 
             {% if incentiveLevelPays | length == 0 %}
@@ -75,7 +87,7 @@
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { 'data-qa': 'cancel-pay'},
                                     visuallyHiddenText: "cancel pay change"
-                                    }]
+                                }]
                             } if pay.description
                         }
                     ), rows) %}
@@ -103,7 +115,10 @@
                         ), cardItems) %}
                     {% endif %}
 
-                    {% if not pay.allocationCount %}
+                    {% set isSinglePayRate = displayPays | length == 1 and displayPays[0].pays | length == 1 %}
+                    {% set hasNoAllocations = not pay.allocationCount %}
+
+                    {% if (hasNoAllocations and not isOutsidePrisonPaid) or (isOutsidePrisonPaid and not isSinglePayRate) %}
                         {% set cardItems = (cardItems.push(
                             {
                                 href: "../remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
