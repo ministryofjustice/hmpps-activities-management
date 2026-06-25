@@ -1,23 +1,23 @@
 import nock from 'nock'
 
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
 import LocationsInsidePrisonApiClient from './locationsInsidePrisonApiClient'
 
-const user = {} as ServiceUser
-
-jest.mock('./tokenStore')
+const user = { username: 'jbloggs' } as ServiceUser
 
 describe('locationsInsidePrisonApiClient', () => {
   let fakeLocationsInsidePrisonApi: nock.Scope
   let locationsInsidePrisonApiClient: LocationsInsidePrisonApiClient
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
     fakeLocationsInsidePrisonApi = nock(config.apis.locationsInsidePrisonApi.url)
-    locationsInsidePrisonApiClient = new LocationsInsidePrisonApiClient()
-
-    jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
+    locationsInsidePrisonApiClient = new LocationsInsidePrisonApiClient(mockAuthenticationClient)
   })
 
   afterEach(() => {
@@ -31,7 +31,7 @@ describe('locationsInsidePrisonApiClient', () => {
 
       fakeLocationsInsidePrisonApi
         .get('/locations/abc-123')
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await locationsInsidePrisonApiClient.fetchLocationById('abc-123', user)
@@ -47,7 +47,7 @@ describe('locationsInsidePrisonApiClient', () => {
 
       fakeLocationsInsidePrisonApi
         .get('/locations/key/LOCATION_KEY')
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await locationsInsidePrisonApiClient.fetchLocationByKey('LOCATION_KEY', user)
@@ -65,7 +65,7 @@ describe('locationsInsidePrisonApiClient', () => {
         .get(
           '/locations/prison/RSI/non-residential-usage-type/PROGRAMMES_ACTIVITIES?formatLocalName=true&filterParents=false',
         )
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await locationsInsidePrisonApiClient.fetchLocationsByNonResidentialUsageType(

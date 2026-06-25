@@ -1,11 +1,13 @@
-import AbstractHmppsRestClient from './abstractHmppsRestClient'
-import config, { ApiConfig } from '../config'
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
+import logger from '../../logger'
+import config from '../config'
 import { ServiceUser } from '../@types/express'
 import { NonAssociation, PrisonerNonAssociations } from '../@types/nonAssociationsApi/types'
 
-export default class NonAssociationsApiClient extends AbstractHmppsRestClient {
-  constructor() {
-    super('Non-Associations API', config.apis.nonAssociationsApi as ApiConfig)
+export default class NonAssociationsApiClient extends RestClient {
+  constructor(authenticationClient: AuthenticationClient) {
+    super('Non-Associations API', config.apis.nonAssociationsApi, logger, authenticationClient)
   }
 
   async getNonAssociationsBetween(prisonerNumbers: string[], user: ServiceUser): Promise<NonAssociation[]> {
@@ -14,7 +16,7 @@ export default class NonAssociationsApiClient extends AbstractHmppsRestClient {
         path: `/non-associations/between`,
         data: prisonerNumbers,
       },
-      user,
+      asSystem(user.username),
     )
   }
 
@@ -27,7 +29,7 @@ export default class NonAssociationsApiClient extends AbstractHmppsRestClient {
           prisonId: user.activeCaseLoadId,
         },
       },
-      user,
+      asSystem(user.username),
     )
   }
 
@@ -39,7 +41,7 @@ export default class NonAssociationsApiClient extends AbstractHmppsRestClient {
       {
         path: `/prisoner/${prisonerNumber}/non-associations`,
       },
-      user,
+      asSystem(user.username),
     )
   }
 }

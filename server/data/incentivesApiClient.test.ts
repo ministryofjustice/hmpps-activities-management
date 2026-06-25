@@ -1,23 +1,23 @@
 import nock from 'nock'
 
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
 import IncentivesApiClient from './incentivesApiClient'
 
-const user = {} as ServiceUser
-
-jest.mock('./tokenStore')
+const user = { username: 'jbloggs' } as ServiceUser
 
 describe('incentivesApiClient', () => {
   let fakeIncentivesApi: nock.Scope
   let incentivesApiClient: IncentivesApiClient
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
     fakeIncentivesApi = nock(config.apis.incentivesApi.url)
-    incentivesApiClient = new IncentivesApiClient()
-
-    jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
+    incentivesApiClient = new IncentivesApiClient(mockAuthenticationClient)
   })
 
   afterEach(() => {
@@ -31,7 +31,7 @@ describe('incentivesApiClient', () => {
 
       fakeIncentivesApi
         .get('/incentive/prison-levels/MDI')
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await incentivesApiClient.getIncentiveLevels('MDI', user)

@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import CaseNotesApiClient from '../data/caseNotesApiClient'
 import CaseNotesService from './caseNotesService'
 import { CaseNote } from '../@types/caseNotesApi/types'
@@ -14,7 +15,9 @@ describe('Case notes service service', () => {
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
 
   beforeEach(() => {
-    caseNotesApiClient = new CaseNotesApiClient() as jest.Mocked<CaseNotesApiClient>
+    caseNotesApiClient = new CaseNotesApiClient(
+      null as unknown as AuthenticationClient,
+    ) as jest.Mocked<CaseNotesApiClient>
     caseNotesService = new CaseNotesService(caseNotesApiClient)
   })
 

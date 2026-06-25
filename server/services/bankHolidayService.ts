@@ -8,14 +8,14 @@ export default class BankHolidayService {
     private readonly store: TokenStoreInterface,
   ) {}
 
-  async getUkBankHolidays(division: string, user: ServiceUser): Promise<Date[]> {
+  async getUkBankHolidays(division: string, _user?: ServiceUser): Promise<Date[]> {
     const cached = await this.store.getToken(`${division}.bankHolidays`)
     if (cached) {
       return JSON.parse(cached).events.map(event => new Date(event.date))
     }
 
     const bankHolidays = await this.bankHolidaysClient
-      .getBankHolidays(user)
+      .getBankHolidays()
       .then(response => response[division].events.map(event => new Date(event.date)))
 
     await this.store.setToken(

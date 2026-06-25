@@ -2,7 +2,6 @@ import nock from 'nock'
 
 import config from '../config'
 import ManageUsersApiClient from './manageUsersApiClient'
-import TokenStore from './tokenStore'
 
 const user = { token: 'token-1', username: 'jbloggs' } as Express.User
 
@@ -13,8 +12,6 @@ describe('manageUsersApiClient', () => {
   beforeEach(() => {
     fakeManageUsersApi = nock(config.apis.manageUsersApi.url)
     manageUsersApiClient = new ManageUsersApiClient()
-
-    jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
   })
 
   afterEach(() => {

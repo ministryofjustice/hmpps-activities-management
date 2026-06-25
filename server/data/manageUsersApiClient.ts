@@ -1,14 +1,14 @@
-import config, { ApiConfig } from '../config'
-
-import AbstractHmppsRestClient from './abstractHmppsRestClient'
+import { asUser, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import logger from '../../logger'
+import config from '../config'
 import { UserDetails } from '../@types/manageUsersApiImport/types'
 
-export default class ManageUsersApiClient extends AbstractHmppsRestClient {
+export default class ManageUsersApiClient extends RestClient {
   constructor() {
-    super('Manage Users API', config.apis.manageUsersApi as ApiConfig)
+    super('Manage Users API', config.apis.manageUsersApi, logger)
   }
 
   getUserByUsername(username: string, user: Express.User): Promise<UserDetails> {
-    return this.get({ path: `/users/${username}`, authToken: user.token })
+    return this.get({ path: `/users/${username}` }, asUser(user.token))
   }
 }

@@ -1,25 +1,15 @@
 import express, { Router } from 'express'
 
-import healthcheck from '../services/healthCheck'
+import createMonitoringMiddleware from '../services/healthCheck'
 import { Services } from '../services'
 
 export default function setUpHealthChecks({ activitiesService, applicationInfo }: Services): Router {
   const router = express.Router()
+  const monitoring = createMonitoringMiddleware(applicationInfo)
 
-  router.get('/health', (req, res, next) => {
-    healthcheck(applicationInfo, result => {
-      if (result.status !== 'UP') {
-        res.status(503)
-      }
-      res.json(result)
-    })
-  })
+  router.get('/health', monitoring.health)
 
-  router.get('/ping', (req, res) => {
-    res.json({
-      status: 'UP',
-    })
-  })
+  router.get('/ping', monitoring.ping)
 
   router.get('/info', (req, res) => {
     activitiesService.activeRolledPrisons().then(activeAgencies => {
