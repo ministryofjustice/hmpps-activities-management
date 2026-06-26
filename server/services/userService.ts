@@ -2,6 +2,7 @@ import _ from 'lodash'
 import ManageUsersApiClient from '../data/manageUsersApiClient'
 import { ServiceUser } from '../@types/express'
 import { UserDetails } from '../@types/manageUsersApiImport/types'
+import { errorHasStatus } from '../utils/helpers/errorHelpers'
 
 export const SERVICE_AS_USERNAME = 'Activities Management Service'
 
@@ -19,7 +20,7 @@ export default class UserService {
           return this.manageUsersApiClient
             .getUserByUsername(u, user)
             .catch(e => {
-              if (e.status === 404) return null
+              if (errorHasStatus(e, 404)) return null
               throw e
             })
             .then(r => {

@@ -3,6 +3,7 @@ import UserService from '../../../../services/userService'
 import { isUncancellable } from '../../../../utils/editAppointmentUtils'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import LocationMappingService from '../../../../services/locationMappingService'
+import { errorHasStatus } from '../../../../utils/helpers/errorHelpers'
 
 export default class AppointmentDetailsRoutes {
   constructor(
@@ -32,7 +33,7 @@ export default class AppointmentDetailsRoutes {
           user,
         )
         .catch(e => {
-          if (e.status === 404) return null
+          if (errorHasStatus(e, 404)) return null
           throw e
         })
 

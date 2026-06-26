@@ -1,92 +1,56 @@
-import { serviceCheckFactory } from '../data/healthCheck'
-import type { AgentConfig } from '../config'
+import { endpointHealthComponent, monitoringMiddleware } from '@ministryofjustice/hmpps-monitoring'
+import logger from '../../logger'
 import config from '../config'
-import { ApplicationInfo } from '../applicationInfo'
+import type { ApplicationInfo } from '../applicationInfo'
 
-interface HealthCheckStatus {
-  name: string
-  status: string
-  message: unknown
-}
-
-interface HealthCheckResult extends Record<string, unknown> {
-  status: string
-  components: Record<string, unknown>
-}
-
-export type HealthCheckService = () => Promise<HealthCheckStatus>
-export type HealthCheckCallback = (result: HealthCheckResult) => void
-
-function service(name: string, url: string, agentConfig: AgentConfig): HealthCheckService {
-  const check = serviceCheckFactory(name, url, agentConfig)
-  return () =>
-    check()
-      .then(result => ({ name, status: 'UP', message: result }))
-      .catch(err => ({ name, status: 'DOWN', message: err }))
-}
-
-function addAppInfo(result: HealthCheckResult, applicationInfo: ApplicationInfo): HealthCheckResult {
-  const buildInfo = {
-    uptime: process.uptime(),
-    build: {
-      buildNumber: applicationInfo.buildNumber,
-      gitRef: applicationInfo.gitRef,
-    },
-    version: applicationInfo.buildNumber,
-  }
-
-  return { ...result, ...buildInfo }
-}
-
-function gatherCheckInfo(aggregateStatus: Record<string, unknown>, currentStatus: HealthCheckStatus) {
-  return { ...aggregateStatus, [currentStatus.name]: { status: currentStatus.status, details: currentStatus.message } }
-}
-
-const apiChecks = [
-  service('hmppsAuth', `${config.apis.hmppsAuth.url}/health/ping`, config.apis.hmppsAuth.agent),
-  service('activitiesApi', `${config.apis.activitiesApi.url}/health/ping`, config.apis.activitiesApi.agent),
-  service('caseNotesApi', `${config.apis.caseNotesApi.url}/health/ping`, config.apis.caseNotesApi.agent),
-  service('prisonApi', `${config.apis.prisonApi.url}/health/ping`, config.apis.prisonApi.agent),
-  service('prisonerSearchApi', `${config.apis.prisonerSearchApi.url}/health/ping`, config.apis.prisonerSearchApi.agent),
-  service('incentivesApi', `${config.apis.incentivesApi.url}/health/ping`, config.apis.incentivesApi.agent),
-  service('manageUsersApi', `${config.apis.manageUsersApi.url}/health/ping`, config.apis.manageUsersApi.agent),
-  service(
-    'nonAssociationsApi',
-    `${config.apis.nonAssociationsApi.url}/health/ping`,
-    config.apis.nonAssociationsApi.agent,
-  ),
-  service('alertsApi', `${config.apis.alertsApi.url}/health/ping`, config.apis.alertsApi.agent),
-  service('bookAVideoLinkApi', `${config.apis.bookAVideoLinkApi.url}/health/ping`, config.apis.bookAVideoLinkApi.agent),
-  service(
-    'locationsInsidePrisonApi',
-    `${config.apis.locationsInsidePrisonApi.url}/health/ping`,
-    config.apis.locationsInsidePrisonApi.agent,
-  ),
-  service('nomisMapping', `${config.apis.nomisMapping.url}/health/ping`, config.apis.nomisMapping.agent),
-  ...(config.apis.tokenVerification.enabled
-    ? [
-        service(
-          'tokenVerification',
-          `${config.apis.tokenVerification.url}/health/ping`,
-          config.apis.tokenVerification.agent,
-        ),
-      ]
-    : []),
-]
-
-export default function healthCheck(
-  applicationInfo: ApplicationInfo,
-  callback: HealthCheckCallback,
-  checks = apiChecks,
-): void {
-  Promise.all(checks.map(fn => fn())).then(checkResults => {
-    const allOk = checkResults.every(item => item.status === 'UP') ? 'UP' : 'DOWN'
-
-    const result = {
-      status: allOk,
-      components: checkResults.reduce(gatherCheckInfo, {}),
-    }
-
-    callback(addAppInfo(result, applicationInfo))
+export default function createMonitoringMiddleware(applicationInfo: ApplicationInfo) {
+  return monitoringMiddleware({
+    applicationInfo,
+    healthComponents: [
+      endpointHealthComponent(logger, 'hmppsAuth', { url: config.apis.hmppsAuth.url, healthPath: '/health/ping' }),
+      endpointHealthComponent(logger, 'activitiesApi', {
+        url: config.apis.activitiesApi.url,
+        healthPath: '/health/ping',
+      }),
+      endpointHealthComponent(logger, 'caseNotesApi', {
+        url: config.apis.caseNotesApi.url,
+        healthPath: '/health/ping',
+      }),
+      endpointHealthComponent(logger, 'prisonApi', { url: config.apis.prisonApi.url, healthPath: '/health/ping' }),
+      endpointHealthComponent(logger, 'prisonerSearchApi', {
+        url: config.apis.prisonerSearchApi.url,
+        healthPath: '/health/ping',
+      }),
+      endpointHealthComponent(logger, 'incentivesApi', {
+        url: config.apis.incentivesApi.url,
+        healthPath: '/health/ping',
+      }),
+      endpointHealthComponent(logger, 'manageUsersApi', {
+        url: config.apis.manageUsersApi.url,
+        healthPath: '/health/ping',
+      }),
+      endpointHealthComponent(logger, 'nonAssociationsApi', {
+        url: config.apis.nonAssociationsApi.url,
+        healthPath: '/health/ping',
+      }),
+      endpointHealthComponent(logger, 'alertsApi', { url: config.apis.alertsApi.url, healthPath: '/health/ping' }),
+      endpointHealthComponent(logger, 'bookAVideoLinkApi', {
+        url: config.apis.bookAVideoLinkApi.url,
+        healthPath: '/health/ping',
+      }),
+      endpointHealthComponent(logger, 'locationsInsidePrisonApi', {
+        url: config.apis.locationsInsidePrisonApi.url,
+        healthPath: '/health/ping',
+      }),
+      endpointHealthComponent(logger, 'nomisMapping', {
+        url: config.apis.nomisMapping.url,
+        healthPath: '/health/ping',
+      }),
+      endpointHealthComponent(logger, 'tokenVerification', {
+        url: config.apis.tokenVerification.url,
+        healthPath: '/health/ping',
+        enabled: config.apis.tokenVerification.enabled,
+      }),
+    ],
   })
 }

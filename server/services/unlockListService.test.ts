@@ -24,7 +24,9 @@ const mockAuthenticationClient = {
 } as unknown as jest.Mocked<AuthenticationClient>
 
 const activitiesApiClient = new ActivitiesApiClient(mockAuthenticationClient) as jest.Mocked<ActivitiesApiClient>
-const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
+const prisonerSearchApiClient = new PrisonerSearchApiClient(
+  mockAuthenticationClient,
+) as jest.Mocked<PrisonerSearchApiClient>
 const alertsFilterService = new AlertsFilterService() as jest.Mocked<AlertsFilterService>
 
 const user = { activeCaseLoadId: 'MDI' } as ServiceUser

@@ -21,8 +21,8 @@ const mockAuthenticationClient = {
 
 describe('Prison Service', () => {
   const prisonApiClient = new PrisonApiClient(mockAuthenticationClient)
-  const prisonerSearchApiClient = new PrisonerSearchApiClient()
-  const incentivesApiClient = new IncentivesApiClient() as jest.Mocked<IncentivesApiClient>
+  const prisonerSearchApiClient = new PrisonerSearchApiClient(mockAuthenticationClient)
+  const incentivesApiClient = new IncentivesApiClient(mockAuthenticationClient) as jest.Mocked<IncentivesApiClient>
   const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient)
 
   const user = {

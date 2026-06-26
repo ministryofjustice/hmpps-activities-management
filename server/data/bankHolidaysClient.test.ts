@@ -1,12 +1,6 @@
 import nock from 'nock'
 import config from '../config'
 import BankHolidaysClient from './bankHolidaysClient'
-import { ServiceUser } from '../@types/express'
-import TokenStore from './tokenStore'
-
-const user = {} as ServiceUser
-
-jest.mock('./tokenStore')
 
 describe('BankHolidaysClient', () => {
   let fakeGovUkBankHolidaysApi: nock.Scope
@@ -15,7 +9,6 @@ describe('BankHolidaysClient', () => {
   beforeEach(() => {
     fakeGovUkBankHolidaysApi = nock(config.apis.bankHolidaysApi.url)
     bankHolidaysClient = new BankHolidaysClient()
-    jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
   })
 
   afterEach(() => {
@@ -50,9 +43,9 @@ describe('BankHolidaysClient', () => {
         },
       }
 
-      fakeGovUkBankHolidaysApi.get('').matchHeader('authorization', `Bearer accessToken`).reply(200, response)
+      fakeGovUkBankHolidaysApi.get('').reply(200, response)
 
-      const output = await bankHolidaysClient.getBankHolidays(user)
+      const output = await bankHolidaysClient.getBankHolidays()
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

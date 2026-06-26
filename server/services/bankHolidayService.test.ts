@@ -110,7 +110,7 @@ describe('Bank Holiday service', () => {
       const actualResult = await bankHolidaysService.getUkBankHolidays('england-and-wales', user)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(bankHolidaysClient.getBankHolidays).toHaveBeenCalledWith(user)
+      expect(bankHolidaysClient.getBankHolidays).toHaveBeenCalled()
       expect(tokenStore.setToken).toHaveBeenCalledWith(
         'england-and-wales.bankHolidays',
         JSON.stringify({ events: expectedResult.map(date => ({ date })) }),
@@ -127,7 +127,7 @@ describe('Bank Holiday service', () => {
       const actualResult = await bankHolidaysService.getUkBankHolidays('scotland', user)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(bankHolidaysClient.getBankHolidays).toHaveBeenCalledWith(user)
+      expect(bankHolidaysClient.getBankHolidays).toHaveBeenCalled()
       expect(tokenStore.setToken).toHaveBeenCalledWith(
         'scotland.bankHolidays',
         JSON.stringify({ events: expectedResult.map(date => ({ date })) }),
@@ -144,7 +144,7 @@ describe('Bank Holiday service', () => {
       const actualResult = await bankHolidaysService.getUkBankHolidays('northern-ireland', user)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(bankHolidaysClient.getBankHolidays).toHaveBeenCalledWith(user)
+      expect(bankHolidaysClient.getBankHolidays).toHaveBeenCalled()
       expect(tokenStore.setToken).toHaveBeenCalledWith(
         'northern-ireland.bankHolidays',
         JSON.stringify({ events: expectedResult.map(date => ({ date })) }),
