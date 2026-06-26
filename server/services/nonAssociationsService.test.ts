@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import atLeast from '../../jest.setup'
 import NonAssociationsApiClient from '../data/nonAssociationsApiClient'
 import { ServiceUser } from '../@types/express'
@@ -11,7 +12,7 @@ jest.mock('../services/prisonService')
 
 describe('NonAssociationsService', () => {
   const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-  const nonAssociationsApiClient = new NonAssociationsApiClient()
+  const nonAssociationsApiClient = new NonAssociationsApiClient(null as unknown as AuthenticationClient)
   const nonAssociationsService = new NonAssociationsService(nonAssociationsApiClient, prisonService)
 
   const user = {

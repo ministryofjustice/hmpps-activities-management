@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { ServiceUser } from '../@types/express'
 import LocationsInsidePrisonApiClient from '../data/locationsInsidePrisonApiClient'
 import { Location } from '../@types/locationsInsidePrisonApi/types'
@@ -14,7 +15,9 @@ describe('Locations Service', () => {
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
 
   beforeEach(() => {
-    locationInsidePrisonApiClient = new LocationsInsidePrisonApiClient() as jest.Mocked<LocationsInsidePrisonApiClient>
+    locationInsidePrisonApiClient = new LocationsInsidePrisonApiClient(
+      null as unknown as AuthenticationClient,
+    ) as jest.Mocked<LocationsInsidePrisonApiClient>
     locationsService = new LocationsService(locationInsidePrisonApiClient)
   })
 

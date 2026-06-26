@@ -1,23 +1,23 @@
 import nock from 'nock'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import TokenStore from './tokenStore'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
 import { PrisonerNumbers } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 
-const user = {} as ServiceUser
-
-jest.mock('./tokenStore')
+const user = { username: 'jbloggs' } as ServiceUser
 
 describe('prisonerSearchApiClient', () => {
   let fakePrisonerSearchApi: nock.Scope
   let prisonerSearchApiClient: PrisonerSearchApiClient
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
     fakePrisonerSearchApi = nock(config.apis.prisonerSearchApi.url)
-    prisonerSearchApiClient = new PrisonerSearchApiClient()
-
-    jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
+    prisonerSearchApiClient = new PrisonerSearchApiClient(mockAuthenticationClient)
   })
 
   afterEach(() => {
@@ -32,7 +32,7 @@ describe('prisonerSearchApiClient', () => {
 
       fakePrisonerSearchApi
         .post('/prisoner-search/prisoner-numbers', prisonerNumbers)
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await prisonerSearchApiClient.searchByPrisonerNumbers(prisonerNumbers, user)
@@ -49,7 +49,7 @@ describe('prisonerSearchApiClient', () => {
 
       fakePrisonerSearchApi
         .get(`/prison/MDI/prisoners?term=${query}&size=50`)
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await prisonerSearchApiClient.searchPrisonInmates(query, 'MDI', user)
@@ -74,7 +74,7 @@ describe('prisonerSearchApiClient', () => {
 
       fakePrisonerSearchApi
         .get(`/prison/${prisonCode}/prisoners`)
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .query(expectedSearchParams)
         .reply(200, response)
 

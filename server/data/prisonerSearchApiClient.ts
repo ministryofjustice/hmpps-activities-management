@@ -1,6 +1,7 @@
-import config, { ApiConfig } from '../config'
-
-import AbstractHmppsRestClient from './abstractHmppsRestClient'
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
+import logger from '../../logger'
+import config from '../config'
 import {
   PagePrisoner,
   Prisoner,
@@ -9,9 +10,9 @@ import {
 } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 
-export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
-  constructor() {
-    super('Prisoner search API', config.apis.prisonerSearchApi as ApiConfig)
+export default class PrisonerSearchApiClient extends RestClient {
+  constructor(authenticationClient: AuthenticationClient) {
+    super('Prisoner search API', config.apis.prisonerSearchApi, logger, authenticationClient)
   }
 
   async searchByPrisonerNumbers(prisonerNumbers: PrisonerNumbers, user: ServiceUser): Promise<Prisoner[]> {
@@ -20,7 +21,7 @@ export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
         path: '/prisoner-search/prisoner-numbers',
         data: prisonerNumbers,
       },
-      user,
+      asSystem(user.username),
     )
   }
 
@@ -29,7 +30,7 @@ export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
       {
         path: `/prisoner/${prisonerNumber}`,
       },
-      user,
+      asSystem(user.username),
     )
   }
 
@@ -43,7 +44,7 @@ export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
         path: `/prison/${prisonCode}/prisoners`,
         query,
       },
-      user,
+      asSystem(user.username),
     )
   }
 
@@ -65,7 +66,7 @@ export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
         path: `/prison/${prisonCode}/prisoners`,
         query: searchParams.toString(),
       },
-      user,
+      asSystem(user.username),
     )
   }
 }

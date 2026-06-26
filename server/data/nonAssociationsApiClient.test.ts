@@ -1,22 +1,22 @@
 import nock from 'nock'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import TokenStore from './tokenStore'
 import NonAssociationsApiClient from './nonAssociationsApiClient'
 import { ServiceUser } from '../@types/express'
 
-const user = {} as ServiceUser
-
-jest.mock('./tokenStore')
+const user = { username: 'jbloggs' } as ServiceUser
 
 describe('nonAssociationsApiClient', () => {
   let fakeNonAssociationsApi: nock.Scope
   let nonAssociationsApiClient: NonAssociationsApiClient
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
     fakeNonAssociationsApi = nock(config.apis.nonAssociationsApi.url)
-    nonAssociationsApiClient = new NonAssociationsApiClient()
-
-    jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
+    nonAssociationsApiClient = new NonAssociationsApiClient(mockAuthenticationClient)
   })
 
   afterEach(() => {
@@ -30,7 +30,7 @@ describe('nonAssociationsApiClient', () => {
 
       fakeNonAssociationsApi
         .post('/non-associations/between')
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await nonAssociationsApiClient.getNonAssociationsBetween(['AA1111A', 'BB2222B'], user)
@@ -45,7 +45,7 @@ describe('nonAssociationsApiClient', () => {
 
       fakeNonAssociationsApi
         .post('/non-associations/involving')
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await nonAssociationsApiClient.getNonAssociationsInvolving(['AA1111A', 'BB2222B'], user)
@@ -75,7 +75,7 @@ describe('nonAssociationsApiClient', () => {
 
       fakeNonAssociationsApi
         .get('/prisoner/AA1111A/non-associations')
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, mockNonAssociation)
 
       const output = await nonAssociationsApiClient.getNonAssociationsByPrisonerNumber('AA1111A', user)
