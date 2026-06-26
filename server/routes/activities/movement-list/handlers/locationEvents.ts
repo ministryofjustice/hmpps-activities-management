@@ -29,9 +29,7 @@ export default class LocationEventsRoutes {
     }
 
     const locationEvent = isOutside
-      ? (
-          await this.activitiesService.getExternalMovements(user.activeCaseLoadId, richDate, user, timeSlot as string)
-        )[0]
+      ? await this.activitiesService.getExternalMovements(user.activeCaseLoadId, richDate, user, timeSlot as string)
       : await this.activitiesService.getInternalLocationEventsByDpsLocationId(
           user.activeCaseLoadId,
           richDate,

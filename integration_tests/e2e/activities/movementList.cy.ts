@@ -256,8 +256,8 @@ context('Movement list', () => {
   it('should show outside movement list', () => {
     cy.stubEndpoint(
       'GET',
-      `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`,
-      externalMovements,
+      `/scheduled-events/prison/MDI/scheduled-external-movements\\?date=${today}&timeSlot=AM`,
+      externalMovements as unknown as JSON,
     )
     cy.signInEAEnabled()
     cy.visit('/activities/unlock-list')
@@ -287,7 +287,7 @@ context('Movement list', () => {
   })
 
   it('should message if no outside movements are scheduled', () => {
-    cy.stubEndpoint('GET', `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`, [])
+    cy.stubEndpoint('GET', `/scheduled-events/prison/MDI/scheduled-external-movements\\?date=${today}&timeSlot=AM`, [])
     cy.signInEAEnabled()
     cy.visit('/activities/unlock-list')
 
