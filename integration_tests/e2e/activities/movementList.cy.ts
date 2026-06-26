@@ -5,6 +5,7 @@ import UnlockAndMovementIndexPage from '../../pages/unlockAndMovements/unlockAnd
 import ChooseDetailsPage from '../../pages/unlockAndMovements/movement/chooseDetails'
 import LocationsPage from '../../pages/unlockAndMovements/movement/locations'
 import externalMovements from '../../fixtures/activitiesApi/externalMovements.json'
+import externalMovementsEmpty from '../../fixtures/activitiesApi/externalMovements-empty.json'
 import getInternalLocationEventsByDpsLocationId from '../../fixtures/activitiesApi/getInternalLocationEventsByDpsLocationId.json'
 import getScheduledEventLocationsAWing from '../../fixtures/activitiesApi/getInternalLocationEventsByDpsLocationId-A-wing.json'
 import getInmateDetails from '../../fixtures/prisonerSearchApi/getInmateDetailsForMovementList.json'
@@ -290,7 +291,7 @@ context('Movement list', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-events/prison/MDI/scheduled-external-movements\\?date=${today}&timeSlot=AM`,
-      {} as unknown as JSON,
+      externalMovementsEmpty as unknown as JSON,
     )
     cy.signInEAEnabled()
     cy.visit('/activities/unlock-list')

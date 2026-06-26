@@ -38,7 +38,7 @@ export default class LocationEventsRoutes {
           timeSlot as string,
         )
 
-    if (locationEvent === undefined) {
+    if (locationEvent === undefined || locationEvent.events.length === 0) {
       if (outsideList) {
         return res.render('pages/activities/movement-list/location-events', {
           outsideList,
