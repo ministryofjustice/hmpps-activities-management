@@ -28,7 +28,7 @@ export default class LocationEventsRoutes {
       return res.redirect(`choose-details`)
     }
 
-    const locationEvent = isOutside
+    const locationEvent = outsideList
       ? await this.activitiesService.getExternalMovements(user.activeCaseLoadId, richDate, user, timeSlot as string)
       : await this.activitiesService.getInternalLocationEventsByDpsLocationId(
           user.activeCaseLoadId,
