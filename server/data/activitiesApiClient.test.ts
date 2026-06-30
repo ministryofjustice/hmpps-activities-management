@@ -1039,22 +1039,20 @@ describe('activitiesApiClient', () => {
       const prisonCode = 'MDI'
       const date = formatIsoDate(new Date())
       const timeSlot = 'AM'
-      const response = [
-        {
-          id: 1,
-          description: 'Outside location',
-          events: [
-            {
-              prisonerNumber: 'A1234BC',
-              summary: 'Court hearing',
-              eventType: EventType.ACTIVITY,
-            },
-          ],
-        },
-      ] as LocationEvents[]
+      const response = {
+        id: 1,
+        description: 'Outside location',
+        events: [
+          {
+            prisonerNumber: 'A1234BC',
+            summary: 'Court hearing',
+            eventType: EventType.ACTIVITY,
+          },
+        ],
+      } as LocationEvents
 
       fakeActivitiesApi
-        .get(`/scheduled-events/prison/${prisonCode}/external-movements`)
+        .get(`/scheduled-events/prison/${prisonCode}/scheduled-external-movements`)
         .query({ date, timeSlot })
         .matchHeader('authorization', 'Bearer token')
         .matchHeader('Caseload-Id', prisonCode)

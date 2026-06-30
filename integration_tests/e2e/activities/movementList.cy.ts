@@ -5,6 +5,7 @@ import UnlockAndMovementIndexPage from '../../pages/unlockAndMovements/unlockAnd
 import ChooseDetailsPage from '../../pages/unlockAndMovements/movement/chooseDetails'
 import LocationsPage from '../../pages/unlockAndMovements/movement/locations'
 import externalMovements from '../../fixtures/activitiesApi/externalMovements.json'
+import externalMovementsEmpty from '../../fixtures/activitiesApi/externalMovements-empty.json'
 import getInternalLocationEventsByDpsLocationId from '../../fixtures/activitiesApi/getInternalLocationEventsByDpsLocationId.json'
 import getScheduledEventLocationsAWing from '../../fixtures/activitiesApi/getInternalLocationEventsByDpsLocationId-A-wing.json'
 import getInmateDetails from '../../fixtures/prisonerSearchApi/getInmateDetailsForMovementList.json'
@@ -29,10 +30,10 @@ context('Movement list', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM&dpsLocationId=11111111-1111-1111-1111-111111111111`,
-      getInternalLocationEventsByDpsLocationId as unknown as JSON,
+      getInternalLocationEventsByDpsLocationId,
     )
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents as unknown as JSON)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents)
   })
 
   it('should show correct alerts', () => {
@@ -148,7 +149,7 @@ context('Movement list', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM&dpsLocationId=11111111-1111-1111-1111-111111111111`,
-      getScheduledEventsWithNotRequired as unknown as JSON,
+      getScheduledEventsWithNotRequired,
     )
 
     cy.signIn()
@@ -192,9 +193,9 @@ context('Movement list', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-events/prison/MDI/location-events\\?date=${tomorrow}&timeSlot=AM&dpsLocationId=11111111-1111-1111-1111-111111111111`,
-      getScheduledEventsWithNotRequired as unknown as JSON,
+      getScheduledEventsWithNotRequired,
     )
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrow}`, getScheduledEvents as unknown as JSON)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrow}`, getScheduledEvents)
 
     cy.signIn()
     cy.visit('/activities/unlock-list')
@@ -225,7 +226,7 @@ context('Movement list', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM&dpsLocationId=33333333-3333-3333-3333-333333333333`,
-      getScheduledEventLocationsAWing as unknown as JSON,
+      getScheduledEventLocationsAWing,
     )
 
     cy.signIn()
@@ -256,7 +257,7 @@ context('Movement list', () => {
   it('should show outside movement list', () => {
     cy.stubEndpoint(
       'GET',
-      `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`,
+      `/scheduled-events/prison/MDI/scheduled-external-movements\\?date=${today}&timeSlot=AM`,
       externalMovements,
     )
     cy.signInEAEnabled()
@@ -287,7 +288,11 @@ context('Movement list', () => {
   })
 
   it('should message if no outside movements are scheduled', () => {
-    cy.stubEndpoint('GET', `/scheduled-events/prison/MDI/external-movements\\?date=${today}&timeSlot=AM`, [])
+    cy.stubEndpoint(
+      'GET',
+      `/scheduled-events/prison/MDI/scheduled-external-movements\\?date=${today}&timeSlot=AM`,
+      externalMovementsEmpty,
+    )
     cy.signInEAEnabled()
     cy.visit('/activities/unlock-list')
 
