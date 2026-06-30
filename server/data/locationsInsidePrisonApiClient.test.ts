@@ -57,20 +57,20 @@ describe('locationsInsidePrisonApiClient', () => {
     })
   })
 
-  describe('get location by non-residential usage type', () => {
+  describe('get location by service type', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
 
       fakeLocationsInsidePrisonApi
         .get(
-          '/locations/prison/RSI/non-residential-usage-type/PROGRAMMES_ACTIVITIES?formatLocalName=true&filterParents=false',
+          '/locations/non-residential/prison/RSI/service/PROGRAMMES_AND_ACTIVITIES?formatLocalName=true&filterParents=false',
         )
         .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
-      const output = await locationsInsidePrisonApiClient.fetchLocationsByNonResidentialUsageType(
+      const output = await locationsInsidePrisonApiClient.fetchLocationsByServiceType(
         'RSI',
-        'PROGRAMMES_ACTIVITIES',
+        'PROGRAMMES_AND_ACTIVITIES',
         user,
       )
 

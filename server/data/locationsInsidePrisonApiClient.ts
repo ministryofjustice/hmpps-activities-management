@@ -25,14 +25,10 @@ export default class LocationsInsidePrisonApiClient extends RestClient {
     )
   }
 
-  public fetchLocationsByNonResidentialUsageType(
-    prisonCode: string,
-    usageType: string,
-    user: ServiceUser,
-  ): Promise<Location[]> {
+  public fetchLocationsByServiceType(prisonCode: string, serviceType: string, user: ServiceUser): Promise<Location[]> {
     return this.get(
       {
-        path: `/locations/prison/${prisonCode}/non-residential-usage-type/${usageType}?formatLocalName=true&filterParents=false`,
+        path: `/locations/non-residential/prison/${prisonCode}/service/${serviceType}?formatLocalName=true&filterParents=false`,
       },
       asSystem(user.username),
     )

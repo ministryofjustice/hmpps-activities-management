@@ -25,15 +25,15 @@ describe('Locations Service', () => {
     jest.resetAllMocks()
   })
 
-  describe('return fetchLocationsByNonResidentialUsageType', () => {
+  describe('return fetchLocationsByServiceType', () => {
     it('should return locations', async () => {
       const locations = [
         { id: '123', code: 'AWING', localName: 'A Wing' },
         { id: '456', code: 'BWING', localName: 'B Wing' },
       ] as Location[]
 
-      when(locationInsidePrisonApiClient.fetchLocationsByNonResidentialUsageType)
-        .calledWith(atLeast('RSI', 'PROGRAMMES_ACTIVITIES'))
+      when(locationInsidePrisonApiClient.fetchLocationsByServiceType)
+        .calledWith(atLeast('RSI', 'PROGRAMMES_AND_ACTIVITIES'))
         .mockResolvedValue(locations)
 
       const expectedLocations = [
@@ -50,8 +50,8 @@ describe('Locations Service', () => {
         { id: '456', code: 'BWING' },
       ] as Location[]
 
-      when(locationInsidePrisonApiClient.fetchLocationsByNonResidentialUsageType)
-        .calledWith(atLeast('RSI', 'PROGRAMMES_ACTIVITIES'))
+      when(locationInsidePrisonApiClient.fetchLocationsByServiceType)
+        .calledWith(atLeast('RSI', 'PROGRAMMES_AND_ACTIVITIES'))
         .mockResolvedValue(locations)
 
       const expectedLocations = [
@@ -69,8 +69,8 @@ describe('Locations Service', () => {
         { id: '456', code: 'BWING' },
       ] as Location[]
 
-      when(locationInsidePrisonApiClient.fetchLocationsByNonResidentialUsageType)
-        .calledWith(atLeast('RSI', 'PROGRAMMES_ACTIVITIES'))
+      when(locationInsidePrisonApiClient.fetchLocationsByServiceType)
+        .calledWith(atLeast('RSI', 'PROGRAMMES_AND_ACTIVITIES'))
         .mockResolvedValue(locations)
 
       const expectedLocations = [
