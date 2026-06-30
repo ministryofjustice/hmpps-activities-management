@@ -22,7 +22,7 @@ export default class LocationsService {
 
   public async fetchActivityLocations(prisonCode: string, user: ServiceUser): Promise<LocationWithDescription[]> {
     return this.locationInsidePrisonApiClient
-      .fetchLocationsByNonResidentialUsageType(prisonCode, 'PROGRAMMES_ACTIVITIES', user)
+      .fetchLocationsByServiceType(prisonCode, 'PROGRAMMES_AND_ACTIVITIES', user)
       .then(locations => {
         return locations
           .map(location => {
