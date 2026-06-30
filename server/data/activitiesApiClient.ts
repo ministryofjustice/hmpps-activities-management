@@ -926,10 +926,10 @@ export default class ActivitiesApiClient extends RestClient {
     date: string,
     user: ServiceUser,
     timeSlot?: string,
-  ): Promise<LocationEvents[]> {
+  ): Promise<LocationEvents> {
     return this.get(
       {
-        path: `/scheduled-events/prison/${prisonCode}/external-movements`,
+        path: `/scheduled-events/prison/${prisonCode}/scheduled-external-movements`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
         query: { date, timeSlot },
       },

@@ -998,23 +998,21 @@ describe('Movement list routes - location events', () => {
       isOutside: 'true',
     }
 
-    const externalMovements = [
-      {
-        ...internalLocation,
-        events: [
-          {
-            prisonerNumber: 'A1234BC',
-            summary: 'External movement - Scheduled',
-            status: 'Scheduled',
-          },
-          {
-            prisonerNumber: 'A1234BC',
-            summary: 'External movement - Cancelled',
-            status: 'Cancelled',
-          },
-        ],
-      },
-    ] as LocationEvents[]
+    const externalMovements = {
+      ...internalLocation,
+      events: [
+        {
+          prisonerNumber: 'A1234BC',
+          summary: 'External movement - Scheduled',
+          status: 'Scheduled',
+        },
+        {
+          prisonerNumber: 'A1234BC',
+          summary: 'External movement - Cancelled',
+          status: 'Cancelled',
+        },
+      ],
+    } as LocationEvents
 
     when(activitiesService.getExternalMovements)
       .calledWith(prisonCode, date, res.locals.user, timeSlot as string)
@@ -1129,21 +1127,19 @@ describe('Movement list routes - location events', () => {
       isOutside: 'true',
     }
 
-    const externalMovements = [
-      {
-        ...internalLocation,
-        events: [
-          {
-            scheduledInstanceId: null,
-            eventType: EventType.ACTIVITY,
-            summary: 'External movement without ID',
-            prisonerNumber: 'A1234BC',
-            startTime: '09:00',
-            endTime: '12:30',
-          },
-        ],
-      },
-    ] as InternalLocationEvents[]
+    const externalMovements = {
+      ...internalLocation,
+      events: [
+        {
+          scheduledInstanceId: null,
+          eventType: EventType.ACTIVITY,
+          summary: 'External movement without ID',
+          prisonerNumber: 'A1234BC',
+          startTime: '09:00',
+          endTime: '12:30',
+        },
+      ],
+    } as InternalLocationEvents
 
     when(activitiesService.getExternalMovements)
       .calledWith(prisonCode, date, res.locals.user, timeSlot as string)
@@ -1176,11 +1172,11 @@ describe('Movement list routes - location events', () => {
       date: dateQueryParam,
       timeSlot,
       location: {
-        ...externalMovements[0],
+        ...externalMovements,
         prisonerEvents: [
           {
             ...prisoner,
-            events: externalMovements[0].events,
+            events: externalMovements.events,
             clashingEvents: [
               {
                 scheduledInstanceId: null,
