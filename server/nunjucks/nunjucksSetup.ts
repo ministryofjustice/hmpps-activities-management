@@ -227,7 +227,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('applicationInsightsRoleName', applicationInfo?.applicationName)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
-  njkEnv.addGlobal('attendAllEnabled', config.attendAllEnabled)
   njkEnv.addGlobal('liveIssueOutageBannerEnabled', config.liveIssueOutageBannerEnabled)
   njkEnv.addGlobal('plannedDowntimeOutageBannerEnabled', config.plannedDowntimeOutageBannerEnabled)
   njkEnv.addGlobal('plannedDowntimeDate', config.plannedDowntimeDate)

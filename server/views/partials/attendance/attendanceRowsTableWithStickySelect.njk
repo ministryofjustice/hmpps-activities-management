@@ -274,7 +274,7 @@
         }
     ), headers) %}
 
-    {% set selectAllAvailable = attendAllEnabled and 'ROLE_ACTIVITY_HUB' in roles %}
+    {% set selectAllAvailable = 'ROLE_ACTIVITY_HUB' in roles %}
 
     {{ stickySelect({
         type: 'check',
