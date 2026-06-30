@@ -476,7 +476,7 @@ export default class ActivitiesService {
     date: Date,
     user: ServiceUser,
     timeSlot?: string,
-  ): Promise<LocationEvents[]> {
+  ): Promise<LocationEvents> {
     return this.activitiesApiClient.getExternalMovements(prisonCode, format(date, 'yyyy-MM-dd'), user, timeSlot)
   }
 

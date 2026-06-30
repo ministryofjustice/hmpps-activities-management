@@ -28,10 +28,8 @@ export default class LocationEventsRoutes {
       return res.redirect(`choose-details`)
     }
 
-    const locationEvent = isOutside
-      ? (
-          await this.activitiesService.getExternalMovements(user.activeCaseLoadId, richDate, user, timeSlot as string)
-        )[0]
+    const locationEvent = outsideList
+      ? await this.activitiesService.getExternalMovements(user.activeCaseLoadId, richDate, user, timeSlot as string)
       : await this.activitiesService.getInternalLocationEventsByDpsLocationId(
           user.activeCaseLoadId,
           richDate,
@@ -40,7 +38,7 @@ export default class LocationEventsRoutes {
           timeSlot as string,
         )
 
-    if (locationEvent === undefined) {
+    if (locationEvent === undefined || locationEvent.events.length === 0) {
       if (outsideList) {
         return res.render('pages/activities/movement-list/location-events', {
           outsideList,
