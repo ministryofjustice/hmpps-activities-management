@@ -17,4 +17,9 @@ ignore:
         reason: Already at most recent version
         expires: 2026-07-10T00:00:00.000Z
         created: 2026-06-22T14:44:59.026Z
+  SNYK-JS-BRACEEXPANSION-17706650:
+    - '*':
+        reason: Dev dependency
+        expires: 2026-08-01T00:00:00.000Z
+        created: 2026-07-01T15:03:23.948Z
 patch: {}
