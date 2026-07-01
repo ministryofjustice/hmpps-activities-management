@@ -113,11 +113,7 @@
                             id: 'activity-' + loop.index,
                             "data-sort-value": activity.activityName | upper
                         },
-                        html: '
-                                <p class="govuk-heading-m govuk-!-margin-bottom-0">
-                                    <a href="/activities/allocation-dashboard/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + (activity.activityName | escape) + '</a>
-                                </p>
-                              '
+                        html: '<a href="/activities/allocation-dashboard/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + (activity.activityName | escape) + '</a>'
                     },
                     {
                         attributes: {
