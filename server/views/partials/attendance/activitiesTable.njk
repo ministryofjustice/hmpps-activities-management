@@ -5,10 +5,17 @@
 {% macro activitiesTable(activities, activityDate, filterParams, now, isUncancelPage, roles) %}
     {% set formActions = [] %}
     {% if not ((activityDate | toDateString) < (now | toDateString)) %}
-      {% set formActions = (formActions.push({
+      {% set formActions = (formActions.push(
+        {
+        text: 'Find attendees to mark as not required',
+        maxItems: 1,
+        formAction: 'activities/attendance-list'
+      },
+      {
         text: 'Mark as cancelled',
         formAction: 'activities/cancel-multiple'
-      }), formActions) %}
+      }
+      ), formActions) %}
     {% endif %}
     {% if not ((activityDate | toDateString) > (now | toDateString)) %}
       {% set formActions = (formActions.push({
