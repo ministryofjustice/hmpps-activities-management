@@ -101,6 +101,13 @@ Or for production:
 
 ## Integration tests (Cypress/Wiremock)
 
+**Quick start commands**
+
+To run the entire Cypress suite locally: `npm run int-test:local`
+To run the interactive Cypress UI locally: `npm run int-test-ui:local`
+
+Alternativaly, the follow steps allow manual running:
+
 Pull images and start dependent services (redis and wiremock):
 
 `$ docker-compose pull`
