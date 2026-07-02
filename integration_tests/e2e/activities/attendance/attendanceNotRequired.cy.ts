@@ -1,4 +1,4 @@
-import { format, startOfToday } from 'date-fns'
+import { addDays, format, startOfToday } from 'date-fns'
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import SelectPeriodPage from '../../../pages/recordAttendance/selectPeriod'
@@ -21,6 +21,7 @@ import HowToRecordAttendancePage from '../../../pages/recordAttendance/attend-al
 
 context('Attendance not required', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
+  const futureDate = format(addDays(startOfToday(), 1), 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -35,6 +36,13 @@ context('Attendance not required', () => {
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,
       getAttendanceSummary,
     )
+
+    cy.stubEndpoint(
+      'GET',
+      `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${futureDate}`,
+      getAttendanceSummary,
+    )
+
     cy.stubEndpoint('GET', '/scheduled-instances/94', getScheduledInstance)
     cy.stubEndpoint('GET', '/scheduled-instances/94/scheduled-attendees', getAttendeesForScheduledInstance)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents)
@@ -116,5 +124,35 @@ context('Attendance not required', () => {
 
     Page.verifyOnPage(AttendanceListPage)
     attendanceListPage.assertNotificationContents('Session no longer cancelled')
+  })
+
+  it('should disable "Find attendees to mark as not required" when multiple activities are selected', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.enterDate(new Date(futureDate))
+    selectPeriodPage.selectAM()
+    selectPeriodPage.continue()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesPage)
+
+    activitiesPage.selectActivitiesWithNames('English level 2')
+
+    activitiesPage.findAttendeesToMarkAsNotRequiredButton().should('be.enabled')
+
+    activitiesPage.selectActivitiesWithNames('English level 1')
+
+    activitiesPage.findAttendeesToMarkAsNotRequiredButton().should('be.disabled')
   })
 })
