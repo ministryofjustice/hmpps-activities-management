@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { addDays, format, startOfToday, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
-import { validate } from 'class-validator'
+import { maxDate, validate } from 'class-validator'
 import SelectPeriodForChangesRoutes, { TimePeriodForChanges } from './selectPeriodForChanges'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
@@ -29,6 +29,7 @@ describe('Route Handlers - Select period for changes', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/change-of-circumstances/select-period', {
+        maxDate: formatDatePickerDate(startOfToday()),
         todayOptionText: `Today - ${format(startOfToday(), 'EEEE, dd MMMM yyyy')}`,
         yesterdayOptionText: `Yesterday - ${format(subDays(startOfToday(), 1), 'EEEE, dd MMMM yyyy')}`,
       })
