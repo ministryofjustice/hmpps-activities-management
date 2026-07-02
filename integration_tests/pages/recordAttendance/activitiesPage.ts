@@ -57,6 +57,8 @@ export default class ActivitiesPage extends Page {
       })
   }
 
+  findAttendeesToMarkAsNotRequiredButton = () => cy.contains('button', 'Find attendees to mark as not required')
+
   sessionPMCheckbox = () => cy.get(`[name=sessionFilters][value="PM"]`)
 
   locationTypeRadio = (value: string) => cy.get(`input[name="locationType"][value="${value}"]`)
