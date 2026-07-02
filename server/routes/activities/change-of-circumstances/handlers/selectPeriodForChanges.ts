@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsIn, ValidateIf } from 'class-validator'
 import { format, startOfToday, subDays } from 'date-fns'
-import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import Validator from '../../../../validators/validator'
 import DateOption from '../../../../enum/dateOption'
 import IsValidDate from '../../../../validators/isValidDate'
@@ -42,6 +42,7 @@ export default class SelectPeriodForChangesRoutes {
     return {
       todayOptionText: `Today - ${format(today, 'EEEE, dd MMMM yyyy')}`,
       yesterdayOptionText: `Yesterday - ${format(yesterday, 'EEEE, dd MMMM yyyy')}`,
+      maxDate: formatDatePickerDate(today),
     }
   }
 }

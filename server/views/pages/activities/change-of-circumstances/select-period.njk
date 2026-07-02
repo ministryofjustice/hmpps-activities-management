@@ -54,6 +54,7 @@
                                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
                                     },
                                     classes: 'moj-datepicker--fixed-width',
+                                    maxDate: maxDate,
                                     errorMessage: validationErrors | findError('date'),
                                     value: formResponses.date or allocateJourney.date | isoDateToDatePickerDate
                                 })
