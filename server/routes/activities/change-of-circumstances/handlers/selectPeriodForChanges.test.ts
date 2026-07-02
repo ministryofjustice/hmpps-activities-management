@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { addDays, format, startOfToday, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
-import { maxDate, validate } from 'class-validator'
+import { validate } from 'class-validator'
 import SelectPeriodForChangesRoutes, { TimePeriodForChanges } from './selectPeriodForChanges'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
