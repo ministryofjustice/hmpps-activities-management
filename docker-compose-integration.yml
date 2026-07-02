@@ -1,0 +1,25 @@
+services:
+  redis:
+    image: 'redis:8.8'
+    networks:
+      - hmpps
+    container_name: redis
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '-', 'http://localhost:6379/health']
+
+  # Needed only when running cypress tests
+  wiremock:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: wiremock
+    ports:
+      - '9091:8080'
+
+networks:
+  hmpps:

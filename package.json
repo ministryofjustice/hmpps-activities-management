@@ -22,7 +22,14 @@
     "int-test-ui": "cypress open --config watchForFileChanges=false",
     "clean": "rm -rf dist node_modules",
     "rebuild": "npm run clean && npm i && npm run build",
-    "setup": "npm ci && hmpps-npm-script-run-allowlist"
+    "setup": "npm ci && hmpps-npm-script-run-allowlist",
+    "deps:pull": "docker compose -f docker-compose-integration.yml pull",
+    "deps:up": "docker compose -f docker-compose-integration.yml up -d",
+    "deps:down": "docker compose -f docker-compose-integration.yml down --remove-orphans",
+    "wait:ui": "wait-on tcp:127.0.0.1:3007 --timeout 60000",
+    "wait:wiremock": "wait-on tcp:127.0.0.1:9091 --timeout 60000",
+    "int-test:local": "npm run deps:down && npm run deps:pull && npm run deps:up && npm run build && concurrently -k --success first -n ui,cypress \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run int-test\"",
+    "int-test-ui:local": "npm run deps:down && npm run deps:pull && npm run deps:up && npm run build && concurrently -k -n ui,cypress \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run int-test-ui\""
   },
   "engines": {
     "node": "^24",
@@ -102,6 +109,7 @@
     "axe-core": "^4.12.1",
     "better-npm-audit": "^3.11.0",
     "cheerio": "1.2.0",
+    "concurrently": "10.0.3",
     "cypress": "15.18.0",
     "cypress-axe": "^1.7.0",
     "cypress-file-upload": "^5.0.8",
@@ -128,7 +136,8 @@
     "sinon": "^22.0.0",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.11",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wait-on": "9.0.10"
   },
   "overrides": {
     "@opentelemetry/core": "2.8.0",

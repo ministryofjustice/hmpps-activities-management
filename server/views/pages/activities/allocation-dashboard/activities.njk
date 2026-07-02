@@ -16,6 +16,7 @@
         </div>
         <div class="govuk-grid-column-one-third">
             <div class='related-tasks'>
+                <h2 class='govuk-heading-m govuk-!-margin-bottom-2'>Related tasks</h2>
                 <ul class='govuk-list'>
                     <li>
                         <a href="/activities/create/start" class="govuk-link govuk-link--no-visited-state" target='_blank'>Create an activity</a>
@@ -112,11 +113,7 @@
                             id: 'activity-' + loop.index,
                             "data-sort-value": activity.activityName | upper
                         },
-                        html: '
-                                <p class="govuk-heading-m govuk-!-margin-bottom-0">
-                                    <a href="/activities/allocation-dashboard/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + (activity.activityName | escape) + '</a>
-                                </p>
-                              '
+                        html: '<a href="/activities/allocation-dashboard/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + (activity.activityName | escape) + '</a>'
                     },
                     {
                         attributes: {
