@@ -110,9 +110,9 @@ Alternativaly, the follow steps allow manual running:
 
 Pull images and start dependent services (redis and wiremock):
 
-`$ docker-compose pull`
+`$ docker compose -f docker-compose-integration.yml pull`
 
-`$ docker-compose up -d`
+`$ docker compose -f docker-compose-integration.yml up -d`
 
 In a different terminal:
 
