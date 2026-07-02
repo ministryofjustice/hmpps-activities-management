@@ -2,13 +2,6 @@
   padding: 10px 10px 20px 20px;
   border: 2px solid govuk-colour("black", $variant: "tint-95");
 
-  &::before {
-    @include govuk-font($size: 19, $weight: bold);
-    display: block;
-    content: "Related tasks";
-    margin-bottom: 5px;
-  }
-
   a {
     @include govuk-font($size: 19);
   }
