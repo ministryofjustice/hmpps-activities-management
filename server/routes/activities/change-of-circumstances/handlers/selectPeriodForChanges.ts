@@ -1,15 +1,15 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsIn, ValidateIf } from 'class-validator'
-import { startOfToday, subDays } from 'date-fns'
+import { format, startOfToday, subDays } from 'date-fns'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
-import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
 import DateOption from '../../../../enum/dateOption'
+import IsValidDate from '../../../../validators/isValidDate'
 
 export class TimePeriodForChanges {
   @Expose()
-  @IsIn(Object.values(DateOption), { message: 'Select a date to query changes in the prison' })
+  @IsIn(Object.values(DateOption), { message: 'Select a date' })
   datePresetOption: string
 
   @Expose()
@@ -21,7 +21,8 @@ export class TimePeriodForChanges {
 }
 
 export default class SelectPeriodForChangesRoutes {
-  GET = async (req: Request, res: Response) => res.render('pages/activities/change-of-circumstances/select-period')
+  GET = async (req: Request, res: Response) =>
+    res.render('pages/activities/change-of-circumstances/select-period', this.viewModel())
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const date = this.selectedDate(req.body)
@@ -32,5 +33,15 @@ export default class SelectPeriodForChangesRoutes {
     if (form.datePresetOption === DateOption.TODAY) return startOfToday()
     if (form.datePresetOption === DateOption.YESTERDAY) return subDays(startOfToday(), 1)
     return form.date
+  }
+
+  private viewModel() {
+    const today = startOfToday()
+    const yesterday = subDays(today, 1)
+
+    return {
+      todayOptionText: `Today - ${format(today, 'EEEE, dd MMMM yyyy')}`,
+      yesterdayOptionText: `Yesterday - ${format(yesterday, 'EEEE, dd MMMM yyyy')}`,
+    }
   }
 }
