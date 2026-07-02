@@ -9,13 +9,11 @@ import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/typ
 import { UserDetails } from '../../../../../@types/manageUsersApiImport/types'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { AppointmentSearchResult } from '../../../../../@types/activitiesAPI/types'
-import LocationMappingService from '../../../../../services/locationMappingService'
 
 jest.mock('../../../../../services/bookAVideoLinkService')
 jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/prisonService')
 jest.mock('../../../../../services/userService')
-jest.mock('../../../../../services/locationMappingService')
 
 describe('VideoLinkDetailsRoutes', () => {
   let req: Partial<Request>
@@ -25,7 +23,6 @@ describe('VideoLinkDetailsRoutes', () => {
   let activitiesService: jest.Mocked<ActivitiesService>
   let prisonService: jest.Mocked<PrisonService>
   let userService: jest.Mocked<UserService>
-  let locationMappingService: jest.Mocked<LocationMappingService>
   let videoLinkDetailsRoutes: VideoLinkDetailsRoutes
 
   beforeEach(() => {
@@ -41,14 +38,12 @@ describe('VideoLinkDetailsRoutes', () => {
     activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
     prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
     userService = new UserService(null) as jest.Mocked<UserService>
-    locationMappingService = new LocationMappingService(null, null) as jest.Mocked<LocationMappingService>
 
     videoLinkDetailsRoutes = new VideoLinkDetailsRoutes(
       bookAVideoLinkService,
       activitiesService,
       prisonService,
       userService,
-      locationMappingService,
     )
   })
 
@@ -83,9 +78,8 @@ describe('VideoLinkDetailsRoutes', () => {
         dateOfBirth: '1980-01-01',
         prisonId: 'PRISON1',
       } as Prisoner)
-      locationMappingService.mapDpsLocationKeyToNomisId.mockResolvedValue(10001)
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
-        { key: 'Room1', description: 'Room 1', enabled: true },
+        { dpsLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
       ] as Location[])
       userService.getUserMap.mockResolvedValue(
         new Map([
@@ -120,7 +114,7 @@ describe('VideoLinkDetailsRoutes', () => {
             dateOfBirth: '1980-01-01',
             prisonId: 'PRISON1',
           },
-          rooms: [{ key: 'Room1', description: 'Room 1', enabled: true }],
+          rooms: [{ dpsLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true }],
           userMap: new Map([
             ['user1', { username: 'user1', active: true, name: 'User One', authSource: 'auth', userId: 'user1' }],
             ['user2', { username: 'user2', active: true, name: 'User Two', authSource: 'auth', userId: 'user2' }],

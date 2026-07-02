@@ -4,13 +4,10 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import { parseIsoDate } from '../../../../../utils/datePickerUtils'
 import { ScheduledEvent } from '../../../../../@types/activitiesAPI/types'
-import PrisonService from '../../../../../services/prisonService'
 import { Location } from '../../../../../@types/bookAVideoLinkApi/types'
 import ProbationBookingService from '../../../../../services/probationBookingService'
-import { LocationLenient } from '../../../../../@types/prisonApiImportCustom'
 
 jest.mock('../../../../../services/activitiesService')
-jest.mock('../../../../../services/prisonService')
 jest.mock('../../../../../services/bookAVideoLinkService')
 jest.mock('../../../../../services/probationBookingService')
 jest.mock('../../../../../utils/datePickerUtils')
@@ -19,7 +16,6 @@ describe('ScheduleRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
   let activitiesService: jest.Mocked<ActivitiesService>
-  let prisonService: jest.Mocked<PrisonService>
   let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
   let probationBookingService: jest.Mocked<ProbationBookingService>
   let scheduleRoutes: ScheduleRoutes
@@ -30,7 +26,7 @@ describe('ScheduleRoutes', () => {
         bookAProbationMeetingJourney: {
           prisoner: { number: 'A1234BC' },
           date: '2023-10-01',
-          locationCode: 'LOCATION_1',
+          locationId: 'LOCATION_ID',
         },
       },
       params: {},
@@ -43,15 +39,9 @@ describe('ScheduleRoutes', () => {
       redirectOrReturn: jest.fn(),
     } as unknown as Response
     activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-    prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
     probationBookingService = new ProbationBookingService(null) as jest.Mocked<ProbationBookingService>
-    scheduleRoutes = new ScheduleRoutes(
-      activitiesService,
-      prisonService,
-      bookAVideoLinkService,
-      probationBookingService,
-    )
+    scheduleRoutes = new ScheduleRoutes(activitiesService, bookAVideoLinkService, probationBookingService)
   })
 
   describe('GET', () => {
@@ -76,35 +66,32 @@ describe('ScheduleRoutes', () => {
           prisonerNumber: 'ABC123',
         },
       ] as unknown as ScheduledEvent[]
-      const internalLocationEvents = [
-        {
-          id: 1,
-          dpsLocationId: '11111111-1111-1111-1111-111111111111',
-          prisonCode: 'PRISON1',
-          code: 'LOC1',
-          description: 'Location 1',
-          events: [
-            ...scheduledEvents,
-            {
-              id: 3,
-              type: 'activity',
-              cancelled: false,
-              prisonCode: 'PRISON1',
-              eventSource: 'source1',
-              scheduledInstanceId: 1,
-              prisonerNumber: 'XYZ321',
-            } as unknown as ScheduledEvent,
-          ],
-        },
-      ]
+      const internalLocationEvents = {
+        id: 1,
+        dpsLocationId: '11111111-1111-1111-1111-111111111111',
+        prisonCode: 'PRISON1',
+        code: 'LOC1',
+        description: 'Location 1',
+        events: [
+          ...scheduledEvents,
+          {
+            id: 3,
+            type: 'activity',
+            cancelled: false,
+            prisonCode: 'PRISON1',
+            eventSource: 'source1',
+            scheduledInstanceId: 1,
+            prisonerNumber: 'XYZ321',
+          } as unknown as ScheduledEvent,
+        ],
+      }
       const rooms = [
         {
-          key: 'ROOM1',
+          dpsLocationId: 'LOCATION_ID_1',
           description: 'Room 1',
           enabled: true,
         },
       ] as Location[]
-      prisonService.getInternalLocationByKey.mockResolvedValue({ locationId: 1 } as LocationLenient)
       activitiesService.getScheduledEventsForPrisoners.mockResolvedValue({
         activities: [scheduledEvents[0]],
         appointments: [scheduledEvents[1]],
@@ -113,7 +100,7 @@ describe('ScheduleRoutes', () => {
         externalTransfers: [],
         adjudications: [],
       })
-      activitiesService.getInternalLocationEvents.mockResolvedValue(internalLocationEvents)
+      activitiesService.getInternalLocationEventsByDpsLocationId.mockResolvedValue(internalLocationEvents)
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue(rooms)
       ;(parseIsoDate as jest.Mock).mockReturnValue(new Date('2023-10-01'))
 
@@ -121,10 +108,7 @@ describe('ScheduleRoutes', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/probation/schedule', {
         prisonerScheduledEvents: [scheduledEvents[0], scheduledEvents[1]],
-        internalLocationEvents: internalLocationEvents.map(ile => ({
-          ...ile,
-          events: scheduledEvents,
-        })),
+        internalLocationEvents,
         rooms,
       })
     })

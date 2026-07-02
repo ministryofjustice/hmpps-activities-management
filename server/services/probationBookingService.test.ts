@@ -20,7 +20,7 @@ describe('Probation booking service', () => {
     },
     prisonCode: 'MDI',
     date: '2022-03-20T00:00:00Z',
-    locationCode: 'LOCATION',
+    locationId: 'LOCATION_ID',
     startTime: '1970-01-01T13:30:00Z',
     endTime: '1970-01-01T14:30:00Z',
     probationTeamCode: 'BLACKPP',
@@ -54,7 +54,7 @@ describe('Probation booking service', () => {
             appointments: [
               {
                 type: 'VLB_PROBATION',
-                locationKey: 'LOCATION',
+                dpsLocationId: 'LOCATION_ID',
                 date: '2022-03-20',
                 startTime: '13:30',
                 endTime: '14:30',
@@ -88,7 +88,7 @@ describe('Probation booking service', () => {
             appointments: [
               {
                 type: 'VLB_PROBATION',
-                locationKey: 'LOCATION',
+                dpsLocationId: 'LOCATION_ID',
                 date: '2022-03-20',
                 startTime: '13:30',
                 endTime: '14:30',
