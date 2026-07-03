@@ -46,7 +46,7 @@ describe('Book A Video link service', () => {
       when(bookAVideoLinkClient.matchAppointmentToVideoLinkBooking).mockResolvedValue(expectedResult)
 
       const prisonerNumber = 'ABC123'
-      const locationKey = 'locationKey'
+      const dpsLocationId = 'LOCATION_ID'
       const date = '2024-02-20'
       const startTime = '14:00'
       const endTime = '15:00'
@@ -54,7 +54,7 @@ describe('Book A Video link service', () => {
 
       const actualResult = await bookAVideoLinkService.matchAppointmentToVideoLinkBooking(
         prisonerNumber,
-        locationKey,
+        dpsLocationId,
         date,
         startTime,
         endTime,
@@ -66,7 +66,7 @@ describe('Book A Video link service', () => {
       expect(bookAVideoLinkClient.matchAppointmentToVideoLinkBooking).toHaveBeenCalledWith(
         {
           prisonerNumber,
-          locationKey,
+          dpsLocationId,
           date,
           startTime,
           statusCode,

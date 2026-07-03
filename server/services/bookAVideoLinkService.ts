@@ -12,7 +12,7 @@ export default class BookAVideoLinkService {
 
   public matchAppointmentToVideoLinkBooking(
     prisonerNumber: string,
-    locationKey: string,
+    dpsLocationId: string,
     date: string,
     startTime: string,
     endTime: string,
@@ -21,7 +21,7 @@ export default class BookAVideoLinkService {
   ) {
     const requestBody = {
       prisonerNumber,
-      locationKey,
+      dpsLocationId,
       date,
       startTime,
       endTime,
