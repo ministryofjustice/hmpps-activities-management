@@ -58,7 +58,7 @@ context('Changes in circumstances', () => {
     const changesInCircumstancesDatePage = Page.verifyOnPage(ChangesInCircumstancesDatePage)
     changesInCircumstancesDatePage.datePresetOption().should('exist')
     changesInCircumstancesDatePage.radioTodayClick()
-    changesInCircumstancesDatePage.submit()
+    changesInCircumstancesDatePage.continue()
 
     const changesInCircumstancesResultsPage = Page.verifyOnPage(ChangesInCircumstancesResultsPage)
     changesInCircumstancesResultsPage
@@ -80,7 +80,7 @@ context('Changes in circumstances', () => {
     } as unknown as JSON)
 
     changesInCircumstancesDatePage.radioYesterdayClick()
-    changesInCircumstancesDatePage.submit()
+    changesInCircumstancesDatePage.continue()
     changesInCircumstancesResultsPage
       .noDataParagraph()
       .should('contain.text', 'There are no changes to show for yesterday.')
@@ -110,7 +110,7 @@ context('Changes in circumstances', () => {
     const changesInCircumstancesDatePage = Page.verifyOnPage(ChangesInCircumstancesDatePage)
     changesInCircumstancesDatePage.radioOtherClick()
     changesInCircumstancesDatePage.selectDatePickerDate(chosenDate)
-    changesInCircumstancesDatePage.submit()
+    changesInCircumstancesDatePage.continue()
 
     const changesInCircumstancesResultsPage = Page.verifyOnPage(ChangesInCircumstancesResultsPage)
     changesInCircumstancesResultsPage
@@ -134,7 +134,7 @@ context('Changes in circumstances', () => {
     const changesInCircumstancesDatePage = Page.verifyOnPage(ChangesInCircumstancesDatePage)
     changesInCircumstancesDatePage.radioOtherClick()
     changesInCircumstancesDatePage.selectDatePickerDate(new Date('2023-05-16'))
-    changesInCircumstancesDatePage.submit()
+    changesInCircumstancesDatePage.continue()
 
     const changesInCircumstancesResultsPage = Page.verifyOnPage(ChangesInCircumstancesResultsPage)
     changesInCircumstancesResultsPage.noDataParagraph().should('not.exist')
