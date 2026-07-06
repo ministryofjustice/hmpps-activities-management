@@ -4,30 +4,42 @@
 
 {% macro activitiesTable(activities, activityDate, filterParams, now, isUncancelPage, roles) %}
     {% set formActions = [] %}
-    {% if not ((activityDate | toDateString) < (now | toDateString)) %}
-      {% set formActions = (formActions.push(
-        {
+    {% set activityDateString = activityDate | formatDate('yyyy-MM-dd') %}
+    {% set todayDateString = now | formatDate('yyyy-MM-dd') %}
+
+    {% set isPastActivityDate = activityDateString < todayDateString %}
+    {% set isTodayActivityDate = activityDateString == todayDateString %}
+    {% set isFutureActivityDate = activityDateString > todayDateString %}
+    {% set isTodayOrFutureActivityDate = activityDateString >= todayDateString %}
+    {% set isTodayOrPastActivityDate = activityDateString <= todayDateString %}
+
+    {% if isFutureActivityDate %}
+      {% set formActions = (formActions.push({
         text: 'Find attendees to mark as not required',
         maxItems: 1,
         formAction: 'activities/attendance-list'
-      },
-      {
+      }), formActions) %}
+    {% endif %}
+
+    {% if isTodayOrFutureActivityDate %}
+      {% set formActions = (formActions.push({
         text: 'Mark as cancelled',
         formAction: 'activities/cancel-multiple'
-      }
-      ), formActions) %}
+      }), formActions) %}
     {% endif %}
-    {% if not ((activityDate | toDateString) > (now | toDateString)) %}
+
+    {% if isTodayOrPastActivityDate %}
       {% set formActions = (formActions.push({
         text: 'Record or edit attendance',
         formAction: 'activities/attendance-list'
       }), formActions) %}
     {% endif %}
-    {% if isUncancelPage and not ((activityDate | toDateString) < (now | toDateString)) %}
+
+    {% if isUncancelPage and isTodayOrFutureActivityDate %}
       {% set formActions = [{
         text: 'Uncancel',
         formAction: 'uncancel-multiple/next'
-      }]%}
+      }] %}
     {% endif %}
 
     {% set pagination =  {
@@ -50,6 +62,13 @@
     {% set rows = [] %}
     {% for activity in activities %}
         {% set activityLocation = showLocation(user.externalActivitiesRolledOut, activity, makeCapitals = true) %}
+
+        {% if activityDateString == todayDateString %}
+            {% set scheduledCount = activity.attendanceSummary.attendees or 0 %}
+        {% else %}
+            {% set scheduledCount = activity.attendanceSummary.allocations or 0 %}
+        {% endif %}
+
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + activity.summary + ' ' + (activity.session),
             value: activity.scheduledInstanceId,
@@ -86,10 +105,10 @@
                 {
                     attributes: {
                         id: 'scheduled-' + loop.index,
-                        "data-sort-value": activity.attendanceSummary.attendees if (activityDate | toDateString == now | toDateString) else activity.attendanceSummary.allocations
+                        "data-sort-value": scheduledCount
                     },
                     classes: 'govuk-table__cell--numeric',
-                    text: activity.attendanceSummary.attendees or 0 if (activityDate | toDateString == now | toDateString) else activity.attendanceSummary.allocations or 0
+                    text: scheduledCount
                 },
                 {
                     attributes: {

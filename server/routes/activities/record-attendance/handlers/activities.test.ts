@@ -211,6 +211,7 @@ describe('Route Handlers - Activities', () => {
           locationId: null,
         },
         activityDate: date,
+        now: expect.any(Date),
         selectedSessions: ['PM', 'ED'],
         activityRows: [
           {
@@ -248,6 +249,7 @@ describe('Route Handlers - Activities', () => {
           locationId: null,
         },
         activityDate: date,
+        now: expect.any(Date),
         selectedSessions: ['AM', 'PM'],
         activityRows: [
           {
@@ -308,6 +310,7 @@ describe('Route Handlers - Activities', () => {
           locationId: null,
         },
         activityDate: date,
+        now: expect.any(Date),
         selectedSessions: ['AM', 'PM'],
         activityRows: [
           {
@@ -369,6 +372,7 @@ describe('Route Handlers - Activities', () => {
           locationId: null,
         },
         activityDate: date,
+        now: expect.any(Date),
         selectedSessions: ['AM', 'PM'],
         activityRows: [
           {
