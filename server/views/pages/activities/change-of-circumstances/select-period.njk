@@ -19,7 +19,8 @@
                     attributes: { "data-qa": "datePresetOption" },
                     fieldset: {
                         legend: {
-                            text: "Select the date",
+                            html: '<span class="govuk-caption-l">Review changes in circumstances</span>Select a date to review changes',
+                            text: "Select a date to review changes",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
@@ -28,12 +29,12 @@
                     items: [
                         {
                             value: "today",
-                            text: "Today",
+                            text: todayOptionText,
                             checked: formResponses.datePresetOption == 'today'
                         },
                         {
                             value: "yesterday",
-                            text: "Yesterday",
+                            text: yesterdayOptionText,
                             checked: formResponses.datePresetOption == 'yesterday'
                         },
                         {
@@ -53,6 +54,7 @@
                                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
                                     },
                                     classes: 'moj-datepicker--fixed-width',
+                                    maxDate: maxDate,
                                     errorMessage: validationErrors | findError('date'),
                                     value: formResponses.date or allocateJourney.date | isoDateToDatePickerDate
                                 })
@@ -62,7 +64,7 @@
                 }) }}
 
                 {{ govukButton({
-                    text: "Submit"
+                    text: "Continue"
                 }) }}
             </form>
         </div>

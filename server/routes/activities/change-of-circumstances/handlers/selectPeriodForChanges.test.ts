@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { addDays, startOfToday, subDays } from 'date-fns'
+import { addDays, format, startOfToday, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import SelectPeriodForChangesRoutes, { TimePeriodForChanges } from './selectPeriodForChanges'
@@ -27,23 +27,30 @@ describe('Route Handlers - Select period for changes', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/change-of-circumstances/select-period')
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/change-of-circumstances/select-period', {
+        maxDate: formatDatePickerDate(startOfToday()),
+        todayOptionText: `Today - ${format(startOfToday(), 'EEEE, dd MMMM yyyy')}`,
+        yesterdayOptionText: `Yesterday - ${format(subDays(startOfToday(), 1), 'EEEE, dd MMMM yyyy')}`,
+      })
     })
   })
 
   describe('POST', () => {
     it('redirect with the expected query params when today selected', async () => {
       req.body = { datePresetOption: DateOption.TODAY }
-      const todaysDate = formatIsoDate(new Date())
+
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`view-changes?date=${todaysDate}`)
+
+      expect(res.redirect).toHaveBeenCalledWith(`view-changes?date=${formatIsoDate(startOfToday())}`)
     })
 
     it('redirect with the expected query params for when yesterday is selected', async () => {
       req.body = { datePresetOption: DateOption.YESTERDAY }
-      const yesterdaysDate = formatIsoDate(subDays(new Date(), 1))
+
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`view-changes?date=${yesterdaysDate}`)
+
+      expect(res.redirect).toHaveBeenCalledWith(`view-changes?date=${formatIsoDate(subDays(startOfToday(), 1))}`)
     })
 
     it('redirect with the expected query params for when a custom date is selected', async () => {
@@ -61,14 +68,14 @@ describe('Route Handlers - Select period for changes', () => {
       const body = {}
       const requestObject = plainToInstance(TimePeriodForChanges, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date to query changes in the prison' }])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date' }])
     })
 
     it('validation fails if invalid values are entered', async () => {
       const body = { datePresetOption: 'invalid' }
       const requestObject = plainToInstance(TimePeriodForChanges, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date to query changes in the prison' }])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date' }])
     })
 
     it('validation fails if preset option is other and a date is not provided', async () => {
