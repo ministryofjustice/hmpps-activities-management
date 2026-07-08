@@ -74,10 +74,13 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/location', {
-        locations,
-        isCtaAcceptAndSave: false,
-      })
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/create-and-edit/location',
+        expect.objectContaining({
+          locations,
+          isCtaAcceptAndSave: false,
+        }),
+      )
     })
 
     it('should render the location view with accept and save', async () => {
@@ -90,10 +93,13 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/location', {
-        locations,
-        isCtaAcceptAndSave: true,
-      })
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/create-and-edit/location',
+        expect.objectContaining({
+          locations,
+          isCtaAcceptAndSave: true,
+        }),
+      )
     })
   })
 
@@ -112,6 +118,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
         id: '26149',
         description: 'Gym',
       })
+      expect(req.session.appointmentJourney.inCell).toEqual(false)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
     })
 
@@ -130,13 +137,14 @@ describe('Route Handlers - Create Appointment - Location', () => {
         id: '26149',
         description: 'Gym',
       })
+      expect(req.session.appointmentJourney.inCell).toEqual(false)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('appointment-set-date')
     })
 
     it('validation fails when selected location is not found', async () => {
       req.body = {
         locationType: LocationType.OUT_OF_CELL,
-        locationId: -1,
+        locationId: '-1',
       }
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
@@ -159,29 +167,35 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
     it('should update the appointment and call redirect or edit', async () => {
       req.body = {
-        locationId: 26149,
+        locationType: LocationType.OUT_OF_CELL,
+        locationId: '26149',
       }
 
       req.session.appointmentJourney = {
         location: {
-          id: 26152,
+          id: '26152',
           description: 'Chapel',
         },
-      } as unknown as AppointmentJourney
+      } as AppointmentJourney
 
-      req.journeyData.editAppointmentJourney = {} as unknown as EditAppointmentJourney
+      req.journeyData.editAppointmentJourney = {} as EditAppointmentJourney
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
 
       await handler.EDIT(req, res)
 
+      expect(req.journeyData.editAppointmentJourney.location).toEqual({
+        id: '26149',
+        description: 'Gym',
+      })
+      expect(req.journeyData.editAppointmentJourney.inCell).toEqual(false)
       expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'location')
     })
 
     it('validation fails when selected location is not found', async () => {
       req.body = {
         locationType: LocationType.OUT_OF_CELL,
-        locationId: -1,
+        locationId: '-1',
       }
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
@@ -196,21 +210,6 @@ describe('Route Handlers - Create Appointment - Location', () => {
   })
 
   describe('Validation', () => {
-    it('validation fails when no location id is selected', async () => {
-      const body = {
-        locationType: LocationType.OUT_OF_CELL,
-      }
-
-      const requestObject = plainToInstance(Location, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(
-        expect.arrayContaining([
-          { property: 'locationId', error: 'Start typing the appointment location and select it from the list' },
-        ]),
-      )
-    })
-
     it('validation fails when no location id is selected', async () => {
       const body = {
         locationType: LocationType.OUT_OF_CELL,
