@@ -27,7 +27,7 @@ export default function CreateRoutes({
   const hearingDetails = new HearingDetailsRoutes(bookAVideoLinkService, courtBookingService)
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
-  const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService, courtBookingService)
+  const schedule = new ScheduleRoutes(activitiesService, bookAVideoLinkService, courtBookingService)
   const courtHearingLink = new CourtHearingLinkRoutes(courtBookingService)
   const extraInformation = new ExtraInformationRoutes(courtBookingService)
   const checkBooking = new CheckBookingRoutes(bookAVideoLinkService, courtBookingService)

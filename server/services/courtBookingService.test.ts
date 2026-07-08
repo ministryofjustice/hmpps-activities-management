@@ -36,7 +36,7 @@ describe('Court booking service', () => {
         },
         prisonCode: 'MDI',
         date: '2022-03-20T00:00:00Z',
-        locationCode: 'LOCATION',
+        locationId: 'LOCATION_ID',
         startTime: '1970-01-01T13:30:00Z',
         endTime: '1970-01-01T14:30:00Z',
         courtCode: 'COURT_HOUSE',
@@ -57,7 +57,7 @@ describe('Court booking service', () => {
             appointments: [
               {
                 type: 'VLB_COURT_MAIN',
-                locationKey: 'LOCATION',
+                dpsLocationId: 'LOCATION_ID',
                 date: '2022-03-20',
                 startTime: '13:30',
                 endTime: '14:30',
@@ -88,13 +88,13 @@ describe('Court booking service', () => {
         },
         prisonCode: 'MDI',
         date: '2022-03-20T00:00:00Z',
-        locationCode: 'LOCATION',
+        locationId: 'LOCATION_ID',
         startTime: '1970-01-01T13:30:00Z',
         endTime: '1970-01-01T14:30:00Z',
-        preLocationCode: 'PRE_LOCATION',
+        preLocationId: 'PRE_LOCATION_ID',
         preHearingStartTime: '1970-01-01T13:15:00Z',
         preHearingEndTime: '1970-01-01T13:30:00Z',
-        postLocationCode: 'POST_LOCATION',
+        postLocationId: 'POST_LOCATION_ID',
         postHearingStartTime: '1970-01-01T14:30:00Z',
         postHearingEndTime: '1970-01-01T14:45:00Z',
         courtCode: 'COURT_HOUSE',
@@ -113,21 +113,21 @@ describe('Court booking service', () => {
             appointments: [
               {
                 type: 'VLB_COURT_PRE',
-                locationKey: 'PRE_LOCATION',
+                dpsLocationId: 'PRE_LOCATION_ID',
                 date: '2022-03-20',
                 startTime: '13:15',
                 endTime: '13:30',
               },
               {
                 type: 'VLB_COURT_MAIN',
-                locationKey: 'LOCATION',
+                dpsLocationId: 'LOCATION_ID',
                 date: '2022-03-20',
                 startTime: '13:30',
                 endTime: '14:30',
               },
               {
                 type: 'VLB_COURT_POST',
-                locationKey: 'POST_LOCATION',
+                dpsLocationId: 'POST_LOCATION_ID',
                 date: '2022-03-20',
                 startTime: '14:30',
                 endTime: '14:45',
@@ -155,7 +155,7 @@ describe('Court booking service', () => {
         number: 'ABC123',
       },
       date: '2022-03-20T00:00:00Z',
-      locationCode: 'LOCATION',
+      locationId: 'LOCATION_ID',
       startTime: '1970-01-01T13:30:00Z',
       endTime: '1970-01-01T14:30:00Z',
       prisonCode: 'MDI',
@@ -164,7 +164,7 @@ describe('Court booking service', () => {
       videoLinkUrl: 'videoLinkUrl',
     } as BookACourtHearingJourney
 
-    it('Puts a request to amend a probation hearing booking', async () => {
+    it('Puts a request to amend a court hearing booking', async () => {
       bookAVideoLinkClient.amendVideoLinkBooking.mockResolvedValue(1)
 
       const expectedBody = {
@@ -176,7 +176,7 @@ describe('Court booking service', () => {
             appointments: [
               {
                 type: 'VLB_COURT_MAIN',
-                locationKey: 'LOCATION',
+                dpsLocationId: 'LOCATION_ID',
                 date: '2022-03-20',
                 startTime: '13:30',
                 endTime: '14:30',

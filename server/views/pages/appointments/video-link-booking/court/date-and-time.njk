@@ -67,9 +67,9 @@
                 {% set items = [{ text: "Select prison room", value: "" }] %}
                 {% for room in rooms %}
                     {% set items = (items.push({
-                        value: room.key,
+                        value: room.dpsLocationId,
                         text: room.description,
-                        selected: formResponses.preLocation == room.key or session.bookACourtHearingJourney.preLocationCode == room.key
+                        selected: formResponses.preLocation == room.dpsLocationId or session.bookACourtHearingJourney.preLocationId == room.dpsLocationId
                     }), items) %}
                 {% endfor %}
 
@@ -104,7 +104,7 @@
                         {
                             value: YesNo.YES,
                             text: "Yes",
-                            checked: formResponses.preRequired == YesNo.YES or (session.bookACourtHearingJourney.preLocationCode and not formResponses.preRequired),
+                            checked: formResponses.preRequired == YesNo.YES or (session.bookACourtHearingJourney.preLocationId and not formResponses.preRequired),
                             conditional: {
                                 html: preLocationsHtml
                             }
@@ -112,7 +112,7 @@
                         {
                             value: YesNo.NO,
                             text: "No",
-                            checked: formResponses.preRequired == YesNo.NO or (session.bookACourtHearingJourney.date and not session.bookACourtHearingJourney.preLocationCode and not formResponses.preRequired)
+                            checked: formResponses.preRequired == YesNo.NO or (session.bookACourtHearingJourney.date and not session.bookACourtHearingJourney.preLocationId and not formResponses.preRequired)
                         }
                     ]
                 }) }}
@@ -120,9 +120,9 @@
                 {% set items = [{ text: "Select prison room", value: "" }] %}
                 {% for room in rooms %}
                     {% set items = (items.push({
-                        value: room.key,
+                        value: room.dpsLocationId,
                         text: room.description,
-                        selected: formResponses.postLocation == room.key or session.bookACourtHearingJourney.postLocationCode == room.key
+                        selected: formResponses.postLocation == room.dpsLocationId or session.bookACourtHearingJourney.postLocationId == room.dpsLocationId
                     }), items) %}
                 {% endfor %}
                 {% set postLocationsHtml %}
@@ -156,7 +156,7 @@
                         {
                             value: YesNo.YES,
                             text: "Yes",
-                            checked: formResponses.postRequired == YesNo.YES or (session.bookACourtHearingJourney.postLocationCode and not formResponses.postRequired),
+                            checked: formResponses.postRequired == YesNo.YES or (session.bookACourtHearingJourney.postLocationId and not formResponses.postRequired),
                             conditional: {
                                 html: postLocationsHtml
                             }
@@ -164,7 +164,7 @@
                         {
                             value: YesNo.NO,
                             text: "No",
-                            checked: formResponses.postRequired == YesNo.NO or (session.bookACourtHearingJourney.date and not session.bookACourtHearingJourney.postLocationCode and not formResponses.postRequired)
+                            checked: formResponses.postRequired == YesNo.NO or (session.bookACourtHearingJourney.date and not session.bookACourtHearingJourney.postLocationId and not formResponses.postRequired)
                         }
                     ]
                 }) }}

@@ -12,13 +12,13 @@ function ListFilter(container) {
       classes: 'govuk-button--blue',
     },
     toggleButtonContainer: {
-      selector: '.moj-action-bar__filter',
+      selector: document.querySelector('.moj-action-bar__filter'),
     },
     closeButton: {
       text: 'Close',
     },
     closeButtonContainer: {
-      selector: '.moj-filter__header-action',
+      selector: document.querySelector('.moj-filter__header-action'),
     },
   })
 }

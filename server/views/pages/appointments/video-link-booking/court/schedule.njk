@@ -73,13 +73,13 @@
                         value: {
                             text: (session.bookACourtHearingJourney.preHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.preHearingEndTime | parseISODate | formatDate('HH:mm'))
                         }
-                    } if session.bookACourtHearingJourney.preLocationCode,
+                    } if session.bookACourtHearingJourney.preLocationId,
                     {
                         key: {
                             text: "Pre-court hearing room"
                         },
                         value: {
-                            text: (rooms | find('key', session.bookACourtHearingJourney.preLocationCode)).description
+                            text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.preLocationId)).description
                         },
                         actions: {
                             items: [
@@ -91,7 +91,7 @@
                                 }
                             ]
                         }
-                    } if session.bookACourtHearingJourney.preLocationCode,
+                    } if session.bookACourtHearingJourney.preLocationId,
                     {
                         key: {
                             text: "Main hearing time"
@@ -115,7 +115,7 @@
                             text: "Main hearing room"
                         },
                         value: {
-                            text: (rooms | find('key', session.bookACourtHearingJourney.locationCode)).description
+                            text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.locationId)).description
                         },
                         actions: {
                             items: [
@@ -135,13 +135,13 @@
                         value: {
                             text: (session.bookACourtHearingJourney.postHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.postHearingEndTime | parseISODate | formatDate('HH:mm'))
                         }
-                    } if session.bookACourtHearingJourney.postLocationCode,
+                    } if session.bookACourtHearingJourney.postLocationId,
                     {
                         key: {
                             text: "Post-court hearing room"
                         },
                         value: {
-                            text: (rooms | find('key', session.bookACourtHearingJourney.postLocationCode)).description
+                            text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.postLocationId)).description
                         },
                         actions: {
                             items: [
@@ -153,7 +153,7 @@
                                 }
                             ]
                         }
-                    } if session.bookACourtHearingJourney.postLocationCode
+                    } if session.bookACourtHearingJourney.postLocationId
                 ]
             }) }}
         </div>

@@ -50,9 +50,9 @@ describe('CheckBookingRoutes', () => {
   describe('GET', () => {
     it('should render the check booking page with rooms, courts, and hearing types', async () => {
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
-        { key: 'Room1', description: 'Room 1', enabled: true },
-        { key: 'Room2', description: 'Room 2', enabled: true },
-      ] as Location[])
+        { dspLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
+        { dspLocationId: 'LOCATION_ID_2', description: 'Room 2', enabled: true },
+      ] as unknown as Location[])
       bookAVideoLinkService.getAllCourts.mockResolvedValue([
         { courtId: 1, code: 'Court1', description: 'Court 1', enabled: true },
         { courtId: 2, code: 'Court2', description: 'Court 2', enabled: true },
@@ -66,8 +66,8 @@ describe('CheckBookingRoutes', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/court/check-booking', {
         rooms: [
-          { key: 'Room1', description: 'Room 1', enabled: true },
-          { key: 'Room2', description: 'Room 2', enabled: true },
+          { dspLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
+          { dspLocationId: 'LOCATION_ID_2', description: 'Room 2', enabled: true },
         ],
         courts: [
           { courtId: 1, code: 'Court1', description: 'Court 1', enabled: true },

@@ -8,7 +8,6 @@ import { PrisonAppointment, VideoLinkBooking } from '../../../../../@types/bookA
 import ActivitiesService from '../../../../../services/activitiesService'
 import { ServiceUser } from '../../../../../@types/express'
 import { AppointmentSearchResult } from '../../../../../@types/activitiesAPI/types'
-import LocationMappingService from '../../../../../services/locationMappingService'
 
 export default class VideoLinkDetailsRoutes {
   constructor(
@@ -16,7 +15,6 @@ export default class VideoLinkDetailsRoutes {
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
     private readonly userService: UserService,
-    private readonly locationMappingService: LocationMappingService,
   ) {}
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -76,8 +74,6 @@ export default class VideoLinkDetailsRoutes {
     retries = 3,
     delay = 1000,
   ): Promise<AppointmentSearchResult> => {
-    const locationId = await this.locationMappingService.mapDpsLocationKeyToNomisId(mainAppointment.prisonLocKey, user)
-
     const appointment = await this.activitiesService
       .searchAppointments(
         user.activeCaseLoadId,
@@ -92,7 +88,7 @@ export default class VideoLinkDetailsRoutes {
       .then(apps =>
         apps.find(
           app =>
-            locationId === app.internalLocation.id &&
+            mainAppointment.dpsLocationId === app.internalLocation.dpsLocationId &&
             mainAppointment.startTime === app.startTime &&
             mainAppointment.endTime === app.endTime,
         ),
