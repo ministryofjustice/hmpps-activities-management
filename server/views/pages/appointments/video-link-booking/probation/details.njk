@@ -175,7 +175,7 @@
                             text: "Room for meeting"
                         },
                         value: {
-                            text: (rooms | find('key', mainAppointment.prisonLocKey)).description
+                            text: (rooms | find('dpsLocationId', mainAppointment.dpsLocationId)).description
                         },
                         actions: {
                             items: [
@@ -334,7 +334,7 @@
                     text: "Location"
                 },
                 value: {
-                    text: (rooms | find('key', appointment.prisonLocKey)).description
+                    text: (rooms | find('dpsLocationId', appointment.dpsLocationId)).description
                 }
             },
             {

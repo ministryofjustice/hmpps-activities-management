@@ -26,7 +26,7 @@ export default class LocationRoutes {
     const { mode } = req.routeContext
     const { preserveHistory } = req.query
 
-    req.session.bookAProbationMeetingJourney.locationCode = location
+    req.session.bookAProbationMeetingJourney.locationId = location
 
     if (mode === 'amend' || preserveHistory) {
       return res.redirect(`schedule${preserveHistory ? '?preserveHistory=true' : ''}`)

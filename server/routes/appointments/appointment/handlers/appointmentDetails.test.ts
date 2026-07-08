@@ -10,18 +10,15 @@ import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import { VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
-import LocationMappingService from '../../../../services/locationMappingService'
 
 jest.mock('../../../../services/userService')
 jest.mock('../../../../services/bookAVideoLinkService')
-jest.mock('../../../../services/locationMappingService')
 
 const userService = new UserService(null) as jest.Mocked<UserService>
 const bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
-const locationMappingService = new LocationMappingService(null, null) as jest.Mocked<LocationMappingService>
 
 describe('Route Handlers - Appointment Details', () => {
-  const handler = new AppointmentDetailsRoutes(userService, bookAVideoLinkService, locationMappingService)
+  const handler = new AppointmentDetailsRoutes(userService, bookAVideoLinkService)
   const tomorrow = addDays(new Date(), 1)
 
   let req: Request
@@ -86,7 +83,7 @@ describe('Route Handlers - Appointment Details', () => {
           code: 'VLB',
         },
         prisonCode: 'MDI',
-        internalLocation: { id: 1 },
+        internalLocation: { dpsLocationId: 'LOCATION_ID' },
       }
 
       req = {
@@ -96,10 +93,8 @@ describe('Route Handlers - Appointment Details', () => {
         appointment: vlbAppointment,
       } as unknown as Request
 
-      when(locationMappingService.mapNomisLocationIdToDpsKey).calledWith(atLeast(1)).mockResolvedValue('locationKey')
-
       when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
-        .calledWith(atLeast('ABC123', 'locationKey', 'ACTIVE'))
+        .calledWith(atLeast('ABC123', 'LOCATION_ID', 'ACTIVE'))
         .mockResolvedValueOnce({ videoLinkBookingId: 1, bookingType: 'COURT' } as VideoLinkBooking)
 
       await handler.GET(req, res)
@@ -115,7 +110,7 @@ describe('Route Handlers - Appointment Details', () => {
           code: 'VLPM',
         },
         prisonCode: 'MDI',
-        internalLocation: { id: 1 },
+        internalLocation: { dpsLocationId: 'LOCATION_ID' },
       }
 
       req = {
@@ -125,9 +120,8 @@ describe('Route Handlers - Appointment Details', () => {
         appointment: vlbAppointment,
       } as unknown as Request
 
-      when(locationMappingService.mapNomisLocationIdToDpsKey).calledWith(atLeast(1)).mockResolvedValue('locationKey')
       when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
-        .calledWith(atLeast('ABC123', 'locationKey', 'ACTIVE'))
+        .calledWith(atLeast('ABC123', 'LOCATION_ID', 'ACTIVE'))
         .mockResolvedValueOnce({ videoLinkBookingId: 1, bookingType: 'PROBATION' } as VideoLinkBooking)
 
       await handler.GET(req, res)
@@ -143,7 +137,7 @@ describe('Route Handlers - Appointment Details', () => {
           code: 'VLB',
         },
         prisonCode: 'MDI',
-        internalLocation: { id: 1 },
+        internalLocation: { dpsLocationId: 'LOCATION_ID' },
         isCancelled: true,
       }
 
@@ -154,10 +148,8 @@ describe('Route Handlers - Appointment Details', () => {
         appointment: vlbAppointment,
       } as unknown as Request
 
-      when(locationMappingService.mapNomisLocationIdToDpsKey).calledWith(atLeast(1)).mockResolvedValue('locationKey')
-
       when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
-        .calledWith(atLeast('ABC123', 'locationKey', 'CANCELLED'))
+        .calledWith(atLeast('ABC123', 'LOCATION_ID', 'CANCELLED'))
         .mockResolvedValueOnce({ videoLinkBookingId: 1, bookingType: 'COURT' } as VideoLinkBooking)
 
       await handler.GET(req, res)
@@ -173,7 +165,7 @@ describe('Route Handlers - Appointment Details', () => {
           code: 'VLB',
         },
         prisonCode: 'MDI',
-        internalLocation: { id: 1 },
+        internalLocation: { dpsLocationId: 'LOCATION_ID' },
       }
 
       req = {
@@ -183,7 +175,6 @@ describe('Route Handlers - Appointment Details', () => {
         appointment: vlbAppointment,
       } as unknown as Request
 
-      locationMappingService.mapNomisLocationIdToDpsKey.mockResolvedValue('locationKey')
       bookAVideoLinkService.matchAppointmentToVideoLinkBooking.mockRejectedValue(createHttpError.NotFound())
 
       await handler.GET(req, res)

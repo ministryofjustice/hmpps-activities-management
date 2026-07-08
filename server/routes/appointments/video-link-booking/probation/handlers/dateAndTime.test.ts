@@ -39,16 +39,16 @@ describe('DateAndTimeRoutes', () => {
   describe('GET', () => {
     it('should render the date and time page with rooms', async () => {
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
-        { key: 'Room1', description: 'Room 1', enabled: true },
-        { key: 'Room2', description: 'Room 2', enabled: true },
+        { dpsLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
+        { dpsLocationId: 'LOCATION_ID_2', description: 'Room 2', enabled: true },
       ] as Location[])
 
       await dateAndTimeRoutes.GET(req as Request, res as Response)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/probation/date-and-time', {
         rooms: [
-          { key: 'Room1', description: 'Room 1', enabled: true },
-          { key: 'Room2', description: 'Room 2', enabled: true },
+          { dpsLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
+          { dpsLocationId: 'LOCATION_ID_2', description: 'Room 2', enabled: true },
         ],
       })
     })

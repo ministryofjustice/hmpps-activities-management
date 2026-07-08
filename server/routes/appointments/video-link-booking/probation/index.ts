@@ -18,7 +18,6 @@ export default function Index(services: Services): Router {
     services.activitiesService,
     services.prisonService,
     services.userService,
-    services.locationMappingService,
   )
 
   get('/:vlbId', videoLinkDetailsRoutes.GET)

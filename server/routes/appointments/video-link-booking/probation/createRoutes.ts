@@ -25,7 +25,7 @@ export default function CreateRoutes({
   const selectPrisoner = new SelectPrisonerRoutes()
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
-  const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService, probationBookingService)
+  const schedule = new ScheduleRoutes(activitiesService, bookAVideoLinkService, probationBookingService)
   const extraInformation = new ExtraInformationRoutes(probationBookingService)
   const checkBooking = new CheckBookingRoutes(bookAVideoLinkService, probationBookingService)
   const confirmation = new ConfirmationRoutes(bookAVideoLinkService, prisonService)

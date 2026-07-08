@@ -28,9 +28,9 @@
                 {% set items = [{ text: "", value: "" }] %}
                 {% for room in rooms %}
                     {% set items = (items.push({
-                        value: room.key,
+                        value: room.dpsLocationId,
                         text: room.description,
-                        selected: formResponses.location == room.key or session.bookAProbationMeetingJourney.locationCode == room.key
+                        selected: formResponses.location == room.dpsLocationId or session.bookAProbationMeetingJourney.locationId == room.dpsLocationId
                     }), items) %}
                 {% endfor %}
 

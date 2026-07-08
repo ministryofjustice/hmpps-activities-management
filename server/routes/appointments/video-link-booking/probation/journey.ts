@@ -19,7 +19,7 @@ export type BookAProbationMeetingJourney = {
   date?: string
   startTime?: string
   endTime?: string
-  locationCode?: string
+  locationId?: string
   notesForStaff?: string
   notesForPrisoners?: string
 }

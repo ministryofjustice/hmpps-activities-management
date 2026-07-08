@@ -11,7 +11,6 @@ import ProbationMeetingDetailsRoutes, { ProbationMeetingDetails } from './handle
 
 export default function AmendRoutes({
   bookAVideoLinkService,
-  prisonService,
   activitiesService,
   probationBookingService,
 }: Services): Router {
@@ -23,7 +22,7 @@ export default function AmendRoutes({
 
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
-  const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService, probationBookingService)
+  const schedule = new ScheduleRoutes(activitiesService, bookAVideoLinkService, probationBookingService)
   const extraInformation = new ExtraInformationRoutes(probationBookingService)
 
   // Book a probation meeting journey is required in session for the following routes

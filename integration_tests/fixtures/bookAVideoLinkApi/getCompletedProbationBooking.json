@@ -9,7 +9,7 @@
       "prisonerNumber": "A8644DY",
       "appointmentType": "VLB_PROBATION",
       "comments": "Test",
-      "prisonLocKey": "VCC-ROOM-1",
+      "dpsLocationId": "abcd-1234-abcd-1234",
       "appointmentDate": "2025-01-01",
       "startTime": "14:00",
       "endTime": "15:30",

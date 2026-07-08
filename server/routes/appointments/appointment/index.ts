@@ -9,17 +9,12 @@ export default function Index({
   userService,
   metricsService,
   bookAVideoLinkService,
-  locationMappingService,
 }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) => router.get(path, fetchAppointment(activitiesService), handler)
 
-  const appointmentDetailsRoutes = new AppointmentDetailsRoutes(
-    userService,
-    bookAVideoLinkService,
-    locationMappingService,
-  )
+  const appointmentDetailsRoutes = new AppointmentDetailsRoutes(userService, bookAVideoLinkService)
   const appointmentMovementSlipRoutes = new AppointmentMovementSlipRoutes(metricsService)
 
   get('/', appointmentDetailsRoutes.GET)

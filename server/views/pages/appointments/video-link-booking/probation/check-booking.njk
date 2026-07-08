@@ -147,7 +147,7 @@
                                 text: "Location"
                             },
                             value: {
-                                text: (rooms | find('key', session.bookAProbationMeetingJourney.locationCode)).description
+                                text: (rooms | find('dpsLocationId', session.bookAProbationMeetingJourney.locationId)).description
                             },
                             actions: {
                                 items: [
@@ -219,7 +219,7 @@
                                 text: "Prison video link (PVL)"
                             },
                             value: {
-                                text: (rooms | find('key', session.bookAProbationMeetingJourney.locationCode)).extraAttributes.prisonVideoUrl or "None entered"
+                                text: (rooms | find('dpsLocationId', session.bookAProbationMeetingJourney.locationId)).extraAttributes.prisonVideoUrl or "None entered"
                             }
                         }
                     ],

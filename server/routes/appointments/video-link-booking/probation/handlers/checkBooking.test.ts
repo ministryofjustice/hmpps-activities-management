@@ -52,12 +52,26 @@ describe('CheckBookingRoutes', () => {
   describe('GET', () => {
     it('should render the check booking page with rooms, probation teams, and meeting types', async () => {
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
-        { key: 'Room1', description: 'Room 1', enabled: true },
-        { key: 'Room2', description: 'Room 2', enabled: true },
+        { dpsLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
+        { dpsLocationId: 'LOCATION_ID_2', description: 'Room 2', enabled: true },
       ] as Location[])
       bookAVideoLinkService.getAllProbationTeams.mockResolvedValue([
-        { probationTeamId: 1, code: 'Team1', description: 'Team 1', enabled: true },
-        { probationTeamId: 2, code: 'Team2', description: 'Team 2', enabled: true },
+        {
+          probationTeamId: 1,
+          code: 'Team1',
+          description: 'Team 1',
+          enabled: true,
+          courtTeam: false,
+          sentenceManagementTeam: false,
+        },
+        {
+          probationTeamId: 2,
+          code: 'Team2',
+          description: 'Team 2',
+          enabled: true,
+          courtTeam: false,
+          sentenceManagementTeam: false,
+        },
       ])
       bookAVideoLinkService.getProbationMeetingTypes.mockResolvedValue([
         { referenceCodeId: 1, groupCode: 'Group1', code: 'MeetingType1', description: 'Meeting Type 1' },
@@ -68,12 +82,26 @@ describe('CheckBookingRoutes', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/probation/check-booking', {
         rooms: [
-          { key: 'Room1', description: 'Room 1', enabled: true },
-          { key: 'Room2', description: 'Room 2', enabled: true },
+          { dpsLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
+          { dpsLocationId: 'LOCATION_ID_2', description: 'Room 2', enabled: true },
         ],
         probationTeams: [
-          { probationTeamId: 1, code: 'Team1', description: 'Team 1', enabled: true },
-          { probationTeamId: 2, code: 'Team2', description: 'Team 2', enabled: true },
+          {
+            probationTeamId: 1,
+            code: 'Team1',
+            description: 'Team 1',
+            enabled: true,
+            courtTeam: false,
+            sentenceManagementTeam: false,
+          },
+          {
+            probationTeamId: 2,
+            code: 'Team2',
+            description: 'Team 2',
+            enabled: true,
+            courtTeam: false,
+            sentenceManagementTeam: false,
+          },
         ],
         meetingTypes: [
           { referenceCodeId: 1, groupCode: 'Group1', code: 'MeetingType1', description: 'Meeting Type 1' },
