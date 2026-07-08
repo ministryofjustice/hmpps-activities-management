@@ -403,7 +403,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       tierCode: EventTier.TIER_2,
       organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
       location: {
-        id: 26152,
+        id: '26152',
         prisonCode: 'CHAP',
         description: 'Chapel',
       },
