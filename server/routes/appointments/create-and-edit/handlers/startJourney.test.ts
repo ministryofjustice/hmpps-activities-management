@@ -76,6 +76,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       },
       internalLocation: {
         id: 26152,
+        dpsLocationId: 'dps-location-26152',
         prisonCode: 'CHAP',
         description: 'Chapel',
       },
@@ -403,8 +404,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       tierCode: EventTier.TIER_2,
       organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
       location: {
-        id: '26152',
-        prisonCode: 'CHAP',
+        id: 'dps-location-26152',
         description: 'Chapel',
       },
       inCell: undefined,
