@@ -104,7 +104,7 @@
     "@types/nunjucks": "^3.2.6",
     "@types/passport": "^1.0.17",
     "@types/passport-oauth2": "^1.8.0",
-    "@types/sinon": "^21.0.1",
+    "@types/sinon": "^22.0.0",
     "@types/superagent": "^8.1.10",
     "axe-core": "^4.12.1",
     "better-npm-audit": "^3.11.0",
