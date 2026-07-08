@@ -48,7 +48,7 @@ describe('Edit Appointment Utils', () => {
           },
           tierCode: EventTier.TIER_1,
           location: {
-            id: 1,
+            id: '1',
             description: 'Location',
           },
           startDate: formatIsoDate(weekTomorrow),
