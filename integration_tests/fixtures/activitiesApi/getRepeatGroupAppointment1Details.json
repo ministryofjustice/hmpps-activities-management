@@ -16,6 +16,7 @@
   "appointmentName": "Chaplain Meeting (Chaplaincy)",
   "internalLocation": {
     "id": 26152,
+    "dpsLocationId": "26152",
     "prisonCode": "MDI",
     "description": "Chapel"
   },

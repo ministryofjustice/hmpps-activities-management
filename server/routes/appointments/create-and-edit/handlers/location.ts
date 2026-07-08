@@ -28,13 +28,28 @@ export default class LocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { appointmentJourney } = req.session
+    const { editAppointmentJourney } = req.journeyData
+
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
+
+    const isEditMode = appointmentJourney.mode === AppointmentJourneyMode.EDIT
+
+    const selectedLocation =
+      isEditMode && editAppointmentJourney?.location !== undefined
+        ? editAppointmentJourney.location
+        : appointmentJourney.location
+
+    const selectedInCell =
+      isEditMode && editAppointmentJourney?.inCell !== undefined
+        ? editAppointmentJourney.inCell
+        : appointmentJourney.inCell
 
     res.render('pages/appointments/create-and-edit/location', {
       locations,
-      isCtaAcceptAndSave:
-        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
+      locationType: selectedInCell ? LocationType.IN_CELL : LocationType.OUT_OF_CELL,
+      location: selectedLocation,
+      isCtaAcceptAndSave: isEditMode && !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
     })
   }
 

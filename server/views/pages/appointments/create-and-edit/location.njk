@@ -21,8 +21,29 @@
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for location in locations %}
-    {% set options = (options.push( { value: location.dpsLocationId, text: location.description }), options) %}
+    {% set options = (options.push({ value: location.dpsLocationId, text: location.description }), options) %}
 {% endfor %}
+
+{% set selectedLocation = session.appointmentJourney.location %}
+{% if editAppointmentJourney and editAppointmentJourney.location is defined %}
+    {% set selectedLocation = editAppointmentJourney.location %}
+{% endif %}
+
+{% set selectedInCell = session.appointmentJourney.inCell %}
+{% if editAppointmentJourney and editAppointmentJourney.inCell is defined %}
+    {% set selectedInCell = editAppointmentJourney.inCell %}
+{% endif %}
+
+{% set selectedLocationId = formResponses.locationId or selectedLocation.id %}
+
+{% set selectedLocationType = formResponses.locationType %}
+{% if not selectedLocationType %}
+    {% if selectedInCell %}
+        {% set selectedLocationType = LocationType.IN_CELL %}
+    {% elseif selectedLocationId %}
+        {% set selectedLocationType = LocationType.OUT_OF_CELL %}
+    {% endif %}
+{% endif %}
 
 {% block meta %}
     <meta name="autocompleteElements" content="locationId"/>
@@ -36,6 +57,7 @@
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
                 {{ govukRadios({
                     id: "location-type",
                     name: "locationType",
@@ -43,7 +65,7 @@
                         {
                             value: LocationType.OUT_OF_CELL,
                             text: "Search for a location",
-                            checked: session.appointmentJourney.dpsLocationId.id,
+                            checked: selectedLocationType == LocationType.OUT_OF_CELL,
                             conditional: {
                                 html: govukSelect({
                                     id: "locationId",
@@ -52,7 +74,7 @@
                                         text: "Start typing a location and select from the list of options."
                                     },
                                     errorMessage: validationErrors | findError('locationId'),
-                                    value: formResponses.locationId or session.appointmentJourney.dpsLocationId.id,
+                                    value: selectedLocationId,
                                     items: options
                                 })
                             }
@@ -60,10 +82,11 @@
                         {
                             value: LocationType.IN_CELL,
                             text: "In cell",
-                            checked: session.appointmentJourney.inCell
+                            checked: selectedLocationType == LocationType.IN_CELL
                         }
                     ]
                 }) }}
+
                 {{ govukButton({
                     text: "Update location" if isCtaAcceptAndSave else "Continue",
                     preventDoubleClick: true
