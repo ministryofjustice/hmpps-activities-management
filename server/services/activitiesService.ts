@@ -455,6 +455,22 @@ export default class ActivitiesService {
     )
   }
 
+  async getInternalLocationEventsByDpsLocationIds(
+    prisonCode: string,
+    date: Date,
+    dpsLocationIds: string[],
+    user: ServiceUser,
+    timeSlot?: string,
+  ) {
+    return this.activitiesApiClient.getInternalLocationEventsByDpsLocationIds(
+      prisonCode,
+      format(date, 'yyyy-MM-dd'),
+      dpsLocationIds,
+      user,
+      timeSlot,
+    )
+  }
+
   async getInternalLocationEventsByDpsLocationId(
     prisonCode: string,
     date: Date,

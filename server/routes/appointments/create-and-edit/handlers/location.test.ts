@@ -25,15 +25,15 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
   const locations = [
     {
-      id: 26152,
+      dpsLocationId: '26152',
       description: 'Chapel',
     },
     {
-      id: 26149,
+      dpsLocationId: '26149',
       description: 'Gym',
     },
     {
-      id: 26151,
+      dpsLocationId: '26151',
       description: 'Library',
     },
   ] as AppointmentLocationSummary[]
@@ -101,7 +101,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
     it('should save selected location in session and redirect to date and time page', async () => {
       req.body = {
         locationType: LocationType.OUT_OF_CELL,
-        locationId: 26149,
+        locationId: '26149',
       }
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
@@ -109,7 +109,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
       await handler.CREATE(req, res)
 
       expect(req.session.appointmentJourney.location).toEqual({
-        id: 26149,
+        id: '26149',
         description: 'Gym',
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
@@ -119,7 +119,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
       req.session.appointmentJourney.type = AppointmentType.SET
       req.body = {
         locationType: LocationType.OUT_OF_CELL,
-        locationId: 26149,
+        locationId: '26149',
       }
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
@@ -127,7 +127,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
       await handler.CREATE(req, res)
 
       expect(req.session.appointmentJourney.location).toEqual({
-        id: 26149,
+        id: '26149',
         description: 'Gym',
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('appointment-set-date')
@@ -211,10 +211,25 @@ describe('Route Handlers - Create Appointment - Location', () => {
       )
     })
 
-    it('validation fails when selected location id is not a number', async () => {
+    it('validation fails when no location id is selected', async () => {
       const body = {
         locationType: LocationType.OUT_OF_CELL,
-        locationId: 'NaN',
+      }
+
+      const requestObject = plainToInstance(Location, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          { property: 'locationId', error: 'Start typing the appointment location and select it from the list' },
+        ]),
+      )
+    })
+
+    it('validation fails when selected location id is empty', async () => {
+      const body = {
+        locationType: LocationType.OUT_OF_CELL,
+        locationId: '',
       }
 
       const requestObject = plainToInstance(Location, body)

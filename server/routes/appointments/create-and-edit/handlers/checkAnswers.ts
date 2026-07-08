@@ -54,7 +54,7 @@ export default class CheckAnswersRoutes {
       tierCode: appointmentJourney.tierCode,
       organiserCode: appointmentJourney.organiserCode,
       customName: appointmentJourney.customName,
-      internalLocationId: appointmentJourney.location?.id,
+      dpsLocationId: appointmentJourney.location?.id,
       inCell: appointmentJourney.inCell,
       startDate: appointmentJourney.startDate,
       startTime: plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString(),
@@ -84,7 +84,7 @@ export default class CheckAnswersRoutes {
       tierCode: appointmentJourney.tierCode,
       organiserCode: appointmentJourney.organiserCode,
       customName: appointmentJourney.customName,
-      internalLocationId: appointmentJourney.location?.id,
+      dpsLocationId: appointmentJourney.location?.id,
       inCell: appointmentJourney.inCell,
       startDate: appointmentJourney.startDate,
       appointments: appointmentSetJourney.appointments.map(appointment => ({

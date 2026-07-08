@@ -21,7 +21,7 @@
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for location in locations %}
-    {% set options = (options.push( { value: location.id, text: location.description }), options) %}
+    {% set options = (options.push( { value: location.dpsLocationId, text: location.description }), options) %}
 {% endfor %}
 
 {% block meta %}
@@ -43,7 +43,7 @@
                         {
                             value: LocationType.OUT_OF_CELL,
                             text: "Search for a location",
-                            checked: session.appointmentJourney.location.id,
+                            checked: session.appointmentJourney.dpsLocationId.id,
                             conditional: {
                                 html: govukSelect({
                                     id: "locationId",
@@ -52,7 +52,7 @@
                                         text: "Start typing a location and select from the list of options."
                                     },
                                     errorMessage: validationErrors | findError('locationId'),
-                                    value: formResponses.locationId or session.appointmentJourney.location.id,
+                                    value: formResponses.locationId or session.appointmentJourney.dpsLocationId.id,
                                     items: options
                                 })
                             }

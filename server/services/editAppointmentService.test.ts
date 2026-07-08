@@ -54,7 +54,7 @@ describe('Edit Appointment Service', () => {
           },
           appointmentName: 'Category',
           location: {
-            id: 1,
+            id: '1',
             description: 'Location',
           },
           startDate: formatIsoDate(weekTomorrow),
@@ -75,7 +75,7 @@ describe('Edit Appointment Service', () => {
         editAppointmentJourney: {
           numberOfAppointments: 4,
           location: {
-            id: 1,
+            id: '1',
             description: 'Location',
           },
           appointments: [
@@ -156,7 +156,7 @@ describe('Edit Appointment Service', () => {
       ]
       req.journeyData.editAppointmentJourney.property = 'location'
       req.journeyData.editAppointmentJourney.location = {
-        id: 2,
+        id: '2',
         description: 'Updated location',
       }
 
@@ -164,7 +164,7 @@ describe('Edit Appointment Service', () => {
 
       expect(activitiesService.editAppointment).toHaveBeenCalledWith(
         2,
-        { internalLocationId: 2, applyTo: AppointmentApplyTo.THIS_APPOINTMENT } as AppointmentUpdateRequest,
+        { dpsLocationId: '2', applyTo: AppointmentApplyTo.THIS_APPOINTMENT } as AppointmentUpdateRequest,
         res.locals.user,
       )
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
@@ -189,7 +189,7 @@ describe('Edit Appointment Service', () => {
     it('when changing the location for a repeating appointment', async () => {
       req.journeyData.editAppointmentJourney.property = 'location'
       req.journeyData.editAppointmentJourney.location = {
-        id: 2,
+        id: '2',
         description: 'Updated location',
       }
 
@@ -375,7 +375,7 @@ describe('Edit Appointment Service', () => {
       it('when changing the location', async () => {
         req.journeyData.editAppointmentJourney.property = 'location'
         req.journeyData.editAppointmentJourney.location = {
-          id: 2,
+          id: '2',
           description: 'Updated location',
         }
 
@@ -384,7 +384,7 @@ describe('Edit Appointment Service', () => {
         expect(activitiesService.cancelAppointment).not.toHaveBeenCalled()
         expect(activitiesService.editAppointment).toHaveBeenCalledWith(
           2,
-          { internalLocationId: 2, applyTo: AppointmentApplyTo.THIS_APPOINTMENT } as AppointmentUpdateRequest,
+          { dpsLocationId: '2', applyTo: AppointmentApplyTo.THIS_APPOINTMENT } as AppointmentUpdateRequest,
           res.locals.user,
         )
         expect(metricsService.trackEvent).toHaveBeenCalledWith(
@@ -876,7 +876,7 @@ describe('Edit Appointment Service', () => {
       it('when changing the location', async () => {
         req.journeyData.editAppointmentJourney.property = 'location'
         req.journeyData.editAppointmentJourney.location = {
-          id: 2,
+          id: '2',
           description: 'Updated location',
         }
 
@@ -921,7 +921,7 @@ describe('Edit Appointment Service', () => {
           },
         ]
         req.journeyData.editAppointmentJourney.location = {
-          id: 2,
+          id: '2',
           description: 'Updated location',
         }
 
@@ -1029,7 +1029,7 @@ describe('Edit Appointment Service', () => {
       it('when changing the location', async () => {
         req.journeyData.editAppointmentJourney.property = 'location'
         req.journeyData.editAppointmentJourney.location = {
-          id: 2,
+          id: '2',
           description: 'Updated location',
         }
 
@@ -1070,7 +1070,7 @@ describe('Edit Appointment Service', () => {
         ]
         req.journeyData.editAppointmentJourney.sequenceNumber = 3
         req.journeyData.editAppointmentJourney.location = {
-          id: 2,
+          id: '2',
           description: 'Updated location',
         }
 
@@ -1115,7 +1115,7 @@ describe('Edit Appointment Service', () => {
           },
         ]
         req.journeyData.editAppointmentJourney.location = {
-          id: 2,
+          id: '2',
           description: 'Updated location',
         }
 

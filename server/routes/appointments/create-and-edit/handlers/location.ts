@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import { Expose, Transform, Type } from 'class-transformer'
-import { IsEnum, IsNotEmpty, IsNumber, ValidateIf } from 'class-validator'
+import { Expose, Transform } from 'class-transformer'
+import { IsEnum, IsNotEmpty, IsString, ValidateIf } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
@@ -15,10 +15,9 @@ export class Location {
 
   @Expose()
   @ValidateIf(l => l.locationType === LocationType.OUT_OF_CELL)
-  @Type(() => Number)
   @IsNotEmpty({ message: 'Start typing the appointment location and select it from the list' })
-  @IsNumber({ allowNaN: false }, { message: 'Start typing the appointment location and select it from the list' })
-  locationId: number
+  @IsString({ message: 'Start typing the appointment location and select it from the list' })
+  locationId: string
 }
 
 export default class LocationRoutes {
@@ -48,7 +47,7 @@ export default class LocationRoutes {
       if (!location) return
 
       appointmentJourney.location = {
-        id: location.id,
+        id: location.dpsLocationId,
         description: location.description,
       }
     } else {
@@ -72,7 +71,7 @@ export default class LocationRoutes {
       if (!location) return
 
       req.journeyData.editAppointmentJourney.location = {
-        id: location.id,
+        id: location.dpsLocationId,
         description: location.description,
       }
     } else {
@@ -90,7 +89,7 @@ export default class LocationRoutes {
 
     const location = await this.activitiesService
       .getAppointmentLocations(user.activeCaseLoadId, user)
-      .then(locations => locations.find(l => l.id === locationId))
+      .then(locations => locations.find(l => l.dpsLocationId === locationId))
 
     if (!location) {
       res.validationFailed('locationId', `Start typing the appointment location and select it from the list`)
