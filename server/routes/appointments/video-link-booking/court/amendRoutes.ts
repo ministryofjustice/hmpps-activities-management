@@ -12,7 +12,6 @@ import CourtHearingLinkRoutes, { CourtHearingLink } from './handlers/courtHearin
 
 export default function AmendRoutes({
   bookAVideoLinkService,
-  prisonService,
   activitiesService,
   courtBookingService,
 }: Services): Router {
@@ -25,7 +24,7 @@ export default function AmendRoutes({
   const hearingDetails = new HearingDetailsRoutes(bookAVideoLinkService, courtBookingService)
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
-  const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService, courtBookingService)
+  const schedule = new ScheduleRoutes(activitiesService, bookAVideoLinkService, courtBookingService)
   const courtHearingLink = new CourtHearingLinkRoutes(courtBookingService)
   const extraInformation = new ExtraInformationRoutes(courtBookingService)
 

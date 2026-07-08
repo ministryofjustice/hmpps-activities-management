@@ -4,12 +4,10 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import { parseIsoDate } from '../../../../../utils/datePickerUtils'
 import { ScheduledEvent } from '../../../../../@types/activitiesAPI/types'
-import PrisonService from '../../../../../services/prisonService'
 import { Location } from '../../../../../@types/bookAVideoLinkApi/types'
 import CourtBookingService from '../../../../../services/courtBookingService'
 
 jest.mock('../../../../../services/activitiesService')
-jest.mock('../../../../../services/prisonService')
 jest.mock('../../../../../services/bookAVideoLinkService')
 jest.mock('../../../../../services/courtBookingService')
 jest.mock('../../../../../utils/datePickerUtils')
@@ -18,7 +16,6 @@ describe('ScheduleRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
   let activitiesService: jest.Mocked<ActivitiesService>
-  let prisonService: jest.Mocked<PrisonService>
   let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
   let courtBookingService: jest.Mocked<CourtBookingService>
   let scheduleRoutes: ScheduleRoutes
@@ -29,6 +26,7 @@ describe('ScheduleRoutes', () => {
         bookACourtHearingJourney: {
           prisoner: { number: 'A1234BC' },
           date: '2023-10-01',
+          locationId: '11111111-1111-1111-1111-111111111111',
         },
       },
       params: {},
@@ -41,10 +39,9 @@ describe('ScheduleRoutes', () => {
       redirectOrReturn: jest.fn(),
     } as unknown as Response
     activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-    prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
     courtBookingService = new CourtBookingService(null) as jest.Mocked<CourtBookingService>
-    scheduleRoutes = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService, courtBookingService)
+    scheduleRoutes = new ScheduleRoutes(activitiesService, bookAVideoLinkService, courtBookingService)
   })
 
   describe('GET', () => {
@@ -69,30 +66,28 @@ describe('ScheduleRoutes', () => {
           prisonerNumber: 'ABC123',
         },
       ] as unknown as ScheduledEvent[]
-      const internalLocationEvents = [
-        {
-          id: 1,
-          dpsLocationId: '11111111-1111-1111-1111-111111111111',
-          prisonCode: 'PRISON1',
-          code: 'LOC1',
-          description: 'Location 1',
-          events: [
-            ...scheduledEvents,
-            {
-              id: 3,
-              type: 'activity',
-              cancelled: false,
-              prisonCode: 'PRISON1',
-              eventSource: 'source1',
-              scheduledInstanceId: 1,
-              prisonerNumber: 'XYZ321',
-            } as unknown as ScheduledEvent,
-          ],
-        },
-      ]
+      const internalLocationEvents = {
+        id: 1,
+        dpsLocationId: '11111111-1111-1111-1111-111111111111',
+        prisonCode: 'PRISON1',
+        code: 'LOC1',
+        description: 'Location 1',
+        events: [
+          ...scheduledEvents,
+          {
+            id: 3,
+            type: 'activity',
+            cancelled: false,
+            prisonCode: 'PRISON1',
+            eventSource: 'source1',
+            scheduledInstanceId: 1,
+            prisonerNumber: 'XYZ321',
+          } as unknown as ScheduledEvent,
+        ],
+      }
       const rooms = [
         {
-          key: 'ROOM1',
+          dpsLocationId: '11111111-1111-1111-1111-111111111111',
           description: 'Room 1',
           enabled: true,
         },
@@ -105,7 +100,7 @@ describe('ScheduleRoutes', () => {
         externalTransfers: [],
         adjudications: [],
       })
-      activitiesService.getInternalLocationEvents.mockResolvedValue(internalLocationEvents)
+      activitiesService.getInternalLocationEventsByDpsLocationId.mockResolvedValue(internalLocationEvents)
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue(rooms)
       ;(parseIsoDate as jest.Mock).mockReturnValue(new Date('2023-10-01'))
 
@@ -113,10 +108,7 @@ describe('ScheduleRoutes', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/court/schedule', {
         prisonerScheduledEvents: [scheduledEvents[0], scheduledEvents[1]],
-        internalLocationEvents: internalLocationEvents.map(ile => ({
-          ...ile,
-          events: scheduledEvents,
-        })),
+        internalLocationEvents: [internalLocationEvents],
         rooms,
       })
     })
