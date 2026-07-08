@@ -50,7 +50,7 @@ export default class ProbationBookingService {
   private mapSessionToAppointment = (journey: BookAProbationMeetingJourney) => [
     {
       type: 'VLB_PROBATION',
-      locationKey: journey.locationCode,
+      dpsLocationId: journey.locationId,
       date: formatDate(parseISODate(journey.date), 'yyyy-MM-dd'),
       startTime: formatDate(parseISODate(journey.startTime), 'HH:mm'),
       endTime: formatDate(parseISODate(journey.endTime), 'HH:mm'),

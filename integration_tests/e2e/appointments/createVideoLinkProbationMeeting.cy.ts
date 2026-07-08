@@ -29,6 +29,7 @@ import VideoLinkDateAndTimePage from '../../pages/appointments/create-and-edit/v
 import VideoLinkSchedulePage from '../../pages/appointments/create-and-edit/video-link-booking/videoLinkSchedulePage'
 import VideoLinkProbationCheckAnswersPage from '../../pages/appointments/create-and-edit/video-link-booking/videoLinkProbationCheckAnswersPage'
 import VideoLinkConfirmationPage from '../../pages/appointments/create-and-edit/video-link-booking/videoLinkConfirmationPage'
+import getInternalLocationEventsByDpsLocationId from '../../fixtures/activitiesApi/getInternalLocationEventsByDpsLocationId.json'
 
 context('Create video link probation appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -63,6 +64,11 @@ context('Create video link probation appointment', () => {
       'POST',
       `/scheduled-events/prison/MDI/locations\\?date=${tomorrowFormatted}`,
       getScheduledEventLocations,
+    )
+    cy.stubEndpoint(
+      'GET',
+      `/scheduled-events/prison/MDI/location-events\\?date=${tomorrowFormatted}&dpsLocationId=abcd-1234-abcd-1234`,
+      getInternalLocationEventsByDpsLocationId,
     )
 
     // Manage users API

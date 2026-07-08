@@ -3,12 +3,7 @@ import { parse } from 'date-fns'
 import createHttpError from 'http-errors'
 import { Services } from '../../../../../services'
 
-export default ({
-  activitiesService,
-  bookAVideoLinkService,
-  prisonService,
-  locationMappingService,
-}: Services): RequestHandler => {
+export default ({ activitiesService, bookAVideoLinkService, prisonService }: Services): RequestHandler => {
   return async (req, res, next) => {
     const { bookingId } = req.params
     const { user } = res.locals
@@ -29,7 +24,6 @@ export default ({
     }
 
     const prisoner = await prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
-    const locationId = await locationMappingService.mapDpsLocationKeyToNomisId(mainAppointment.prisonLocKey, user)
 
     const existingVlbAppointment = await activitiesService
       .searchAppointments(
@@ -45,7 +39,7 @@ export default ({
         apps.find(
           app =>
             ['VLB', 'VLPM'].includes(app.category.code) && // Handle legacy probation bookings which may have type VLB
-            app.internalLocation.id === locationId &&
+            app.internalLocation.dpsLocationId === mainAppointment.dpsLocationId &&
             mainAppointment.startTime === app.startTime &&
             mainAppointment.endTime === app.endTime,
         ),
@@ -80,7 +74,7 @@ export default ({
       date: parseDateToISOString(mainAppointment.appointmentDate),
       startTime: parseTimeToISOString(mainAppointment.startTime),
       endTime: parseTimeToISOString(mainAppointment.endTime),
-      locationCode: mainAppointment.prisonLocKey,
+      locationId: mainAppointment.dpsLocationId,
       notesForStaff: booking.notesForStaff,
       notesForPrisoners: booking.notesForPrisoners,
     }

@@ -2,14 +2,12 @@ import { Request, Response } from 'express'
 import UserService from '../../../../services/userService'
 import { isUncancellable } from '../../../../utils/editAppointmentUtils'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
-import LocationMappingService from '../../../../services/locationMappingService'
 import { errorHasStatus } from '../../../../utils/helpers/errorHelpers'
 
 export default class AppointmentDetailsRoutes {
   constructor(
     private readonly userService: UserService,
     private readonly bookAVideoLinkService: BookAVideoLinkService,
-    private readonly locationMappingService: LocationMappingService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -17,15 +15,10 @@ export default class AppointmentDetailsRoutes {
     const { user } = res.locals
 
     if (appointment.category.code === 'VLB' || appointment.category.code === 'VLPM') {
-      const locationKey = await this.locationMappingService.mapNomisLocationIdToDpsKey(
-        appointment.internalLocation.id,
-        user,
-      )
-
       const videoLinkBooking = await this.bookAVideoLinkService
         .matchAppointmentToVideoLinkBooking(
           appointment.attendees[0].prisoner.prisonerNumber,
-          locationKey,
+          appointment.internalLocation.dpsLocationId,
           appointment.startDate,
           appointment.startTime,
           appointment.endTime,

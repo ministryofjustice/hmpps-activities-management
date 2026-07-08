@@ -89,7 +89,7 @@
                             text: "Meeting room"
                         },
                         value: {
-                            text: (rooms | find('key', session.bookAProbationMeetingJourney.locationCode)).description
+                            text: (rooms | find('dpsLocationId', session.bookAProbationMeetingJourney.locationId)).description
                         },
                         actions: {
                             items: [
@@ -175,55 +175,52 @@
 
     <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">Room schedules on {{ session.bookAProbationMeetingJourney.date | parseISODate | formatDate }}</h2>
+              <h2 class="govuk-heading-m">Room schedules on {{ session.bookAProbationMeetingJourney.date | parseISODate | formatDate }}</h2>
+              <div class="govuk-summary-card appointment-schedule">
+                <div class="govuk-summary-card__title-wrapper">
+                  <h3 class="govuk-summary-card__title">{{ internalLocationEvents.description }}</h3>
+                </div>
+                <div class="govuk-summary-card__content">
+                  {% set events = internalLocationEvents.events | filter('cancelled', false) | filterNot('appointmentId', session.bookAProbationMeetingJourney.appointmentId) %}
+                  {% if events.length > 0 %}
+                    {% set scheduledEventRows = [] %}
+                    {% for scheduledEvent in events %}
+                      {% set scheduledEventRows = (scheduledEventRows.push([
+                        {
+                          text: timeText(scheduledEvent),
+                          attributes: {
+                          'data-sort-value': scheduledEvent.startTime | parseDate('HH:mm') | formatDate("HHmm")
+                        }
+                        },
+                        {
+                          text: scheduledEvent.summary | trim
+                        }
+                      ]), scheduledEventRows) %}
+                    {% endfor %}
 
-                {% for location in internalLocationEvents %}
-                    <div class="govuk-summary-card appointment-schedule">
-                        <div class="govuk-summary-card__title-wrapper">
-                            <h3 class="govuk-summary-card__title">{{ location.description }}</h3>
-                        </div>
-                        <div class="govuk-summary-card__content">
-                            {% set events = location.events | filter('cancelled', false) | filterNot('appointmentId', session.bookAProbationMeetingJourney.appointmentId) %}
-                            {% if events.length > 0 %}
-                                {% set scheduledEventRows = [] %}
-                                {% for scheduledEvent in events %}
-                                    {% set scheduledEventRows = (scheduledEventRows.push([
-                                        {
-                                            text: timeText(scheduledEvent),
-                                            attributes: {
-                                                'data-sort-value': scheduledEvent.startTime | parseDate('HH:mm') | formatDate("HHmm")
-                                            }
-                                        },
-                                        {
-                                            text: scheduledEvent.summary | trim
-                                        }
-                                    ]), scheduledEventRows) %}
-                                {% endfor %}
-
-                                {{ govukTable({
-                                    head: [
-                                        {
-                                            text: "Time",
-                                            classes: "govuk-!-border-bottom-2",
-                                            attributes: { "aria-sort": "ascending" }
-                                        },
-                                        {
-                                            text: "Scheduled appointment",
-                                            attributes: { "aria-sort": "none" }
-                                        }
-                                    ],
-                                    rows: scheduledEventRows,
-                                    classes: 'govuk-!-margin-bottom-2',
-                                    attributes: {
-                                        'data-module': 'moj-sortable-table'
-                                    }
-                                }) }}
-                            {% else %}
-                                <p class="govuk-body">No scheduled events.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
+                    {{ govukTable({
+                      head: [
+                        {
+                          text: "Time",
+                          classes: "govuk-!-border-bottom-2",
+                          attributes: { "aria-sort": "ascending" }
+                        },
+                        {
+                          text: "Scheduled appointment",
+                          attributes: { "aria-sort": "none" }
+                        }
+                      ],
+                      rows: scheduledEventRows,
+                      classes: 'govuk-!-margin-bottom-2',
+                      attributes: {
+                        'data-module': 'moj-sortable-table'
+                      }
+                    }) }}
+                  {% else %}
+                    <p class="govuk-body">No scheduled events.</p>
+                  {% endif %}
+                </div>
+              </div>
             </div>
     </div>
 
