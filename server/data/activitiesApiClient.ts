@@ -885,25 +885,6 @@ export default class ActivitiesApiClient extends RestClient {
     )
   }
 
-  // TODO: 2388: Replace location IDs with DPS Locations UUIDs
-  async getInternalLocationEvents(
-    prisonCode: string,
-    date: string,
-    internalLocationIds: number[],
-    user: ServiceUser,
-    timeSlot?: string,
-  ): Promise<InternalLocationEvents[]> {
-    return this.post(
-      {
-        path: `/scheduled-events/prison/${prisonCode}/locations`,
-        headers: CASELOAD_HEADER(user.activeCaseLoadId),
-        query: { date, timeSlot },
-        data: internalLocationIds,
-      },
-      asUser(user.token),
-    )
-  }
-
   async getInternalLocationEventsByDpsLocationIds(
     prisonCode: string,
     date: string,
@@ -922,6 +903,7 @@ export default class ActivitiesApiClient extends RestClient {
     )
   }
 
+  // TODO: Remove this method and revert the changes to use this.
   async getInternalLocationEventsByDpsLocationId(
     prisonCode: string,
     date: string,

@@ -439,22 +439,6 @@ export default class ActivitiesService {
     )
   }
 
-  async getInternalLocationEvents(
-    prisonCode: string,
-    date: Date,
-    internalLocationIds: number[],
-    user: ServiceUser,
-    timeSlot?: string,
-  ) {
-    return this.activitiesApiClient.getInternalLocationEvents(
-      prisonCode,
-      format(date, 'yyyy-MM-dd'),
-      internalLocationIds,
-      user,
-      timeSlot,
-    )
-  }
-
   async getInternalLocationEventsByDpsLocationIds(
     prisonCode: string,
     date: Date,
