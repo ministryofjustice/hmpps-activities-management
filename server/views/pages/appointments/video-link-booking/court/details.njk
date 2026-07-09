@@ -125,7 +125,7 @@
                             text: "Room for hearing"
                         },
                         value: {
-                            text: (rooms | find('key', mainAppointment.prisonLocKey)).description
+                            text: (rooms | find('dpsLocationId', mainAppointment.dpsLocationId)).description
                         },
                         actions: {
                             items: [
@@ -235,7 +235,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: (rooms | find('key', preAppointment.prisonLocKey)).description
+                            text: (rooms | find('dpsLocationId', preAppointment.dpsLocationId)).description
                         }
                     },
                     {
@@ -279,7 +279,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: (rooms | find('key', postAppointment.prisonLocKey)).description
+                            text: (rooms | find('dpsLocationId', postAppointment.dpsLocationId)).description
                         }
                     },
                     {
@@ -403,7 +403,7 @@
                     text: "Location"
                 },
                 value: {
-                    text: (rooms | find('key', appointment.prisonLocKey)).description
+                    text: (rooms | find('dpsLocationId', appointment.dpsLocationId)).description
                 }
             },
             {

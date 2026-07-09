@@ -1,29 +1,23 @@
 import { Request, Response } from 'express'
-import _, { uniqWith } from 'lodash'
+import _ from 'lodash'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { parseIsoDate } from '../../../../../utils/datePickerUtils'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
-import PrisonService from '../../../../../services/prisonService'
 import CourtBookingService from '../../../../../services/courtBookingService'
 
 export default class ScheduleRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
-    private readonly prisonService: PrisonService,
     private readonly bookAVideoLinkService: BookAVideoLinkService,
     private readonly courtBookingService: CourtBookingService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisoner, prisonCode, date, locationCode, preLocationCode, postLocationCode } =
+    const { prisoner, prisonCode, date, locationId, preLocationId, postLocationId } =
       req.session.bookACourtHearingJourney
 
-    const locations = await Promise.all(
-      _.uniq([locationCode, preLocationCode, postLocationCode])
-        .filter(Boolean)
-        .map(code => this.prisonService.getInternalLocationByKey(code, user)),
-    )
+    const uniqueLocationIds = _.uniq([locationId, preLocationId, postLocationId].filter(Boolean))
 
     const [prisonerScheduledEvents, internalLocationEvents, rooms] = await Promise.all([
       this.activitiesService
@@ -36,22 +30,16 @@ export default class ScheduleRoutes {
           ...response.externalTransfers,
           ...response.adjudications,
         ]),
-      this.activitiesService
-        .getInternalLocationEvents(
-          user.activeCaseLoadId,
-          parseIsoDate(date),
-          locations.map(l => l.locationId),
-          user,
-        )
-        .then(events =>
-          events.map(location => ({
-            ...location,
-            events: uniqWith(
-              location.events,
-              (a, b) => a.scheduledInstanceId === b.scheduledInstanceId && a.appointmentId === b.appointmentId,
-            ),
-          })),
+      Promise.all(
+        uniqueLocationIds.map(location =>
+          this.activitiesService.getInternalLocationEventsByDpsLocationId(
+            user.activeCaseLoadId,
+            parseIsoDate(date),
+            location,
+            user,
+          ),
         ),
+      ),
       this.bookAVideoLinkService.getAppointmentLocations(prisonCode, user),
     ])
 

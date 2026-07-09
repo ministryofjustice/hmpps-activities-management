@@ -5,12 +5,7 @@ import createHttpError from 'http-errors'
 import { isNotEmpty } from 'class-validator'
 import { Services } from '../../../../../services'
 
-export default ({
-  activitiesService,
-  bookAVideoLinkService,
-  prisonService,
-  locationMappingService,
-}: Services): RequestHandler => {
+export default ({ activitiesService, bookAVideoLinkService, prisonService }: Services): RequestHandler => {
   return async (req, res, next) => {
     const { bookingId } = req.params
     const { user } = res.locals
@@ -34,11 +29,11 @@ export default ({
 
     const prisoner = await prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
 
-    const locationIds = await Promise.all(
-      _.uniq([mainAppointment.prisonLocKey, preAppointment?.prisonLocKey, postAppointment?.prisonLocKey])
-        .filter(Boolean)
-        .map(key => locationMappingService.mapDpsLocationKeyToNomisId(key, user)),
-    )
+    const locationIds = _.uniq([
+      mainAppointment.dpsLocationId,
+      preAppointment?.dpsLocationId,
+      postAppointment?.dpsLocationId,
+    ]).filter(Boolean)
 
     const existingVlbAppointments = await activitiesService
       .searchAppointments(
@@ -54,7 +49,7 @@ export default ({
       .then(apps =>
         apps.filter(
           app =>
-            locationIds.includes(app.internalLocation.id) &&
+            locationIds.includes(app.internalLocation.dpsLocationId) &&
             [
               [mainAppointment.startTime, mainAppointment.endTime],
               [preAppointment?.startTime, preAppointment?.endTime],
@@ -86,9 +81,9 @@ export default ({
       preHearingEndTime: parseTimeToISOString(preAppointment?.endTime),
       postHearingStartTime: parseTimeToISOString(postAppointment?.startTime),
       postHearingEndTime: parseTimeToISOString(postAppointment?.endTime),
-      locationCode: mainAppointment.prisonLocKey,
-      preLocationCode: preAppointment?.prisonLocKey,
-      postLocationCode: postAppointment?.prisonLocKey,
+      locationId: mainAppointment.dpsLocationId,
+      preLocationId: preAppointment?.dpsLocationId,
+      postLocationId: postAppointment?.dpsLocationId,
       videoLinkUrl: isNotEmpty(booking.videoLinkUrl) ? booking.videoLinkUrl : undefined,
       notesForStaff: booking.notesForStaff,
       notesForPrisoners: booking.notesForPrisoners,
