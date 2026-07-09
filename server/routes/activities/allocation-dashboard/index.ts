@@ -14,6 +14,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const allocationDashboardHandler = new AllocationDashboardRoutes(prisonService, activitiesService)
 
   get('/', activitiesHandler.GET)
+
   get('/:activityId', allocationDashboardHandler.GET)
   post('/:activityId/allocate', allocationDashboardHandler.ALLOCATE, SelectedAllocation)
   post('/:activityId/view-waitlist-application', allocationDashboardHandler.VIEW_APPLICATION, SelectedAllocation)

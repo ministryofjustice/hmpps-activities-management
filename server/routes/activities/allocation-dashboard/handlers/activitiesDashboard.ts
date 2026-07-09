@@ -7,24 +7,40 @@ export default class ActivitiesRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const filters = req.query as { isOutsideWorkFilter: string }
-    filters.isOutsideWorkFilter ??= 'false'
+    const { externalActivitiesRolledOut } = user
+    const { searchTerm, isOutsideWorkFilter = 'false' } = req.query as {
+      searchTerm?: string
+      isOutsideWorkFilter?: string
+    }
 
-    let activities = await this.activitiesService.getActivities(true, user).then(act =>
-      act.map(a => ({
-        ...a,
-        ...this.getCalculatedFields(a),
+    const filters = { isOutsideWorkFilter }
+
+    const getActivities = await this.activitiesService.getActivities(true, user).then(activity =>
+      activity.map(act => ({
+        ...act,
+        ...this.getCalculatedFields(act),
       })),
     )
 
-    if (user.externalActivitiesRolledOut) {
-      activities = activities.filter(a => a.outsideWork === (filters.isOutsideWorkFilter === 'true'))
+    let activities = getActivities
+
+    const hasSearchTerm = typeof searchTerm === 'string' && searchTerm.trim().length > 0
+
+    if (hasSearchTerm) {
+      activities = activities.filter(activity => activity.activityName.toLowerCase().includes(searchTerm.toLowerCase()))
+    }
+
+    if (externalActivitiesRolledOut) {
+      const isOutsideWork = filters.isOutsideWorkFilter === 'true'
+
+      activities = activities.filter(activity => activity.outsideWork === isOutsideWork)
     }
 
     res.render('pages/activities/allocation-dashboard/activities', {
       total: this.getCalculatedFields(this.calculateTotals(activities) as ActivitySummary),
       activities,
       filters,
+      searchTerm,
     })
   }
 
