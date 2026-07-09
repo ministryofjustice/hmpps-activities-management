@@ -37,8 +37,8 @@ describe('LocationRoutes', () => {
   describe('GET', () => {
     it('renders location view with available rooms', async () => {
       const rooms = [
-        { key: 'Room 1', description: 'Room 1', enabled: true },
-        { key: 'Room 2', description: 'Room 2', enabled: true },
+        { dpsLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
+        { dpsLocationId: 'LOCATION_ID_2', description: 'Room 2', enabled: true },
       ] as BvlsLocation[]
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue(rooms)
 

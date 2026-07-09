@@ -85,8 +85,8 @@ export default class DateAndTimeRoutes {
       preHearingEndTime: preRequired === YesNo.YES ? startTime.toISOString() : undefined,
       postHearingStartTime: postRequired === YesNo.YES ? endTime.toISOString() : undefined,
       postHearingEndTime: postRequired === YesNo.YES ? addMinutes(endTime, 15).toISOString() : undefined,
-      preLocationCode: preLocation,
-      postLocationCode: postLocation,
+      preLocationId: preLocation,
+      postLocationId: postLocation,
     }
 
     return res.redirect(`schedule${preserveHistory ? '?preserveHistory=true' : ''}`)

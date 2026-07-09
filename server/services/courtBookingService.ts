@@ -44,11 +44,17 @@ export default class CourtBookingService {
   }
 
   private mapSessionToAppointments(journey: BookACourtHearingJourney) {
-    const createAppointment = (type: string, locationCode: string, date: string, startTime: string, endTime: string) =>
-      locationCode
+    const createAppointment = (
+      type: string,
+      dpsLocationId: string,
+      date: string,
+      startTime: string,
+      endTime: string,
+    ) =>
+      dpsLocationId
         ? {
             type,
-            locationKey: locationCode,
+            dpsLocationId,
             date: formatDate(parseISODate(date), 'yyyy-MM-dd'),
             startTime: formatDate(parseISODate(startTime), 'HH:mm'),
             endTime: formatDate(parseISODate(endTime), 'HH:mm'),
@@ -58,15 +64,15 @@ export default class CourtBookingService {
     return [
       createAppointment(
         'VLB_COURT_PRE',
-        journey.preLocationCode,
+        journey.preLocationId,
         journey.date,
         journey.preHearingStartTime,
         journey.preHearingEndTime,
       ),
-      createAppointment('VLB_COURT_MAIN', journey.locationCode, journey.date, journey.startTime, journey.endTime),
+      createAppointment('VLB_COURT_MAIN', journey.locationId, journey.date, journey.startTime, journey.endTime),
       createAppointment(
         'VLB_COURT_POST',
-        journey.postLocationCode,
+        journey.postLocationId,
         journey.date,
         journey.postHearingStartTime,
         journey.postHearingEndTime,
