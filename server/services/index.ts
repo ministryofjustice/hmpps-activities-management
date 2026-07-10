@@ -9,7 +9,6 @@ import CaseNotesService from './caseNotesService'
 import AlertsFilterService from './alertsFilterService'
 import BookAVideoLinkService from './bookAVideoLinkService'
 import NonAssociationsService from './nonAssociationsService'
-import LocationMappingService from './locationMappingService'
 import AlertsService from './alertsService'
 import LocationsService from './locationsService'
 import CourtBookingService from './courtBookingService'
@@ -28,7 +27,6 @@ export default function services() {
     nonAssociationsApiClient,
     alertsApiClient,
     locationsInsidePrisonApiClient,
-    nomisMappingClient,
     tokenStore,
     bankHolidaysClient,
   } = dataAccess()
@@ -52,7 +50,6 @@ export default function services() {
     metricsService: new MetricsService(),
     nonAssociationsService: new NonAssociationsService(nonAssociationsApiClient, prisonService),
     alertsService,
-    locationMappingService: new LocationMappingService(locationsInsidePrisonApiClient, nomisMappingClient),
     locationsService: new LocationsService(locationsInsidePrisonApiClient),
     tokenStore,
   }
