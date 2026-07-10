@@ -2,14 +2,10 @@ import { Request, Response } from 'express'
 import { formatListWithAnd, convertToTitleCase } from '../../../../utils/utils'
 import { FormValidationError } from '../../../../middleware/formValidationErrorHandler'
 import { Slot } from '../../../../@types/activitiesAPI/types'
-import config from '../../../../config'
 import { YesNo } from '../../../../@types/activities'
 
 export default class AddToSessionsToday {
   GET = async (req: Request, res: Response): Promise<void> => {
-    if (!config.sameDayScheduleModificationsEnabled) {
-      return res.redirect('exclusions')
-    }
 
     const { inmate, updatedExclusions, futureSameDaySlots, addToSessionsToday } = req.journeyData.allocateJourney
     const headingText = this.createHeadingText(inmate.prisonerName, futureSameDaySlots)

@@ -3,7 +3,6 @@ import { Expose, Transform, Type } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import { parseDate } from '../../../../utils/utils'
 import getFutureSameDaySlots from '../../../../utils/helpers/futureSameDaySlots'
-import config from '../../../../config'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import TimeSlot from '../../../../enum/timeSlot'
 import {
@@ -123,7 +122,6 @@ export default class ExclusionRoutes {
       weeks,
       disabledSlotsExist: disabledSlots.length > 0,
       allocationHasStarted,
-      sameDayScheduleModificationsEnabled: config.sameDayScheduleModificationsEnabled,
     })
   }
 
@@ -186,7 +184,6 @@ export default class ExclusionRoutes {
     const allocationHasStarted = new Date() >= parseDate(startDate)
 
     if (
-      config.sameDayScheduleModificationsEnabled &&
       allocationHasStarted &&
       (req.routeContext.mode === 'edit' || req.routeContext.mode === 'exclude')
     ) {

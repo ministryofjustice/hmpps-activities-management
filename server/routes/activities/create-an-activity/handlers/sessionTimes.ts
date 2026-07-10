@@ -23,7 +23,6 @@ import {
 import { ServiceUser } from '../../../../@types/express'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import getFutureSameDaySlots, { getAllSameDaySlots } from '../../../../utils/helpers/futureSameDaySlots'
-import config from '../../../../config'
 import { parseDate } from '../../../../utils/utils'
 
 export class SessionTimes {
@@ -88,7 +87,6 @@ export default class SessionTimesRoutes {
     const { activityId, name, scheduleWeeks, startDate } = req.journeyData.createJourney
     const { startTimes, endTimes }: SessionTimes = req.body
     const { preserveHistory } = req.query
-    const { sameDayScheduleModificationsEnabled } = config
     const allocationHasStarted = new Date() >= parseDate(startDate)
 
     const startTimesObj = Array.from(startTimes.keys()).reduce((acc, key) => {
@@ -135,7 +133,7 @@ export default class SessionTimesRoutes {
     req.journeyData.createJourney.customSlots = customSlots
 
     if (req.routeContext.mode === 'edit') {
-      if (sameDayScheduleModificationsEnabled && allocationHasStarted) {
+      if (allocationHasStarted) {
         const activity = await this.activitiesService.getActivity(activityId, user)
         const activitySchedule = activity.schedules[0]
 

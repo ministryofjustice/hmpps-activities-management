@@ -148,6 +148,7 @@ context('Edit activity', () => {
     cancelPayRatePage.cancelPayRate()
     cancelPayRatePage.confirm()
   })
+
   it('should allow the user to change an activity - changing days/sessions if using custom times', () => {
     cy.visit('/activities/view/2')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
@@ -159,14 +160,12 @@ context('Edit activity', () => {
     customTimesChangeOptionPage.continue()
 
     const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
-    // TODO: when sameDayScheduleModificationsEnabled is enabled, use commented out assertion and remove the one below it
-    // daysAndSessionsPage
-    //   .modParagraph()
-    //   .should(
-    //     'contain.text',
-    //     'If you add a session for today, you can choose if it runs today or not. Other changes you make will take effect tomorrow.',
-    //   )
-    daysAndSessionsPage.modParagraph().should('contain.text', 'Any changes you make will take effect tomorrow.')
+    daysAndSessionsPage
+      .modParagraph()
+      .should(
+        'contain.text',
+        'If you add a session for today, you can choose if it runs today or not. Other changes you make will take effect tomorrow.',
+      )
     daysAndSessionsPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
     daysAndSessionsPage.getInputById('timeSlotsTuesday').should('be.checked')
     daysAndSessionsPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
