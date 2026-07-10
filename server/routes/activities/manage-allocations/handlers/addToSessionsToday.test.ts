@@ -196,7 +196,6 @@ describe('Route Handlers - Allocation - Add To Sessions Today', () => {
         }),
       )
     })
-
   })
 
   describe('POST', () => {

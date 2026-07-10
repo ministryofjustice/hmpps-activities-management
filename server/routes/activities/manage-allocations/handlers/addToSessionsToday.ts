@@ -6,7 +6,6 @@ import { YesNo } from '../../../../@types/activities'
 
 export default class AddToSessionsToday {
   GET = async (req: Request, res: Response): Promise<void> => {
-
     const { inmate, updatedExclusions, futureSameDaySlots, addToSessionsToday } = req.journeyData.allocateJourney
     const headingText = this.createHeadingText(inmate.prisonerName, futureSameDaySlots)
     const yesText = this.createYesText(futureSameDaySlots)

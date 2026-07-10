@@ -165,7 +165,6 @@ export default class DaysAndSessionsRoutes {
     const activity = await this.activitiesService.getActivity(activityId, user)
     const usingRegimeTimes = activity.schedules[0].usePrisonRegimeTime
 
-
     const activitySchedule = activity.schedules[0]
     const allocationHasStarted = new Date() >= parseDate(startDate)
 

@@ -183,10 +183,7 @@ export default class ExclusionRoutes {
 
     const allocationHasStarted = new Date() >= parseDate(startDate)
 
-    if (
-      allocationHasStarted &&
-      (req.routeContext.mode === 'edit' || req.routeContext.mode === 'exclude')
-    ) {
+    if (allocationHasStarted && (req.routeContext.mode === 'edit' || req.routeContext.mode === 'exclude')) {
       const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
       const futureSameDaySlots = getFutureSameDaySlots(changedExclusionSlots, schedule, regimeTimes)
 
