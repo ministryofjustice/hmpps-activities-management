@@ -64,10 +64,12 @@ context('Edit activity', () => {
     ]
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
+    cy.stubEndpoint('GET', '/schedules/2', getActivity4.schedules[0])
     cy.stubEndpoint('GET', '/activities/4/filtered', getActivity4)
     cy.stubEndpoint('PATCH', '/activities/MDI/activityId/4', getActivity4)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
   })
+
   it('should remove a day when updating from the default regime times', () => {
     cy.visit('/activities/view/4')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)

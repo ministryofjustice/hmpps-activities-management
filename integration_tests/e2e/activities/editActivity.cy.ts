@@ -102,6 +102,7 @@ context('Edit activity', () => {
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity2)
     cy.stubEndpoint('GET', '/activities/2/pay-history', getActivity2)
+    cy.stubEndpoint('GET', '/schedules/2', getActivity2.schedules[0])
     cy.stubEndpoint('PATCH', '/activities/MDI/activityId/2', getActivity2)
   })
 
@@ -193,6 +194,7 @@ context('Edit activity', () => {
       `You've updated the daily schedule for English level 1`,
     )
   })
+
   it('should allow the user to change an activity - changing times if currently using custom times', () => {
     cy.visit('/activities/view/2')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
