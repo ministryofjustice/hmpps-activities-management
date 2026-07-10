@@ -7,7 +7,6 @@ import NamePage from '../../pages/appointments/create-and-edit/namePage'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getMdiAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduleEvents-MDI-A1350DZ-A8644DY.json'
-import getScheduledEventLocations from '../../fixtures/activitiesApi/getScheduledEventLocations.json'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
 import { formatDate } from '../../../server/utils/utils'
@@ -59,11 +58,6 @@ context('Create video link probation appointment', () => {
       'POST',
       `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`,
       getScheduledEvents as unknown as JSON,
-    )
-    cy.stubEndpoint(
-      'POST',
-      `/scheduled-events/prison/MDI/locations\\?date=${tomorrowFormatted}`,
-      getScheduledEventLocations,
     )
     cy.stubEndpoint(
       'GET',

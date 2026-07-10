@@ -142,7 +142,7 @@
                                 text: "Location"
                             },
                             value: {
-                                text: (rooms | find('key', session.bookACourtHearingJourney.preLocationCode)).description
+                                text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.preLocationId)).description
                             }
                         },
                         {
@@ -161,8 +161,8 @@
                                 text: session.bookACourtHearingJourney.preHearingEndTime | parseISODate | formatDate('HH:mm')
                             }
                         }
-                    ] if session.bookACourtHearingJourney.preLocationCode else [{ value: { text: "No pre-court hearing" } }],
-                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookACourtHearingJourney.preLocationCode,
+                    ] if session.bookACourtHearingJourney.preLocationId else [{ value: { text: "No pre-court hearing" } }],
+                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookACourtHearingJourney.preLocationId,
                     attributes: { 'data-qa': 'pre-scheduling-information' }
                 }) }}
 
@@ -178,7 +178,7 @@
                                 text: "Location"
                             },
                             value: {
-                                text: (rooms | find('key', session.bookACourtHearingJourney.locationCode)).description
+                                text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.locationId)).description
                             },
                             actions: {
                                 items: [
@@ -275,7 +275,7 @@
                                 text: "Location"
                             },
                             value: {
-                                text: (rooms | find('key', session.bookACourtHearingJourney.postLocationCode)).description
+                                text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.postLocationId)).description
                             }
                         },
                         {
@@ -294,8 +294,8 @@
                                 text: session.bookACourtHearingJourney.postHearingEndTime | parseISODate | formatDate('HH:mm')
                             }
                         }
-                    ] if session.bookACourtHearingJourney.postLocationCode else [{ value: { text: "No post-court hearing" } }],
-                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookACourtHearingJourney.postLocationCode,
+                    ] if session.bookACourtHearingJourney.postLocationId else [{ value: { text: "No post-court hearing" } }],
+                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookACourtHearingJourney.postLocationId,
                     attributes: { 'data-qa': 'post-scheduling-information' }
                 }) }}
 
