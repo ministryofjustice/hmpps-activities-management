@@ -9,7 +9,6 @@ import CaseNotesService from './caseNotesService'
 import AlertsFilterService from './alertsFilterService'
 import BookAVideoLinkService from './bookAVideoLinkService'
 import NonAssociationsService from './nonAssociationsService'
-import LocationMappingService from './locationMappingService'
 import AlertsService from './alertsService'
 import LocationsService from './locationsService'
 import CourtBookingService from './courtBookingService'
@@ -20,7 +19,7 @@ describe('Services', () => {
   test('The correct services are instantiated', () => {
     const servicesList = services()
 
-    expect(Object.values(servicesList).length).toBe(17)
+    expect(Object.values(servicesList).length).toBe(16)
     expect(servicesList.userService).toBeInstanceOf(UserService)
     expect(servicesList.prisonService).toBeInstanceOf(PrisonService)
     expect(servicesList.ukBankHolidayService).toBeInstanceOf(BankHolidayService)
@@ -32,7 +31,6 @@ describe('Services', () => {
     expect(servicesList.bookAVideoLinkService).toBeInstanceOf(BookAVideoLinkService)
     expect(servicesList.nonAssociationsService).toBeInstanceOf(NonAssociationsService)
     expect(servicesList.alertsService).toBeInstanceOf(AlertsService)
-    expect(servicesList.locationMappingService).toBeInstanceOf(LocationMappingService)
     expect(servicesList.locationsService).toBeInstanceOf(LocationsService)
     expect(servicesList.courtBookingService).toBeInstanceOf(CourtBookingService)
     expect(servicesList.probationBookingService).toBeInstanceOf(ProbationBookingService)
