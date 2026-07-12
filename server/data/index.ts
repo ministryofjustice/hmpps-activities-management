@@ -10,7 +10,6 @@ import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
 import NonAssociationsApiClient from './nonAssociationsApiClient'
 import AlertsApiClient from './alertsApiClient'
 import LocationsInsidePrisonApiClient from './locationsInsidePrisonApiClient'
-import NomisMappingClient from './nomisMappingClient'
 import BankHolidaysClient from './bankHolidaysClient'
 import { createRedisClient } from './redisClient'
 import TokenStore from './tokenStore'
@@ -40,7 +39,6 @@ export default function dataAccess() {
     nonAssociationsApiClient: new NonAssociationsApiClient(hmppsAuthClient),
     alertsApiClient: new AlertsApiClient(hmppsAuthClient),
     locationsInsidePrisonApiClient: new LocationsInsidePrisonApiClient(hmppsAuthClient),
-    nomisMappingClient: new NomisMappingClient(hmppsAuthClient),
     bankHolidaysClient: new BankHolidaysClient(),
     tokenStore,
   }
