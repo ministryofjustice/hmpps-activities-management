@@ -23,14 +23,6 @@ describe('Route Handlers - Activities dashboard', () => {
       waitlisted: 5,
       outsideWork: false,
     } as ActivitySummary
-    const maths2 = {
-      id: 1,
-      activityName: 'Maths level 2',
-      capacity: 150,
-      allocated: 75,
-      waitlisted: 5,
-      outsideWork: false,
-    } as ActivitySummary
     const english = {
       id: 2,
       activityName: 'English level 1',
@@ -47,6 +39,14 @@ describe('Route Handlers - Activities dashboard', () => {
       waitlisted: 10,
       outsideWork: true,
     } as ActivitySummary
+    const maths2 = {
+      id: 4,
+      activityName: 'Maths level 2',
+      capacity: 150,
+      allocated: 75,
+      waitlisted: 5,
+      outsideWork: false,
+    } as ActivitySummary
 
     when(activitiesService.getActivities).mockResolvedValue([maths, maths2, english, outsideWorkActivity])
   }
@@ -62,7 +62,7 @@ describe('Route Handlers - Activities dashboard', () => {
     } as unknown as Response
 
     req = {
-      params: { categoryId: '1' },
+      params: {},
       query: {},
     } as unknown as Request
 
@@ -101,7 +101,7 @@ describe('Route Handlers - Activities dashboard', () => {
           },
           {
             activityName: 'Maths level 2',
-            id: 1,
+            id: 4,
             capacity: 150,
             allocated: 75,
             percentageAllocated: 50,
@@ -117,7 +117,7 @@ describe('Route Handlers - Activities dashboard', () => {
     })
 
     it('should render searched activities with their allocation summaries', async () => {
-      req.query.searchTerm = 'maths'
+      req.query.searchTerm = ' maths'
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
@@ -134,7 +134,7 @@ describe('Route Handlers - Activities dashboard', () => {
           },
           {
             activityName: 'Maths level 2',
-            id: 1,
+            id: 4,
             capacity: 150,
             allocated: 75,
             percentageAllocated: 50,
@@ -149,7 +149,74 @@ describe('Route Handlers - Activities dashboard', () => {
       })
     })
 
+    it('should not render searched activities that do not match the search term', async () => {
+      req.query.searchTerm = 'maths'
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
+        activities: expect.not.arrayContaining([
+          {
+            activityName: 'English level 1',
+            id: 2,
+            capacity: 200,
+            allocated: 100,
+            percentageAllocated: 50,
+            vacancies: 100,
+            waitlisted: 2,
+            outsideWork: false,
+          },
+        ]),
+        total: { allocated: 150, capacity: 300, percentageAllocated: 50, vacancies: 150, waitlisted: 10 },
+        filters: { isOutsideWorkFilter: 'false' },
+        searchTerm: 'maths',
+      })
+    })
+
+    it('should render internal prison activities with whitespace search term', async () => {
+      req.query.searchTerm = ' '
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
+        activities: expect.arrayContaining([
+          {
+            activityName: 'English level 1',
+            id: 2,
+            capacity: 200,
+            allocated: 100,
+            percentageAllocated: 50,
+            vacancies: 100,
+            waitlisted: 2,
+            outsideWork: false,
+          },
+          {
+            activityName: 'Maths level 1',
+            id: 1,
+            capacity: 150,
+            allocated: 75,
+            percentageAllocated: 50,
+            vacancies: 75,
+            waitlisted: 5,
+            outsideWork: false,
+          },
+          {
+            activityName: 'Maths level 2',
+            id: 4,
+            capacity: 150,
+            allocated: 75,
+            percentageAllocated: 50,
+            vacancies: 75,
+            waitlisted: 5,
+            outsideWork: false,
+          },
+        ]),
+        total: { allocated: 250, capacity: 500, percentageAllocated: 50, vacancies: 250, waitlisted: 12 },
+        filters: { isOutsideWorkFilter: 'false' },
+        searchTerm: '',
+      })
+    })
+
     it('should render outside work activities', async () => {
+      req.query.searchTerm = 'Outside'
       req.query.isOutsideWorkFilter = 'true'
       await handler.GET(req, res)
 
@@ -168,6 +235,7 @@ describe('Route Handlers - Activities dashboard', () => {
         ]),
         total: { allocated: 50, capacity: 100, percentageAllocated: 50, vacancies: 50, waitlisted: 10 },
         filters: { isOutsideWorkFilter: 'true' },
+        searchTerm: 'outside',
       })
     })
   })

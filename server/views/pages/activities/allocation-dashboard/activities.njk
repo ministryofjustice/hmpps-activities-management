@@ -8,10 +8,10 @@
 {% set pageId = 'manage-allocations-activities-page' %}
 {% set hardBackLinkHref = "/activities/allocations" %}
 {% set hardBackLinkText = "Back" %}
+{% set searchQuery = '&searchTerm=' + (searchTerm or '') if searchTerm else '' %}
 
 {% block content %}
-    <form id="filter-form" method="GET" novalidate>
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+    <form id="filter-form" method="GET">
         <input type="hidden" name="isOutsideWorkFilter" value="{{ filters.isOutsideWorkFilter }}">
 
         <div class="govuk-grid-row">
@@ -28,14 +28,14 @@
                             classes: 'govuk-label--s'
                         },
                         type: 'search',
-                        value: session.req.query.searchTerm
+                        value: searchTerm
                     },
                     buttonParams: {
                         text: 'Search'
                     }
-                }) }}
-            
+                }) }}   
             </div>
+    </form>
             <div class="govuk-grid-column-one-third">
                 <div class='related-tasks'>
                     <h2 class='govuk-heading-m govuk-!-margin-bottom-2'>Related tasks</h2>
@@ -50,27 +50,25 @@
                 </div>
             </div>
         </div>
-        {% if activities.length %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-
                 {% if user.externalActivitiesRolledOut %}
                     {{ mojSubNavigation({
                         label: "Sub navigation",
                         items: [{
                             text: "In-prison activities",
-                            href: "allocation-dashboard?isOutsideWorkFilter=false",
+                            href: "allocation-dashboard?isOutsideWorkFilter=false" + searchQuery,
                             active: true if filters.isOutsideWorkFilter === 'false' else false
                         }, {
                             text: "Outside activities",
-                            href: "allocation-dashboard?isOutsideWorkFilter=true",
+                            href: "allocation-dashboard?isOutsideWorkFilter=true" + searchQuery,
                             active: true if filters.isOutsideWorkFilter === 'true' else false
                         }]
                     }) }}
 
                     <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ 'Outside' if filters.isOutsideWorkFilter === 'true' else 'In-prison' }} activities</h2>
                 {% endif %}
-
+        {% if activities.length %}
                 {% set rows = [
                     [
                         {
@@ -255,12 +253,14 @@
             </div>
         </div>
         {% else %}
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-s govuk-!-margin-bottom-7">No activities found</h1>
-                <p class="govuk-body-s">Enter a different activity name, or <a href="/activities/allocation-dashboard" class="govuk-link govuk-link--no-visited-state">return to the list of activities</a></p>   
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    {% set returnToActivities = "/activities/allocation-dashboard?isOutsideWorkFilter=true" 
+                        if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter === 'true' 
+                        else "/activities/allocation-dashboard?isOutsideWorkFilter=false" %}
+                    <h2 class="govuk-heading-s govuk-!-margin-bottom-7">No activities found</h2>
+                    <p class="govuk-body-s">Enter a different activity name, or <a href= {{returnToActivities}} class="govuk-link govuk-link--no-visited-state">return to the list of activities</a></p>   
+                </div>
             </div>
-        </div>
         {% endif %}
-    </form>
 {% endblock %}
