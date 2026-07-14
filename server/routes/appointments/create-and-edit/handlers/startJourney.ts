@@ -202,7 +202,12 @@ export default class StartJourneyRoutes {
       category: appointment.category,
       tierCode: EventTier[appointment.tier?.code] ?? null,
       organiserCode: EventOrganiser[appointment.organiser?.code] ?? null,
-      location: appointment.internalLocation,
+      location: appointment.internalLocation?.dpsLocationId
+        ? {
+            id: appointment.internalLocation.dpsLocationId,
+            description: appointment.internalLocation.description,
+          }
+        : undefined,
       inCell: appointment.inCell,
       startDate: appointment.startDate,
       startTime: {

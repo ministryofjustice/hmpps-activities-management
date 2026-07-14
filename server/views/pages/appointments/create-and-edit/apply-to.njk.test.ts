@@ -60,7 +60,7 @@ describe('Views - Appointments Management - Apply to', () => {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
           location: {
-            id: 123,
+            id: '123',
             description: 'Original location',
           },
           startDate: formatIsoDate(weekTomorrow),
@@ -69,7 +69,7 @@ describe('Views - Appointments Management - Apply to', () => {
       },
       editAppointmentJourney: {
         location: {
-          id: 123,
+          id: '123',
           description: 'Original location',
         },
         numberOfAppointments: 3,
@@ -188,7 +188,7 @@ describe('Views - Appointments Management - Apply to', () => {
 
   it('call to action is confirm and save when changing a property', () => {
     viewContext.editAppointmentJourney.location = {
-      id: 456,
+      id: '456',
       description: 'Updated location',
     }
 

@@ -81,6 +81,7 @@ context('Edit activity - 2 weekly', () => {
     ]
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity2)
+    cy.stubEndpoint('GET', '/schedules/2', getActivity2.schedules[0])
     cy.stubEndpoint('PATCH', '/activities/MDI/activityId/2', getActivity2)
   })
 

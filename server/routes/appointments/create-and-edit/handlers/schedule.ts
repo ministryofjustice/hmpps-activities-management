@@ -71,7 +71,12 @@ export default class ScheduleRoutes {
     const locationSchedule =
       locationId && appointmentCategoryCode.startsWith('VL') // Video conferencing appointment types
         ? await this.activitiesService
-            .getInternalLocationEvents(user.activeCaseLoadId, parseIsoDate(appointmentStartDate), [locationId], user)
+            .getInternalLocationEventsByDpsLocationIds(
+              user.activeCaseLoadId,
+              parseIsoDate(appointmentStartDate),
+              [locationId],
+              user,
+            )
             .then(
               location =>
                 location.map(l => ({

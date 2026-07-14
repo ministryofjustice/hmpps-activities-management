@@ -24,7 +24,6 @@ import {
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { CreateAnActivityJourney, ScheduleFrequency, Slots } from '../journey'
 import getFutureSameDaySlots, { getAllSameDaySlots } from '../../../../utils/helpers/futureSameDaySlots'
-import config from '../../../../config'
 import TimeSlot from '../../../../enum/timeSlot'
 
 export class DaysAndSessions {
@@ -72,11 +71,10 @@ export default class DaysAndSessionsRoutes {
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { scheduleWeeks, startDate, scheduleId, baselineSlots } = req.journeyData.createJourney
-    const { sameDayScheduleModificationsEnabled } = config
     const { weekNumber } = req.params as { weekNumber: string }
 
     // Store existing slots, which will be used to compare against user changes for same-day validation when editing
-    if (sameDayScheduleModificationsEnabled && !baselineSlots && req.routeContext.mode === 'edit') {
+    if (!baselineSlots && req.routeContext.mode === 'edit') {
       const schedule = await this.activitiesService.getActivitySchedule(scheduleId, res.locals.user)
       const mappedSlots = mapActivityScheduleSlotsToSlots(schedule.slots)
       req.journeyData.createJourney.baselineSlots = mergeExclusionSlots(mappedSlots)
@@ -159,7 +157,6 @@ export default class DaysAndSessionsRoutes {
 
   private async editDaysAndSessions(req: Request, res: Response) {
     const { user } = res.locals
-    const { sameDayScheduleModificationsEnabled } = config
 
     const { weekNumber } = req.params as { weekNumber: string }
     const weekNumberInt = +weekNumber
@@ -167,10 +164,6 @@ export default class DaysAndSessionsRoutes {
 
     const activity = await this.activitiesService.getActivity(activityId, user)
     const usingRegimeTimes = activity.schedules[0].usePrisonRegimeTime
-
-    if (!sameDayScheduleModificationsEnabled) {
-      return usingRegimeTimes ? this.editSlots(req, res) : res.redirect('../session-times')
-    }
 
     const activitySchedule = activity.schedules[0]
     const allocationHasStarted = new Date() >= parseDate(startDate)
