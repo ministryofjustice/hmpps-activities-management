@@ -9,7 +9,6 @@ import {
   mapSlotsToWeeklyTimeSlots,
   mergeExclusionSlots,
 } from '../../../../utils/helpers/activityTimeSlotMappers'
-import config from '../../../../config'
 
 export default class ConfirmExclusionsRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -23,7 +22,6 @@ export default class ConfirmExclusionsRoutes {
 
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
-    const { sameDayScheduleModificationsEnabled } = config
 
     const { exclusions, updatedExclusions, addToSessionsToday, futureSameDaySlots } = req.journeyData.allocateJourney
 
@@ -41,7 +39,6 @@ export default class ConfirmExclusionsRoutes {
       addToTodayText: this.getAddToTodayText(futureSameDaySlots),
       addToSessionsToday: addToSessionsToday ? YesNo.YES : YesNo.NO,
       futureSameDaySlots,
-      sameDayScheduleModificationsEnabled,
     })
   }
 
@@ -49,7 +46,6 @@ export default class ConfirmExclusionsRoutes {
     const { user } = res.locals
     const { allocationId } = req.params
     const { mode } = req.routeContext
-    const { sameDayScheduleModificationsEnabled } = config
 
     const { exclusions, updatedExclusions, activity, inmate, addToSessionsToday, futureSameDaySlots } =
       req.journeyData.allocateJourney
@@ -62,7 +58,7 @@ export default class ConfirmExclusionsRoutes {
 
       const allocation = { exclusions: mergedExclusions } as AllocationUpdateRequest
 
-      if (sameDayScheduleModificationsEnabled && addToSessionsToday && futureSameDaySlots.length > 0) {
+      if (addToSessionsToday && futureSameDaySlots.length > 0) {
         allocation.firstTimeSlotForToday = futureSameDaySlots[0].timeSlot
       }
 

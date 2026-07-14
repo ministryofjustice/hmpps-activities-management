@@ -232,9 +232,7 @@ context('Allocate to activity', () => {
     allocatePage.waitlistRows().eq(0).should('contain.text', 'Withdrawn')
   })
 
-  // TODO: Use commented out assertions when sameDayScheduleModificationsEnabled flag is removed
-  // it('should render the correct content in the create allocation flow', () => {
-  it('with sameDayScheduleModificationsEnabled NOT enabled, content should not change.', () => {
+  it('should render the correct content in the create allocation flow', () => {
     const allocatePage = navigateToActivitiesDashboard()
     allocatePage.tabWithTitle('Other people').click()
     allocatePage.selectRiskLevelOption('Any Workplace Risk Assessment')
@@ -264,8 +262,7 @@ context('Allocate to activity', () => {
 
     const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
 
-    exclusionsPage.pageTitle().should('contain.text', 'Change when Alfonso Cholak should attend this activity')
-    // exclusionsPage.pageTitle().should('contain.text', `Change Alfonso Cholak's scheduled sessions for this activity`)
+    exclusionsPage.pageTitle().should('contain.text', `Change Alfonso Cholak's scheduled sessions for this activity`)
 
     exclusionsPage.continue()
   })

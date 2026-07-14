@@ -6,7 +6,6 @@ import ExclusionRoutes, { Schedule } from './exclusions'
 import atLeast from '../../../../../jest.setup'
 import { ActivitySchedule, PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -141,12 +140,10 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         },
       },
     } as unknown as Request
-    config.sameDayScheduleModificationsEnabled = false
   })
 
   afterEach(() => {
     jest.useRealTimers()
-    config.sameDayScheduleModificationsEnabled = false
   })
 
   beforeEach(() => {
@@ -221,14 +218,11 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       })
 
       it('should render the expected view', async () => {
-        config.sameDayScheduleModificationsEnabled = false
-
         await handler.GET(req, res)
         expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/exclusions', {
           prisonerName: 'John Smith',
           disabledSlotsExist: true,
           allocationHasStarted: true,
-          sameDayScheduleModificationsEnabled: false,
           weeks: [
             {
               weekNumber: 1,
@@ -297,8 +291,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       })
 
       it('should not mark any slots as disabled when there are no repeats', async () => {
-        config.sameDayScheduleModificationsEnabled = false
-
         when(activitiesService.getActivitySchedule)
           .calledWith(atLeast(1))
           .mockResolvedValue({
@@ -456,9 +448,8 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         req.routeContext = { mode: 'create' }
       })
 
-      it('should NOT trigger same-day logic when feature flag is enabled and all conditions match', async () => {
+      it('should NOT trigger same-day logic when all conditions match', async () => {
         jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
-        config.sameDayScheduleModificationsEnabled = true
 
         req.journeyData.allocateJourney.startDate = '2024-08-20'
 
@@ -468,7 +459,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
         expect(res.redirect).toHaveBeenCalledWith('check-answers')
         expect(res.redirect).not.toHaveBeenCalledWith('addToToday')
-        expect(activitiesService.getPrisonRegime).not.toHaveBeenCalled()
 
         jest.useRealTimers()
       })
@@ -655,7 +645,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
       it('should NOT trigger same-day logic when exclusions have not changed', async () => {
         jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
-        config.sameDayScheduleModificationsEnabled = true
 
         req.journeyData.allocateJourney.startDate = '2024-08-20'
 
@@ -681,27 +670,8 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         jest.useRealTimers()
       })
 
-      it('should NOT trigger same-day logic when feature flag is disabled and future same day slots exist', async () => {
+      it('should NOT trigger same-day logic when no future same day slots exist', async () => {
         jest.useFakeTimers().setSystemTime(new Date('2024-08-21 08:00:00'))
-        config.sameDayScheduleModificationsEnabled = false
-
-        try {
-          setupForSameDayTests()
-
-          await handler.POST(req, res)
-
-          expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
-          expect(res.redirect).not.toHaveBeenCalledWith('addToToday')
-          expect(req.journeyData.allocateJourney.futureSameDaySlots).toEqual([])
-          expect(req.journeyData.allocateJourney.addToSessionsToday).toBe(undefined)
-        } finally {
-          jest.useRealTimers()
-        }
-      })
-
-      it('should NOT trigger same-day logic when feature flag is enabled and no future same day slots exist', async () => {
-        jest.useFakeTimers().setSystemTime(new Date('2024-08-21 08:00:00'))
-        config.sameDayScheduleModificationsEnabled = true
 
         req.journeyData.allocateJourney.startDate = '2024-08-20'
 
@@ -718,9 +688,8 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         jest.useRealTimers()
       })
 
-      it('should NOT trigger same-day logic when feature flag is enabled and slot start time has passed', async () => {
+      it('should NOT trigger same-day logic when slot start time has passed', async () => {
         jest.useFakeTimers().setSystemTime(new Date('2024-08-21 12:30:00'))
-        config.sameDayScheduleModificationsEnabled = true
 
         try {
           setupForSameDayTests()
@@ -736,9 +705,8 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         }
       })
 
-      it('should NOT trigger same-day logic when feature flag is enabled and activity has NOT started yet', async () => {
+      it('should NOT trigger same-day logic when activity has NOT started yet', async () => {
         jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
-        config.sameDayScheduleModificationsEnabled = true
         req.journeyData.allocateJourney.startDate = '2024-08-22'
 
         try {
@@ -757,9 +725,8 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
       // SAME-DAY LOGIC POSITIVE
 
-      it('should trigger same-day logic when feature flag is enabled, future same day slots exist and activity has started', async () => {
+      it('should trigger same-day logic when future same day slots exist and activity has started', async () => {
         jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
-        config.sameDayScheduleModificationsEnabled = true
         req.journeyData.allocateJourney.startDate = '2024-08-20'
 
         try {
@@ -799,7 +766,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
       it('should NOT trigger same-day logic for exclude when conditions are not met', async () => {
         jest.useFakeTimers().setSystemTime(new Date('2024-08-21 12:30:00')) // slot in past
-        config.sameDayScheduleModificationsEnabled = true
 
         try {
           setupForSameDayTests()
@@ -812,9 +778,8 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         }
       })
 
-      it('should trigger same-day logic for the exclude journey when feature flag is enabled and slot is later "today"', async () => {
+      it('should trigger same-day logic for the exclude journey when slot is later "today"', async () => {
         jest.useFakeTimers().setSystemTime(new Date('2024-08-21 07:00:00'))
-        config.sameDayScheduleModificationsEnabled = true
 
         try {
           setupForSameDayTests()

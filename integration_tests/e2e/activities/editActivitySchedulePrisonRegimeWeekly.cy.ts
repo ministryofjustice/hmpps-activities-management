@@ -125,6 +125,8 @@ context('Edit activity - weekly', () => {
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
     cy.stubEndpoint('GET', '/activities/3/filtered', getActivity3)
+    cy.stubEndpoint('GET', '/schedules/2', getActivity3.schedules[0])
+
     cy.stubEndpoint('PATCH', '/activities/MDI/activityId/3', getActivity3)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
   })

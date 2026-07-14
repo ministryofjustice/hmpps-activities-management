@@ -16,7 +16,6 @@ import { DaysAndSlotsInRegime } from '../../../../utils/helpers/applicableRegime
 import activitySchedule from '../../../../services/fixtures/activity_schedule_bi_weekly_1.json'
 import { DayOfWeekEnum, SessionSlot } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
-import config from '../../../../config'
 import getFutureSameDaySlots, { getAllSameDaySlots } from '../../../../utils/helpers/futureSameDaySlots'
 
 jest.mock('../../../../services/activitiesService')
@@ -807,7 +806,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
   })
 })
 
-describe('Same-day schedule modifications (sameDayScheduleModificationsEnabled is true)', () => {
+describe('Same-day schedule modifications', () => {
   let getFutureSameDaySlotsMock: jest.Mock
   let getAllSameDaySlotsMock: jest.Mock
   let handler: SessionTimesRoutes
@@ -817,7 +816,6 @@ describe('Same-day schedule modifications (sameDayScheduleModificationsEnabled i
 
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(new Date('2026-04-27T14:00:00'))
-    config.sameDayScheduleModificationsEnabled = true
     getFutureSameDaySlotsMock = getFutureSameDaySlots as jest.Mock
     getAllSameDaySlotsMock = getAllSameDaySlots as jest.Mock
     getFutureSameDaySlotsMock.mockReset()
@@ -864,7 +862,6 @@ describe('Same-day schedule modifications (sameDayScheduleModificationsEnabled i
 
   afterEach(() => {
     jest.useRealTimers()
-    config.sameDayScheduleModificationsEnabled = false
   })
 
   it('should redirect to run-session-today if there are future same-day slots', async () => {

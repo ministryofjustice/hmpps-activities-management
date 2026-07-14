@@ -14,7 +14,7 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
     compiledTemplate = compile(view.toString(), njkEnv)
   })
 
-  it('should not show the add to today row when sameDayScheduleModificationsEnabled is false', () => {
+  it('should not show the add to today row when no future same-day slots exist', () => {
     const viewContext = {
       allocateJourney: {
         inmate: { prisonerName: 'Jack Bloggs' },
@@ -23,7 +23,6 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
       excludedSlots: {},
       addedSlots: {},
       futureSameDaySlots: [],
-      sameDayScheduleModificationsEnabled: false,
       addToSessionsToday: 'NO',
       addToTodayText: null,
     }
@@ -43,7 +42,6 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
       excludedSlots: {},
       addedSlots: {},
       futureSameDaySlots: [],
-      sameDayScheduleModificationsEnabled: false,
       addToSessionsToday: 'NO',
       addToTodayText: null,
     }
@@ -62,7 +60,6 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
       excludedSlots: {},
       addedSlots: { 1: [{ day: 'Monday', slots: [{ timeSlot: 'AM', startTime: '09:00', endTime: '12:00' }] }] },
       futureSameDaySlots: [],
-      sameDayScheduleModificationsEnabled: false,
       addToSessionsToday: 'NO',
       addToTodayText: null,
     }
@@ -83,7 +80,6 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
       excludedSlots: { 1: [{ day: 'Monday', slots: [{ timeSlot: 'AM', startTime: '09:00', endTime: '12:00' }] }] },
       addedSlots: {},
       futureSameDaySlots: [],
-      sameDayScheduleModificationsEnabled: false,
       addToSessionsToday: 'NO',
       addToTodayText: null,
     }
@@ -97,7 +93,7 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
     expect(bodyText).toContain('Changes take effect on unlock, movement and attendance lists from tomorrow.')
   })
 
-  it('should show the add to today row in the summary list when sameDayScheduleModificationsEnabled is true and futureSameDaySlots exist', () => {
+  it('should show the add to today row in the summary list when futureSameDaySlots exist', () => {
     const viewContext = {
       allocateJourney: {
         inmate: { prisonerName: 'Jack Bloggs' },
@@ -106,7 +102,6 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
       excludedSlots: {},
       addedSlots: {},
       futureSameDaySlots: [{ timeSlot: 'AM' }],
-      sameDayScheduleModificationsEnabled: true,
       addToSessionsToday: 'NO',
       addToTodayText: "today's AM session",
     }
@@ -125,7 +120,6 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
       excludedSlots: {},
       addedSlots: {},
       futureSameDaySlots: [{ timeSlot: 'AM' }],
-      sameDayScheduleModificationsEnabled: true,
       addToSessionsToday: 'Yes',
       addToTodayText: "today's AM session",
     }
@@ -144,7 +138,6 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
       excludedSlots: {},
       addedSlots: {},
       futureSameDaySlots: [{ timeSlot: 'AM' }],
-      sameDayScheduleModificationsEnabled: true,
       addToSessionsToday: 'YES',
       addToTodayText: "today's AM session",
     }
@@ -165,7 +158,6 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
       excludedSlots: {},
       addedSlots: {},
       futureSameDaySlots: [{ timeSlot: 'AM' }],
-      sameDayScheduleModificationsEnabled: true,
       addToSessionsToday: 'NO',
       addToTodayText: "today's AM session",
     }
@@ -186,7 +178,6 @@ describe('Views - Manage Allocations - Confirm Exclusions', () => {
       excludedSlots: {},
       addedSlots: {},
       futureSameDaySlots: [{ timeSlot: 'AM' }],
-      sameDayScheduleModificationsEnabled: true,
       addToSessionsToday: 'NO',
       addToTodayText: "today's AM session",
     }

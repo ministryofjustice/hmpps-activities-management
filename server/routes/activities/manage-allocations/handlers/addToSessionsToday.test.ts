@@ -3,10 +3,8 @@ import AddToSessionsToday from './addToSessionsToday'
 import { FormValidationError } from '../../../../middleware/formValidationErrorHandler'
 import { Slot } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
-import config from '../../../../config'
 
 describe('Route Handlers - Allocation - Add To Sessions Today', () => {
-  config.sameDayScheduleModificationsEnabled = true
   const handler = new AddToSessionsToday()
   let req: Request
   let res: Response
@@ -197,15 +195,6 @@ describe('Route Handlers - Allocation - Add To Sessions Today', () => {
           addToTodaySession: YesNo.NO,
         }),
       )
-    })
-
-    it('should redirect to exclusions when sameDayScheduleModificationsEnabled is disabled', async () => {
-      config.sameDayScheduleModificationsEnabled = false
-
-      await handler.GET(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('exclusions')
-      expect(res.render).not.toHaveBeenCalled()
     })
   })
 

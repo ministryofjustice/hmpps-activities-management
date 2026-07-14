@@ -6,7 +6,6 @@ import atLeast from '../../../../../jest.setup'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_bi_weekly_1.json'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -133,7 +132,6 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
         addToSessionsToday: YesNo.NO,
         addToTodayText: null,
         futureSameDaySlots: [],
-        sameDayScheduleModificationsEnabled: false,
       })
     })
 
@@ -357,11 +355,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
     })
 
     describe('Same day schedule modifications', () => {
-      let originalFeatureFlag: boolean
-
       beforeEach(() => {
-        originalFeatureFlag = config.sameDayScheduleModificationsEnabled
-
         req.journeyData.allocateJourney.exclusions = [
           {
             weekNumber: 2,
@@ -392,10 +386,6 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
         ]
       })
 
-      afterEach(() => {
-        config.sameDayScheduleModificationsEnabled = originalFeatureFlag
-      })
-
       const expectedExclusions = [
         {
           weekNumber: 2,
@@ -411,39 +401,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
         },
       ]
 
-      it('should NOT include firstTimeSlotForToday when feature flag is DISABLED', async () => {
-        config.sameDayScheduleModificationsEnabled = false
-        req.routeContext = { mode: 'edit' }
-        req.params.allocationId = '1'
-        req.journeyData.allocateJourney.addToSessionsToday = true
-        req.journeyData.allocateJourney.futureSameDaySlots = [
-          {
-            weekNumber: 2,
-            timeSlot: 'AM',
-            monday: true,
-            tuesday: false,
-            wednesday: false,
-            thursday: false,
-            friday: false,
-            saturday: false,
-            sunday: false,
-            daysOfWeek: ['MONDAY'],
-          },
-        ]
-
-        await handler.POST(req, res)
-
-        expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
-          1,
-          {
-            exclusions: expectedExclusions,
-          },
-          res.locals.user,
-        )
-      })
-
-      it('should NOT include firstTimeSlotForToday when feature flag is ENABLED but addToSessionsToday is false', async () => {
-        config.sameDayScheduleModificationsEnabled = true
+      it('should NOT include firstTimeSlotForToday when addToSessionsToday is false', async () => {
         req.routeContext = { mode: 'edit' }
         req.params.allocationId = '1'
         req.journeyData.allocateJourney.addToSessionsToday = false
@@ -474,7 +432,6 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
       })
 
       it('should NOT include firstTimeSlotForToday when futureSameDaySlots is empty (start time for slot has passed)', async () => {
-        config.sameDayScheduleModificationsEnabled = true
         req.routeContext = { mode: 'edit' }
         req.params.allocationId = '1'
         req.journeyData.allocateJourney.addToSessionsToday = true
@@ -491,8 +448,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
         )
       })
 
-      it('should include firstTimeSlotForToday when feature flag is enabled, addToSessionsToday is true, and futureSameDaySlots has slots', async () => {
-        config.sameDayScheduleModificationsEnabled = true
+      it('should include firstTimeSlotForToday when addToSessionsToday is true and futureSameDaySlots has slots', async () => {
         req.routeContext.mode = 'edit'
         req.params.allocationId = '1'
         req.journeyData.allocateJourney.addToSessionsToday = true
@@ -529,7 +485,6 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
       })
 
       it('should use the first slot (AM) from futureSameDaySlots when there is more than one slot', async () => {
-        config.sameDayScheduleModificationsEnabled = true
         req.routeContext.mode = 'edit'
         req.params.allocationId = '1'
         req.journeyData.allocateJourney.addToSessionsToday = true
