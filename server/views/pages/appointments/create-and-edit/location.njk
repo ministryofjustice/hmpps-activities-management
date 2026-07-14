@@ -12,8 +12,17 @@
     {% set pageTitle = appointmentJourneyTitle("change location" + serviceTitle, session.appointmentJourney) %}
     {% set pageHeading = "Enter the new location" %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Appointment set location" + serviceTitle if session.appointmentJourney.type == AppointmentType.SET else "Appointment location" + serviceTitle, session.appointmentJourney) %}
-    {% set pageHeading = ("Where will the appointments take place?" if session.appointmentJourney.type == AppointmentType.SET else "Where will the appointment take place?") %}
+    {% set pageTitle = appointmentJourneyTitle(
+        "Appointment set location" + serviceTitle
+        if session.appointmentJourney.type == AppointmentType.SET
+        else "Appointment location" + serviceTitle,
+        session.appointmentJourney
+    ) %}
+    {% set pageHeading = (
+        "Where will the appointments take place?"
+        if session.appointmentJourney.type == AppointmentType.SET
+        else "Where will the appointment take place?"
+    ) %}
 {% endif %}
 
 {% set pageId = 'appointment-location-page' %}
@@ -21,8 +30,24 @@
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for location in locations %}
-    {% set options = (options.push( { value: location.id, text: location.description }), options) %}
+    {% set options = (
+        options.push({
+            value: location.dpsLocationId,
+            text: location.description
+        }),
+        options
+    ) %}
 {% endfor %}
+
+{% set selectedLocationId = initialLocationId %}
+{% if formResponses and formResponses.locationId is defined %}
+    {% set selectedLocationId = formResponses.locationId %}
+{% endif %}
+
+{% set selectedLocationType = initialLocationType %}
+{% if formResponses and formResponses.locationType is defined %}
+    {% set selectedLocationType = formResponses.locationType %}
+{% endif %}
 
 {% block meta %}
     <meta name="autocompleteElements" content="locationId"/>
@@ -32,18 +57,21 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
+
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
                 {{ govukRadios({
                     id: "location-type",
                     name: "locationType",
+                    errorMessage: validationErrors | findError('locationType'),
                     items: [
                         {
                             value: LocationType.OUT_OF_CELL,
                             text: "Search for a location",
-                            checked: session.appointmentJourney.location.id,
+                            checked: selectedLocationType == LocationType.OUT_OF_CELL,
                             conditional: {
                                 html: govukSelect({
                                     id: "locationId",
@@ -52,7 +80,7 @@
                                         text: "Start typing a location and select from the list of options."
                                     },
                                     errorMessage: validationErrors | findError('locationId'),
-                                    value: formResponses.locationId or session.appointmentJourney.location.id,
+                                    value: selectedLocationId,
                                     items: options
                                 })
                             }
@@ -60,10 +88,11 @@
                         {
                             value: LocationType.IN_CELL,
                             text: "In cell",
-                            checked: session.appointmentJourney.inCell
+                            checked: selectedLocationType == LocationType.IN_CELL
                         }
                     ]
                 }) }}
+
                 {{ govukButton({
                     text: "Update location" if isCtaAcceptAndSave else "Continue",
                     preventDoubleClick: true

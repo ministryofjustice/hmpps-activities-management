@@ -18,7 +18,7 @@ export type EditAppointmentJourney = {
   tierCode?: EventTier
   organiserCode?: EventOrganiser
   location?: {
-    id: number
+    id: string
     description: string
   }
   inCell?: boolean
