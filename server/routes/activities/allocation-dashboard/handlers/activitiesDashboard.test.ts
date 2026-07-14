@@ -74,7 +74,7 @@ describe('Route Handlers - Activities dashboard', () => {
   })
 
   describe('GET', () => {
-    it('should render activities with their allocation summaries', async () => {
+    it('should render internal prison activities with their allocation summaries', async () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
@@ -113,6 +113,73 @@ describe('Route Handlers - Activities dashboard', () => {
         total: { allocated: 250, capacity: 500, percentageAllocated: 50, vacancies: 250, waitlisted: 12 },
         filters: { isOutsideWorkFilter: 'false' },
         searchTerm: undefined,
+      })
+    })
+
+    it('should render outside work activities with their allocation summaries', async () => {
+      req.query.searchTerm = 'Outside'
+      req.query.isOutsideWorkFilter = 'true'
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
+        activities: expect.arrayContaining([
+          {
+            activityName: 'Outside Work Activity',
+            id: 3,
+            capacity: 100,
+            allocated: 50,
+            percentageAllocated: 50,
+            vacancies: 50,
+            waitlisted: 10,
+            outsideWork: true,
+          },
+        ]),
+        total: { allocated: 50, capacity: 100, percentageAllocated: 50, vacancies: 50, waitlisted: 10 },
+        filters: { isOutsideWorkFilter: 'true' },
+        searchTerm: 'outside',
+      })
+    })
+
+    it('should render internal prison activities with whitespace search term', async () => {
+      req.query.searchTerm = ' '
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
+        activities: expect.arrayContaining([
+          {
+            activityName: 'English level 1',
+            id: 2,
+            capacity: 200,
+            allocated: 100,
+            percentageAllocated: 50,
+            vacancies: 100,
+            waitlisted: 2,
+            outsideWork: false,
+          },
+          {
+            activityName: 'Maths level 1',
+            id: 1,
+            capacity: 150,
+            allocated: 75,
+            percentageAllocated: 50,
+            vacancies: 75,
+            waitlisted: 5,
+            outsideWork: false,
+          },
+          {
+            activityName: 'Maths level 2',
+            id: 4,
+            capacity: 150,
+            allocated: 75,
+            percentageAllocated: 50,
+            vacancies: 75,
+            waitlisted: 5,
+            outsideWork: false,
+          },
+        ]),
+        total: { allocated: 250, capacity: 500, percentageAllocated: 50, vacancies: 250, waitlisted: 12 },
+        filters: { isOutsideWorkFilter: 'false' },
+        searchTerm: '',
       })
     })
 
@@ -172,70 +239,16 @@ describe('Route Handlers - Activities dashboard', () => {
       })
     })
 
-    it('should render internal prison activities with whitespace search term', async () => {
-      req.query.searchTerm = ' '
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
-        activities: expect.arrayContaining([
-          {
-            activityName: 'English level 1',
-            id: 2,
-            capacity: 200,
-            allocated: 100,
-            percentageAllocated: 50,
-            vacancies: 100,
-            waitlisted: 2,
-            outsideWork: false,
-          },
-          {
-            activityName: 'Maths level 1',
-            id: 1,
-            capacity: 150,
-            allocated: 75,
-            percentageAllocated: 50,
-            vacancies: 75,
-            waitlisted: 5,
-            outsideWork: false,
-          },
-          {
-            activityName: 'Maths level 2',
-            id: 4,
-            capacity: 150,
-            allocated: 75,
-            percentageAllocated: 50,
-            vacancies: 75,
-            waitlisted: 5,
-            outsideWork: false,
-          },
-        ]),
-        total: { allocated: 250, capacity: 500, percentageAllocated: 50, vacancies: 250, waitlisted: 12 },
-        filters: { isOutsideWorkFilter: 'false' },
-        searchTerm: '',
-      })
-    })
-
-    it('should render outside work activities', async () => {
-      req.query.searchTerm = 'Outside'
+    it('should not render any activities with an unmatched search term', async () => {
+      req.query.searchTerm = 'Unmatched'
       req.query.isOutsideWorkFilter = 'true'
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
-        activities: expect.arrayContaining([
-          {
-            activityName: 'Outside Work Activity',
-            id: 3,
-            capacity: 100,
-            allocated: 50,
-            percentageAllocated: 50,
-            vacancies: 50,
-            waitlisted: 10,
-            outsideWork: true,
-          },
-        ]),
-        total: { allocated: 50, capacity: 100, percentageAllocated: 50, vacancies: 50, waitlisted: 10 },
+        activities: expect.arrayContaining([]),
+        total: { allocated: 0, capacity: 0, percentageAllocated: 100, vacancies: 0, waitlisted: 0 },
         filters: { isOutsideWorkFilter: 'true' },
-        searchTerm: 'outside',
+        searchTerm: 'unmatched',
       })
     })
   })
