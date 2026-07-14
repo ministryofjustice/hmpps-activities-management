@@ -45,8 +45,13 @@ export default class LocationRoutes {
         ? editAppointmentJourney.inCell
         : appointmentJourney.inCell
 
-    const initialLocationType =
-      selectedInCell === true ? LocationType.IN_CELL : selectedLocation ? LocationType.OUT_OF_CELL : undefined
+    let initialLocationType: LocationType | undefined
+
+    if (selectedInCell === true) {
+      initialLocationType = LocationType.IN_CELL
+    } else if (selectedLocation) {
+      initialLocationType = LocationType.OUT_OF_CELL
+    }
 
     res.render('pages/appointments/create-and-edit/location', {
       locations,
