@@ -14,7 +14,7 @@ export class Location {
   locationType: LocationType
 
   @Expose()
-  @ValidateIf(l => l.locationType === LocationType.OUT_OF_CELL)
+  @ValidateIf(location => location.locationType === LocationType.OUT_OF_CELL)
   @IsNotEmpty({ message: 'Start typing the appointment location and select it from the list' })
   @IsString({ message: 'Start typing the appointment location and select it from the list' })
   locationId: string
@@ -45,11 +45,14 @@ export default class LocationRoutes {
         ? editAppointmentJourney.inCell
         : appointmentJourney.inCell
 
+    const initialLocationType =
+      selectedInCell === true ? LocationType.IN_CELL : selectedLocation ? LocationType.OUT_OF_CELL : undefined
+
     res.render('pages/appointments/create-and-edit/location', {
       locations,
-      locationType: selectedInCell ? LocationType.IN_CELL : LocationType.OUT_OF_CELL,
-      location: selectedLocation,
-      isCtaAcceptAndSave: isEditMode && !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
+      initialLocationId: selectedLocation?.id,
+      initialLocationType,
+      isCtaAcceptAndSave: isEditMode && !isApplyToQuestionRequired(editAppointmentJourney),
     })
   }
 
@@ -59,7 +62,10 @@ export default class LocationRoutes {
 
     if (locationType === LocationType.OUT_OF_CELL) {
       const location = await this.getLocation(req, res)
-      if (!location) return
+
+      if (!location) {
+        return
+      }
 
       appointmentJourney.location = {
         id: location.dpsLocationId,
@@ -71,10 +77,10 @@ export default class LocationRoutes {
 
     appointmentJourney.inCell = locationType === LocationType.IN_CELL
 
-    if (req.session.appointmentJourney.type === AppointmentType.SET) {
-      res.redirectOrReturn(`appointment-set-date`)
+    if (appointmentJourney.type === AppointmentType.SET) {
+      res.redirectOrReturn('appointment-set-date')
     } else {
-      res.redirectOrReturn(`date-and-time`)
+      res.redirectOrReturn('date-and-time')
     }
   }
 
@@ -83,7 +89,10 @@ export default class LocationRoutes {
 
     if (locationType === LocationType.OUT_OF_CELL) {
       const location = await this.getLocation(req, res)
-      if (!location) return
+
+      if (!location) {
+        return
+      }
 
       req.journeyData.editAppointmentJourney.location = {
         id: location.dpsLocationId,
@@ -102,12 +111,11 @@ export default class LocationRoutes {
     const { locationId } = req.body
     const { user } = res.locals
 
-    const location = await this.activitiesService
-      .getAppointmentLocations(user.activeCaseLoadId, user)
-      .then(locations => locations.find(l => l.dpsLocationId === locationId))
+    const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
+    const location = locations.find(candidate => candidate.dpsLocationId === locationId)
 
     if (!location) {
-      res.validationFailed('locationId', `Start typing the appointment location and select it from the list`)
+      res.validationFailed('locationId', 'Start typing the appointment location and select it from the list')
       return false
     }
 

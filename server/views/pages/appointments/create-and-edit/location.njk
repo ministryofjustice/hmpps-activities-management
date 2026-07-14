@@ -12,8 +12,17 @@
     {% set pageTitle = appointmentJourneyTitle("change location" + serviceTitle, session.appointmentJourney) %}
     {% set pageHeading = "Enter the new location" %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Appointment set location" + serviceTitle if session.appointmentJourney.type == AppointmentType.SET else "Appointment location" + serviceTitle, session.appointmentJourney) %}
-    {% set pageHeading = ("Where will the appointments take place?" if session.appointmentJourney.type == AppointmentType.SET else "Where will the appointment take place?") %}
+    {% set pageTitle = appointmentJourneyTitle(
+        "Appointment set location" + serviceTitle
+        if session.appointmentJourney.type == AppointmentType.SET
+        else "Appointment location" + serviceTitle,
+        session.appointmentJourney
+    ) %}
+    {% set pageHeading = (
+        "Where will the appointments take place?"
+        if session.appointmentJourney.type == AppointmentType.SET
+        else "Where will the appointment take place?"
+    ) %}
 {% endif %}
 
 {% set pageId = 'appointment-location-page' %}
@@ -21,28 +30,23 @@
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for location in locations %}
-    {% set options = (options.push({ value: location.dpsLocationId, text: location.description }), options) %}
+    {% set options = (
+        options.push({
+            value: location.dpsLocationId,
+            text: location.description
+        }),
+        options
+    ) %}
 {% endfor %}
 
-{% set selectedLocation = session.appointmentJourney.location %}
-{% if editAppointmentJourney and editAppointmentJourney.location is defined %}
-    {% set selectedLocation = editAppointmentJourney.location %}
+{% set selectedLocationId = initialLocationId %}
+{% if formResponses and formResponses.locationId is defined %}
+    {% set selectedLocationId = formResponses.locationId %}
 {% endif %}
 
-{% set selectedInCell = session.appointmentJourney.inCell %}
-{% if editAppointmentJourney and editAppointmentJourney.inCell is defined %}
-    {% set selectedInCell = editAppointmentJourney.inCell %}
-{% endif %}
-
-{% set selectedLocationId = formResponses.locationId or selectedLocation.id %}
-
-{% set selectedLocationType = formResponses.locationType %}
-{% if not selectedLocationType %}
-    {% if selectedInCell %}
-        {% set selectedLocationType = LocationType.IN_CELL %}
-    {% elseif selectedLocationId %}
-        {% set selectedLocationType = LocationType.OUT_OF_CELL %}
-    {% endif %}
+{% set selectedLocationType = initialLocationType %}
+{% if formResponses and formResponses.locationType is defined %}
+    {% set selectedLocationType = formResponses.locationType %}
 {% endif %}
 
 {% block meta %}
@@ -53,6 +57,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
+
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
             <form method="POST">
@@ -61,6 +66,7 @@
                 {{ govukRadios({
                     id: "location-type",
                     name: "locationType",
+                    errorMessage: validationErrors | findError('locationType'),
                     items: [
                         {
                             value: LocationType.OUT_OF_CELL,
