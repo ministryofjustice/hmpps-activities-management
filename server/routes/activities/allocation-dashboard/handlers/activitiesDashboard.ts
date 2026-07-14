@@ -14,22 +14,19 @@ export default class ActivitiesRoutes {
     }
 
     const filters = { isOutsideWorkFilter }
+    const searchValue = searchTerm?.trim()
+    const isOutsideWork = filters.isOutsideWorkFilter === 'true'
 
-    const allActivities = await this.activitiesService
+    let activities = await this.activitiesService
       .getActivities(true, user)
       .then(activity => activity.map(act => this.getCalculatedFields(act)))
 
-    let activities = allActivities
-
-    const searchTermValue = searchTerm?.trim().toLowerCase()
-
-    if (searchTermValue) {
-      activities = activities.filter(activity => activity.activityName.toLowerCase().includes(searchTermValue))
+    if (searchValue) {
+      const normalisedSearchValue = searchValue.toLowerCase()
+      activities = activities.filter(activity => activity.activityName.toLowerCase().includes(normalisedSearchValue))
     }
 
     if (externalActivitiesRolledOut) {
-      const isOutsideWork = filters.isOutsideWorkFilter === 'true'
-
       activities = activities.filter(activity => activity.outsideWork === isOutsideWork)
     }
 
@@ -37,7 +34,7 @@ export default class ActivitiesRoutes {
       total: this.getCalculatedFields(this.calculateTotals(activities) as ActivitySummary),
       activities,
       filters,
-      searchTerm: searchTermValue,
+      searchTerm: searchValue,
     })
   }
 

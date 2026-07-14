@@ -136,7 +136,7 @@ describe('Route Handlers - Activities dashboard', () => {
         ]),
         total: { allocated: 50, capacity: 100, percentageAllocated: 50, vacancies: 50, waitlisted: 10 },
         filters: { isOutsideWorkFilter: 'true' },
-        searchTerm: 'outside',
+        searchTerm: 'Outside',
       })
     })
 
@@ -248,7 +248,7 @@ describe('Route Handlers - Activities dashboard', () => {
         activities: expect.arrayContaining([]),
         total: { allocated: 0, capacity: 0, percentageAllocated: 100, vacancies: 0, waitlisted: 0 },
         filters: { isOutsideWorkFilter: 'true' },
-        searchTerm: 'unmatched',
+        searchTerm: 'Unmatched',
       })
     })
   })

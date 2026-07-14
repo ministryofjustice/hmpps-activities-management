@@ -251,15 +251,11 @@
                             rows: rows
                         }) }}
                 {% else %}
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-two-thirds">
-                            {% set returnToActivities = "/activities/allocation-dashboard?isOutsideWorkFilter=true" 
-                                if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter === 'true' 
-                                else "/activities/allocation-dashboard?isOutsideWorkFilter=false" %}
-                            <h2 class="govuk-heading-s govuk-!-margin-bottom-7">No activities found</h2>
-                            <p class="govuk-body-s">Enter a different activity name, or <a href= {{ returnToActivities }} class="govuk-link govuk-link--no-visited-state">return to the list of activities</a></p>   
-                        </div>
-                    </div>
+                    {% set returnToActivities = "/activities/allocation-dashboard?isOutsideWorkFilter=true" 
+                        if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter === 'true' 
+                        else "/activities/allocation-dashboard?isOutsideWorkFilter=false" %}
+                    <h2 class="govuk-heading-s govuk-!-margin-bottom-7">No activities found</h2>
+                    <p class="govuk-body-s">Enter a different activity name, or <a href= "{{ returnToActivities }}" class="govuk-link govuk-link--no-visited-state">return to the list of activities</a></p>   
                 {% endif %}
             <div/>
         <div/>
