@@ -34,8 +34,6 @@ export default class ViewActivityPage extends Page {
     })
   }
 
-  changeDaysAndSessions = (text: string) => this.getInputByLabel(text).click()
-
   changeBankHolidayLink = (): Cypress.Chainable => cy.get('[data-qa="change-bank-holiday-link"]')
 
   getSummaryListValue = (cardElement: Cypress.Chainable, key: string): Cypress.Chainable =>
