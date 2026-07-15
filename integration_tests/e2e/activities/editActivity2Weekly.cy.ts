@@ -123,12 +123,14 @@ context('Edit activity - 2 weekly', () => {
     sessionTimesPage.selectEndTime(17, 50, '1', 'WEDNESDAY', 'PM')
     sessionTimesPage.continue()
 
+    viewActivityPage.checkForSameDayMods()
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(
       'Activity updated',
       `You've updated the daily schedule for English level 1`,
     )
   })
+
   it('should allow the user to change an activity - changing times if currently using custom times', () => {
     cy.visit('/activities/view/2')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
@@ -155,12 +157,15 @@ context('Edit activity - 2 weekly', () => {
     sessionTimesPage.selectStartTime(9, 30, '1', 'TUESDAY', 'AM')
     sessionTimesPage.selectEndTime(11, 50, '1', 'TUESDAY', 'AM')
     sessionTimesPage.continue()
+
+    viewActivityPage.checkForSameDayMods()
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(
       'Activity updated',
       `You've updated the daily schedule for English level 1`,
     )
   })
+
   it('should allow the user to change an activity - changing times if currently using custom times - change to regime times', () => {
     cy.visit('/activities/view/2')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
@@ -174,6 +179,7 @@ context('Edit activity - 2 weekly', () => {
     customTimesChangeDefaultCustomPage.changeTimes('Change all start and end times to prison regime times')
     customTimesChangeDefaultCustomPage.continue()
 
+    viewActivityPage.checkForSameDayMods()
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(
       'Activity updated',
