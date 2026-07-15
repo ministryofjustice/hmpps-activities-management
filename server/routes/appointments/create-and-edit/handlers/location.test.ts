@@ -291,4 +291,48 @@ describe('Route Handlers - Create Appointment - Location', () => {
       expect(errors).toHaveLength(0)
     })
   })
+
+  it('should render the location view with the existing location selected', async () => {
+    req.session.appointmentJourney = {
+      location: {
+        id: '26152',
+        description: 'Chapel',
+      },
+      inCell: false,
+    } as AppointmentJourney
+
+    when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'pages/appointments/create-and-edit/location',
+      expect.objectContaining({
+        locations,
+        initialLocationId: '26152',
+        initialLocationType: LocationType.OUT_OF_CELL,
+        isCtaAcceptAndSave: false,
+      }),
+    )
+  })
+
+  it('should render the location view with in-cell selected', async () => {
+    req.session.appointmentJourney = {
+      inCell: true,
+    } as AppointmentJourney
+
+    when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'pages/appointments/create-and-edit/location',
+      expect.objectContaining({
+        locations,
+        initialLocationId: undefined,
+        initialLocationType: LocationType.IN_CELL,
+        isCtaAcceptAndSave: false,
+      }),
+    )
+  })
 })
