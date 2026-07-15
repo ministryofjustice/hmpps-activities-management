@@ -22,6 +22,18 @@ export default class ViewActivityPage extends Page {
 
   changeScheduleLink = () => cy.get('[data-qa="change-schedule-link"]')
 
+  checkForSameDayMods() {
+    cy.get('body').then($body => {
+      const heading = $body.find('h1').text().trim()
+      const sameDayQuestion = /^Do you want the .+ (AM|PM) session to run today\?$/
+
+      if (sameDayQuestion.test(heading)) {
+        this.getInputByLabel('Yes').click()
+        this.continue()
+      }
+    })
+  }
+
   changeBankHolidayLink = (): Cypress.Chainable => cy.get('[data-qa="change-bank-holiday-link"]')
 
   getSummaryListValue = (cardElement: Cypress.Chainable, key: string): Cypress.Chainable =>
