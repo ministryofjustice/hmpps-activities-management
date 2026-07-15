@@ -15,11 +15,7 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">{{ allocateJourney.activity.name | safe }}</span>
 
-            {% if sameDayScheduleModificationsEnabled %}
                 <h1 class="govuk-heading-l">Change {{ prisonerName | safe }}'s scheduled sessions for this activity</h1>
-            {% else %}
-                <h1 class="govuk-heading-l">Change when {{ prisonerName | safe }} should attend this activity</h1>
-            {% endif %}
 
             {% if session.req.routeContext.mode == 'create' %}
                 <p class='govuk-body'>Unselect a session to modify {{ prisonerName | safe }} out.</p>
@@ -34,7 +30,7 @@
                 }) }}
             {% endif %}
 
-          {% if sameDayScheduleModificationsEnabled and (session.req.routeContext.mode == 'edit' or session.req.routeContext.mode == 'exclude') and allocationHasStarted %}
+          {% if (session.req.routeContext.mode == 'edit' or session.req.routeContext.mode == 'exclude') and allocationHasStarted %}
           {{ govukDetails({
             summaryText: "Adding sessions for people to attend today",
             html: "If you add a session happening today, you can choose if you want the prisoner to attend today or from the next time the session runs. </br></br>

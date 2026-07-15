@@ -25,15 +25,15 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
   const locations = [
     {
-      id: 26152,
+      dpsLocationId: '26152',
       description: 'Chapel',
     },
     {
-      id: 26149,
+      dpsLocationId: '26149',
       description: 'Gym',
     },
     {
-      id: 26151,
+      dpsLocationId: '26151',
       description: 'Library',
     },
   ] as AppointmentLocationSummary[]
@@ -74,10 +74,13 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/location', {
-        locations,
-        isCtaAcceptAndSave: false,
-      })
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/create-and-edit/location',
+        expect.objectContaining({
+          locations,
+          isCtaAcceptAndSave: false,
+        }),
+      )
     })
 
     it('should render the location view with accept and save', async () => {
@@ -90,10 +93,13 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/location', {
-        locations,
-        isCtaAcceptAndSave: true,
-      })
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/create-and-edit/location',
+        expect.objectContaining({
+          locations,
+          isCtaAcceptAndSave: true,
+        }),
+      )
     })
   })
 
@@ -101,7 +107,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
     it('should save selected location in session and redirect to date and time page', async () => {
       req.body = {
         locationType: LocationType.OUT_OF_CELL,
-        locationId: 26149,
+        locationId: '26149',
       }
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
@@ -109,9 +115,10 @@ describe('Route Handlers - Create Appointment - Location', () => {
       await handler.CREATE(req, res)
 
       expect(req.session.appointmentJourney.location).toEqual({
-        id: 26149,
+        id: '26149',
         description: 'Gym',
       })
+      expect(req.session.appointmentJourney.inCell).toEqual(false)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
     })
 
@@ -119,7 +126,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
       req.session.appointmentJourney.type = AppointmentType.SET
       req.body = {
         locationType: LocationType.OUT_OF_CELL,
-        locationId: 26149,
+        locationId: '26149',
       }
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
@@ -127,16 +134,17 @@ describe('Route Handlers - Create Appointment - Location', () => {
       await handler.CREATE(req, res)
 
       expect(req.session.appointmentJourney.location).toEqual({
-        id: 26149,
+        id: '26149',
         description: 'Gym',
       })
+      expect(req.session.appointmentJourney.inCell).toEqual(false)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('appointment-set-date')
     })
 
     it('validation fails when selected location is not found', async () => {
       req.body = {
         locationType: LocationType.OUT_OF_CELL,
-        locationId: -1,
+        locationId: '-1',
       }
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
@@ -159,29 +167,35 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
     it('should update the appointment and call redirect or edit', async () => {
       req.body = {
-        locationId: 26149,
+        locationType: LocationType.OUT_OF_CELL,
+        locationId: '26149',
       }
 
       req.session.appointmentJourney = {
         location: {
-          id: 26152,
+          id: '26152',
           description: 'Chapel',
         },
-      } as unknown as AppointmentJourney
+      } as AppointmentJourney
 
-      req.journeyData.editAppointmentJourney = {} as unknown as EditAppointmentJourney
+      req.journeyData.editAppointmentJourney = {} as EditAppointmentJourney
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
 
       await handler.EDIT(req, res)
 
+      expect(req.journeyData.editAppointmentJourney.location).toEqual({
+        id: '26149',
+        description: 'Gym',
+      })
+      expect(req.journeyData.editAppointmentJourney.inCell).toEqual(false)
       expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'location')
     })
 
     it('validation fails when selected location is not found', async () => {
       req.body = {
         locationType: LocationType.OUT_OF_CELL,
-        locationId: -1,
+        locationId: '-1',
       }
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
@@ -211,10 +225,10 @@ describe('Route Handlers - Create Appointment - Location', () => {
       )
     })
 
-    it('validation fails when selected location id is not a number', async () => {
+    it('validation fails when selected location id is empty', async () => {
       const body = {
         locationType: LocationType.OUT_OF_CELL,
-        locationId: 'NaN',
+        locationId: '',
       }
 
       const requestObject = plainToInstance(Location, body)
@@ -276,5 +290,49 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       expect(errors).toHaveLength(0)
     })
+  })
+
+  it('should render the location view with the existing location selected', async () => {
+    req.session.appointmentJourney = {
+      location: {
+        id: '26152',
+        description: 'Chapel',
+      },
+      inCell: false,
+    } as AppointmentJourney
+
+    when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'pages/appointments/create-and-edit/location',
+      expect.objectContaining({
+        locations,
+        initialLocationId: '26152',
+        initialLocationType: LocationType.OUT_OF_CELL,
+        isCtaAcceptAndSave: false,
+      }),
+    )
+  })
+
+  it('should render the location view with in-cell selected', async () => {
+    req.session.appointmentJourney = {
+      inCell: true,
+    } as AppointmentJourney
+
+    when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'pages/appointments/create-and-edit/location',
+      expect.objectContaining({
+        locations,
+        initialLocationId: undefined,
+        initialLocationType: LocationType.IN_CELL,
+        isCtaAcceptAndSave: false,
+      }),
+    )
   })
 })

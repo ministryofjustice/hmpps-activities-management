@@ -311,9 +311,9 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       req.params.appointmentId = '1'
       req.session.appointmentJourney.repeat = YesNo.NO
       req.session.appointmentJourney.category = { code: 'VLLA', description: 'Video Link - Legal Appointment' }
-      req.session.appointmentJourney.location = { id: 1, description: 'Video Room' }
+      req.session.appointmentJourney.location = { id: '1', description: 'Video Room' }
 
-      activitiesService.getInternalLocationEvents.mockResolvedValue([
+      activitiesService.getInternalLocationEventsByDpsLocationIds.mockResolvedValue([
         {
           description: 'Video Room',
           events: [

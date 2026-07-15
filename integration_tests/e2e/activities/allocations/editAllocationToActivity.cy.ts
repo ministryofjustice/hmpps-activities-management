@@ -78,7 +78,6 @@ context('Allocate to activity', () => {
 
   // Note: Cypress only lets us freeze time in the browser.
   // As a result, the same day modifications logic (which run in the node app) can only be covered by the unit tests.
-  // TODO: Use commented out assertions when sameDayScheduleModificationsEnabled flag is removed
   it('should be able to edit exclusions without triggering same day modifications logic', () => {
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', [])
 
@@ -93,11 +92,8 @@ context('Allocate to activity', () => {
 
     const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
 
-    exclusionsPage.pageTitle().should('contain.text', `Change when Jo Bloggs should attend this activity`)
-    exclusionsPage.detailsSummary().should('not.exist')
-
-    // exclusionsPage.pageTitle().should('contain.text', `Change Jo Bloggs's scheduled sessions for this activity`)
-    // exclusionsPage.detailsSummary().should('contain.text', 'Adding sessions for people to attend today')
+    exclusionsPage.pageTitle().should('contain.text', `Change Jo Bloggs's scheduled sessions for this activity`)
+    exclusionsPage.detailsSummary().should('contain.text', 'Adding sessions for people to attend today')
 
     cy.get('#week1\\[tuesday\\]').uncheck()
     exclusionsPage.continue()

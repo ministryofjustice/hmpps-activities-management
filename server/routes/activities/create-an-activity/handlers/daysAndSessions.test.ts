@@ -12,7 +12,6 @@ import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleV
 import { Activity, ActivitySchedule, Slot } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import getFutureSameDaySlots from '../../../../utils/helpers/futureSameDaySlots'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../utils/helpers/activityScheduleValidator')
@@ -488,6 +487,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               name: 'Maths level 1',
               slots: {},
               scheduleWeeks: 2,
+              startDate: formatIsoDate(startDate),
             },
           },
           params: {
@@ -564,6 +564,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               name: 'Maths level 1',
               slots: {},
               scheduleWeeks: 2,
+              startDate: formatIsoDate(startDate),
             },
           },
           params: {
@@ -668,6 +669,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               name: 'Maths level 1',
               slots: {},
               scheduleWeeks: 1,
+              startDate: formatIsoDate(startDate),
             },
           },
           params: {
@@ -973,11 +975,10 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
     })
   })
 
-  describe('Same-day schedule modifications (sameDayScheduleModificationsEnabled is true)', () => {
+  describe('Same-day schedule modifications', () => {
     let getFutureSameDaySlotsMock: jest.Mock
 
     beforeEach(() => {
-      config.sameDayScheduleModificationsEnabled = true
       getFutureSameDaySlotsMock = getFutureSameDaySlots as jest.Mock
       getFutureSameDaySlotsMock.mockClear()
       activitiesService.getActivity.mockClear()

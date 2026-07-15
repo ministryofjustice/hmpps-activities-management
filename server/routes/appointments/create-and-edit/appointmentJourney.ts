@@ -30,7 +30,7 @@ export type AppointmentJourney = {
   organiserCode?: EventOrganiser
   customName?: string
   location?: {
-    id: number
+    id: string
     description: string
   }
   inCell?: boolean

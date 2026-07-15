@@ -48,7 +48,7 @@ describe('Edit Appointment Utils', () => {
           },
           tierCode: EventTier.TIER_1,
           location: {
-            id: 1,
+            id: '1',
             description: 'Location',
           },
           startDate: formatIsoDate(weekTomorrow),
@@ -68,7 +68,7 @@ describe('Edit Appointment Utils', () => {
         editAppointmentJourney: {
           numberOfAppointments: 4,
           location: {
-            id: 1,
+            id: '1',
             description: 'Location',
           },
           appointments: [
@@ -273,7 +273,7 @@ describe('Edit Appointment Utils', () => {
     describe('when changing for location messages', () => {
       beforeEach(() => {
         req.journeyData.editAppointmentJourney.location = {
-          id: 2,
+          id: '2',
           description: 'Updated location',
         }
       })
@@ -305,9 +305,9 @@ describe('Edit Appointment Utils', () => {
 
     describe('when checking for location changes', () => {
       it.each([
-        ['location id changes to in cell', { id: 1 }, undefined, false, true, true],
-        ['location id remains unchanged', { id: 1 }, { id: 1 }, true, false, false],
-        ['location changes from in cell to id', undefined, { id: 1 }, true, false, true],
+        ['location id changes to in cell', { id: '1' }, undefined, false, true, true],
+        ['location id remains unchanged', { id: '1' }, { id: '1' }, true, false, false],
+        ['location changes from in cell to id', undefined, { id: '1' }, true, false, true],
         ['location remains in cell', undefined, undefined, true, true, false],
         ['location remains unchanged', undefined, undefined, undefined, undefined, false],
       ])('%s', (_, oldLocation, newLocation, oldInCell, newInCell, expected) => {

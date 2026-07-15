@@ -102,6 +102,7 @@ context('Edit activity', () => {
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity2)
     cy.stubEndpoint('GET', '/activities/2/pay-history', getActivity2)
+    cy.stubEndpoint('GET', '/schedules/2', getActivity2.schedules[0])
     cy.stubEndpoint('PATCH', '/activities/MDI/activityId/2', getActivity2)
   })
 
@@ -148,6 +149,7 @@ context('Edit activity', () => {
     cancelPayRatePage.cancelPayRate()
     cancelPayRatePage.confirm()
   })
+
   it('should allow the user to change an activity - changing days/sessions if using custom times', () => {
     cy.visit('/activities/view/2')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
@@ -159,14 +161,12 @@ context('Edit activity', () => {
     customTimesChangeOptionPage.continue()
 
     const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
-    // TODO: when sameDayScheduleModificationsEnabled is enabled, use commented out assertion and remove the one below it
-    // daysAndSessionsPage
-    //   .modParagraph()
-    //   .should(
-    //     'contain.text',
-    //     'If you add a session for today, you can choose if it runs today or not. Other changes you make will take effect tomorrow.',
-    //   )
-    daysAndSessionsPage.modParagraph().should('contain.text', 'Any changes you make will take effect tomorrow.')
+    daysAndSessionsPage
+      .modParagraph()
+      .should(
+        'contain.text',
+        'If you add a session for today, you can choose if it runs today or not. Other changes you make will take effect tomorrow.',
+      )
     daysAndSessionsPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
     daysAndSessionsPage.getInputById('timeSlotsTuesday').should('be.checked')
     daysAndSessionsPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
@@ -188,12 +188,14 @@ context('Edit activity', () => {
     sessionTimesPage.selectEndTime(11, 50, '1', 'MONDAY', 'AM')
     sessionTimesPage.continue()
 
+    viewActivityPage.checkForSameDayMods()
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(
       'Activity updated',
       `You've updated the daily schedule for English level 1`,
     )
   })
+
   it('should allow the user to change an activity - changing times if currently using custom times', () => {
     cy.visit('/activities/view/2')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
@@ -216,12 +218,15 @@ context('Edit activity', () => {
     sessionTimesPage.selectStartTime(9, 30, '1', 'TUESDAY', 'AM')
     sessionTimesPage.selectEndTime(11, 50, '1', 'TUESDAY', 'AM')
     sessionTimesPage.continue()
+
+    viewActivityPage.checkForSameDayMods()
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(
       'Activity updated',
       `You've updated the daily schedule for English level 1`,
     )
   })
+
   it('should allow the user to change an activity - changing times if currently using custom times - change to regime times', () => {
     cy.visit('/activities/view/2')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
@@ -237,6 +242,7 @@ context('Edit activity', () => {
     customTimesChangeDefaultCustomPage.changeTimes('Change all start and end times to prison regime times')
     customTimesChangeDefaultCustomPage.continue()
 
+    viewActivityPage.checkForSameDayMods()
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(
       'Activity updated',
