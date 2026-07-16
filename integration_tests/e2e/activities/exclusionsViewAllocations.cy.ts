@@ -17,13 +17,20 @@ context('Exclusions', () => {
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/prisoner/A5015DY', getInmateDetails)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocationsExclusions)
+
+    prisonerAllocationsExclusions[0].allocations.forEach(allocation => {
+      cy.stubEndpoint('GET', `/allocations/id/${allocation.id}/exclusions/history`, [])
+    })
+
     cy.stubEndpoint('GET', '/schedules/1', getScheduleGym as unknown as JSON)
     cy.stubEndpoint('GET', '/schedules/2', getScheduleMaths as unknown as JSON)
     cy.stubEndpoint('GET', '/schedules/3', getSchedulePlastering as unknown as JSON)
+
     cy.stubEndpoint('GET', '/allocations/id/2', {
       ...prisonerAllocationsExclusions[0].allocations[0],
       exclusions: [],
     })
+
     cy.stubEndpoint('GET', '/activities/1/filtered', getActivityMaths)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
