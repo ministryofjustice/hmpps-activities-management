@@ -76,6 +76,7 @@ import {
   LocationPrefixes,
   BulkAllocationRequest,
   LocationEvents,
+  ExclusionRevision,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -1185,6 +1186,16 @@ export default class ActivitiesApiClient extends RestClient {
         data: {
           issuePayment,
         },
+      },
+      asUser(user.token),
+    )
+  }
+
+  async getAllocationExclusionsHistory(allocationId: number, user: ServiceUser): Promise<ExclusionRevision[]> {
+    return this.get(
+      {
+        path: `/allocations/id/${allocationId}/exclusions/history`,
+        headers: CASELOAD_HEADER(user.activeCaseLoadId),
       },
       asUser(user.token),
     )

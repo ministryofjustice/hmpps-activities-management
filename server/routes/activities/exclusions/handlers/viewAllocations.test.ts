@@ -1,10 +1,9 @@
 import { Request, Response } from 'express'
-
+import { format, parseISO } from 'date-fns'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import atLeast from '../../../../../jest.setup'
-import { ActivitySchedule, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
+import { ActivitySchedule, ExclusionRevision, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 import ViewAllocationsRoutes from './viewAllocations'
@@ -17,6 +16,7 @@ const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesS
 
 describe('Route Handlers - Exclusions - View allocations', () => {
   const handler = new ViewAllocationsRoutes(activitiesService, prisonService)
+
   let req: Request
   let res: Response
 
@@ -24,7 +24,11 @@ describe('Route Handlers - Exclusions - View allocations', () => {
     username: 'joebloggs',
   }
 
+  const schedule = activitySchedule as unknown as ActivitySchedule
+
   beforeEach(() => {
+    jest.resetAllMocks()
+
     res = {
       locals: {
         user,
@@ -76,9 +80,11 @@ describe('Route Handlers - Exclusions - View allocations', () => {
           },
         ] as PrisonerAllocations[])
 
-      when(activitiesService.getActivitySchedule)
-        .calledWith(atLeast(1))
-        .mockResolvedValue(activitySchedule as unknown as ActivitySchedule)
+      when(activitiesService.getActivitySchedule).calledWith(1, res.locals.user).mockResolvedValue(schedule)
+
+      when(activitiesService.getAllocationExclusionsHistory)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue([] as ExclusionRevision[])
     })
 
     it('should render the correct view', async () => {
@@ -106,6 +112,7 @@ describe('Route Handlers - Exclusions - View allocations', () => {
               startDate: '2022-05-19',
             },
             currentWeek: 1,
+            scheduleLastChanged: schedule.updatedTime ? format(parseISO(schedule.updatedTime), 'd MMMM yyyy') : null,
             scheduledSlots: {
               '1': [
                 {

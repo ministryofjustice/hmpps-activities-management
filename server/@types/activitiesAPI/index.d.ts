@@ -619,34 +619,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/scheduled-events/prison/{prisonCode}/location-events': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /**
-     * Get a list of scheduled events for a prison given list of DPS location UUIDs, a date and optional time slot
-     * @description Returns scheduled events for the prison, locations UUIDs, date and optional time slot.
-     *           This endpoint only returns activities and appointments and these come from the local database.
-     *           This endpoint supports the creation of movement lists.
-     *           Note that activities are only scheduled 60 days in advance. Appointments may be scheduled for any date in the future.
-     *
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     */
-    post: operations['getScheduledEventsForMultipleLocationsByDPSLocationsIds']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/rollout/prison-regime/{agencyId}': {
     parameters: {
       query?: never
@@ -1834,7 +1806,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/scheduled-events/prison/{prisonCode}/external-movements': {
+  '/scheduled-events/prison/{prisonCode}/scheduled-external-movements': {
     parameters: {
       query?: never
       header?: never
@@ -1842,16 +1814,44 @@ export interface paths {
       cookie?: never
     }
     /**
-     * Get a list of external movements (TAPs) for a given prison code, date and an optional time slot
+     * Get external movements (TAPs) as a single LocationEvents object for a given prison code, date and an optional time slot
      * @description Returns external movements fetched from the External Movements API for the given prison,
-     *           date and optional time slot. This endpoint supports the creation of movement lists.
+     *           date and optional time slot as a single LocationEvents object. This endpoint supports the creation of movement lists.
      *
      *
      *     Requires one of the following roles:
      *     * PRISON
      *     * ACTIVITY_ADMIN
      */
-    get: operations['getExternalMovements']
+    get: operations['getScheduledExternalMovements']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/scheduled-events/prison/{prisonCode}/location-events': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get a list of scheduled events for a DPS location, a date and optional time slot
+     * @description Returns scheduled events for the DPS location, date and optional time slot.
+     *           This endpoint only returns activities and appointments from the local database.
+     *           This endpoint supports the creation of movement lists.
+     *           Activities are only scheduled 60 days in advance. Appointments may be scheduled for any date in the future.
+     *
+     *
+     *     Requires one of the following roles:
+     *     * PRISON
+     *     * ACTIVITY_ADMIN
+     */
+    get: operations['getScheduledEventsByDPSLocationsId']
     put?: never
     post?: never
     delete?: never
@@ -2739,6 +2739,30 @@ export interface paths {
      *     * NOMIS_ACTIVITIES
      */
     get: operations['getAllocationById']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/allocations/id/{allocationId}/exclusions/history': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get exclusions history by allocation id
+     * @description Returns historical exclusion snapshots for the supplied allocation id.
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_HUB
+     *     * ACTIVITY_ADMIN
+     */
+    get: operations['getExclusionsHistoryByAllocationId']
     put?: never
     post?: never
     delete?: never
@@ -3734,10 +3758,10 @@ export interface components {
       offset?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
-      pageNumber?: number
+      pageSize?: number
       paged?: boolean
       /** Format: int32 */
-      pageSize?: number
+      pageNumber?: number
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
@@ -3753,9 +3777,9 @@ export interface components {
       first?: boolean
       last?: boolean
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -8000,116 +8024,32 @@ export interface components {
       pieceRateItems?: number | null
     }
     AddressDto: {
-      /**
-       * @description Primary Address
-       * @example false
-       */
       primary: boolean
-      /**
-       * @description No Fixed Address
-       * @example false
-       */
       noFixedAddress: boolean
-      /**
-       * Format: int64
-       * @description Address Id
-       * @example 543524
-       */
+      /** Format: int64 */
       addressId?: number | null
-      /**
-       * @description Address Type. Note: Reference domain is ADDR_TYPE
-       * @example BUS
-       */
       addressType?: string | null
-      /**
-       * @description Flat
-       * @example 3B
-       */
       flat?: string | null
-      /**
-       * @description Premise
-       * @example Liverpool Prison
-       */
       premise?: string | null
-      /**
-       * @description Street
-       * @example Slinn Street
-       */
       street?: string | null
-      /**
-       * @description Locality
-       * @example Brincliffe
-       */
       locality?: string | null
-      /**
-       * @description Town/City. Note: Reference domain is CITY
-       * @example Liverpool
-       */
       town?: string | null
-      /**
-       * @description Postal Code
-       * @example LI1 5TH
-       */
       postalCode?: string | null
-      /**
-       * @description County. Note: Reference domain is COUNTY
-       * @example HEREFORD
-       */
       county?: string | null
-      /**
-       * @description Country. Note: Reference domain is COUNTRY
-       * @example ENG
-       */
       country?: string | null
-      /**
-       * @description Comment
-       * @example This is a comment text
-       */
       comment?: string | null
-      /**
-       * Format: date
-       * @description Date Added
-       * @example Thu May 12 00:00:00 UTC 2005
-       */
+      /** Format: date */
       startDate?: string | null
-      /**
-       * Format: date
-       * @description Date ended
-       * @example Fri Feb 12 00:00:00 UTC 2021
-       */
+      /** Format: date */
       endDate?: string | null
-      /**
-       * @description The phone number associated with the address
-       * @example null
-       */
       phones?: components['schemas']['Telephone'][] | null
-      /**
-       * @description The address usages/types
-       * @example null
-       */
       addressUsages?: components['schemas']['AddressUsageDto'][] | null
     }
     AddressUsageDto: {
-      /**
-       * Format: int64
-       * @description Address ID of the associated address
-       * @example 23422313
-       */
+      /** Format: int64 */
       addressId?: number | null
-      /**
-       * @description The address usages
-       * @example HDC
-       */
       addressUsage?: string | null
-      /**
-       * @description The address usages description
-       * @example HDC Address
-       */
       addressUsageDescription?: string | null
-      /**
-       * @description Active Flag
-       * @example true
-       */
       activeFlag?: boolean | null
     }
     /** @description Allocation details with activity pay rate if applicable */
@@ -8185,26 +8125,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     Telephone: {
-      /**
-       * @description Telephone number
-       * @example 0114 2345678
-       */
       number: string
-      /**
-       * @description Telephone type
-       * @example TEL
-       */
       type: string
-      /**
-       * Format: int64
-       * @description Phone Id
-       * @example 2234232
-       */
+      /** Format: int64 */
       phoneId?: number | null
-      /**
-       * @description Telephone extension number
-       * @example 123
-       */
       ext?: string | null
     }
     /** @description Prisoner workplace risk assessment suitability */
@@ -8341,9 +8265,9 @@ export interface components {
       first?: boolean
       last?: boolean
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Attendance summary details */
@@ -8618,61 +8542,20 @@ export interface components {
       count: number
     }
     Location: {
-      /**
-       * Format: int64
-       * @description Location identifier.
-       * @example null
-       */
+      /** Format: int64 */
       locationId: number
-      /**
-       * @description Location type.
-       * @example null
-       */
       locationType: string
-      /**
-       * @description Location description.
-       * @example null
-       */
       description: string
-      /**
-       * @description Identifier of Agency this location is associated with.
-       * @example null
-       */
       agencyId: string
-      /**
-       * @description What events this room can be used for.
-       * @example null
-       */
       locationUsage?: string | null
-      /**
-       * Format: int64
-       * @description Identifier of this location's parent location.
-       * @example null
-       */
+      /** Format: int64 */
       parentLocationId?: number | null
-      /**
-       * Format: int32
-       * @description Current occupancy of location.
-       * @example null
-       */
+      /** Format: int32 */
       currentOccupancy?: number | null
-      /**
-       * @description Location prefix. Defines search prefix that will constrain search to this location and its subordinate locations.
-       * @example null
-       */
       locationPrefix?: string | null
-      /**
-       * Format: int32
-       * @description Operational capacity of the location.
-       * @example null
-       */
+      /** Format: int32 */
       operationalCapacity?: number | null
-      /**
-       * @description User-friendly location description.
-       * @example null
-       */
       userDescription?: string | null
-      /** @example null */
       internalLocationCode?: string | null
     }
     /** @description Location prefix response */
@@ -8684,20 +8567,8 @@ export interface components {
       locationPrefix: string
     }
     LocationGroup: {
-      /**
-       * @description The name of the group
-       * @example null
-       */
       name: string
-      /**
-       * @description A key for the group
-       * @example null
-       */
       key: string
-      /**
-       * @description The child groups of this group
-       * @example null
-       */
       children: components['schemas']['LocationGroup'][]
     }
     /**
@@ -8966,12 +8837,15 @@ export interface components {
        * @enum {string|null}
        */
       eventDescription?:
-        | 'ACTIVITY_SUSPENDED'
-        | 'ACTIVITY_ENDED'
-        | 'RELEASED'
-        | 'PERMANENT_RELEASE'
-        | 'TEMPORARY_RELEASE'
-        | null
+        'ACTIVITY_SUSPENDED' | 'ACTIVITY_ENDED' | 'RELEASED' | 'PERMANENT_RELEASE' | 'TEMPORARY_RELEASE' | null
+      /**
+       * @description The current allocations for the prisoner
+       * @example [
+       *       "KITCHEN AM",
+       *       "GYM PM"
+       *     ]
+       */
+      activeAllocations: string[]
     }
     /** @description The result of an event review search */
     EventReviewSearchResults: {
@@ -9472,6 +9346,46 @@ export interface components {
        * @example false
        */
       isDeleted: boolean
+    }
+    /** @description Represents a historical snapshot for an exclusion change. */
+    ExclusionRevision: {
+      /**
+       * Format: int32
+       * @description The week number
+       * @example 1
+       */
+      weekNumber: number
+      /** @description The time slots that were affected */
+      timeSlots: ('AM' | 'PM' | 'ED')[]
+      /**
+       * @description The day of the week
+       * @example MONDAY
+       * @enum {string}
+       */
+      dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+      /**
+       * @description The type of revision
+       * @example ADDED
+       * @enum {string}
+       */
+      revisionType: 'ADDED' | 'REMOVED'
+      /**
+       * Format: int64
+       * @description The revision number
+       * @example 12345
+       */
+      revision: number
+      /**
+       * @description The username of the user that made the change
+       * @example BLOGGSJ
+       */
+      updatedBy: string
+      /**
+       * Format: date-time
+       * @description The local date and time
+       * @example 2026-06-25T10:15:30
+       */
+      updatedDateTime: string
     }
   }
   responses: never
@@ -10920,74 +10834,6 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': number[]
-      }
-    }
-    responses: {
-      /** @description Successful call - zero or more scheduled events found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['InternalLocationEvents'][]
-        }
-      }
-      /** @description Invalid request */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Requested resource not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getScheduledEventsForMultipleLocationsByDPSLocationsIds: {
-    parameters: {
-      query: {
-        /** @description The exact date to return events for (required) in format YYYY-MM-DD */
-        date: string
-        /** @description Time slot of the events (optional). If supplied, one of AM, PM or ED. */
-        timeSlot?: 'AM' | 'PM' | 'ED'
-      }
-      header?: never
-      path: {
-        /** @description The 3-character prison code. */
-        prisonCode: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': string[]
       }
     }
     responses: {
@@ -13500,7 +13346,7 @@ export interface operations {
       }
     }
   }
-  getExternalMovements: {
+  getScheduledExternalMovements: {
     parameters: {
       query: {
         /** @description The exact date to return movements for (required) in format YYYY-MM-DD */
@@ -13523,7 +13369,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['LocationEvents'][]
+          'application/json': components['schemas']['LocationEvents']
         }
       }
       /** @description Invalid request */
@@ -13546,6 +13392,72 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getScheduledEventsByDPSLocationsId: {
+    parameters: {
+      query: {
+        /** @description The exact date to return events for (required) in format YYYY-MM-DD */
+        date: string
+        /** @description The internal DPS Location UUID. Example b7602cc8-e769-4cbb-8194-62d8e655992a */
+        dpsLocationId: string
+        /** @description Time slot of the events (optional). If supplied, one of AM, PM or ED. */
+        timeSlot?: 'AM' | 'PM' | 'ED'
+      }
+      header?: never
+      path: {
+        /** @description The 3-character prison code. */
+        prisonCode: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful call - zero or more scheduled events found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['InternalLocationEvents'][]
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
         headers: {
           [name: string]: unknown
         }
@@ -15324,6 +15236,57 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['Allocation']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The allocation for this ID was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getExclusionsHistoryByAllocationId: {
+    parameters: {
+      query?: never
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        allocationId: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Exclusions history returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ExclusionRevision'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */

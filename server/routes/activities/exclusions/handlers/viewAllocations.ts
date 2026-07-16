@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { format, parseISO } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { formatFirstLastName, parseDate } from '../../../../utils/utils'
@@ -21,23 +22,39 @@ export default class ViewAllocationsRoutes {
 
     const allocations = await this.activitiesService
       .getActivePrisonPrisonerAllocations([prisonerNumber], user)
-      .then(r => r.flatMap(a => a.allocations))
+      .then(response => response.flatMap(result => result.allocations))
 
     const schedules = await Promise.all(
-      allocations.map(a => this.activitiesService.getActivitySchedule(a.scheduleId, user)),
+      allocations.map(allocation => this.activitiesService.getActivitySchedule(allocation.scheduleId, user)),
     )
 
-    const activities = allocations.map(a => {
-      const schedule = schedules.find(s => s.id === a.scheduleId)
+    const exclusionHistories = await Promise.all(
+      allocations.map(allocation => this.activitiesService.getAllocationExclusionsHistory(allocation.id, user)),
+    )
 
-      const allocationSlots = activitySlotsMinusExclusions(a.exclusions, schedule.slots)
+    const activities = allocations.map((allocation, index) => {
+      const schedule = schedules[index]
+      const exclusionHistory = exclusionHistories[index]
+
+      const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
       const dailySlots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
 
+      const latestPrisonerScheduleChange = exclusionHistory.reduce<string | null>((latest, revision) => {
+        if (!latest) return revision.updatedDateTime
+
+        return new Date(revision.updatedDateTime) > new Date(latest) ? revision.updatedDateTime : latest
+      }, null)
+
+      const latestScheduleChange = [schedule.updatedTime, latestPrisonerScheduleChange]
+        .filter((value): value is string => Boolean(value))
+        .sort((first, second) => new Date(second).getTime() - new Date(first).getTime())[0]
+
       return {
-        allocation: a,
+        allocation,
         activityName: schedule.description,
         currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
         scheduledSlots: dailySlots,
+        scheduleLastChanged: latestScheduleChange ? format(parseISO(latestScheduleChange), 'd MMMM yyyy') : null,
       }
     })
 

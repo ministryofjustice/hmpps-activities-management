@@ -44,6 +44,7 @@ import {
   AdvanceAttendance,
   ActivityPayHistory,
   InternalLocationEvents,
+  ExclusionRevision,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import activityPayHistory from './fixtures/activity_pay_history_1.json'
@@ -1318,6 +1319,19 @@ describe('Activities Service', () => {
       await activitiesService.putAdvanceAttendance(123456, true, user)
 
       expect(activitiesApiClient.putAdvanceAttendance).toHaveBeenCalledWith(123456, true, user)
+    })
+  })
+
+  describe('getAllocationExclusionsHistory', () => {
+    it('should get the history by allocation Id', async () => {
+      const expectedResult = [] as ExclusionRevision[]
+
+      when(activitiesApiClient.getAllocationExclusionsHistory).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getAllocationExclusionsHistory(1, user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getAllocationExclusionsHistory).toHaveBeenCalledWith(1, user)
     })
   })
 })
