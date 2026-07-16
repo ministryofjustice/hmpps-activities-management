@@ -6,6 +6,29 @@ import { formatFirstLastName, parseDate } from '../../../../utils/utils'
 import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 
+const getLatestScheduleChange = (
+  allocatedTime: string | null | undefined,
+  activityScheduleUpdatedTime: string | null | undefined,
+  prisonerScheduleUpdatedTimes: Array<string | null | undefined>,
+): string | null => {
+  const allocatedAt = allocatedTime ? parseISO(allocatedTime) : null
+
+  const scheduleChangeDates = [activityScheduleUpdatedTime, ...prisonerScheduleUpdatedTimes]
+    .filter((value): value is string => Boolean(value))
+    .map(value => parseISO(value))
+    .filter(changeDate => !allocatedAt || changeDate.getTime() > allocatedAt.getTime())
+
+  if (scheduleChangeDates.length === 0) {
+    return null
+  }
+
+  const latestScheduleChange = scheduleChangeDates.reduce((latest, current) =>
+    current.getTime() > latest.getTime() ? current : latest,
+  )
+
+  return format(latestScheduleChange, 'd MMMM yyyy')
+}
+
 export default class ViewAllocationsRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
@@ -18,45 +41,38 @@ export default class ViewAllocationsRoutes {
 
     req.session.prisonerSearchBackLinkHref = `/activities/exclusions/prisoner/${prisonerNumber}`
 
-    const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
+    const [prisoner, prisonerAllocations] = await Promise.all([
+      this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user),
+      this.activitiesService.getActivePrisonPrisonerAllocations([prisonerNumber], user),
+    ])
 
-    const allocations = await this.activitiesService
-      .getActivePrisonPrisonerAllocations([prisonerNumber], user)
-      .then(response => response.flatMap(result => result.allocations))
+    const allocations = prisonerAllocations.flatMap(result => result.allocations)
 
-    const schedules = await Promise.all(
-      allocations.map(allocation => this.activitiesService.getActivitySchedule(allocation.scheduleId, user)),
+    const activities = await Promise.all(
+      allocations.map(async allocation => {
+        const [schedule, exclusionHistory] = await Promise.all([
+          this.activitiesService.getActivitySchedule(allocation.scheduleId, user),
+          this.activitiesService.getAllocationExclusionsHistory(allocation.id, user),
+        ])
+
+        const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
+        const scheduledSlots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
+
+        const scheduleLastChanged = getLatestScheduleChange(
+          allocation.allocatedTime,
+          schedule.updatedTime,
+          exclusionHistory.map(revision => revision.updatedDateTime),
+        )
+
+        return {
+          allocation,
+          activityName: schedule.description,
+          currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
+          scheduledSlots,
+          scheduleLastChanged,
+        }
+      }),
     )
-
-    const exclusionHistories = await Promise.all(
-      allocations.map(allocation => this.activitiesService.getAllocationExclusionsHistory(allocation.id, user)),
-    )
-
-    const activities = allocations.map((allocation, index) => {
-      const schedule = schedules[index]
-      const exclusionHistory = exclusionHistories[index]
-
-      const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
-      const dailySlots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
-
-      const latestPrisonerScheduleChange = exclusionHistory.reduce<string | null>((latest, revision) => {
-        if (!latest) return revision.updatedDateTime
-
-        return new Date(revision.updatedDateTime) > new Date(latest) ? revision.updatedDateTime : latest
-      }, null)
-
-      const latestScheduleChange = [schedule.updatedTime, latestPrisonerScheduleChange]
-        .filter((value): value is string => Boolean(value))
-        .sort((first, second) => new Date(second).getTime() - new Date(first).getTime())[0]
-
-      return {
-        allocation,
-        activityName: schedule.description,
-        currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
-        scheduledSlots: dailySlots,
-        scheduleLastChanged: latestScheduleChange ? format(parseISO(latestScheduleChange), 'd MMMM yyyy') : null,
-      }
-    })
 
     res.render('pages/activities/exclusions/view-allocations', {
       prisonerName: formatFirstLastName(prisoner.firstName, prisoner.lastName),
