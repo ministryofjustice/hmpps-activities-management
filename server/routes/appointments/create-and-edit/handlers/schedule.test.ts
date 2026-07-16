@@ -313,31 +313,29 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       req.session.appointmentJourney.category = { code: 'VLLA', description: 'Video Link - Legal Appointment' }
       req.session.appointmentJourney.location = { id: '1', description: 'Video Room' }
 
-      activitiesService.getInternalLocationEventsByDpsLocationIds.mockResolvedValue([
-        {
-          description: 'Video Room',
-          events: [
-            {
-              scheduledInstanceId: 1,
-              appointmentId: 1,
-              prisonerNumber: 'ABC123',
-              summary: 'Clashing appointment 1',
-            },
-            {
-              scheduledInstanceId: 1,
-              appointmentId: 1,
-              prisonerNumber: 'ZXY321',
-              summary: 'Clashing appointment 1',
-            },
-            {
-              scheduledInstanceId: 2,
-              appointmentId: 2,
-              prisonerNumber: 'ZXY321',
-              summary: 'Clashing appointment 2',
-            },
-          ],
-        },
-      ] as InternalLocationEvents[])
+      activitiesService.getInternalLocationEventsByDpsLocationId.mockResolvedValue({
+        description: 'Video Room',
+        events: [
+          {
+            scheduledInstanceId: 1,
+            appointmentId: 1,
+            prisonerNumber: 'ABC123',
+            summary: 'Clashing appointment 1',
+          },
+          {
+            scheduledInstanceId: 1,
+            appointmentId: 1,
+            prisonerNumber: 'ZXY321',
+            summary: 'Clashing appointment 1',
+          },
+          {
+            scheduledInstanceId: 2,
+            appointmentId: 2,
+            prisonerNumber: 'ZXY321',
+            summary: 'Clashing appointment 2',
+          },
+        ],
+      } as InternalLocationEvents)
 
       await handler.GET(req, res)
 
