@@ -8,8 +8,8 @@ import {
   AppointmentSeries,
   AppointmentSeriesCreateRequest,
   AppointmentSet,
-  AppointmentSetCreateRequest,
   AppointmentSetAppointment,
+  AppointmentSetCreateRequest,
 } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentFrequency } from '../../../../@types/appointments'
@@ -119,7 +119,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         appointmentType: 'GROUP',
         categoryCode: 'MEDO',
         prisonCode: 'TPR',
-        dpsLocationId: '32',
+        internalLocationId: 32,
         inCell: false,
         startDate: '2023-04-23',
         startTime: '09:30',
@@ -161,13 +161,48 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
       } as AppointmentSeries
     })
 
-    it('should create the appointment series and redirect to confirmation page', async () => {
+    it('should create the appointment series using the internal location ID from a legacy numeric string journey', async () => {
       when(activitiesService.createAppointmentSeries)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
+
       expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
+    })
+
+    it('should create the appointment series using the internal location ID from a legacy numeric journey', async () => {
+      req.session.appointmentJourney.location.id = 32 as unknown as string
+
+      when(activitiesService.createAppointmentSeries)
+        .calledWith(atLeast(expectedRequest))
+        .mockResolvedValueOnce(expectedResponse)
+
+      await handler.POST(req, res)
+
+      expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
+    })
+
+    it('should create the appointment series using the DPS location ID from a new journey', async () => {
+      const dpsLocationId = 'b7602cc8-e769-4cbb-8194-62d8e655992a'
+
+      req.session.appointmentJourney.location.id = dpsLocationId
+
+      const { internalLocationId: _, ...requestWithoutLegacyLocation } = expectedRequest
+      const expectedDpsRequest = {
+        ...requestWithoutLegacyLocation,
+        dpsLocationId,
+      } as AppointmentSeriesCreateRequest
+
+      when(activitiesService.createAppointmentSeries)
+        .calledWith(atLeast(expectedDpsRequest))
+        .mockResolvedValueOnce(expectedResponse)
+
+      await handler.POST(req, res)
+
+      expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedDpsRequest, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
     })
 
@@ -201,6 +236,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
+
       expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
     })
   })
@@ -252,11 +288,15 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
       expectedRequest = {
         prisonCode: 'TPR',
         categoryCode: 'MEDO',
-        dpsLocationId: '32',
+        internalLocationId: 32,
         inCell: false,
         startDate: '2023-04-23',
         appointments: [
-          { prisonerNumber: 'A1234BC', startTime: '13:30', endTime: '14:00' } as AppointmentSetAppointment,
+          {
+            prisonerNumber: 'A1234BC',
+            startTime: '13:30',
+            endTime: '14:00',
+          } as AppointmentSetAppointment,
           {
             prisonerNumber: 'B2345CD',
             startTime: '14:00',
@@ -323,13 +363,48 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
       } as AppointmentSet
     })
 
-    it('should create the appointment set and redirect to confirmation page', async () => {
+    it('should create the appointment set using the internal location ID from a legacy numeric string journey', async () => {
       when(activitiesService.createAppointmentSet)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
+
       expect(activitiesService.createAppointmentSet).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('set-confirmation/14')
+    })
+
+    it('should create the appointment set using the internal location ID from a legacy numeric journey', async () => {
+      req.session.appointmentJourney.location.id = 32 as unknown as string
+
+      when(activitiesService.createAppointmentSet)
+        .calledWith(atLeast(expectedRequest))
+        .mockResolvedValueOnce(expectedResponse)
+
+      await handler.POST(req, res)
+
+      expect(activitiesService.createAppointmentSet).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('set-confirmation/14')
+    })
+
+    it('should create the appointment set using the DPS location ID from a new journey', async () => {
+      const dpsLocationId = 'b7602cc8-e769-4cbb-8194-62d8e655992a'
+
+      req.session.appointmentJourney.location.id = dpsLocationId
+
+      const { internalLocationId: _, ...requestWithoutLegacyLocation } = expectedRequest
+      const expectedDpsRequest = {
+        ...requestWithoutLegacyLocation,
+        dpsLocationId,
+      } as AppointmentSetCreateRequest
+
+      when(activitiesService.createAppointmentSet)
+        .calledWith(atLeast(expectedDpsRequest))
+        .mockResolvedValueOnce(expectedResponse)
+
+      await handler.POST(req, res)
+
+      expect(activitiesService.createAppointmentSet).toHaveBeenCalledWith(expectedDpsRequest, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('set-confirmation/14')
     })
   })
