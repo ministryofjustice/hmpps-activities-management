@@ -71,23 +71,20 @@ export default class ScheduleRoutes {
     const locationSchedule =
       locationId && appointmentCategoryCode.startsWith('VL') // Video conferencing appointment types
         ? await this.activitiesService
-            .getInternalLocationEventsByDpsLocationIds(
+            .getInternalLocationEventsByDpsLocationId(
               user.activeCaseLoadId,
               parseIsoDate(appointmentStartDate),
-              [locationId],
+              locationId,
               user,
             )
-            .then(
-              location =>
-                location.map(l => ({
-                  ...l,
-                  events: uniqWith(
-                    l.events,
-                    // Filtering unique appointments, to only contain an appointment once if there are many attendees
-                    (a, b) => a.scheduledInstanceId === b.scheduledInstanceId && a.appointmentId === b.appointmentId,
-                  ),
-                }))[0],
-            )
+            .then(l => ({
+              ...l,
+              events: uniqWith(
+                l.events,
+                // Filtering unique appointments, to only contain an appointment once if there are many attendees
+                (a, b) => a.scheduledInstanceId === b.scheduledInstanceId && a.appointmentId === b.appointmentId,
+              ),
+            }))
         : undefined
 
     res.render('pages/appointments/create-and-edit/schedule', {

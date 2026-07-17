@@ -623,7 +623,8 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
       })
 
-      it('should correctly process slots when both week1 and week2 are provided', async () => {
+      it('should NOT trigger same-day logic when the matching weekday is in a different schedule week', async () => {
+        jest.useFakeTimers().setSystemTime(new Date('2024-08-23 07:00:00')) // Friday week 1
         req.body = {
           week1: {
             monday: ['PM'],
@@ -639,6 +640,25 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         expect(req.journeyData.allocateJourney.updatedExclusions.length).toBeGreaterThan(0)
 
         expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
+      })
+
+      it('should trigger same-day logic when the matching weekday is in the same schedule week', async () => {
+        jest.useFakeTimers().setSystemTime(new Date('2024-08-30 07:00:00')) // Friday week 2
+        req.body = {
+          week1: {
+            monday: ['PM'],
+            wednesday: ['AM'],
+          },
+          week2: {
+            friday: ['AM'],
+          },
+        }
+
+        await handler.POST(req, res)
+
+        expect(req.journeyData.allocateJourney.updatedExclusions.length).toBeGreaterThan(0)
+
+        expect(res.redirect).toHaveBeenCalledWith('addToToday')
       })
 
       // SAME-DAY LOGIC NEGATIVE
