@@ -15,24 +15,37 @@ context('Exclusions', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
+
     cy.stubEndpoint('GET', '/prisoner/A5015DY', getInmateDetails)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocationsExclusions)
+
+    prisonerAllocationsExclusions
+      .flatMap(result => result.allocations)
+      .forEach(allocation => {
+        cy.stubEndpoint('GET', `/allocations/id/${allocation.id}/exclusions/history`, [] as unknown as JSON)
+      })
+
     cy.stubEndpoint('GET', '/schedules/1', getScheduleGym as unknown as JSON)
     cy.stubEndpoint('GET', '/schedules/2', getScheduleMaths as unknown as JSON)
     cy.stubEndpoint('GET', '/schedules/3', getSchedulePlastering as unknown as JSON)
+
     cy.stubEndpoint('GET', '/allocations/id/2', {
       ...prisonerAllocationsExclusions[0].allocations[0],
       exclusions: [],
     })
+
     cy.stubEndpoint('GET', '/activities/1/filtered', getActivityMaths)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
+
     cy.signIn()
   })
+
   it('should render the exclusions page', () => {
     cy.visit('/activities/exclusions/prisoner/A5015DY')
 
     const exclusionsAllocationsPage = Page.verifyOnPage(ExclusionsViewAllocations)
+
     exclusionsAllocationsPage.suspensionBadge().should('have.lengthOf', 2)
     exclusionsAllocationsPage.viewSuspendedLinks().should('have.lengthOf', 2)
   })
@@ -43,7 +56,6 @@ context('Exclusions', () => {
     const exclusionsAllocationsPage = Page.verifyOnPage(ExclusionsViewAllocations)
     exclusionsAllocationsPage.changeLink(1).click()
 
-    // This page is tested in editAllocationToActivity.cy.ts, we just want to check that the link takes us here.
     const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
     exclusionsPage.continue()
 
@@ -58,10 +70,13 @@ context('Exclusions', () => {
     cy.visit('/activities/exclusions/prisoner/A5015DY')
 
     const exclusionsAllocationsPage = Page.verifyOnPage(ExclusionsViewAllocations)
+
     exclusionsAllocationsPage.viewSuspendedLinks().should('have.lengthOf', 2).invoke('removeAttr', 'target')
+
     exclusionsAllocationsPage.firstSuspensionLink()
 
     const viewSuspensionPage = Page.verifyOnPage(ViewSuspensionPage)
+
     viewSuspensionPage
       .summary()
       .find('dt')
@@ -72,6 +87,7 @@ context('Exclusions', () => {
         expect($dt.get(3).innerText).to.contain('Paid while suspended?')
         expect($dt.get(4).innerText).to.contain('Added by')
       })
+
     viewSuspensionPage
       .summary()
       .find('dd')
