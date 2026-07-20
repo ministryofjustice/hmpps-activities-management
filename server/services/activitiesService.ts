@@ -66,6 +66,7 @@ import {
   PrisonerAllocations,
   InternalLocationEvents,
   LocationEvents,
+  ExclusionRevision,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { AttendanceStatus } from '../@types/appointments'
@@ -662,5 +663,9 @@ export default class ActivitiesService {
     user: ServiceUser,
   ): Promise<LocationPrefixes[]> {
     return this.activitiesApiClient.getPrisonLocationPrefixesByGroups(prisonCode, locationKey, locationGroups, user)
+  }
+
+  async getAllocationExclusionsHistory(allocationId: number, user: ServiceUser): Promise<ExclusionRevision[]> {
+    return this.activitiesApiClient.getAllocationExclusionsHistory(allocationId, user)
   }
 }
