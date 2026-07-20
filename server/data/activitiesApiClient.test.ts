@@ -1218,4 +1218,16 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('getAllocationExclusionsHistory', () => {
+    it('should call endpoint to get allocation exclusions history', async () => {
+      fakeActivitiesApi
+        .get('/allocations/id/1/exclusions/history')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.getAllocationExclusionsHistory(1, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })
