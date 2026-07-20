@@ -33,8 +33,6 @@ generic-service:
     FEEDBACK_URL: "https://www.smartsurvey.co.uk/s/ActivitiesAndAppointments/"
     BANK_HOLIDAYS_API_URL: "https://www.gov.uk/bank-holidays.json"
     PRISONER_EXTRA_INFORMATION_ENABLED: "false"
-    NODE_USE_ENV_PROXY: "1"
-    APPLICATION_INSIGHTS_NO_STATSBEAT: "true"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
@@ -56,13 +54,6 @@ generic-service:
     elasticache-redis:
       REDIS_HOST: "primary_endpoint_address"
       REDIS_AUTH_TOKEN: "auth_token"
-    hmpps-envoy-https-proxy-env:
-      HTTP_PROXY: "HTTP_PROXY"
-      HTTPS_PROXY: "HTTPS_PROXY"
-      NO_PROXY: "NO_PROXY"
-      http_proxy: "HTTP_PROXY"
-      https_proxy: "HTTPS_PROXY"
-      no_proxy: "NO_PROXY"
 
   allowlist:
     ark-nps-hmcts-ttp2: 194.33.192.0/25
