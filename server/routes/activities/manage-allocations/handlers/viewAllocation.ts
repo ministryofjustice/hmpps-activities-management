@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { parseISO } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatFirstLastName, parseDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
@@ -10,7 +11,6 @@ import UserService from '../../../../services/userService'
 import CaseNotesService from '../../../../services/caseNotesService'
 import logger from '../../../../../logger'
 import getCurrentPay from '../../../../utils/helpers/getCurrentPay'
-import { parseISO } from 'date-fns'
 
 type LatestScheduleChange = Pick<ExclusionRevision, 'updatedDateTime' | 'updatedBy'>
 
