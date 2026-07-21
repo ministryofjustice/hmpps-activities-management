@@ -164,6 +164,27 @@
                         </a>
                     </dd>
                 </div>
+                {% if latestScheduleChange %}
+                <div class="govuk-summary-list__row" data-qa="schedule-last-changed">
+                    <dt class="govuk-summary-list__key">
+                        Schedule last changed
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <a
+                            href="/activities/view/{{ allocation.activityId }}"
+                            class="govuk-link govuk-link--no-visited-state"
+                            data-qa="edit-activity-details-link"
+                        >
+                            Schedule for {{ allocation.activitySummary }}
+                        </a>
+                        was changed on
+                        {{ latestScheduleChange.updatedDateTime
+                            | parseDate("yyyy-MM-dd'T'HH:mm:ss")
+                            | formatDate("d MMMM yyyy 'at' HH:mm") }}
+                        by {{ serviceUserName(userMap.get(latestScheduleChange.updatedBy)) }}
+                    </dd>
+                </div>
+            {% endif %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Allocated by
