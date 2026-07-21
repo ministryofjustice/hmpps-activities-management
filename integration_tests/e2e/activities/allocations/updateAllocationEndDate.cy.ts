@@ -92,6 +92,7 @@ context('Update an allocation end as needed', () => {
     cy.stubEndpoint('GET', '/incentive-reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
     cy.stubEndpoint('GET', '/allocations/id/2', prisonerAllocations[0].allocations[1])
+    cy.stubEndpoint('GET', '/allocations/id/2/exclusions/history', [])
     cy.stubEndpoint('GET', '/allocations/id/1', prisonerAllocations[0].allocations[0])
 
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
