@@ -38,6 +38,14 @@ FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine-runtime
 
 WORKDIR /app
 
+ARG BUILD_NUMBER=1_0_0
+ARG GIT_REF=not-available
+ARG GIT_BRANCH=main
+
+ENV BUILD_NUMBER=${BUILD_NUMBER}
+ENV GIT_REF=${GIT_REF}
+ENV GIT_BRANCH=${GIT_BRANCH}
+
 COPY --from=build --chown=appuser:appgroup \
         /app/package.json \
         /app/package-lock.json \
