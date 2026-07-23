@@ -1,6 +1,8 @@
 # Stage: base image
 FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine AS base
 
+WORKDIR /app
+
 ARG BUILD_NUMBER=1_0_0
 ARG GIT_REF=not-available
 ARG GIT_BRANCH=main
@@ -32,7 +34,9 @@ RUN npm run build
 RUN npm prune --no-audit --no-fund --omit=dev
 
 # Stage: copy production assets and dependencies
-FROM base
+FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine-runtime
+
+WORKDIR /app
 
 COPY --from=build --chown=appuser:appgroup \
         /app/package.json \
@@ -52,4 +56,4 @@ EXPOSE 3000 3001
 ENV NODE_ENV='production'
 USER 2000
 
-CMD [ "npm", "start" ]
+CMD [ "node", "dist/server.js" ]
