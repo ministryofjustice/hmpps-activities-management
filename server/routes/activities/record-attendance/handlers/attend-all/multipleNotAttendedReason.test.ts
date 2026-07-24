@@ -3,7 +3,12 @@ import { when } from 'jest-when'
 import { format } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
-import { AttendanceReason, ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
+import {
+  AttendanceReason,
+  PrisonerScheduledEvents,
+  ScheduledActivity,
+  ScheduledEvent,
+} from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import MultipleNotAttendedReasonRoutes from './multipleNotAttendedReason'
 
@@ -100,6 +105,41 @@ const prisoners = [
   },
 ] as unknown as Prisoner[]
 
+const clashingAppointment: ScheduledEvent = {
+  autoSuspended: false,
+  cancelled: false,
+  inCell: false,
+  offWing: false,
+  onWing: false,
+  outsidePrison: false,
+  priority: 0,
+  suspended: false,
+  scheduledInstanceId: 999999,
+  eventType: 'APPOINTMENT',
+  eventSource: 'SAA',
+  summary: 'Gym',
+  startTime: '09:00',
+  endTime: '10:00',
+  prisonerNumber: 'ABC123',
+  date: today,
+} as ScheduledEvent
+
+const emptyScheduledEvents: PrisonerScheduledEvents = {
+  activities: [],
+  appointments: [],
+  courtHearings: [],
+  visits: [],
+  adjudications: [],
+}
+
+const scheduledEventsWithClash: PrisonerScheduledEvents = {
+  activities: [],
+  appointments: [clashingAppointment],
+  courtHearings: [],
+  visits: [],
+  adjudications: [],
+}
+
 const notAttendedReasons = [
   {
     id: 1,
@@ -112,6 +152,19 @@ const notAttendedReasons = [
     captureIncentiveLevelWarning: false,
     captureOtherText: false,
     displaySequence: 1,
+    displayInAbsence: true,
+  },
+  {
+    id: 2,
+    code: 'CLASH',
+    description: 'Appointment clash',
+    attended: false,
+    capturePay: false,
+    captureMoreDetail: false,
+    captureCaseNote: false,
+    captureIncentiveLevelWarning: false,
+    captureOtherText: false,
+    displaySequence: 5,
     displayInAbsence: true,
   },
 ] as AttendanceReason[]
@@ -153,11 +206,15 @@ describe('Route Handlers - Multiple people not attended reasons', () => {
 
     when(prisonService.searchInmatesByPrisonerNumbers).mockResolvedValue(prisoners)
 
+    when(activitiesService.getScheduledEventsForPrisoners)
+      .calledWith(expect.any(Date), ['ABC123', 'ABC321'], res.locals.user)
+      .mockResolvedValue(emptyScheduledEvents)
+
     when(activitiesService.getAttendanceReasons).calledWith(res.locals.user).mockResolvedValue(notAttendedReasons)
   })
 
   describe('GET', () => {
-    it('should render the expected view with only not attended instances', async () => {
+    it('should render the expected view with only not attended instances and empty other events', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/record-attendance/attend-all/multiple-not-attended-reason',
@@ -169,6 +226,7 @@ describe('Route Handlers - Multiple people not attended reasons', () => {
               lastName: 'Onester',
               instances: [scheduledActivity1],
               isPayable: false,
+              otherEvents: [],
             },
             {
               prisonerNumber: 'ABC321',
@@ -176,12 +234,27 @@ describe('Route Handlers - Multiple people not attended reasons', () => {
               lastName: 'Twoster',
               instances: [],
               isPayable: false,
+              otherEvents: [],
             },
           ],
           notAttendedReasons,
           backLink: req.journeyData.recordAttendanceJourney.returnUrl || 'choose-details-by-residential-location',
         },
       )
+    })
+
+    it('should include clashingAppointment in other events when prisoner has appointment clash', async () => {
+      when(activitiesService.getScheduledEventsForPrisoners)
+        .calledWith(expect.any(Date), ['ABC123', 'ABC321'], res.locals.user)
+        .mockResolvedValue(scheduledEventsWithClash)
+
+      await handler.GET(req, res)
+
+      const renderCall = (res.render as jest.Mock).mock.calls[0]
+      const { attendanceDetails } = renderCall[1]
+
+      expect(attendanceDetails[0].otherEvents).toContainEqual(expect.objectContaining(clashingAppointment))
+      expect(attendanceDetails[1].otherEvents).toEqual([])
     })
   })
 })
