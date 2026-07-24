@@ -37,7 +37,7 @@ export default class EducationLevelRoutes {
     const studyArea = studyAreas.find(r => r.code === req.body.studyAreaCode)
     const eduLevel = eduLevels.find(r => r.code === req.body.eduLevelCode)
 
-    // Prevent adding non-existant education
+    // Prevent adding non-existent education
     if (!studyArea || !eduLevel) return res.validationFailed('eduLevelCode', 'Education not found')
 
     req.journeyData.createJourney.educationLevels ??= []
