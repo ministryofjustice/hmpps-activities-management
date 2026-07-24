@@ -31,11 +31,11 @@ export default class SearchRoutes {
       return res.redirect(`?startDate=${formatIsoDate(new Date())}`)
     }
 
-    const timeSlotAsEnum = asString(timeSlots).length > 0 ? asString(timeSlots).split(',') : []
+    const selectedTimeSlots = asString(timeSlots).length > 0 ? asString(timeSlots).split(',') : []
 
-    const request = {
+    const searchRequest = {
       startDate,
-      timeSlots: timeSlotAsEnum,
+      timeSlots: selectedTimeSlots,
       dpsLocationId: locationId,
       createdBy: createdBy && createdBy !== 'all' ? createdBy : null,
     } as AppointmentSearchRequest
@@ -44,31 +44,47 @@ export default class SearchRoutes {
       this.activitiesService.getAppointmentCategories(user),
       this.activitiesService
         .getAppointmentLocations(user.activeCaseLoadId, user)
-        .then(s => s.sort((a, b) => a.description.localeCompare(b.description))),
-      this.activitiesService.searchAppointments(user.activeCaseLoadId, request, user),
+        .then(appointmentLocations => appointmentLocations.sort((a, b) => a.description.localeCompare(b.description))),
+      this.activitiesService.searchAppointments(user.activeCaseLoadId, searchRequest, user),
     ])
 
     const appointmentNameFilters = [
-      ...categories.map(c => c.description),
-      ...new Set(appointments.filter(a => a.customName).map(a => a.appointmentName)),
+      ...categories.map(category => category.description),
+      ...new Set(
+        appointments.filter(appointment => appointment.customName).map(appointment => appointment.appointmentName),
+      ),
     ].sort()
 
     let results = appointments
+
     if (appointmentName) {
-      results = results.filter(a => a.appointmentName === appointmentName || a.category.description === appointmentName)
+      results = results.filter(
+        appointment =>
+          appointment.appointmentName === appointmentName || appointment.category.description === appointmentName,
+      )
     }
+
     if (prisonerNumber) {
       const prisonerNumberFilterText = asString(prisonerNumber).toLowerCase()
-      results = results.filter(app =>
-        app.attendees.find(a => a.prisonerNumber.toLowerCase().includes(prisonerNumberFilterText)),
+
+      results = results.filter(appointment =>
+        appointment.attendees.some(attendee =>
+          attendee.prisonerNumber.toLowerCase().includes(prisonerNumberFilterText),
+        ),
       )
     }
 
     // Get prisoner details for appointments with a single attendee
-    const prisonerNumbers = results.flatMap(r => (r.attendees.length === 1 ? r.attendees[0].prisonerNumber : []))
+    const prisonerNumbers = results
+      .filter(result => result.attendees.length === 1)
+      .map(result => result.attendees[0].prisonerNumber)
+
     let prisonersDetails = {}
+
     if (prisonerNumbers.length > 0) {
-      prisonersDetails = (await this.prisonService.searchInmatesByPrisonerNumbers(uniq(prisonerNumbers), user)).reduce(
+      const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(uniq(prisonerNumbers), user)
+
+      prisonersDetails = prisoners.reduce(
         (prisonerMap, prisoner) => ({
           ...prisonerMap,
           [prisoner.prisonerNumber]: prisoner,
@@ -79,7 +95,7 @@ export default class SearchRoutes {
 
     return res.render('pages/appointments/search/results', {
       startDate,
-      timeSlots: timeSlotAsEnum ?? '',
+      timeSlots: selectedTimeSlots,
       appointmentNameFilters,
       appointmentName: appointmentName ?? '',
       locations,
@@ -94,10 +110,16 @@ export default class SearchRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { startDate, timeSlots, appointmentName, locationId, prisonerNumber, createdBy } = req.body
 
-    return res.redirect(
-      `?startDate=${formatIsoDate(startDate)}&timeSlots=${convertToArray(timeSlots) ?? ''}&appointmentName=${
-        appointmentName ?? ''
-      }&locationId=${locationId ?? ''}&prisonerNumber=${prisonerNumber ?? ''}&createdBy=${createdBy ?? ''}`,
-    )
+    const selectedTimeSlots = convertToArray(timeSlots) ?? ''
+
+    const redirectUrl =
+      `?startDate=${formatIsoDate(startDate)}` +
+      `&timeSlots=${selectedTimeSlots}` +
+      `&appointmentName=${appointmentName ?? ''}` +
+      `&locationId=${locationId ?? ''}` +
+      `&prisonerNumber=${prisonerNumber ?? ''}` +
+      `&createdBy=${createdBy ?? ''}`
+
+    return res.redirect(redirectUrl)
   }
 }

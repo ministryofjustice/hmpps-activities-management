@@ -9,6 +9,8 @@ import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePicke
 
 const view = fs.readFileSync('server/views/pages/appointments/search/results.njk')
 
+const normaliseWhitespace = (value: string): string => value.replace(/\s+/g, ' ').trim()
+
 describe('Views - Appointments Management - Appointment Search Results', () => {
   let compiledTemplate: Template
   let viewContext = {
@@ -170,31 +172,52 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($('[data-qa=result-prisoner-count-0]').text().trim()).toContain('A1111AA')
     expect($('[data-qa=result-prisoner-count-0]').text().trim()).toContain('1-1-1')
     expect($('[data-qa=result-sequence-number-0]').text().trim()).toEqual('1 of 1')
-    expect($('[data-qa=view-and-edit-result-0] > a').text()).toContain('Manage details')
-    expect($('[data-qa=view-and-edit-result-0] > a').attr('href')).toEqual('/appointments/2')
+
+    const manageDetailsLink = $('[data-qa=view-and-edit-result-0] > a')
+    expect(normaliseWhitespace(manageDetailsLink.text())).toEqual(
+      'Manage details of Test appointment name 1 (Test Category 1) at 09:30 to 11:00',
+    )
+    expect(normaliseWhitespace(manageDetailsLink.find('.govuk-visually-hidden').text())).toEqual(
+      'of Test appointment name 1 (Test Category 1) at 09:30 to 11:00',
+    )
+    expect(manageDetailsLink.attr('href')).toEqual('/appointments/2')
 
     expect($('[data-qa=result-time-1]').text().trim()).toEqual('13:00 to 14:30')
     expect($('[data-qa=result-appointment-name-1]').text().trim()).toEqual('Test appointment name 2 (Test Category 2)')
     expect($('[data-qa=result-location-1]').text().trim()).toEqual('In cell')
     expect($('[data-qa=result-prisoner-count-1]').text().trim()).toEqual('3')
     expect($('[data-qa=result-sequence-number-1]').text().trim()).toEqual('2 of 6')
-    expect($('[data-qa=view-and-edit-result-1] > a').text()).toContain('View')
-    expect($('[data-qa=view-and-edit-result-1] > a').text()).not.toContain('Manage details')
-    expect($('[data-qa=view-and-edit-result-1] > a').attr('href')).toEqual('/appointments/3')
+
+    const expiredAppointmentLink = $('[data-qa=view-and-edit-result-1] > a')
+    expect(normaliseWhitespace(expiredAppointmentLink.text())).toEqual(
+      'View Test appointment name 2 (Test Category 2) at 13:00 to 14:30',
+    )
+    expect(normaliseWhitespace(expiredAppointmentLink.find('.govuk-visually-hidden').text())).toEqual(
+      'Test appointment name 2 (Test Category 2) at 13:00 to 14:30',
+    )
+    expect(expiredAppointmentLink.attr('href')).toEqual('/appointments/3')
 
     expect($('[data-qa=result-time-2]').text().trim()).toEqual('16:00 to 17:30')
     expect($('[data-qa=result-appointment-name-2]').text().trim()).toEqual('Test appointment name 3 (Test Category 3)')
     expect($('[data-qa=result-location-2]').text().trim()).toEqual('Test Location 3')
     expect($('[data-qa=result-prisoner-count-2]').text().trim()).toEqual('3')
     expect($('[data-qa=result-sequence-number-2]').text().trim()).toEqual('2 of 6')
-    expect($('[data-qa=view-and-edit-result-2] > a').text()).toContain('View')
-    expect($('[data-qa=view-and-edit-result-2] > a').text()).not.toContain('Manage details')
-    expect($('[data-qa=view-and-edit-result-2] > a').attr('href')).toEqual('/appointments/4')
+
+    const cancelledAppointmentLink = $('[data-qa=view-and-edit-result-2] > a')
+    expect(normaliseWhitespace(cancelledAppointmentLink.text())).toEqual(
+      'View Test appointment name 3 (Test Category 3) at 16:00 to 17:30',
+    )
+    expect(normaliseWhitespace(cancelledAppointmentLink.find('.govuk-visually-hidden').text())).toEqual(
+      'Test appointment name 3 (Test Category 3) at 16:00 to 17:30',
+    )
+    expect(cancelledAppointmentLink.attr('href')).toEqual('/appointments/4')
   })
 
   it('should not display end time when result does not have an end time', () => {
     viewContext.results = [
       {
+        appointmentId: 5,
+        appointmentName: 'Appointment without an end time',
         startDate: '2023-05-26',
         startTime: '10:00',
         attendees: [
@@ -202,12 +225,62 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
             prisonerNumber: 'A1111AA',
           },
         ],
+        category: {
+          code: 'TEST',
+          description: 'Test category',
+        },
+        internalLocation: {
+          description: 'Test location',
+        },
+        sequenceNumber: 1,
+        maxSequenceNumber: 1,
+        isExpired: false,
+        isCancelled: false,
       },
     ]
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=result-time-0]').text().trim()).toEqual('10:00')
+
+    const actionLink = $('[data-qa=view-and-edit-result-0] > a')
+    expect(normaliseWhitespace(actionLink.text())).toEqual('Manage details of Appointment without an end time at 10:00')
+    expect(normaliseWhitespace(actionLink.find('.govuk-visually-hidden').text())).toEqual(
+      'of Appointment without an end time at 10:00',
+    )
+  })
+
+  it('should display the prison number when prisoner details cannot be found', () => {
+    viewContext.results = [
+      {
+        appointmentId: 5,
+        appointmentName: 'Test appointment',
+        startDate: '2023-05-26',
+        startTime: '10:00',
+        endTime: '11:00',
+        attendees: [
+          {
+            prisonerNumber: 'Z9999ZZ',
+          },
+        ],
+        category: {
+          code: 'TEST',
+          description: 'Test category',
+        },
+        internalLocation: {
+          description: 'Test location',
+        },
+        sequenceNumber: 1,
+        maxSequenceNumber: 1,
+        isExpired: false,
+        isCancelled: false,
+      },
+    ]
+    viewContext.prisonersDetails = {}
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=result-prisoner-count-0]').text().trim()).toEqual('Z9999ZZ')
   })
 
   it('clear filters does not appear if only start date filter is applied', () => {
