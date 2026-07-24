@@ -243,7 +243,7 @@ describe('Route Handlers - Multiple people not attended reasons', () => {
       )
     })
 
-    it('should include clashingActivityEvent in other events when prisoner has appointment clash', async () => {
+    it('should include clashingAppointmentEvent in other events when prisoner has appointment clash', async () => {
       when(activitiesService.getScheduledEventsForPrisoners)
         .calledWith(expect.any(Date), ['ABC123', 'ABC321'], res.locals.user)
         .mockResolvedValue(scheduledEventsWithClash)
