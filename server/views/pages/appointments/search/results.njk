@@ -18,64 +18,81 @@
 {% set hardBackLinkText = "Choose a different date" %}
 {% set hardBackLinkHref = "/appointments/search/select-date" %}
 
-{% macro attendees(attendees) %}
-    {% if attendees | length == 1 %}
-        {% set prisonerDetails = prisonersDetails[attendees[0].prisonerNumber] %}
-        {{ showProfileLink({
-            firstName: prisonerDetails.firstName,
-            middleNames: prisonerDetails.middleNames,
-            lastName: prisonerDetails.lastName,
-            prisonerNumber: prisonerDetails.prisonerNumber or attendees[0].prisonerNumber,
-            cellLocation: statusBasedCellLocation(prisonerDetails.cellLocation, prisonerDetails.status, prisonerDetails.prisonId == user.activeCaseLoadId),
-            inCaseLoad: prisonerDetails.prisonId == user.activeCaseLoadId,
-            link: true,
-            classes: 'hmpps-inline-block'
-        }) }}
+{% macro attendeeDetails(attendeeList) %}
+    {% if attendeeList | length == 1 %}
+        {% set attendee = attendeeList[0] %}
+        {% set prisonerDetails = prisonersDetails[attendee.prisonerNumber] %}
+
+        {% if prisonerDetails %}
+            {{ showProfileLink({
+                firstName: prisonerDetails.firstName,
+                middleNames: prisonerDetails.middleNames,
+                lastName: prisonerDetails.lastName,
+                prisonerNumber: prisonerDetails.prisonerNumber or attendee.prisonerNumber,
+                cellLocation: statusBasedCellLocation(
+                    prisonerDetails.cellLocation,
+                    prisonerDetails.status,
+                    prisonerDetails.prisonId == user.activeCaseLoadId
+                ),
+                inCaseLoad: prisonerDetails.prisonId == user.activeCaseLoadId,
+                link: true,
+                classes: 'hmpps-inline-block'
+            }) }}
+        {% else %}
+            {{ attendee.prisonerNumber }}
+        {% endif %}
     {% else %}
-        {{ attendees.length }}
+        {{ attendeeList | length }}
     {% endif %}
 {% endmacro %}
 
-{% macro appointmentResultActions(result) %}
+{% macro appointmentResultActions(result, appointmentTime) %}
+    {% set canManage = not result.isExpired and not result.isCancelled %}
+
     {% if result.isCancelled %}
         {{ govukTag({
             text: 'Cancelled',
-            classes: "govuk-tag--red"
-        })}}
+            classes: 'govuk-tag--red'
+        }) }}
     {% endif %}
 
     <a href="/appointments/{{ result.appointmentId }}" class="govuk-link--no-visited-state govuk-!-display-inline-block govuk-!-margin-top-1 govuk-!-display-none-print">
-        {{ "Manage details" if not result.isExpired and not result.isCancelled else "View" }} <span class="govuk-visually-hidden"> appointment</span>
+        {{ 'Manage details' if canManage else 'View' }}<span class="govuk-visually-hidden">{% if canManage %} of{% endif %} {{ result.appointmentName }} at {{ appointmentTime }}</span>
     </a>
 {% endmacro %}
 
 {% set resultsTableRows = [] %}
-{% set index = 0 %}
 {% for result in results %}
+    {% set appointmentTime = result.startTime + (" to " + result.endTime if result.endTime) %}
     {% set resultsTableRows = (resultsTableRows.push([
         {
-            text: result.startTime + (" to " + result.endTime if result.endTime),
-            attributes: { 'data-qa': 'result-time-' + index, 'data-sort-value': result.startTime | parseDate('HH:mm') | formatDate("HHmm") }
+            text: appointmentTime,
+            attributes: {
+                'data-qa': 'result-time-' + loop.index0,
+                'data-sort-value': result.startTime | parseDate('HH:mm') | formatDate("HHmm")
+            }
         }, {
             text: result.appointmentName,
-            attributes: { 'data-qa': 'result-appointment-name-' + index }
+            attributes: { 'data-qa': 'result-appointment-name-' + loop.index0 }
         }, {
             text: showLocation(user.externalActivitiesRolledOut, result),
-            attributes: { 'data-qa': 'result-location-' + index }
+            attributes: { 'data-qa': 'result-location-' + loop.index0 }
         }, {
-            html: attendees(result.attendees, prisonersDetails),
-            attributes: { 'data-qa': 'result-prisoner-count-' + index, 'data-sort-value': result.attendees | getSortableItemForAttendee(prisonersDetails) }
+            html: attendeeDetails(result.attendees),
+            attributes: {
+                'data-qa': 'result-prisoner-count-' + loop.index0,
+                'data-sort-value': result.attendees | getSortableItemForAttendee(prisonersDetails)
+            }
         }, {
             text: result.sequenceNumber + " of " + result.maxSequenceNumber,
             classes: 'govuk-!-text-align-right',
-            attributes: { 'data-qa': 'result-sequence-number-' + index }
+            attributes: { 'data-qa': 'result-sequence-number-' + loop.index0 }
         }, {
-            html: appointmentResultActions(result),
+            html: appointmentResultActions(result, appointmentTime),
             classes: 'govuk-!-text-align-right',
-            attributes: { 'data-qa': 'view-and-edit-result-' + index }
+            attributes: { 'data-qa': 'view-and-edit-result-' + loop.index0 }
         }
     ]), resultsTableRows) %}
-    {% set index = index + 1 %}
 {% endfor %}
 
 {% block content %}
@@ -309,6 +326,7 @@
                 }) }}
             </form>
         </div>
+
         <div class="moj-filter-layout__content">
             <div class="moj-action-bar govuk-!-display-none-print">
                 <div class="moj-action-bar__filter"></div>
