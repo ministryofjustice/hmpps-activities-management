@@ -13,9 +13,12 @@ import {
 } from 'class-validator'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
+import { EventType, YesNo } from '../../../../../@types/activities'
+import applyCancellationDisplayRule from '../../../../../utils/applyCancellationDisplayRule'
 import AttendanceReason from '../../../../../enum/attendanceReason'
-import { YesNo } from '../../../../../@types/activities'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
+import { eventClashes, toDate } from '../../../../../utils/utils'
+import { flattenPrisonerScheduledEvents } from '../../utils/recordAttendanceUtils'
 import {
   parseSelectedAttendances,
   getPrisonerNumberFromAttendance,
@@ -112,8 +115,16 @@ export default class MultipleNotAttendedReasonRoutes {
     const { instanceIds, prisonerNumbers } = parseSelectedAttendances(selectedAttendances)
 
     const allInstances = await this.activitiesService.getScheduledActivities(instanceIds, user)
-    const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
-    const notAttendedReasons = (await this.activitiesService.getAttendanceReasons(user))
+
+    const [prisoners, scheduledEvents, attendanceReasons] = await Promise.all([
+      this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
+      this.activitiesService.getScheduledEventsForPrisoners(toDate(allInstances[0].date), prisonerNumbers, user),
+      this.activitiesService.getAttendanceReasons(user),
+    ])
+
+    const allEvents = flattenPrisonerScheduledEvents(scheduledEvents)
+
+    const notAttendedReasons = attendanceReasons
       .filter(r => r.displayInAbsence)
       .sort((r1, r2) => r1.displaySequence - r2.displaySequence)
 
@@ -129,12 +140,19 @@ export default class MultipleNotAttendedReasonRoutes {
         return !instance.cancelled && attendance && attendance.status === AttendanceStatus.WAITING
       })
 
+      const otherEvents = allEvents
+        .filter(event => event.prisonerNumber === prisonerNumber)
+        .filter(event => filteredInstances.every(instance => event.scheduledInstanceId !== instance.id))
+        .filter(event => filteredInstances.some(instance => eventClashes(event, instance)))
+        .filter(event => event.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(event))
+
       return {
         prisonerNumber,
         firstName: prisoner.firstName,
         lastName: prisoner.lastName,
         instances: filteredInstances,
         isPayable: instances.some(i => i.activitySchedule.activity.paid),
+        otherEvents,
       }
     })
 
