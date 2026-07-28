@@ -75,18 +75,25 @@
     }}
   </div>
 {% endblock %}
+
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
   {% set refusedRows = [] %}
+
   {% for attendee in refusedSessions %}
     {% set sessionTimes = attendee.attendance.startTime + ' to ' + attendee.attendance.endTime %}
+
     {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
       {% set location = showLocation(user.externalActivitiesRolledOut, attendee) %}
       {% set caseNoteType = "Incentive level warning" if attendee.attendance.incentiveLevelWarningIssued else "Negative: general entry" %}
       {% set linkText = "View or edit attendance record" if attendee.editable else "View attendance record" %}
+
       {%
         set refusedRows = (refusedRows.push([
             {
-                attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee | formatName(NameFormatStyle.lastCommaFirstMiddle, false) },
+                attributes: {
+                    id: 'activity-' + loop.index,
+                    "data-sort-value": attendee | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+                },
                 html: showProfileLink({
                     firstName: attendee.firstName,
                     middleNames: attendee.middleNames,
@@ -98,23 +105,46 @@
                 classes: 'govuk-table_cell'
             },
             {
-                attributes: { id: 'location-' + loop.index },
+                attributes: {
+                    id: 'location-' + loop.index
+                },
                 text: location,
                 classes: 'govuk-table_cell'
             },
             {
-                attributes: { id: 'activity-' + loop.index },
-                html: '<a href=/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a><br>' + sessionTimes,
+                attributes: {
+                    id: 'activity-' + loop.index
+                },
+                html: '<a href=/activities/attendance/activities/'
+                    + attendee.attendance.scheduledInstanceId
+                    + '/attendance-list class="govuk-link govuk-link--no-visited-state" target="_blank">'
+                    + (attendee.attendance.activitySummary | escape)
+                    + '</a><br>'
+                    + sessionTimes,
                 classes: 'govuk-table_cell'
             },
             {
-                attributes: { id: 'case-note-type-' + loop.index },
+                attributes: {
+                    id: 'case-note-type-' + loop.index
+                },
                 text: caseNoteType,
                 classes: 'govuk-table_cell'
             },
             {
-                attributes: { id: 'attendance-details-link-' + loop.index  },
-                html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + linkText + '</a>',
+                attributes: {
+                    id: 'attendance-details-link-' + loop.index
+                },
+                html: '<a href="/activities/attendance/activities/'
+                    + attendee.attendance.scheduledInstanceId
+                    + '/attendance-details/'
+                    + attendee.attendance.attendanceId
+                    + '" class="govuk-link govuk-link--no-visited-state">'
+                    + linkText
+                    + '<span class="govuk-visually-hidden"> for '
+                    + (attendee.firstName | escape)
+                    + ' '
+                    + (attendee.lastName | escape)
+                    + '</span></a>',
                 classes: 'govuk-table__cell'
             }
         ]), refusedRows)
@@ -135,7 +165,9 @@
         head: [
             {
                 text: "Attendee",
-                attributes: { "aria-sort": "ascending" },
+                attributes: {
+                    "aria-sort": "ascending"
+                },
                 classes: ''
             },
             {
@@ -151,14 +183,19 @@
                 classes: ''
             },
             {
-                html: '<span class="govuk-visually-hidden">'+ linkText +'</span>'
+                html: '<span class="govuk-visually-hidden">' + linkText + '</span>'
             }
         ],
-        rows: refusedRows if refusedRows | length > 0 else [[{
-            text: "No refused sessions",
-            attributes: { "colspan": "6" },
-            classes: 'govuk-table_cell govuk-!-text-align-centre'
-        }]]
+        rows: refusedRows if refusedRows | length > 0 else [[
+            {
+                text: "No refused sessions",
+                attributes: {
+                    "colspan": "6"
+                },
+                classes: 'govuk-table_cell govuk-!-text-align-centre'
+            }
+        ]]
     })
   }}
 {% endmacro %}
+```
