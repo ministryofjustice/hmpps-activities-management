@@ -425,15 +425,21 @@
         href="advance-attendance-details/{{ attendee.advancedAttendance.id }}"
         class="govuk-link govuk-link--no-visited-state"
       >
-        View or Edit
+        View or edit<span class="govuk-visually-hidden">
+          attendance for {{ attendee.prisoner.firstName | toTitleCase }}
+          {{ attendee.prisoner.lastName | toTitleCase }}</span
+        >
       </a>
     {% else %}
       <a href="attendance-details/{{ attendee.attendance.id }}" class="govuk-link govuk-link--no-visited-state">
         {% if attendee.attendance.editable and instance.activitySchedule.activity.attendanceRequired %}
-          View or Edit
+          View or edit
         {% else %}
           View
-        {% endif %}
+        {% endif %}<span class="govuk-visually-hidden">
+          attendance for {{ attendee.prisoner.firstName | toTitleCase }}
+          {{ attendee.prisoner.lastName | toTitleCase }}</span
+        >
       </a>
     {% endif %}
   {% endif %}

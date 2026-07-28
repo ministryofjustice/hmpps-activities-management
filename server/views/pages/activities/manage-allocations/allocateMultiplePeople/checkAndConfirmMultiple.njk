@@ -86,22 +86,22 @@
         {% for inmate in allocateJourney.inmates %}
           {%
             set rows = (rows.push([
-            {
-                html: showProfileLink({
-                    firstName: inmate.firstName,
-                    middleNames: inmate.middleNames,
-                    lastName: inmate.lastName,
-                    prisonerNumber: inmate.prisonerNumber,
-                    inCaseLoad: inmate.prisonCode == user.activeCaseLoadId
-                })
-            },
-            {
-                html: payRate(inmate.payBand, inmate.incentiveLevel)
-            },
-            {
-                html: "<a class='govuk-link--no-visited-state' href='pay-band-multiple?preserveHistory=true'>Change <span class='govuk-visually-hidden'>pay rate</span></a>" if inmate.numberPayBandsAvailable > 1 else ''
+                        {
+                            html: showProfileLink({
+                                firstName: inmate.firstName,
+                                middleNames: inmate.middleNames,
+                                lastName: inmate.lastName,
+                                prisonerNumber: inmate.prisonerNumber,
+                                inCaseLoad: inmate.prisonCode == user.activeCaseLoadId
+                            })
+                        },
+                        {
+                            html: payRate(inmate.payBand, inmate.incentiveLevel)
+                        },
+                        {
+                html: "<a class='govuk-link--no-visited-state' href='pay-band-multiple?preserveHistory=true'>Change<span class='govuk-visually-hidden'> pay rate for " + inmate.firstName + " " + inmate.lastName + "</span></a>" if inmate.numberPayBandsAvailable > 1 else ''
             }
-            ]), rows)
+                        ]), rows)
           %}
         {% endfor %}
 
