@@ -251,10 +251,13 @@
       class="govuk-link govuk-link--no-visited-state"
     >
       {% if attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired %}
-        View or Edit
+        View or edit
       {% else %}
         View
-      {% endif %}
+      {% endif %}<span class="govuk-visually-hidden">
+        attendance for {{ attendee.prisoner.firstName | toTitleCase }}
+        {{ attendee.prisoner.lastName | toTitleCase }}</span
+      >
     </a>
   {% endif %}
 {% endmacro %}
