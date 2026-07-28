@@ -107,7 +107,7 @@ context('Record attendance', () => {
       '14:00 to 15:00',
       ['Did not attend', 'Paid'],
       'Attended Pay',
-      'View or Edit',
+      'View or edit attendance for Booking Andy',
     )
     attendanceListPage.assertRow(
       2,
@@ -128,7 +128,7 @@ context('Record attendance', () => {
       '14:15 to 15:15',
       ['Attended', 'Unpaid', 'Did not attend', 'Paid'],
       'Attended No pay',
-      'View or Edit',
+      'View or edit attendance for Booking Andy',
     )
     attendanceListPage.assertRow(
       6,
@@ -166,7 +166,7 @@ context('Record attendance', () => {
       '14:00 to 15:00',
       [],
       'Attended Pay',
-      'View or Edit',
+      'View or edit attendance for Cudmastarie Aborah',
     )
     attendanceListPage.assertRow(
       6,
@@ -177,7 +177,7 @@ context('Record attendance', () => {
       '14:15 to 15:15',
       [],
       'Attended No pay',
-      'View or Edit',
+      'View or edit attendance for Cudmastarie Aborah',
     )
 
     attendanceListPage
@@ -264,7 +264,7 @@ context('Record attendance', () => {
       '14:00 to 15:00',
       [],
       'Sick Pay',
-      'View or Edit',
+      'View or edit attendance for Eeteljan Arianniver',
     )
     attendanceListPage.assertRow(
       7,
@@ -275,7 +275,7 @@ context('Record attendance', () => {
       '14:15 to 15:15',
       [],
       'Sick No pay',
-      'View or Edit',
+      'View or edit attendance for Eeteljan Arianniver',
     )
   })
 
