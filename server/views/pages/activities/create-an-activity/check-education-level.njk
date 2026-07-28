@@ -23,26 +23,34 @@
       {% for educationLevel in educationLevels %}
         {% set rows = [] %}
         {%
-          set rows = (rows.push(
-          {
-              key: {
-                  text: educationLevel.educationLevelDescription
-              },
-              value: {
-                  text: educationLevel.studyAreaDescription
-              },
-              actions: {
-                  items: [
-                      {
-                          href: "remove-education-level?eduLevel=" + educationLevel.educationLevelCode + "&studyArea=" + educationLevel.studyAreaCode  + ('&preserveHistory=true' if session.req.query.preserveHistory else ''),
-                          text: "Remove",
-                          visuallyHiddenText: "remove education level"
-                      }
-                  ]
-              }
-          }
-          ), rows)
+          set rows = (
+              rows.push({
+                  key: {
+                      text: educationLevel.educationLevelDescription
+                  },
+                  value: {
+                      text: educationLevel.studyAreaDescription
+                  },
+                  actions: {
+                      items: [
+                          {
+                              href: "remove-education-level?eduLevel="
+                                  + educationLevel.educationLevelCode
+                                  + "&studyArea="
+                                  + educationLevel.studyAreaCode
+                                  + ("&preserveHistory=true" if session.req.query.preserveHistory else ""),
+                              text: "Remove",
+                              visuallyHiddenText: educationLevel.studyAreaDescription
+                                  + " "
+                                  + educationLevel.educationLevelDescription
+                          }
+                      ]
+                  }
+              }),
+              rows
+          )
         %}
+
         {{
           govukSummaryList({
               rows: rows
@@ -64,14 +72,18 @@
           {{
             govukButton({
                 text: "Add another qualification",
-                href: 'education-level' + ('?preserveHistory=true' if session.req.query.preserveHistory else ''),
+                href: "education-level"
+                    + ("?preserveHistory=true" if session.req.query.preserveHistory else ""),
                 classes: "govuk-button--secondary govuk-!-margin-bottom-8"
             })
           }}
         </div>
+
         {{
           govukButton({
-              text: "Update education levels" if session.req.routeContext.mode == 'edit' else "Confirm",
+              text: "Update education levels"
+                  if session.req.routeContext.mode == "edit"
+                  else "Confirm",
               preventDoubleClick: true
           })
         }}
