@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
@@ -10,63 +9,73 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(createJourney) }}
-            <h1 class='govuk-heading-l'>Review education levels and qualifications</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ activityJourneyCaption(createJourney) }}
+      <h1 class="govuk-heading-l">Review education levels and qualifications</h1>
 
-            {% if educationLevels | length %}
-                <h2 class='govuk-heading-m'>Level or qualification</h2>
-            {% else %}
-                <p class="govuk-body">This activity does not have any education or qualification requirements.</p>
-            {% endif %}
+      {% if educationLevels | length %}
+        <h2 class="govuk-heading-m">Level or qualification</h2>
+      {% else %}
+        <p class="govuk-body">This activity does not have any education or qualification requirements.</p>
+      {% endif %}
 
-            {% for educationLevel in educationLevels %}
-                {% set rows = [] %}
-                    {% set rows = (rows.push(
-                    {
-                        key: {
-                            text: educationLevel.educationLevelDescription
-                        },
-                        value: {
-                            text: educationLevel.studyAreaDescription
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "remove-education-level?eduLevel=" + educationLevel.educationLevelCode + "&studyArea=" + educationLevel.studyAreaCode  + ('&preserveHistory=true' if session.req.query.preserveHistory else ''),
-                                    text: "Remove",
-                                    visuallyHiddenText: "remove education level"
-                                }
-                            ]
-                        }
-                    }
-                    ), rows) %}
-                {{ govukSummaryList({
-                    rows: rows
-                }) }}
-            {% endfor %}
+      {% for educationLevel in educationLevels %}
+        {% set rows = [] %}
+        {%
+          set rows = (rows.push(
+          {
+              key: {
+                  text: educationLevel.educationLevelDescription
+              },
+              value: {
+                  text: educationLevel.studyAreaDescription
+              },
+              actions: {
+                  items: [
+                      {
+                          href: "remove-education-level?eduLevel=" + educationLevel.educationLevelCode + "&studyArea=" + educationLevel.studyAreaCode  + ('&preserveHistory=true' if session.req.query.preserveHistory else ''),
+                          text: "Remove",
+                          visuallyHiddenText: "remove education level"
+                      }
+                  ]
+              }
+          }
+          ), rows)
+        %}
+        {{
+          govukSummaryList({
+              rows: rows
+          })
+        }}
+      {% endfor %}
 
-            {% if session.req.routeContext.mode == 'edit' %}
-                {{ govukInsetText({
-                text: "If you change the education requirements, this may affect people who are currently allocated to this activity."
-                }) }}
-            {% endif %}
+      {% if session.req.routeContext.mode == 'edit' %}
+        {{
+          govukInsetText({
+          text: "If you change the education requirements, this may affect people who are currently allocated to this activity."
+          })
+        }}
+      {% endif %}
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <div>
-                    {{ govukButton({
-                        text: "Add another qualification",
-                        href: 'education-level' + ('?preserveHistory=true' if session.req.query.preserveHistory else ''),
-                        classes: "govuk-button--secondary govuk-!-margin-bottom-8"
-                    }) }}
-                </div>
-                {{ govukButton({
-                    text: "Update education levels" if session.req.routeContext.mode == 'edit' else "Confirm",
-                    preventDoubleClick: true
-                }) }}
-            </form>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <div>
+          {{
+            govukButton({
+                text: "Add another qualification",
+                href: 'education-level' + ('?preserveHistory=true' if session.req.query.preserveHistory else ''),
+                classes: "govuk-button--secondary govuk-!-margin-bottom-8"
+            })
+          }}
         </div>
+        {{
+          govukButton({
+              text: "Update education levels" if session.req.routeContext.mode == 'edit' else "Confirm",
+              preventDoubleClick: true
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}
