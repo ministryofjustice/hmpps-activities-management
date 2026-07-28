@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
@@ -20,326 +19,370 @@
 {% set tab = '' %}
 
 {% block content %}
-    {% set filterOptionsHtml %}
-        {# Absence reasons filter #}
-        {% if status == 'Absences' %}
-            {% set absenceReasonFilters = [] %}
-            {% for reason in absenceReasons %}
-                {% set absenceReasonFilters = (absenceReasonFilters.push({
-                    value: reason,
-                    text: reason | absenceReasonDisplayConverter,
-                    checked: reason | absenceReasonCheckboxMatch(attendanceSummaryJourney.absenceReasonFilters)
-                }), absenceReasonFilters) %}
-            {% endfor %}
+  {% set filterOptionsHtml %}
+  {# Absence reasons filter #}
+  {% if status == 'Absences' %}
+    {% set absenceReasonFilters = [] %}
+    {% for reason in absenceReasons %}
+      {%
+        set absenceReasonFilters = (absenceReasonFilters.push({
+            value: reason,
+            text: reason | absenceReasonDisplayConverter,
+            checked: reason | absenceReasonCheckboxMatch(attendanceSummaryJourney.absenceReasonFilters)
+        }), absenceReasonFilters)
+      %}
+    {% endfor %}
 
-            {{ govukCheckboxes({
-                idPrefix: 'absenceReasonFilters',
-                name: 'absenceReasonFilters',
-                classes: "govuk-radios--small",
-                attributes: { "data-qa": "absence-reasons-radio-buttons" },
-                fieldset: {
-                    legend: {
-                        text: 'Absences',
-                        classes: 'govuk-fieldset__legend--m'
-                    }
-                },
-                items: absenceReasonFilters
-            }) }}
-            <div class="govuk-!-margin-bottom-4">
-                <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="absenceReasonFilters" data-qa="absenceReasonClear"></a>
-            </div>
+    {{
+      govukCheckboxes({
+          idPrefix: 'absenceReasonFilters',
+          name: 'absenceReasonFilters',
+          classes: "govuk-radios--small",
+          attributes: { "data-qa": "absence-reasons-radio-buttons" },
+          fieldset: {
+              legend: {
+                  text: 'Absences',
+                  classes: 'govuk-fieldset__legend--m'
+              }
+          },
+          items: absenceReasonFilters
+      })
+    }}
+    <div class="govuk-!-margin-bottom-4">
+      <a
+        href="#"
+        class="govuk-link govuk-link--no-visited-state"
+        data-module="select-all-link"
+        data-checkbox-name="absenceReasonFilters"
+        data-qa="absenceReasonClear"
+      ></a>
+    </div>
 
-            {# Pay filter #}
-            {{ govukRadios({
-                idPrefix: 'payFilters',
-                name: 'payFilters',
-                classes: "",
-                attributes: { "data-qa": "pay-radio-buttons" },
-                fieldset: {
-                    legend: {
-                        text: 'Pay',
-                        classes: 'govuk-fieldset__legend--m'
-                    }
-                },
-                items: [
-                    {
-                        value: AbsencePayFilter.ANY_PAY,
-                        text: 'Any pay',
-                        checked: AbsencePayFilter.ANY_PAY in attendanceSummaryJourney.payFilters
-                    },
-                    {
-                        value: AbsencePayFilter.NO_PAY,
-                        text: 'No pay only',
-                        checked: AbsencePayFilter.NO_PAY in attendanceSummaryJourney.payFilters
-                    }
-                ]
-            }) }}
-            <input type="hidden" name="isAbsencesFilter" value="true"/>
-        {% endif %}
+    {# Pay filter #}
+    {{
+      govukRadios({
+          idPrefix: 'payFilters',
+          name: 'payFilters',
+          classes: "",
+          attributes: { "data-qa": "pay-radio-buttons" },
+          fieldset: {
+              legend: {
+                  text: 'Pay',
+                  classes: 'govuk-fieldset__legend--m'
+              }
+          },
+          items: [
+              {
+                  value: AbsencePayFilter.ANY_PAY,
+                  text: 'Any pay',
+                  checked: AbsencePayFilter.ANY_PAY in attendanceSummaryJourney.payFilters
+              },
+              {
+                  value: AbsencePayFilter.NO_PAY,
+                  text: 'No pay only',
+                  checked: AbsencePayFilter.NO_PAY in attendanceSummaryJourney.payFilters
+              }
+          ]
+      })
+    }}
+    <input type="hidden" name="isAbsencesFilter" value="true" />
+  {% endif %}
 
-        {% if user.externalActivitiesRolledOut %}
-            {# Activity type filter #}
-            {{ govukCheckboxes({
-                idPrefix: 'activityTypeFilters',
-                name: 'activityTypeFilters',
-                classes: "govuk-radios--small",
-                fieldset: {
-                    legend: {
-                        text: 'Activity type',
-                        classes: 'govuk-fieldset__legend--m'
-                    }
-                },
-                items: [
-                    {value: 'inPrison', text: 'In-prison', checked: 'inPrison' in attendanceSummaryJourney.activityTypeFilters},
-                    {value: 'outsidePrison', text: 'Outside - prison-paid', checked: 'outsidePrison' in attendanceSummaryJourney.activityTypeFilters},
-                    {value: 'outsideEmployer', text: 'Outside - employer-paid', checked: 'outsideEmployer' in attendanceSummaryJourney.activityTypeFilters}
-                ]
-            }) }}
-        {% endif %}
+  {% if user.externalActivitiesRolledOut %}
+    {# Activity type filter #}
+    {{
+      govukCheckboxes({
+          idPrefix: 'activityTypeFilters',
+          name: 'activityTypeFilters',
+          classes: "govuk-radios--small",
+          fieldset: {
+              legend: {
+                  text: 'Activity type',
+                  classes: 'govuk-fieldset__legend--m'
+              }
+          },
+          items: [
+              {value: 'inPrison', text: 'In-prison', checked: 'inPrison' in attendanceSummaryJourney.activityTypeFilters},
+              {value: 'outsidePrison', text: 'Outside - prison-paid', checked: 'outsidePrison' in attendanceSummaryJourney.activityTypeFilters},
+              {value: 'outsideEmployer', text: 'Outside - employer-paid', checked: 'outsideEmployer' in attendanceSummaryJourney.activityTypeFilters}
+          ]
+      })
+    }}
+  {% endif %}
 
-        {# Categories filter #}
-        {% set categoryFilters = [] %}
-        {% for category in uniqueCategories %}
-            {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
-        {% endfor %}
+  {# Categories filter #}
+  {% set categoryFilters = [] %}
+    {% for category in uniqueCategories %}
+      {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
+    {% endfor %}
 
-        {{ govukCheckboxes({
-            idPrefix: 'categoryFilters',
-            name: 'categoryFilters',
-            classes: "govuk-radios--small",
-            attributes: { "data-qa": "category-radio-buttons" },
-            fieldset: {
-                legend: {
-                    text: 'Categories',
-                    classes: 'govuk-fieldset__legend--m'
-                }
-            },
-            items: categoryFilters
-        }) }}
+    {{
+      govukCheckboxes({
+          idPrefix: 'categoryFilters',
+          name: 'categoryFilters',
+          classes: "govuk-radios--small",
+          attributes: { "data-qa": "category-radio-buttons" },
+          fieldset: {
+              legend: {
+                  text: 'Categories',
+                  classes: 'govuk-fieldset__legend--m'
+              }
+          },
+          items: categoryFilters
+      })
+    }}
 
-        <div class="govuk-!-margin-bottom-4">
-            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
-        </div>
+    <div class="govuk-!-margin-bottom-4">
+      <a
+        href="#"
+        class="govuk-link govuk-link--no-visited-state"
+        data-module="select-all-link"
+        data-checkbox-name="categoryFilters"
+      ></a>
+    </div>
 
-        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
-            Apply filters
-        </button>
-    {% endset %}
+    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">Apply filters</button>
+  {% endset %}
 
-    {% if status == 'Attended' %}
-        {% if tier == EventTier.TIER_1 %}
-            {% set h1Title = "All Tier 1 attendances" %}
-        {% elif tier == EventTier.TIER_2 %}
-            {% set h1Title = "All Tier 2 attendances" %}
-        {% elif tier == EventTier.FOUNDATION %}
-            {% set h1Title = "All routine attendances" %}
-        {% else %}
-            {% set h1Title = "All attended" %}
-        {% endif %}
-    {% elif status == 'Absences' %}
-        {% set h1Title = "All absences" %}
-    {% elif status == 'NotAttended' %}
-        {% set h1Title = "All not attended yet" %}
+  {% if status == 'Attended' %}
+    {% if tier == EventTier.TIER_1 %}
+      {% set h1Title = "All Tier 1 attendances" %}
+    {% elif tier == EventTier.TIER_2 %}
+      {% set h1Title = "All Tier 2 attendances" %}
+    {% elif tier == EventTier.FOUNDATION %}
+      {% set h1Title = "All routine attendances" %}
     {% else %}
-        {# default #}
-        {% set h1Title = "Attendance summary" %}
+      {% set h1Title = "All attended" %}
     {% endif %}
+  {% elif status == 'Absences' %}
+    {% set h1Title = "All absences" %}
+  {% elif status == 'NotAttended' %}
+    {% set h1Title = "All not attended yet" %}
+  {% else %}
+    {# default #}
+    {% set h1Title = "Attendance summary" %}
+  {% endif %}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">{{ h1Title }}
-                <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
-            </h1>
-            {% if showRefusalsLink %}
-                <p class="govuk-body" data-qa="refusals-link">
-                    <a href="refusals?date={{ activityDate | formatDate('yyyy-MM-dd') }}">View all refusals and where incentive level warnings were given</a>
-                </p>
-            {% endif %}
-            {{ searchInput({
-                classes: "search-input--inline-search",
-                input: {
-                    id: 'searchTerm',
-                    name: 'searchTerm',
-                    type: "search",
-                    label: {
-                        text: 'Search by name or prison number',
-                        classes: 'govuk-label--s'
-                    },
-                    value: attendanceSummaryJourney.searchTerm,
-                    attributes: {
-                        form: 'filter-form'
-                    }
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
+        {{ h1Title }}
+        <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
+      </h1>
+      {% if showRefusalsLink %}
+        <p class="govuk-body" data-qa="refusals-link">
+          <a href="refusals?date={{ activityDate | formatDate('yyyy-MM-dd') }}"
+            >View all refusals and where incentive level warnings were given</a
+          >
+        </p>
+      {% endif %}
+      {{
+        searchInput({
+            classes: "search-input--inline-search",
+            input: {
+                id: 'searchTerm',
+                name: 'searchTerm',
+                type: "search",
+                label: {
+                    text: 'Search by name or prison number',
+                    classes: 'govuk-label--s'
                 },
-                button: {
-                    text: "Search",
-                    attributes: {
-                        form: 'filter-form'
-                    }
-                }
-            }) }}
-        </div>
-        <div class="govuk-grid-column-one-third govuk-!-text-align-right">
-            <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
-            {{ govukButton({
-                text: "Refresh",
-                classes: "govuk-button--blue",
+                value: attendanceSummaryJourney.searchTerm,
                 attributes: {
                     form: 'filter-form'
                 }
-            }) }}
-        </div>
+            },
+            button: {
+                text: "Search",
+                attributes: {
+                    form: 'filter-form'
+                }
+            }
+        })
+      }}
     </div>
+    <div class="govuk-grid-column-one-third govuk-!-text-align-right">
+      <div class="govuk-hint govuk-!-font-size-16">
+        Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}
+      </div>
+      {{
+        govukButton({
+            text: "Refresh",
+            classes: "govuk-button--blue",
+            attributes: {
+                form: 'filter-form'
+            }
+        })
+      }}
+    </div>
+  </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
-                <div class="moj-filter-layout__filter moj-filter-layout__flex">
-                    <form id="filter-form" method="POST" action="update-filters" novalidate>
-                        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                        {{ mojFilter({
-                    heading: {
-                        text: 'Filter'
-                    },
-                    optionsHtml: filterOptionsHtml
-                }) }}
-                    </form>
-                </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+        <div class="moj-filter-layout__filter moj-filter-layout__flex">
+          <form id="filter-form" method="POST" action="update-filters" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            {{
+              mojFilter({
+                  heading: {
+                      text: 'Filter'
+                  },
+                  optionsHtml: filterOptionsHtml
+              })
+            }}
+          </form>
+        </div>
 
-                <div class="moj-filter-layout__content">
-                    <div class="moj-action-bar">
-                        <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
-                    </div>
-                    {{ govukTabs({
-                    classes: "govuk-tabs--borderless",
-                    items: [
-                        {
-                            label: "Daily summary",
-                            id: "day-tab",
-                            panel: {
-                                html: summaryHtml("DAY", "daily", activityDate, user)
-                            }
-                        },
-                        {
-                            label: "AM session",
-                            id: "am-tab",
-                            panel: {
-                                html: summaryHtml("AM", "morning", activityDate, user)
-                            }
-                        },
-                        {
-                            label: "PM session",
-                            id: "pm-tab",
-                            panel: {
-                                html: summaryHtml("PM", "afternoon", activityDate, user)
-                            }
-                        },
-                        {
-                            label: "ED session",
-                            id: "ed-tab",
-                            panel: {
-                                html: summaryHtml("ED", "evening", activityDate, user)
-                            }
+        <div class="moj-filter-layout__content">
+          <div class="moj-action-bar">
+            <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+          </div>
+          {{
+            govukTabs({
+                classes: "govuk-tabs--borderless",
+                items: [
+                    {
+                        label: "Daily summary",
+                        id: "day-tab",
+                        panel: {
+                            html: summaryHtml("DAY", "daily", activityDate, user)
                         }
-                    ]
-                }) }}
-                </div>
-            </div>
+                    },
+                    {
+                        label: "AM session",
+                        id: "am-tab",
+                        panel: {
+                            html: summaryHtml("AM", "morning", activityDate, user)
+                        }
+                    },
+                    {
+                        label: "PM session",
+                        id: "pm-tab",
+                        panel: {
+                            html: summaryHtml("PM", "afternoon", activityDate, user)
+                        }
+                    },
+                    {
+                        label: "ED session",
+                        id: "ed-tab",
+                        panel: {
+                            html: summaryHtml("ED", "evening", activityDate, user)
+                        }
+                    }
+                ]
+            })
+          }}
         </div>
+      </div>
     </div>
+  </div>
 {% endblock %}
 
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate, user) %}
-    {% set tab = 'day-tab' if timeSlot == 'DAY' %}
-    {% set attendanceRows = [] %}
-    {% for attendee in attendees %}
-        {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
-            {% set activityNameHtml = '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>' %}
-            {% if status == 'Absences' or (tab != 'day-tab' and ((tier == EventTier.TIER_1 or tier == EventTier.TIER_2) or (status == 'NotAttended'))) %}
-                {% set activityNameHtml = activityNameHtml + '<br>' + (
-                attendee.attendance.startTime) + ' to ' + (
-                attendee.attendance.endTime) %}
-            {% endif %}
+  {% set tab = 'day-tab' if timeSlot == 'DAY' %}
+  {% set attendanceRows = [] %}
+  {% for attendee in attendees %}
+    {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
+      {% set activityNameHtml = '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>' %}
+      {% if status == 'Absences' or (tab != 'day-tab' and ((tier == EventTier.TIER_1 or tier == EventTier.TIER_2) or (status == 'NotAttended'))) %}
+        {%
+          set activityNameHtml = activityNameHtml + '<br>' + (
+          attendee.attendance.startTime) + ' to ' + (
+          attendee.attendance.endTime)
+        %}
+      {% endif %}
 
-            {% set sessionNameHtml = attendee.attendance.timeSlot %}
-            {% if (status == 'Attended' and(tier == EventTier.TIER_1 or tier == EventTier.TIER_2)) 
-                or status == 'NotAttended' %}
-                {% set sessionNameHtml = attendee.attendance.timeSlot + '<br>' + (
-                attendee.attendance.startTime) + ' to ' + (
-                attendee.attendance.endTime) %}
-            {% endif %}
+      {% set sessionNameHtml = attendee.attendance.timeSlot %}
+      {%
+        if (status == 'Attended' and(tier == EventTier.TIER_1 or tier == EventTier.TIER_2))
+        or status == 'NotAttended'
+      %}
+        {%
+          set sessionNameHtml = attendee.attendance.timeSlot + '<br>' + (
+          attendee.attendance.startTime) + ' to ' + (
+          attendee.attendance.endTime)
+        %}
+      {% endif %}
 
-            {% set attendanceDetailsHtml = attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + payStatus({
-                dataPresentCheck: attendee.attendance,
-                status: attendee.attendance.status,
-                issuePayment: attendee.attendance.issuePayment,
-                payable: true,
-                marginTagClass: true,
-                user: user
-            }) %}
-            {% if status == 'Absences' %}
-                {% set attendanceDetailsHtml = attendanceDetailsHtml + ' ' + incentiveLevelWarningTag(attendee.attendance) %}
-            {% endif %}
+      {%
+        set attendanceDetailsHtml = attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + payStatus({
+            dataPresentCheck: attendee.attendance,
+            status: attendee.attendance.status,
+            issuePayment: attendee.attendance.issuePayment,
+            payable: true,
+            marginTagClass: true,
+            user: user
+        })
+      %}
+      {% if status == 'Absences' %}
+        {% set attendanceDetailsHtml = attendanceDetailsHtml + ' ' + incentiveLevelWarningTag(attendee.attendance) %}
+      {% endif %}
 
-            {% set attendanceRows = (attendanceRows.push([
-                {
-                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee | formatName(NameFormatStyle.lastCommaFirstMiddle, false) },
-                    html: showProfileLink({
-                        firstName: attendee.firstName,
-                        middleNames: attendee.middleNames,
-                        lastName: attendee.lastName,
-                        prisonerNumber: attendee.prisonerNumber,
-                        inCaseLoad: attendee.prisonCode == user.activeCaseLoadId,
-                        classes: 'hmpps-inline-block'
-                    }),
-                    classes: 'govuk-table_cell'
-                },
-                {
-                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": attendee.location },
-                    html: statusBasedCellLocation(attendee.location, attendee.status, attendee.prisonCode == user.activeCaseLoadId),
-                    classes: 'govuk-table_cell'
-                },
-                {
-                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.attendance.activitySummary },
-                    html: activityNameHtml,
-                    classes: 'govuk-table__cell'
-                },
-                {
-                    attributes: { id: 'session-' + loop.index, "data-sort-value": attendee.attendance.timeSlot },
-                    html: sessionNameHtml,
-                    classes: 'govuk-table__cell'
-                } if (status == "NotAttended" or status == "Attended") and tab == "day-tab",
-                {
-                    attributes: { id: 'recorded-time-' + loop.index, "data-sort-value": attendee.location },
-                    text: attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('HH:mm:ss') + ' on ' + attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMM yyyy'),
-                    classes: 'govuk-table_cell'
-                } if status != "NotAttended",
-                {
-                    html: attendanceDetailsHtml,
-                    attributes: {
-                        "data-qa": "attendance"
-                    }
-                },
-                {
-                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + 'View or edit</a>'
-                } if status != "NotAttended"
-            ] | removeUndefined), attendanceRows) %}
-        {% endif %}
-    {% endfor %}
+      {%
+        set attendanceRows = (attendanceRows.push([
+            {
+                attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee | formatName(NameFormatStyle.lastCommaFirstMiddle, false) },
+                html: showProfileLink({
+                    firstName: attendee.firstName,
+                    middleNames: attendee.middleNames,
+                    lastName: attendee.lastName,
+                    prisonerNumber: attendee.prisonerNumber,
+                    inCaseLoad: attendee.prisonCode == user.activeCaseLoadId,
+                    classes: 'hmpps-inline-block'
+                }),
+                classes: 'govuk-table_cell'
+            },
+            {
+                attributes: { id: 'cell-location-' + loop.index, "data-sort-value": attendee.location },
+                html: statusBasedCellLocation(attendee.location, attendee.status, attendee.prisonCode == user.activeCaseLoadId),
+                classes: 'govuk-table_cell'
+            },
+            {
+                attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.attendance.activitySummary },
+                html: activityNameHtml,
+                classes: 'govuk-table__cell'
+            },
+            {
+                attributes: { id: 'session-' + loop.index, "data-sort-value": attendee.attendance.timeSlot },
+                html: sessionNameHtml,
+                classes: 'govuk-table__cell'
+            } if (status == "NotAttended" or status == "Attended") and tab == "day-tab",
+            {
+                attributes: { id: 'recorded-time-' + loop.index, "data-sort-value": attendee.location },
+                text: attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('HH:mm:ss') + ' on ' + attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMM yyyy'),
+                classes: 'govuk-table_cell'
+            } if status != "NotAttended",
+            {
+                html: attendanceDetailsHtml,
+                attributes: {
+                    "data-qa": "attendance"
+                }
+            },
+            {
+                html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + 'View or edit</a>'
+            } if status != "NotAttended"
+        ] | removeUndefined), attendanceRows)
+      %}
+    {% endif %}
+  {% endfor %}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            {% if status == 'Attended' %}
-                <h2 class="govuk-heading-m">{{ attendanceRows | length }} attended</h2>
-            {% elseif status == 'NotAttended' %}
-                <h2 class="govuk-heading-m">{{ attendanceRows | length }} not attended yet</h2>
-            {% elseif status == 'Absences' %}
-                <h2 class="govuk-heading-m">{{ attendanceRows | length }} absence{% if attendanceRows | length != 1 %}s{% endif %}
-                </h2>
-            {% endif %}
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      {% if status == 'Attended' %}
+        <h2 class="govuk-heading-m">{{ attendanceRows | length }} attended</h2>
+        {% elseif status == 'NotAttended' %}
+        <h2 class="govuk-heading-m">{{ attendanceRows | length }} not attended yet</h2>
+        {% elseif status == 'Absences' %}
+        <h2 class="govuk-heading-m">
+          {{ attendanceRows | length }} absence{% if attendanceRows | length != 1 %}s{% endif %}
+        </h2>
+      {% endif %}
     </div>
+  </div>
 
-    {{ govukTable({
+  {{
+    govukTable({
         attributes: {
             'data-module': 'moj-sortable-table',
             id: 'attendee-list-table',
@@ -377,5 +420,6 @@
             } if status != "NotAttended"
         ] | removeUndefined,
         rows: attendanceRows
-    }) }}
+    })
+  }}
 {% endmacro %}
