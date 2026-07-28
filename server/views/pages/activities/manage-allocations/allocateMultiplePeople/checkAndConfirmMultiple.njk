@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -15,119 +14,130 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
-                <h1 class="govuk-heading-l">Check and confirm {{ allocateJourney.inmates | length }} allocation{% if allocateJourney.inmates | length > 1 %}s{% endif %}</h1>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
+      <h1 class="govuk-heading-l">
+        Check and confirm {{ allocateJourney.inmates | length }}
+        allocation{% if allocateJourney.inmates | length > 1 %}s{% endif %}
+      </h1>
     </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% set endDateOption = ('../remove-end-date-option' if allocateJourney.endDate else '../end-date') + '?preserveHistory=true' %}
 
-            {% set endDateOption = ('../remove-end-date-option' if allocateJourney.endDate else '../end-date') + '?preserveHistory=true' %}
+      <h2 class="govuk-heading-m">Allocations details</h2>
 
-            <h2 class="govuk-heading-m">Allocations details</h2>
-
-                {{ govukSummaryList({
-                    rows: [
-                        {
-                            key: { text: "Activity" },
-                            value: { text: allocateJourney.activity.name }
-                        },
-                        {
-                            key: { text: "Location" },
-                            value: { text: showLocation(user.externalActivitiesRolledOut, allocateJourney.activity) }
-                        },
-                        {
-                            key: { text: "Start of allocation" },
-                            value: {
-                                text: allocateJourney.startDate | formatDate
-                                },
-                            actions: {
-                                items: [{
-                                    href: "../start-date?preserveHistory=true",
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: " start date"
-                                }]
-                            }
-                        },
-                        {
-                            key: { text: "End of allocation" },
-                            value: {
-                                text: allocateJourney.endDate | formatDate if allocateJourney.endDate else "No date set"
-                            },
-                            actions: {
-                                items: [{
-                                    href: endDateOption,
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: " end date"
-                                }]
-                            }
-                        },
-                        {
-                            key: { text: "Number of people you’re allocating" },
-                            value: { text: allocateJourney.inmates | length }
-                        }
-                    ]
-                }) }}
-
-            {% if showPayRates %}
-            <h2 class="govuk-heading-m">Pay rates</h2>
-            <p class="govuk-body">You can only change the pay rate where there’s more than one pay band available for an incentive level.</p>
-
-            {% set rows = [] %}
-            {% for inmate in allocateJourney.inmates %}
-                {% set rows = (rows.push([
+      {{
+        govukSummaryList({
+            rows: [
                 {
-                    html: showProfileLink({
-                        firstName: inmate.firstName,
-                        middleNames: inmate.middleNames,
-                        lastName: inmate.lastName,
-                        prisonerNumber: inmate.prisonerNumber,
-                        inCaseLoad: inmate.prisonCode == user.activeCaseLoadId
-                    })
+                    key: { text: "Activity" },
+                    value: { text: allocateJourney.activity.name }
                 },
                 {
-                    html: payRate(inmate.payBand, inmate.incentiveLevel)
+                    key: { text: "Location" },
+                    value: { text: showLocation(user.externalActivitiesRolledOut, allocateJourney.activity) }
                 },
                 {
-                    html: "<a class='govuk-link--no-visited-state' href='pay-band-multiple?preserveHistory=true'>Change <span class='govuk-visually-hidden'>pay rate</span></a>" if inmate.numberPayBandsAvailable > 1 else ''
-                }
-                ]), rows) %}
-            {% endfor %}
-
-            {{ govukTable({
-                captionClasses: "govuk-table__caption--m",
-                firstCellIsHeader: false,
-                head: [
-                    {
-                        text: "Person to be allocated"
-                    },
-                    {
-                        text: "Pay rate",
-                        colspan: 2
+                    key: { text: "Start of allocation" },
+                    value: {
+                        text: allocateJourney.startDate | formatDate
+                        },
+                    actions: {
+                        items: [{
+                            href: "../start-date?preserveHistory=true",
+                            classes: 'govuk-link--no-visited-state',
+                            text: "Change",
+                            visuallyHiddenText: " start date"
+                        }]
                     }
-                ],
-                rows: rows,
-                attributes: {
-                  'data-qa': 'prisoner-pay-list'
+                },
+                {
+                    key: { text: "End of allocation" },
+                    value: {
+                        text: allocateJourney.endDate | formatDate if allocateJourney.endDate else "No date set"
+                    },
+                    actions: {
+                        items: [{
+                            href: endDateOption,
+                            classes: 'govuk-link--no-visited-state',
+                            text: "Change",
+                            visuallyHiddenText: " end date"
+                        }]
+                    }
+                },
+                {
+                    key: { text: "Number of people you’re allocating" },
+                    value: { text: allocateJourney.inmates | length }
                 }
-            }) }}
-            {% endif %}
+            ]
+        })
+      }}
 
+      {% if showPayRates %}
+        <h2 class="govuk-heading-m">Pay rates</h2>
+        <p class="govuk-body">
+          You can only change the pay rate where there’s more than one pay band available for an incentive level.
+        </p>
 
-            {% set buttonText = "Confirm allocation" if allocateJourney.inmates | length === 1 else "Confirm " + allocateJourney.inmates | length + " allocations" %}
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: buttonText,
-                        preventDoubleClick: true
-                    }) }}
-                </div>
-            </form>
+        {% set rows = [] %}
+        {% for inmate in allocateJourney.inmates %}
+          {%
+            set rows = (rows.push([
+            {
+                html: showProfileLink({
+                    firstName: inmate.firstName,
+                    middleNames: inmate.middleNames,
+                    lastName: inmate.lastName,
+                    prisonerNumber: inmate.prisonerNumber,
+                    inCaseLoad: inmate.prisonCode == user.activeCaseLoadId
+                })
+            },
+            {
+                html: payRate(inmate.payBand, inmate.incentiveLevel)
+            },
+            {
+                html: "<a class='govuk-link--no-visited-state' href='pay-band-multiple?preserveHistory=true'>Change <span class='govuk-visually-hidden'>pay rate</span></a>" if inmate.numberPayBandsAvailable > 1 else ''
+            }
+            ]), rows)
+          %}
+        {% endfor %}
+
+        {{
+          govukTable({
+              captionClasses: "govuk-table__caption--m",
+              firstCellIsHeader: false,
+              head: [
+                  {
+                      text: "Person to be allocated"
+                  },
+                  {
+                      text: "Pay rate",
+                      colspan: 2
+                  }
+              ],
+              rows: rows,
+              attributes: {
+                'data-qa': 'prisoner-pay-list'
+              }
+          })
+        }}
+      {% endif %}
+
+      {% set buttonText = "Confirm allocation" if allocateJourney.inmates | length === 1 else "Confirm " + allocateJourney.inmates | length + " allocations" %}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: buttonText,
+                preventDoubleClick: true
+            })
+          }}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}
