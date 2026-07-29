@@ -14,7 +14,6 @@ import {
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { EventType, YesNo } from '../../../../../@types/activities'
-import applyCancellationDisplayRule from '../../../../../utils/applyCancellationDisplayRule'
 import AttendanceReason from '../../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
 import { eventClashes, toDate } from '../../../../../utils/utils'
@@ -144,7 +143,7 @@ export default class MultipleNotAttendedReasonRoutes {
         .filter(event => event.prisonerNumber === prisonerNumber)
         .filter(event => filteredInstances.every(instance => event.scheduledInstanceId !== instance.id))
         .filter(event => filteredInstances.some(instance => eventClashes(event, instance)))
-        .filter(event => event.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(event))
+        .filter(event => event.eventType === EventType.APPOINTMENT)
 
       return {
         prisonerNumber,

@@ -23,13 +23,18 @@
         <p class="govuk-body">If they are already modified out of a session, select it to add them back in.</p>
       {% endif %}
 
-      {% if disabledSlotsExist %}
-        {{
-          govukInsetText({
-              text: "Sessions that run in both weeks cannot be edited."
-          })
-        }}
-      {% endif %}
+          {% if (session.req.routeContext.mode == 'edit' or session.req.routeContext.mode == 'exclude') and allocationHasStarted %}
+          {{ govukDetails({
+            summaryText: "Adding sessions for people to attend today",
+            html: "If you add a session happening today, you can choose if you want the prisoner to attend today or from the next time the session runs. </br></br>
+            You cannot modify people out of sessions already scheduled for today. You’ll need to mark that the prisoner did not attend instead."
+          }) }}
+          {% endif %}
+
+        </div>
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
       {% if (session.req.routeContext.mode == 'edit' or session.req.routeContext.mode == 'exclude') and allocationHasStarted %}
         {{

@@ -124,6 +124,25 @@ const clashingAppointment: ScheduledEvent = {
   date: today,
 } as ScheduledEvent
 
+const clashingActivity: ScheduledEvent = {
+  autoSuspended: false,
+  cancelled: false,
+  inCell: false,
+  offWing: false,
+  onWing: false,
+  outsidePrison: false,
+  priority: 0,
+  suspended: false,
+  scheduledInstanceId: 888888,
+  eventType: 'ACTIVITY',
+  eventSource: 'SAA',
+  summary: 'Activity - Kitchen',
+  startTime: '09:00',
+  endTime: '10:00',
+  prisonerNumber: 'ABC123',
+  date: today,
+} as ScheduledEvent
+
 const emptyScheduledEvents: PrisonerScheduledEvents = {
   activities: [],
   appointments: [],
@@ -132,9 +151,17 @@ const emptyScheduledEvents: PrisonerScheduledEvents = {
   adjudications: [],
 }
 
-const scheduledEventsWithClash: PrisonerScheduledEvents = {
+const scheduledEventsWithAppointmentClash: PrisonerScheduledEvents = {
   activities: [],
   appointments: [clashingAppointment],
+  courtHearings: [],
+  visits: [],
+  adjudications: [],
+}
+
+const scheduledEventsWithActivityClash: PrisonerScheduledEvents = {
+  activities: [clashingActivity],
+  appointments: [],
   courtHearings: [],
   visits: [],
   adjudications: [],
@@ -246,7 +273,7 @@ describe('Route Handlers - Multiple people not attended reasons', () => {
     it('should include clashingAppointment in other events when prisoner has appointment clash', async () => {
       when(activitiesService.getScheduledEventsForPrisoners)
         .calledWith(expect.any(Date), ['ABC123', 'ABC321'], res.locals.user)
-        .mockResolvedValue(scheduledEventsWithClash)
+        .mockResolvedValue(scheduledEventsWithAppointmentClash)
 
       await handler.GET(req, res)
 
@@ -255,6 +282,19 @@ describe('Route Handlers - Multiple people not attended reasons', () => {
 
       expect(attendanceDetails[0].otherEvents).toContainEqual(expect.objectContaining(clashingAppointment))
       expect(attendanceDetails[1].otherEvents).toEqual([])
+    })
+
+    it('should NOT include clashingActivities in other events when prisoner has activity clash', async () => {
+      when(activitiesService.getScheduledEventsForPrisoners)
+        .calledWith(expect.any(Date), ['ABC123', 'ABC321'], res.locals.user)
+        .mockResolvedValue(scheduledEventsWithActivityClash)
+
+      await handler.GET(req, res)
+
+      const renderCall = (res.render as jest.Mock).mock.calls[0]
+      const { attendanceDetails } = renderCall[1]
+
+      expect(attendanceDetails[0].otherEvents).toEqual([])
     })
   })
 })
