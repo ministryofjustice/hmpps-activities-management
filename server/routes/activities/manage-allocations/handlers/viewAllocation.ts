@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatFirstLastName, parseDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import { Activity, ExclusionRevision } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
@@ -10,6 +10,34 @@ import UserService from '../../../../services/userService'
 import CaseNotesService from '../../../../services/caseNotesService'
 import logger from '../../../../../logger'
 import getCurrentPay from '../../../../utils/helpers/getCurrentPay'
+
+const getLatestScheduleChanges = (allocatedTime: string | null | undefined, exclusionHistory: ExclusionRevision[]) => {
+  const historicalRecords = allocatedTime
+    ? exclusionHistory.filter(history => history.updatedDateTime > allocatedTime)
+    : exclusionHistory
+
+  if (!historicalRecords.length) {
+    return {
+      added: [],
+      removed: [],
+    }
+  }
+
+  const latestUpdatedDateTime = historicalRecords.reduce((latest, current) =>
+    current.updatedDateTime > latest.updatedDateTime ? current : latest,
+  ).updatedDateTime
+
+  const latestChanges = historicalRecords.filter(record => record.updatedDateTime === latestUpdatedDateTime)
+
+  const [latestChange] = latestChanges
+
+  return {
+    added: latestChanges.filter(history => history.revisionType === 'ADDED'),
+    removed: latestChanges.filter(history => history.revisionType === 'REMOVED'),
+    updatedBy: latestChange.updatedBy,
+    latestUpdatedDateTime,
+  }
+}
 
 export default class ViewAllocationRoutes {
   constructor(
@@ -25,9 +53,10 @@ export default class ViewAllocationRoutes {
 
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
 
-    const [activity, prisoner]: [Activity, Prisoner] = await Promise.all([
+    const [activity, prisoner, exclusionHistory]: [Activity, Prisoner, ExclusionRevision[]] = await Promise.all([
       this.activitiesService.getActivity(allocation.activityId, user),
       this.prisonService.getInmateByPrisonerNumber(allocation.prisonerNumber, user),
+      this.activitiesService.getAllocationExclusionsHistory(allocation.id, user),
     ])
 
     const prisonerName = formatFirstLastName(prisoner.firstName, prisoner.lastName)
@@ -47,7 +76,14 @@ export default class ViewAllocationRoutes {
 
     const isStarted = new Date(allocation.startDate) <= new Date()
 
-    const userMap = await this.userService.getUserMap([allocation.plannedSuspension?.plannedBy], user)
+    const {
+      added: addedPrisonerExclusionHistory,
+      removed: removedPrisonerExclusionHistory,
+      updatedBy,
+      latestUpdatedDateTime,
+    } = getLatestScheduleChanges(allocation.allocatedTime, exclusionHistory)
+
+    const userMap = await this.userService.getUserMap([allocation.plannedSuspension?.plannedBy, updatedBy], user)
 
     try {
       const allocatedByUser = await this.userService.getUserMap([allocation.allocatedBy], user)
@@ -74,8 +110,13 @@ export default class ViewAllocationRoutes {
       dailySlots,
       currentWeek,
       userMap,
+      updatedBy,
+      latestUpdatedDateTime,
       suspensionCaseNote,
       activityIsPaid: activity?.paid,
+      exclusionHistory,
+      addedPrisonerExclusionHistory,
+      removedPrisonerExclusionHistory,
     })
   }
 }

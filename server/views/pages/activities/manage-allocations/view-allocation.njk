@@ -164,6 +164,42 @@
                         </a>
                     </dd>
                 </div>
+
+            {% if addedPrisonerExclusionHistory.length or removedPrisonerExclusionHistory.length %} 
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Schedule last changed
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                            {{ latestUpdatedDateTime
+                                    | parseDate("yyyy-MM-dd'T'HH:mm:ss")
+                                    | formatDate("d MMMM yyyy 'at' HH:mm") }}
+                            by - 
+                            {{ serviceUserName(userMap.get(updatedBy)) }}
+                        {% if addedPrisonerExclusionHistory.length %}      
+                            <div class='govuk-!-margin-top-6'>
+                                Removed from:
+                                {% for schedule in addedPrisonerExclusionHistory %}
+                                    <div class='govuk-summary-list__key--normal-key-weight'> 
+                                        {{ exclusionDetails(schedule) }}
+                                    </div> 
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if removedPrisonerExclusionHistory.length %}
+                            <div class='govuk-!-margin-top-6'>
+                                Added to:
+                                {% for schedule in removedPrisonerExclusionHistory %}
+                                    <div class='govuk-summary-list__key--normal-key-weight'>
+                                        {{ exclusionDetails(schedule) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </dd>
+                </div>
+            {% endif %}
+        
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Allocated by
@@ -194,4 +230,10 @@
     {% else %}
         No pay rate for this activity
     {% endif %}
+{% endmacro %}
+
+{% macro exclusionDetails(schedule) %}
+    Week {{ schedule.weekNumber }} - 
+    {{ schedule.dayOfWeek | title }} 
+    {{ schedule.timeSlots }}
 {% endmacro %}
