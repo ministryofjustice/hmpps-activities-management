@@ -5,15 +5,15 @@ import { resetStubs } from './integration_tests/mockApis/wiremock'
 import stubs from './integration_tests/mockApis/stubs'
 
 export default defineConfig({
-  fixturesFolder: 'integration_tests/fixtures',
-  screenshotsFolder: 'integration_tests/screenshots',
-  videosFolder: 'integration_tests/videos',
-  reporter: 'cypress-multi-reporters',
-  reporterOptions: {
-    configFile: 'reporter-config.json',
-  },
-  taskTimeout: 60000,
   e2e: {
+    fixturesFolder: 'integration_tests/fixtures',
+    screenshotsFolder: 'integration_tests/screenshots',
+    videosFolder: 'integration_tests/videos',
+    reporter: 'cypress-multi-reporters',
+    reporterOptions: {
+      configFile: 'reporter-config.json',
+    },
+    taskTimeout: 60000,
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
