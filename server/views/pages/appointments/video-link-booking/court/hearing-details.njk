@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -7,78 +6,92 @@
 {% set pageId = 'hearing-details-page' %}
 {% set jsBackLink = true %}
 {% if session.req.params == 'create' %}
-    {% set pageHeading = "Enter the court and type of hearing" %}
+  {% set pageHeading = "Enter the court and type of hearing" %}
 {% else %}
-    {% set pageHeading = "Enter the type of hearing" if videoBooking.bookingType == 'COURT' else "Enter the type of meeting" %}
+  {% set pageHeading = "Enter the type of hearing" if videoBooking.bookingType == 'COURT' else "Enter the type of meeting" %}
 {% endif %}
 {% block meta %}
-    {% if session.req.routeContext.mode == 'create' %}
-        <meta name="autocompleteElements" content="courtCode"/>
-    {% endif %}
-    <meta name="autocompleteElements" content="hearingTypeCode"/>
+  {% if session.req.routeContext.mode == 'create' %}
+    <meta name="autocompleteElements" content="courtCode" />
+  {% endif %}
+  <meta name="autocompleteElements" content="hearingTypeCode" />
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session) }}
+      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
     </div>
+  </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method='POST' {% if session.req.routeContext.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing hearing type" {% endif %}>
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form
+        method="POST"
+        {% if session.req.routeContext.mode == 'amend' %}data-module="form-spinner" data-loading-text="Changing hearing
+        type"{% endif %}
+      >
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% set items = [{ text: "", value: "" }] %}
-                {% for court in courts %}
-                    {% set items = (items.push({
-                        value: court.code,
-                        text: court.description,
-                        selected: formResponses.courtCode == court.code or session.bookACourtHearingJourney.courtCode == court.code
-                    }), items) %}
-                {% endfor %}
+        {% set items = [{ text: "", value: "" }] %}
+        {% for court in courts %}
+          {%
+            set items = (items.push({
+                value: court.code,
+                text: court.description,
+                selected: formResponses.courtCode == court.code or session.bookACourtHearingJourney.courtCode == court.code
+            }), items)
+          %}
+        {% endfor %}
 
-                {% if session.req.routeContext.mode == 'create' %}
-                    {{ govukSelect({
-                        name: "courtCode",
-                        id: "courtCode",
-                        label: {
-                            text: "Select the court the booking is for",
-                            classes: 'govuk-label--s'
-                        },
-                        items: items,
-                        errorMessage: validationErrors | findError("courtCode")
-                    }) }}
-                {% else %}
-                    <input type="hidden" name="courtCode" value="{{ session.bookACourtHearingJourney.courtCode }}">
-                {% endif %}
+        {% if session.req.routeContext.mode == 'create' %}
+          {{
+            govukSelect({
+                name: "courtCode",
+                id: "courtCode",
+                label: {
+                    text: "Select the court the booking is for",
+                    classes: 'govuk-label--s'
+                },
+                items: items,
+                errorMessage: validationErrors | findError("courtCode")
+            })
+          }}
+        {% else %}
+          <input type="hidden" name="courtCode" value="{{ session.bookACourtHearingJourney.courtCode }}" />
+        {% endif %}
 
-                {% set items = [{ text: "", value: "" }] %}
-                {% for hearingType in hearingTypes %}
-                    {% set items = (items.push({
-                        value: hearingType.code,
-                        text: hearingType.description,
-                        selected: formResponses.hearingTypeCode == hearingType.code or session.bookACourtHearingJourney.hearingTypeCode == hearingType.code
-                    }), items) %}
-                {% endfor %}
+        {% set items = [{ text: "", value: "" }] %}
+        {% for hearingType in hearingTypes %}
+          {%
+            set items = (items.push({
+                value: hearingType.code,
+                text: hearingType.description,
+                selected: formResponses.hearingTypeCode == hearingType.code or session.bookACourtHearingJourney.hearingTypeCode == hearingType.code
+            }), items)
+          %}
+        {% endfor %}
 
-                {{ govukSelect({
-                    name: "hearingTypeCode",
-                    id: "hearingTypeCode",
-                    label: {
-                        text: "Select the type of hearing",
-                        classes: 'govuk-label--s'
-                    },
-                    items: items,
-                    errorMessage: validationErrors | findError("hearingTypeCode")
-                }) }}
+        {{
+          govukSelect({
+              name: "hearingTypeCode",
+              id: "hearingTypeCode",
+              label: {
+                  text: "Select the type of hearing",
+                  classes: 'govuk-label--s'
+              },
+              items: items,
+              errorMessage: validationErrors | findError("hearingTypeCode")
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Continue"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

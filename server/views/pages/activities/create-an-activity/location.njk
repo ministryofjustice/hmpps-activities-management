@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -12,82 +11,93 @@
 
 {% set options = [{ value: '', text: '' }] %}
 {% for location in locations %}
-    {% set options = (options.push( { value: location.id, text: location.description }), options) %}
+  {% set options = (options.push( { value: location.id, text: location.description }), options) %}
 {% endfor %}
 
 {% block meta %}
-    <meta name="autocompleteElements" content="location"/>
+  <meta name="autocompleteElements" content="location" />
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(createJourney) }}
-            <h1 class="govuk-heading-l">{{ 'Enter the new activity location' if session.req.routeContext.mode == 'edit' else 'Where does this activity take place?' }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ activityJourneyCaption(createJourney) }}
+      <h1 class="govuk-heading-l">
+        {{ 'Enter the new activity location' if session.req.routeContext.mode == 'edit' else 'Where does this activity take place?' }}
+      </h1>
 
-            <p class='govuk-body'>
-                If the location is not listed choose the relevant option so unlock lists can be filtered to show who is staying on the wing or leaving.
-            </p>
+      <p class="govuk-body">
+        If the location is not listed choose the relevant option so unlock lists can be filtered to show who is staying
+        on the wing or leaving.
+      </p>
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukRadios({
-                    id: "location-type",
-                    name: "locationType",
-                    items: [
-                        {
-                            value: LocationType.OUT_OF_CELL,
-                            text: "Search for a location",
-                            checked: formResponses.locationType == 'OFF_WING' or createJourney.location.id,
-                            conditional: {
-                                html: govukSelect({
-                                    id: "location",
-                                    name: "location",
-                                    label: {
-                                        text: "Start typing a location and select from the list of options."
-                                    },
-                                    errorMessage: validationErrors | findError('location'),
-                                    value: formResponses.location or createJourney.location.id,
-                                    items: options
-                                })
-                            }
-                        },
-                        {
-                            value: LocationType.IN_CELL,
-                            text: "In cell",
-                            checked: createJourney.inCell == true
-                        },
-                        {
-                            value: LocationType.OFF_WING,
-                            text: "Off wing - not listed",
-                            checked: createJourney.offWing == true
-                        },
-                        {
-                            value: LocationType.ON_WING,
-                            text: "On wing",
-                            checked: createJourney.onWing == true
-                        }
-                    ]
-                }) }}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          govukRadios({
+              id: "location-type",
+              name: "locationType",
+              items: [
+                  {
+                      value: LocationType.OUT_OF_CELL,
+                      text: "Search for a location",
+                      checked: formResponses.locationType == 'OFF_WING' or createJourney.location.id,
+                      conditional: {
+                          html: govukSelect({
+                              id: "location",
+                              name: "location",
+                              label: {
+                                  text: "Start typing a location and select from the list of options."
+                              },
+                              errorMessage: validationErrors | findError('location'),
+                              value: formResponses.location or createJourney.location.id,
+                              items: options
+                          })
+                      }
+                  },
+                  {
+                      value: LocationType.IN_CELL,
+                      text: "In cell",
+                      checked: createJourney.inCell == true
+                  },
+                  {
+                      value: LocationType.OFF_WING,
+                      text: "Off wing - not listed",
+                      checked: createJourney.offWing == true
+                  },
+                  {
+                      value: LocationType.ON_WING,
+                      text: "On wing",
+                      checked: createJourney.onWing == true
+                  }
+              ]
+          })
+        }}
 
-                {% if session.req.routeContext.mode == 'edit' %}
-                    {{ govukWarningText({
-                        text: "Changing the location may affect the security risk and the capacity of this activity.",
-                        iconFallbackText: "Warning"
-                    }) }}
-                    <div class="govuk-button-group">
-                        {{ govukButton({
-                            text: "Update activity location",
-                            preventDoubleClick: true
-                        }) }}
-                        <a class="govuk-link js-backlink" href="/">Cancel</a>
-                    </div>
-                {% else %}
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                {% endif %}
-            </form>
-        </div>
+        {% if session.req.routeContext.mode == 'edit' %}
+          {{
+            govukWarningText({
+                text: "Changing the location may affect the security risk and the capacity of this activity.",
+                iconFallbackText: "Warning"
+            })
+          }}
+          <div class="govuk-button-group">
+            {{
+              govukButton({
+                  text: "Update activity location",
+                  preventDoubleClick: true
+              })
+            }}
+            <a class="govuk-link js-backlink" href="/">Cancel</a>
+          </div>
+        {% else %}
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
+        {% endif %}
+      </form>
     </div>
+  </div>
 {% endblock %}

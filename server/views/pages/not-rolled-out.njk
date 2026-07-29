@@ -4,22 +4,25 @@
 {% set pageTitle = "Service not available - "  + applicationName + " - DPS" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-xl">The {{ serviceName }} service is not available at {{ user.activeCaseLoad.description }} yet</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-xl">
+        The {{ serviceName }} service is not available at {{ user.activeCaseLoad.description }} yet
+      </h1>
 
-            <p class="govuk-body">
-                The {{ serviceName }} service will be available at {{ user.activeCaseLoad.description }} soon. We'll let you know when it's coming.
-            </p>
-        </div>
+      <p class="govuk-body">
+        The {{ serviceName }} service will be available at {{ user.activeCaseLoad.description }} soon. We'll let you
+        know when it's coming.
+      </p>
     </div>
+  </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="govuk-button-group">
-                <a id="return-to-home" href="{{ hmppsAuthUrl }}" class="govuk-button">HMPPS services home page</a>
-                <a href='{{ dpsUrl }}/change-caseload' class='govuk-link govuk-!-font-size-19'>Change your location</a>
-            </div>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <div class="govuk-button-group">
+        <a id="return-to-home" href="{{ hmppsAuthUrl }}" class="govuk-button">HMPPS services home page</a>
+        <a href="{{ dpsUrl }}/change-caseload" class="govuk-link govuk-!-font-size-19">Change your location</a>
+      </div>
     </div>
+  </div>
 {% endblock %}

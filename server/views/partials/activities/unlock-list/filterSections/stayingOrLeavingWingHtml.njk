@@ -1,28 +1,30 @@
-{{ govukRadios({
-idPrefix: 'stayingOrLeavingFilter',
-name: 'stayingOrLeavingFilter',
-classes: "govuk-radios--small",
-fieldset: {
-    legend: {
-        text: 'Staying or leaving wing',
-        classes: 'govuk-visually-hidden'
-    }
-},
-items:[
-    {
-        value: 'Staying',
-        text: 'Staying',
-        checked: 'Staying' == unlockListJourney.stayingOrLeavingFilter
-    },
-    {
-        value: 'Leaving',
-        text: 'Leaving',
-        checked: 'Leaving' == unlockListJourney.stayingOrLeavingFilter
-    },
-    {
-        value: 'Both',
-        text: 'Both',
-        checked: 'Both' == unlockListJourney.stayingOrLeavingFilter
-    }
-]
-}) }}
+{{
+  govukRadios({
+  idPrefix: 'stayingOrLeavingFilter',
+  name: 'stayingOrLeavingFilter',
+  classes: "govuk-radios--small",
+  fieldset: {
+      legend: {
+          text: 'Staying or leaving wing',
+          classes: 'govuk-visually-hidden'
+      }
+  },
+  items:[
+      {
+          value: 'Staying',
+          text: 'Staying',
+          checked: 'Staying' == unlockListJourney.stayingOrLeavingFilter
+      },
+      {
+          value: 'Leaving',
+          text: 'Leaving',
+          checked: 'Leaving' == unlockListJourney.stayingOrLeavingFilter
+      },
+      {
+          value: 'Both',
+          text: 'Both',
+          checked: 'Both' == unlockListJourney.stayingOrLeavingFilter
+      }
+  ]
+  })
+}}

@@ -1,23 +1,25 @@
-{{ govukRadios({
-    idPrefix: 'cancelledEventsFilter',
-    name: 'cancelledEventsFilter',
-    classes: "govuk-radios--small",
-    fieldset: {
-        legend: {
-            text: 'Show cancelled events',
-            classes: 'govuk-visually-hidden'
-        }
-    },
-    items:[
-        {
-            value: YesNo.YES,
-            text: 'Yes',
-            checked: unlockListJourney.cancelledEventsFilter == YesNo.YES
-        },
-        {
-            value: YesNo.NO,
-            text: 'No',
-            checked: unlockListJourney.cancelledEventsFilter == YesNo.NO
-        }
-    ]
-}) }}
+{{
+  govukRadios({
+      idPrefix: 'cancelledEventsFilter',
+      name: 'cancelledEventsFilter',
+      classes: "govuk-radios--small",
+      fieldset: {
+          legend: {
+              text: 'Show cancelled events',
+              classes: 'govuk-visually-hidden'
+          }
+      },
+      items:[
+          {
+              value: YesNo.YES,
+              text: 'Yes',
+              checked: unlockListJourney.cancelledEventsFilter == YesNo.YES
+          },
+          {
+              value: YesNo.NO,
+              text: 'No',
+              checked: unlockListJourney.cancelledEventsFilter == YesNo.NO
+          }
+      ]
+  })
+}}

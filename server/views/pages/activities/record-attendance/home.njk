@@ -7,40 +7,46 @@
 {% set hardBackLinkText = "Back to all activities, unlock and attendance tasks" %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Record activity attendance</h1>
+  <h1 class="govuk-heading-l">Record activity attendance</h1>
 {% endblock %}
 
 {% block content %}
-    <div class="card-group govuk-grid-row">
-        <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "id": "RecordAttendanceSpecific",
-                    "href": "/activities/attendance/attend-all/how-to-record-attendance",
-                    "clickable": "true",
-                    "heading": "Record attendance and cancel activity sessions",
-                    "description": "Mark and update attendance. Cancel individual activity sessions.",
-                    "data-qa": "record-attendance"
-                }) }}
-        </div>
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "ViewDailyAttendanceSummary",
-                "href": "/activities/attendance-summary/select-period",
-                "clickable": "true",
-                "heading": "View daily attendance summary",
-                "description": "See daily attendance figures, including details of who is not attended yet, absent or suspended. Check details of cancelled sessions.",
-                "data-qa": "view-daily-attendance-summary"
-            }) }}
-        </div>
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "ViewNotAttended",
-                "href": "/activities/attendance-summary/not-attended-select-date",
-                "clickable": "true",
-                "heading": "View people who are not attended yet",
-                "description": "See details of who has not had their attendance recorded yet.",
-                "data-qa": "view-not-attended"
-            }) }}
-        </div>
+  <div class="card-group govuk-grid-row">
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "id": "RecordAttendanceSpecific",
+            "href": "/activities/attendance/attend-all/how-to-record-attendance",
+            "clickable": "true",
+            "heading": "Record attendance and cancel activity sessions",
+            "description": "Mark and update attendance. Cancel individual activity sessions.",
+            "data-qa": "record-attendance"
+        })
+      }}
     </div>
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "id": "ViewDailyAttendanceSummary",
+            "href": "/activities/attendance-summary/select-period",
+            "clickable": "true",
+            "heading": "View daily attendance summary",
+            "description": "See daily attendance figures, including details of who is not attended yet, absent or suspended. Check details of cancelled sessions.",
+            "data-qa": "view-daily-attendance-summary"
+        })
+      }}
+    </div>
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "id": "ViewNotAttended",
+            "href": "/activities/attendance-summary/not-attended-select-date",
+            "clickable": "true",
+            "heading": "View people who are not attended yet",
+            "description": "See details of who has not had their attendance recorded yet.",
+            "data-qa": "view-not-attended"
+        })
+      }}
+    </div>
+  </div>
 {% endblock %}

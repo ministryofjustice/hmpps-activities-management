@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
@@ -9,49 +8,52 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(createJourney) }}
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
-                <input type='hidden' name='bandId' value='{{ band.id }}' />
-                <input type='hidden' name='startDate' value='{{ paymentStartDate }}' />
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ activityJourneyCaption(createJourney) }}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="incentiveLevel" value="{{ iep }}" />
+        <input type="hidden" name="bandId" value="{{ band.id }}" />
+        <input type="hidden" name="startDate" value="{{ paymentStartDate }}" />
 
-                {% set otherDateHintHtml %}
-                  <div>The pay rate is set to change to {{ rate | toMoney }} from  {{ paymentStartDate | formatDate }}.</div>
-                {% endset %}
+        {% set otherDateHintHtml %}
+          <div>The pay rate is set to change to {{ rate | toMoney }} from {{ paymentStartDate | formatDate }}.</div>
+        {% endset %}
 
-                {{ govukRadios({
-                    name: "cancelOption",
-                    fieldset: {
-                        legend: {
-                            text: "Are you sure you want to cancel the change to " + iep + ": " + band.alias + " ?",
-                            classes: "govuk-fieldset__legend--l",
-                            isPageHeading: true
-                        }
-                    },
-                    items: [
-                        {
-                            value: YesNo.YES,
-                            text: "Yes",
-                            checked: formResponses.cancel == YesNo.YES
-                        },
-                        {
-                            value: YesNo.NO,
-                            text: "No",
-                            checked: formResponses.cancel == YesNo.NO
-                        }
-                    ],
-                    hint: { html: otherDateHintHtml },
-                    errorMessage: validationErrors | findError('cancelOption')
-                }) }}
+        {{
+          govukRadios({
+              name: "cancelOption",
+              fieldset: {
+                  legend: {
+                      text: "Are you sure you want to cancel the change to " + iep + ": " + band.alias + " ?",
+                      classes: "govuk-fieldset__legend--l",
+                      isPageHeading: true
+                  }
+              },
+              items: [
+                  {
+                      value: YesNo.YES,
+                      text: "Yes",
+                      checked: formResponses.cancel == YesNo.YES
+                  },
+                  {
+                      value: YesNo.NO,
+                      text: "No",
+                      checked: formResponses.cancel == YesNo.NO
+                  }
+              ],
+              hint: { html: otherDateHintHtml },
+              errorMessage: validationErrors | findError('cancelOption')
+          })
+        }}
 
-
-                {{ govukButton({
-                    text: "Confirm"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Confirm"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

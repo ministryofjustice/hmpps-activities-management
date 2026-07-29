@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% set pageTitle = "Movement list locations - Activities - DPS" %}
@@ -8,14 +7,18 @@
 {% set hardBackLinkHref = "choose-details?dateOption=" + movementListJourney.dateOption + "&date=" + movementListJourney.date + "&timeSlot=" + movementListJourney.timeSlot %}
 
 {% macro locationActions(location) %}
-    <a href="location-events?locationIds={{ location.dpsLocationId }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
-        View movement list<span class="govuk-visually-hidden"> for {{ location.description }}</span>
-    </a>
+  <a
+    href="location-events?locationIds={{ location.dpsLocationId }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}"
+    class="govuk-link--no-visited-state"
+  >
+    View movement list<span class="govuk-visually-hidden"> for {{ location.description }}</span>
+  </a>
 {% endmacro %}
 
 {% set locationsTableRows = [] %}
 {% for location in locations %}
-    {% set locationsTableRows = (locationsTableRows.push([
+  {%
+    set locationsTableRows = (locationsTableRows.push([
         {
             text: location.description,
             attributes: { 'data-qa': 'location-' + loop.index + '-description' }
@@ -24,72 +27,85 @@
             classes: 'govuk-!-text-align-right',
             attributes: { 'data-qa': 'location-' + loop.index + '-view-movement-list' }
         }
-    ]), locationsTableRows) %}
+    ]), locationsTableRows)
+  %}
 {% endfor %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l govuk-!-margin-0">Locations people are going to in this session</h1>
-            <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot }} session</span>
-            <span class="govuk-caption-l govuk-!-margin-bottom-6" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l govuk-!-margin-0">Locations people are going to in this session</h1>
+      <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot }} session</span>
+      <span class="govuk-caption-l govuk-!-margin-bottom-6" data-qa="date-caption"
+        >{{ date | toDate | formatDate }}</span
+      >
     </div>
+  </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">{{ locations | length }}{{' internal' if user.externalActivitiesRolledOut }} location{{ "s" if locations | length != 1 }}</h2>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h2 class="govuk-heading-m">
+        {{ locations | length }}{{ ' internal' if user.externalActivitiesRolledOut }}
+        location{{ "s" if locations | length != 1 }}
+      </h2>
 
-            {{ govukTable({
-                attributes: {
-                    'data-module': 'moj-sortable-table',
-                    'data-qa': 'locations'
+      {{
+        govukTable({
+            attributes: {
+                'data-module': 'moj-sortable-table',
+                'data-qa': 'locations'
+            },
+            head: [
+                {
+                    text: "Location",
+                    attributes: { "aria-sort": "ascending" }
                 },
-                head: [
-                    {
-                        text: "Location",
-                        attributes: { "aria-sort": "ascending" }
-                    },
-                    {
-                        html: '<span class="govuk-visually-hidden">Actions</span>',
-                        classes: 'action-column'
-                    }],
-                rows: locationsTableRows,
-                classes: 'sticky-header'
-            }) }}
-        </div>
+                {
+                    html: '<span class="govuk-visually-hidden">Actions</span>',
+                    classes: 'action-column'
+                }],
+            rows: locationsTableRows,
+            classes: 'sticky-header'
+        })
+      }}
     </div>
+  </div>
 
-    {% if user.externalActivitiesRolledOut %}
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">Outside</h2>
-                <p class="govuk-body">Some temporary absences are not shown on the list for security reasons.</p>
+  {% if user.externalActivitiesRolledOut %}
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-m">Outside</h2>
+        <p class="govuk-body">Some temporary absences are not shown on the list for security reasons.</p>
 
-                {% set outsideLocationLink %}
-                    <a href="location-events?isOutside=true&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
-                        View movement list
-                    </a>
-                {% endset %}
+        {% set outsideLocationLink %}
+          <a
+            href="location-events?isOutside=true&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}"
+            class="govuk-link--no-visited-state"
+          >
+            View movement list
+          </a>
+        {% endset %}
 
-                {{ govukTable({
-                    attributes: {
-                        'data-qa': 'outside-locations'
-                    },
-                    rows: [
-                        [
-                            {
-                                text: "Outside locations",
-                                attributes: { 'data-qa': 'location-outside-description' }
-                            }, {
-                                html: outsideLocationLink,
-                                classes: 'govuk-!-text-align-right',
-                                attributes: { 'data-qa': 'location-outside-view-movement-list' }
-                            }
-                        ]
-                    ]
-                }) }}
-            </div>
-        </div>
-    {% endif %}
+        {{
+          govukTable({
+              attributes: {
+                  'data-qa': 'outside-locations'
+              },
+              rows: [
+                  [
+                      {
+                          text: "Outside locations",
+                          attributes: { 'data-qa': 'location-outside-description' }
+                      }, {
+                          html: outsideLocationLink,
+                          classes: 'govuk-!-text-align-right',
+                          attributes: { 'data-qa': 'location-outside-view-movement-list' }
+                      }
+                  ]
+              ]
+          })
+        }}
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
@@ -9,42 +8,48 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ activityJourneyCaption(createJourney) }}
-                {{ mojDatePicker({
-                    id: 'startDate',
-                    name: 'startDate',
-                    leadingZeros: 'true',
-                    label: {
-                        text: "Change the start date for this activity" if session.req.routeContext.mode == 'edit' else "Enter the start date for this activity",
-                        classes: "govuk-label--l",
-                        isPageHeading: true
-                    },
-                    classes: 'moj-datepicker--fixed-width',
-                    hint: {
-                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
-                    },
-                    errorMessage: validationErrors | findError('startDate'),
-                    value: formResponses.startDate or createJourney.startDate | isoDateToDatePickerDate
-                }) }}
-                {% if session.req.routeContext.mode == 'edit' %}
-                    <div class="govuk-button-group">
-                        {{ govukButton({
-                            text: "Update start date",
-                            preventDoubleClick: true
-                        }) }}
-                        <a class="govuk-link js-backlink" href="/">Cancel</a>
-                    </div>
-                {% else %}
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                {% endif %}
-            </form>
-        </div>
+        {{ activityJourneyCaption(createJourney) }}
+        {{
+          mojDatePicker({
+              id: 'startDate',
+              name: 'startDate',
+              leadingZeros: 'true',
+              label: {
+                  text: "Change the start date for this activity" if session.req.routeContext.mode == 'edit' else "Enter the start date for this activity",
+                  classes: "govuk-label--l",
+                  isPageHeading: true
+              },
+              classes: 'moj-datepicker--fixed-width',
+              hint: {
+                  text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
+              },
+              errorMessage: validationErrors | findError('startDate'),
+              value: formResponses.startDate or createJourney.startDate | isoDateToDatePickerDate
+          })
+        }}
+        {% if session.req.routeContext.mode == 'edit' %}
+          <div class="govuk-button-group">
+            {{
+              govukButton({
+                  text: "Update start date",
+                  preventDoubleClick: true
+              })
+            }}
+            <a class="govuk-link js-backlink" href="/">Cancel</a>
+          </div>
+        {% else %}
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
+        {% endif %}
+      </form>
     </div>
+  </div>
 {% endblock %}

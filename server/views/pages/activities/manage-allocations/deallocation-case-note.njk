@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -9,54 +8,58 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <h1 class='govuk-heading-l'>Add a case note for {{ allocateJourney.inmate.prisonerName }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <h1 class="govuk-heading-l">Add a case note for {{ allocateJourney.inmate.prisonerName }}</h1>
 
-                {{ govukRadios({
-                    name: "type",
-                    fieldset: {
-                        legend: {
-                            text: 'Select the type of case note',
-                            isPageHeading: false
-                        }
-                    },
-                    errorMessage: validationErrors | findError('type'),
-                    items: [
-                        {
-                            value: "GEN",
-                            text: "General",
-                            checked: formResponses.type == 'GEN' or allocateJourney.deallocationCaseNote.type == 'GEN'
-                        },
-                        {
-                            value: "NEG",
-                            text: "Negative",
-                            checked: formResponses.type == 'NEG' or allocateJourney.deallocationCaseNote.type == 'NEG'
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              name: "type",
+              fieldset: {
+                  legend: {
+                      text: 'Select the type of case note',
+                      isPageHeading: false
+                  }
+              },
+              errorMessage: validationErrors | findError('type'),
+              items: [
+                  {
+                      value: "GEN",
+                      text: "General",
+                      checked: formResponses.type == 'GEN' or allocateJourney.deallocationCaseNote.type == 'GEN'
+                  },
+                  {
+                      value: "NEG",
+                      text: "Negative",
+                      checked: formResponses.type == 'NEG' or allocateJourney.deallocationCaseNote.type == 'NEG'
+                  }
+              ]
+          })
+        }}
 
-                {{ govukCharacterCount({
-                    label: {
-                        text: "Enter the case note"
-                    },
-                    id: 'text',
-                    name: "text",
-                    maxlength: 3800,
-                    errorMessage: validationErrors | findError("text"),
-                    value: formResponses.text or allocateJourney.deallocationCaseNote.text
-                }) }}
+        {{
+          govukCharacterCount({
+              label: {
+                  text: "Enter the case note"
+              },
+              id: 'text',
+              name: "text",
+              maxlength: 3800,
+              errorMessage: validationErrors | findError("text"),
+              value: formResponses.text or allocateJourney.deallocationCaseNote.text
+          })
+        }}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({ text: "Continue" }) }}
-                    {% if not session.req.query.preserveHistory %}
-                        <a class="govuk-link" href="cancel">Cancel</a>
-                    {% endif %}
-                </div>
-            </form>
+        <div class="govuk-button-group">
+          {{ govukButton({ text: "Continue" }) }}
+          {% if not session.req.query.preserveHistory %}
+            <a class="govuk-link" href="cancel">Cancel</a>
+          {% endif %}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

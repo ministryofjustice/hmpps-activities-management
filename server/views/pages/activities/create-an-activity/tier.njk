@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
@@ -10,49 +9,57 @@
 
 {% set activityTierOptions = [] %}
 {% for tierKey, tierText in eventTierRadioOptionDescriptions %}
-    {% set activityTierOptions = (activityTierOptions.push({
+  {%
+    set activityTierOptions = (activityTierOptions.push({
         value: tierKey,
         text: tierText,
         checked: formResponses.tier == tierKey or createJourney.tierCode == tierKey
-    }), activityTierOptions) %}
+    }), activityTierOptions)
+  %}
 {% endfor %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ activityJourneyCaption(createJourney) }}
-                {{ govukRadios({
-                    fieldset: {
-                        legend: {
-                            text: "Which tier is this activity in?" if session.req.routeContext.mode == 'edit' else "Select a tier for the new activity",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    hint: {
-                        text: 'Recording whether the activity is tier 1 (core curriculum, for example literacy) or tier 2 (extra curricular, for example library) helps ensure there is a balanced regime.'
-                    },
-                    name: "tier",
-                    errorMessage: validationErrors | findError('tier'),
-                    items: activityTierOptions
-                }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{ activityJourneyCaption(createJourney) }}
+        {{
+          govukRadios({
+              fieldset: {
+                  legend: {
+                      text: "Which tier is this activity in?" if session.req.routeContext.mode == 'edit' else "Select a tier for the new activity",
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--l"
+                  }
+              },
+              hint: {
+                  text: 'Recording whether the activity is tier 1 (core curriculum, for example literacy) or tier 2 (extra curricular, for example library) helps ensure there is a balanced regime.'
+              },
+              name: "tier",
+              errorMessage: validationErrors | findError('tier'),
+              items: activityTierOptions
+          })
+        }}
 
-                {% if session.req.routeContext.mode == 'edit' %}
-                    <div class="govuk-button-group">
-                      {{ govukButton({
-                        text: "Update tier",
-                        preventDoubleClick: true
-                      }) }}
-                        <a class="govuk-link js-backlink" href="/activities/view/{{ createJourney.activityId }}">Cancel</a>
-                    </div>
-                {% else %}
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                {% endif %}
-            </form>
-        </div>
+        {% if session.req.routeContext.mode == 'edit' %}
+          <div class="govuk-button-group">
+            {{
+              govukButton({
+                text: "Update tier",
+                preventDoubleClick: true
+              })
+            }}
+            <a class="govuk-link js-backlink" href="/activities/view/{{ createJourney.activityId }}">Cancel</a>
+          </div>
+        {% else %}
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
+        {% endif %}
+      </form>
     </div>
+  </div>
 {% endblock %}

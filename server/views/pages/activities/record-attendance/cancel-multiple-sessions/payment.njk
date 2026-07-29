@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 
@@ -9,56 +8,66 @@
 
 {% set outsideContent = 'by the prison ' if hasExternalEmployerPaid else '' %}
 
+
 {% set hintHTML %}
-    {% if not allPaid %}
-        <div class="govuk-inset-text"><p class="govuk-body">People are currently paid {{ outsideContent }} for attending {{ paidActivities | length }} of {{ allActivities | length }} activities you're cancelling:</p>
-        <ul class="govuk-list govuk-list--bullet">
-                {% for activity in paidActivities | sortBy('summary') %}
-                    <li>{{ activity.summary }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
+  {% if not allPaid %}
+    <div class="govuk-inset-text">
+      <p class="govuk-body">
+        People are currently paid {{ outsideContent }} for attending {{ paidActivities | length }} of
+        {{ allActivities | length }} activities you're cancelling:
+      </p>
+      <ul class="govuk-list govuk-list--bullet">
+        {% for activity in paidActivities | sortBy('summary') %}
+          <li>{{ activity.summary }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 {% endset %}
 
-
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l">Cancel activity sessions</span>
-            {% if allPaid %}
-                <h1 class="govuk-heading-l">Should people be paid for these cancelled sessions?</h1>
-            {% else %}
-                <h1 class="govuk-heading-l">Should people be paid {{ outsideContent }} for {{ paidActivities | length }} of these cancelled sessions?</h1>
-            {% endif %}
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukRadios({
-                    name: "issuePayOption",
-                    errorMessage: validationErrors | findError('issuePayOption'),
-                    hint: { html: hintHTML },
-                    items: [
-                        {
-                            value: "yes",
-                            text: "Yes",
-                            checked: "yes" == formResponses.issuePayOption
-                        },
-                        {
-                            value: "no",
-                            text: "No",
-                            checked: "no" == formResponses.issuePayOption,
-                            hint: {
-                                text: "Anyone already marked as ‘Attended’ will now not be paid. Their attendance will change to ‘Cancelled’."
-                            }
-                        }
-                    ]
-                }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-l">Cancel activity sessions</span>
+      {% if allPaid %}
+        <h1 class="govuk-heading-l">Should people be paid for these cancelled sessions?</h1>
+      {% else %}
+        <h1 class="govuk-heading-l">
+          Should people be paid {{ outsideContent }} for {{ paidActivities | length }} of these cancelled sessions?
+        </h1>
+      {% endif %}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          govukRadios({
+              name: "issuePayOption",
+              errorMessage: validationErrors | findError('issuePayOption'),
+              hint: { html: hintHTML },
+              items: [
+                  {
+                      value: "yes",
+                      text: "Yes",
+                      checked: "yes" == formResponses.issuePayOption
+                  },
+                  {
+                      value: "no",
+                      text: "No",
+                      checked: "no" == formResponses.issuePayOption,
+                      hint: {
+                          text: "Anyone already marked as ‘Attended’ will now not be paid. Their attendance will change to ‘Cancelled’."
+                      }
+                  }
+              ]
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Continue",
-                    preventDoubleClick: true
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Continue",
+              preventDoubleClick: true
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -11,91 +10,97 @@
 {% set hardBackLinkText = "Back" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-l">Record activity attendance</span>
-            <h1 class="govuk-heading-l">Choose details to record attendance</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <span class="govuk-caption-l">Record activity attendance</span>
+      <h1 class="govuk-heading-l">Choose details to record attendance</h1>
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukRadios({
-                    name: "datePresetOption",
-                    fieldset: {
-                        legend: {
-                            text: "Attendance date",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('datePresetOption'),
-                    items: [
-                        {
-                            value: "today",
-                            text: "Today - " + now | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
-                        },
-                        {
-                            value: "yesterday",
-                            text: "Yesterday - " + now | addDays(-1) | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.datePresetOption == 'yesterday' or datePresetOption == 'yesterday'
-                        },
-                        {
-                            value: "other",
-                            text: "A different date",
-                            checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
-                            conditional: {
-                                html: mojDatePicker({
-                                    id: 'date',
-                                    name: 'date',
-                                    leadingZeros: 'true',
-                                    classes: 'moj-datepicker--fixed-width',
-                                    label: {
-                                        text: 'Other date',
-                                        classes: 'govuk-visually-hidden'
-                                    },
-                                    hint: {
-                                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
-                                    },
-                                    errorMessage: validationErrors | findError('date'),
-                                    value: formResponses.date or date
-                                })
-                            }
-                        }
-                    ]
-                }) }}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          govukRadios({
+              name: "datePresetOption",
+              fieldset: {
+                  legend: {
+                      text: "Attendance date",
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--m"
+                  }
+              },
+              errorMessage: validationErrors | findError('datePresetOption'),
+              items: [
+                  {
+                      value: "today",
+                      text: "Today - " + now | formatDate('d MMMM yyyy', false),
+                      checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
+                  },
+                  {
+                      value: "yesterday",
+                      text: "Yesterday - " + now | addDays(-1) | formatDate('d MMMM yyyy', false),
+                      checked: formResponses.datePresetOption == 'yesterday' or datePresetOption == 'yesterday'
+                  },
+                  {
+                      value: "other",
+                      text: "A different date",
+                      checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
+                      conditional: {
+                          html: mojDatePicker({
+                              id: 'date',
+                              name: 'date',
+                              leadingZeros: 'true',
+                              classes: 'moj-datepicker--fixed-width',
+                              label: {
+                                  text: 'Other date',
+                                  classes: 'govuk-visually-hidden'
+                              },
+                              hint: {
+                                  text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
+                              },
+                              errorMessage: validationErrors | findError('date'),
+                              value: formResponses.date or date
+                          })
+                      }
+                  }
+              ]
+          })
+        }}
 
-                {{ govukCheckboxes({
-                    name: "sessions",
-                    fieldset: {
-                        legend: {
-                            text: "Time period",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('sessions'),
-                    items: [
-                        {
-                            value: TimeSlot.AM,
-                            text: "AM (morning)",
-                            checked: sessions and TimeSlot.AM in (sessions)
-                        },
-                        {
-                            value: TimeSlot.PM,
-                            text: "PM (afternoon)",
-                            checked: sessions and TimeSlot.PM in (sessions)
-                        },
-                        {
-                            value: TimeSlot.ED,
-                            text: "ED (evening)",
-                            checked: sessions and TimeSlot.ED in (sessions)
-                        }
-                    ]
-                }) }}
+        {{
+          govukCheckboxes({
+              name: "sessions",
+              fieldset: {
+                  legend: {
+                      text: "Time period",
+                      classes: "govuk-fieldset__legend--m"
+                  }
+              },
+              errorMessage: validationErrors | findError('sessions'),
+              items: [
+                  {
+                      value: TimeSlot.AM,
+                      text: "AM (morning)",
+                      checked: sessions and TimeSlot.AM in (sessions)
+                  },
+                  {
+                      value: TimeSlot.PM,
+                      text: "PM (afternoon)",
+                      checked: sessions and TimeSlot.PM in (sessions)
+                  },
+                  {
+                      value: TimeSlot.ED,
+                      text: "ED (evening)",
+                      checked: sessions and TimeSlot.ED in (sessions)
+                  }
+              ]
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Continue"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

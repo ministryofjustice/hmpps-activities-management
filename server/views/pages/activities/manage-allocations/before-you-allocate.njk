@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -17,237 +16,292 @@
 {% set prisonerName = allocateJourney.inmate.prisonerName %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-l">{{ allocateJourney.activity.name }}</span>
-            <h1 class="govuk-heading-l">Before you allocate {{ prisonerName }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <span class="govuk-caption-l">{{ allocateJourney.activity.name }}</span>
+      <h1 class="govuk-heading-l">Before you allocate {{ prisonerName }}</h1>
 
-            <p class="govuk-body-l">Use the information on this page to decide if <a href="{{ dpsUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}" class="govuk-link" target="_blank">{{ prisonerName }}<span class="govuk-visually-hidden"> (opens in new tab)</span></a> is suitable for {{ allocateJourney.activity.name }}.</p>
-            <p class="govuk-body-l">You may need to consult with other departments before making your decision.</p>
+      <p class="govuk-body-l">
+        Use the information on this page to decide if
+        <a href="{{ dpsUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}" class="govuk-link" target="_blank"
+          >{{ prisonerName }}<span class="govuk-visually-hidden"> (opens in new tab)</span></a
+        >
+        is suitable for {{ allocateJourney.activity.name }}.
+      </p>
+      <p class="govuk-body-l">You may need to consult with other departments before making your decision.</p>
 
-            {% if allocationSuitability.previousDeallocations | length %}
-                <h2 class="govuk-heading-m">{{ prisonerName }} was previously removed from this activity</h2>
-                <p class="govuk-body">Consider if they should be allocated to this activity again.</p>
+      {% if allocationSuitability.previousDeallocations | length %}
+        <h2 class="govuk-heading-m">{{ prisonerName }} was previously removed from this activity</h2>
+        <p class="govuk-body">Consider if they should be allocated to this activity again.</p>
 
-                {% set rows = [] %}
-                {% for deallocation in allocationSuitability.previousDeallocations | sortBy('allocation.deallocatedTime') | reverse %}
-                    {% set rows = (rows.push([
-                        {
-                            text: deallocation.allocation.deallocatedTime | parseISODate | formatDate('d MMMM yyyy'),
-                            classes: 'govuk-table__cell--no-border' if deallocation.caseNoteText
-                        },
-                        {
-                            text: deallocation.allocation.deallocatedReason.description,
-                            classes: 'govuk-table__cell--no-border' if deallocation.caseNoteText
-                        }
-                    ]), rows) %}
+        {% set rows = [] %}
+        {% for deallocation in allocationSuitability.previousDeallocations | sortBy('allocation.deallocatedTime') | reverse %}
+          {%
+            set rows = (rows.push([
+                {
+                    text: deallocation.allocation.deallocatedTime | parseISODate | formatDate('d MMMM yyyy'),
+                    classes: 'govuk-table__cell--no-border' if deallocation.caseNoteText
+                },
+                {
+                    text: deallocation.allocation.deallocatedReason.description,
+                    classes: 'govuk-table__cell--no-border' if deallocation.caseNoteText
+                }
+            ]), rows)
+          %}
 
-                    {% if deallocation.caseNoteText %}
-                        {% set rows = (rows.push([
-                            {
-                                attributes: {
-                                    colspan: '2'
-                                },
-                                html: govukDetails({
-                                        summaryText: "View case note",
-                                        classes: "govuk-!-margin-0",
-                                        text: deallocation.caseNoteText
-                                      })
-                            }
-                        ]), rows) %}
-                    {% endif %}
-                {% endfor %}
+          {% if deallocation.caseNoteText %}
+            {%
+              set rows = (rows.push([
+                  {
+                      attributes: {
+                          colspan: '2'
+                      },
+                      html: govukDetails({
+                              summaryText: "View case note",
+                              classes: "govuk-!-margin-0",
+                              text: deallocation.caseNoteText
+                            })
+                  }
+              ]), rows)
+            %}
+          {% endif %}
+        {% endfor %}
 
-                {{ govukTable({
-                    caption: "Previous deallocations",
-                    captionClasses: "govuk-visually-hidden",
-                    classes: 'fixed-layout-table',
-                    head: [
-                        {
-                            text: "Date",
-                            classes: 'govuk-table__header'
-                        },
-                        {
-                            text: "Reason for removal",
-                            classes: 'govuk-table__header'
-                        }
-                    ],
-                    rows: rows
-                }) }}
-            {% endif %}
+        {{
+          govukTable({
+              caption: "Previous deallocations",
+              captionClasses: "govuk-visually-hidden",
+              classes: 'fixed-layout-table',
+              head: [
+                  {
+                      text: "Date",
+                      classes: 'govuk-table__header'
+                  },
+                  {
+                      text: "Reason for removal",
+                      classes: 'govuk-table__header'
+                  }
+              ],
+              rows: rows
+          })
+        }}
+      {% endif %}
 
-            <h2 class="govuk-heading-m">Activity requirements</h2>
-            <p class="govuk-body">Review the requirements for {{ allocateJourney.activity.name }} and check if {{ prisonerName }} meets them.</p>
-            {{ govukTable({
-                caption: "Activity requirements",
+      <h2 class="govuk-heading-m">Activity requirements</h2>
+      <p class="govuk-body">
+        Review the requirements for {{ allocateJourney.activity.name }} and check if {{ prisonerName }} meets them.
+      </p>
+      {{
+        govukTable({
+            caption: "Activity requirements",
+            captionClasses: "govuk-visually-hidden",
+            firstCellIsHeader: true,
+            head: [
+                {
+                    text: 'Type of requirement',
+                    classes: 'govuk-table__header'
+                },
+                {
+                    text: prisonerName + "'s details",
+                    classes: 'govuk-table__header'
+                },
+                {
+                    text: "Meets requirement",
+                    classes: 'govuk-table__header'
+                }
+            ],
+            rows: [
+                [
+                    {
+                        text: 'Workplace risk assessment level'
+                    },
+                    {
+                        text: allocationSuitability.workplaceRiskAssessment.riskLevel | toTitleCase or "None assigned"
+                    },
+                    {
+                        html: suitabilityTag(allocationSuitability.workplaceRiskAssessment.suitable)
+                    }
+                ],
+                [
+                    {
+                        text: 'Incentive level'
+                    },
+                    {
+                        text: allocationSuitability.incentiveLevel.incentiveLevel or "None"
+                    },
+                    {
+                        html: suitabilityTag(allocationSuitability.incentiveLevel.suitable)
+                    }
+                ],
+                [
+                    {
+                        text: 'Education levels'
+                    },
+                    {
+                        html: prisonerEducation(allocationSuitability.education.education)
+                    },
+                    {
+                        html: suitabilityTag(allocationSuitability.education.suitable)
+                    }
+                ],
+                [
+                    {
+                        text: 'Earliest release date'
+                    },
+                    {
+                        html: earliestReleaseDate(allocationSuitability.releaseDate.earliestReleaseDate)
+                    },
+                    {
+                        html: govukTag({
+                            text: 'Not applicable',
+                            classes: 'govuk-tag--grey'
+                        }) if allocationSuitability.releaseDate.suitable else suitabilityTag(
+                            allocationSuitability.releaseDate.suitable
+                        )
+                    }
+                ]
+            ]
+        })
+      }}
+
+      <h2 class="govuk-heading-m">Non-associations</h2>
+      {% if nonAssociations | length %}
+        {% set nonAssociationsNumber %}
+          {% if nonAssociations.length === 1 %}one{% else %}{{ nonAssociations | length }}{% endif %}
+        {% endset %}
+        <p class="govuk-body" data-qa="non-association-count-para">
+          Review {{ prisonerName | possessive }} {{ nonAssociationsNumber }} open
+          non-association{% if nonAssociations.length > 1 %}s{% endif %} in {{ user.activeCaseLoad.description }} to
+          check that they can be safely allocated.
+        </p>
+        <p class="govuk-body">
+          <a
+            data-qa="non-association-link"
+            href="/activities/non-associations/{{ allocateJourney.activity.activityId }}/{{ allocateJourney.inmate.prisonerNumber }}"
+            target="_blank"
+            >View {{ prisonerName | possessive }} non-associations</a
+          >
+        </p>
+      {% else %}
+        <p class="govuk-body" data-qa="no-non-associations-para">
+          {{ prisonerName }} has no open non-associations with anyone in {{ user.activeCaseLoad.description }}.
+        </p>
+      {% endif %}
+
+      {% if allocationSuitability.allocations | length %}
+        <h2 class="govuk-heading-m">Current allocations</h2>
+        <p class="govuk-body">
+          Check if {{ prisonerName }}'s current allocation would be compatible with {{ allocateJourney.activity.name }}.
+        </p>
+
+        <div class="govuk-!-margin-bottom-8 govuk-body">
+          {% set currentAllocations = [] %}
+          {% for prisonerAllocation in allocationSuitability.allocations %}
+            {%
+              set currentAllocations = (currentAllocations.push([
+                  {
+                      html: prisonerAllocation.allocation.activitySummary +
+                      suspensionBadge(prisonerAllocation.allocation.status, prisonerAllocation.allocation.plannedSuspension, now)
+                  },
+                  {
+                      text: prisonerAllocation.allocation.startDate | formatDate('d MMMM yyyy')
+                  },
+                  {
+                      text: prisonerAllocation.allocation.endDate | formatDate('d MMMM yyyy') if prisonerAllocation.allocation.endDate else "None set"
+                  },
+                  {
+                      text: prisonerAllocation.payRate.rate | toMoney + " (" + prisonerAllocation.allocation.prisonPayBand.alias + ")" if prisonerAllocation.payRate else "No pay"
+                  }
+              ]), currentAllocations)
+            %}
+          {% endfor %}
+
+          {{
+            govukTable({
+                caption: "Current Allocations",
                 captionClasses: "govuk-visually-hidden",
                 firstCellIsHeader: true,
                 head: [
                     {
-                        text: 'Type of requirement',
+                        text: 'Activity',
                         classes: 'govuk-table__header'
                     },
                     {
-                        text: prisonerName + "'s details",
+                        text: 'Start date',
                         classes: 'govuk-table__header'
                     },
                     {
-                        text: "Meets requirement",
+                        text: 'End date',
+                        classes: 'govuk-table__header'
+                    },
+                    {
+                        text: 'Pay rate',
                         classes: 'govuk-table__header'
                     }
                 ],
-                rows: [
-                    [
-                        {
-                            text: 'Workplace risk assessment level'
-                        },
-                        {
-                            text: allocationSuitability.workplaceRiskAssessment.riskLevel | toTitleCase or "None assigned"
-                        },
-                        {
-                            html: suitabilityTag(allocationSuitability.workplaceRiskAssessment.suitable)
-                        }
-                    ],
-                    [
-                        {
-                            text: 'Incentive level'
-                        },
-                        {
-                            text: allocationSuitability.incentiveLevel.incentiveLevel or "None"
-                        },
-                        {
-                            html: suitabilityTag(allocationSuitability.incentiveLevel.suitable)
-                        }
-                    ],
-                    [
-                        {
-                            text: 'Education levels'
-                        },
-                        {
-                            html: prisonerEducation(allocationSuitability.education.education)
-                        },
-                        {
-                            html: suitabilityTag(allocationSuitability.education.suitable)
-                        }
-                    ],
-                    [
-                        {
-                            text: 'Earliest release date'
-                        },
-                        {
-                            html: earliestReleaseDate(allocationSuitability.releaseDate.earliestReleaseDate)
-                        },
-                        {
-                            html: govukTag({
-                                text: 'Not applicable',
-                                classes: 'govuk-tag--grey'
-                            }) if allocationSuitability.releaseDate.suitable else suitabilityTag(
-                                allocationSuitability.releaseDate.suitable
-                            )
-                        }
-                    ]
-                ]
-            }) }}
+                rows: currentAllocations
+            })
+          }}
 
-            <h2 class="govuk-heading-m">Non-associations</h2>
-            {% if nonAssociations | length %}
-                {% set nonAssociationsNumber %}
-                    {% if nonAssociations.length === 1 %}one{% else %}{{ nonAssociations | length }}{% endif %}
-                {% endset %}
-                <p class="govuk-body" data-qa="non-association-count-para">Review {{ prisonerName | possessive }} {{ nonAssociationsNumber }} open non-association{% if nonAssociations.length > 1 %}s{% endif %} in {{ user.activeCaseLoad.description }} to check that they can be safely allocated.</p>
-                <p class="govuk-body"><a data-qa="non-association-link" href="/activities/non-associations/{{ allocateJourney.activity.activityId }}/{{allocateJourney.inmate.prisonerNumber}}" target="_blank">View {{ prisonerName | possessive }} non-associations</a></p>
-            {% else %}
-                <p class="govuk-body" data-qa="no-non-associations-para">{{ prisonerName }} has no open non-associations with anyone in {{ user.activeCaseLoad.description }}.</p>
-            {% endif %}
-
-            {% if allocationSuitability.allocations | length %}
-                <h2 class="govuk-heading-m">Current allocations</h2>
-                <p class="govuk-body">Check if {{ prisonerName }}'s current allocation would be compatible with {{ allocateJourney.activity.name }}.</p>
-
-                <div class="govuk-!-margin-bottom-8 govuk-body">
-                    {% set currentAllocations = [] %}
-                    {% for prisonerAllocation in allocationSuitability.allocations %}
-                        {% set currentAllocations = (currentAllocations.push([
-                            {
-                                html: prisonerAllocation.allocation.activitySummary +
-                                suspensionBadge(prisonerAllocation.allocation.status, prisonerAllocation.allocation.plannedSuspension, now)
-                            },
-                            {
-                                text: prisonerAllocation.allocation.startDate | formatDate('d MMMM yyyy')
-                            },
-                            {
-                                text: prisonerAllocation.allocation.endDate | formatDate('d MMMM yyyy') if prisonerAllocation.allocation.endDate else "None set"
-                            },
-                            {
-                                text: prisonerAllocation.payRate.rate | toMoney + " (" + prisonerAllocation.allocation.prisonPayBand.alias + ")" if prisonerAllocation.payRate else "No pay"
-                            }
-                        ]), currentAllocations) %}
-                    {% endfor %}
-
-                    {{ govukTable({
-                        caption: "Current Allocations",
-                        captionClasses: "govuk-visually-hidden",
-                        firstCellIsHeader: true,
-                        head: [
-                            {
-                                text: 'Activity',
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                text: 'Start date',
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                text: 'End date',
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                text: 'Pay rate',
-                                classes: 'govuk-table__header'
-                            }
-                        ],
-                        rows: currentAllocations
-                    }) }}
-
-                    <span class="govuk-body"><a href="{{ dpsUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}/work-activities" class="govuk-link" target="_blank">View allocations for the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a></span>
-                </div>
-            {% else %}
-                {{ govukInsetText({
-                    text: prisonerName + " is not currently allocated to any activities."
-                }) }}
-
-                <span class="govuk-body"><a href="{{ dpsUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}/work-activities" class="govuk-link" target="_blank">View allocations for the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a></span>
-            {% endif %}
-
-            <div class="govuk-!-margin-top-8">
-                <form method="POST">
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                    {{ govukRadios({
-                        name: "confirm",
-                        fieldset: {
-                            legend: {
-                                text: "Do you want to allocate " + prisonerName + " to " + allocateJourney.activity.name + "?",
-                                classes: "govuk-fieldset__legend--m"
-                            }
-                        },
-                        errorMessage: validationErrors | findError('confirm'),
-                        items: [
-                            {
-                                value: "yes",
-                                text: "Yes"
-                            },
-                            {
-                                value: "no",
-                                text: "No, I want to review the list of other people"
-                            }
-                        ]
-                    }) }}
-
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                </form>
-            </div>
+          <span class="govuk-body"
+            ><a
+              href="{{ dpsUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}/work-activities"
+              class="govuk-link"
+              target="_blank"
+              >View allocations for the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a
+            ></span
+          >
         </div>
+      {% else %}
+        {{
+          govukInsetText({
+              text: prisonerName + " is not currently allocated to any activities."
+          })
+        }}
+
+        <span class="govuk-body"
+          ><a
+            href="{{ dpsUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}/work-activities"
+            class="govuk-link"
+            target="_blank"
+            >View allocations for the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a
+          ></span
+        >
+      {% endif %}
+
+      <div class="govuk-!-margin-top-8">
+        <form method="POST">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          {{
+            govukRadios({
+                name: "confirm",
+                fieldset: {
+                    legend: {
+                        text: "Do you want to allocate " + prisonerName + " to " + allocateJourney.activity.name + "?",
+                        classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                errorMessage: validationErrors | findError('confirm'),
+                items: [
+                    {
+                        value: "yes",
+                        text: "Yes"
+                    },
+                    {
+                        value: "no",
+                        text: "No, I want to review the list of other people"
+                    }
+                ]
+            })
+          }}
+
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
+        </form>
+      </div>
     </div>
+  </div>
 {% endblock %}

@@ -1,63 +1,100 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
 
 {% set pageTitle = "Allocation confirmation - Activities - DPS" %}
 {% set pageId = 'confirmation-page' %}
 
 {% if otherAllocations | length > 1 %}
-    {% set otherAllocationIds = otherAllocations | flatMap('id') %}
-    {% set deallocationText = 'any other activities they’re allocated to' %}
-    {% set deallocationHref = "/activities/allocations/remove/deallocation-select-activities?selectActivity=true&otherAllocationIds=" + otherAllocationIds %}
+  {% set otherAllocationIds = otherAllocations | flatMap('id') %}
+  {% set deallocationText = 'any other activities they’re allocated to' %}
+  {% set deallocationHref = "/activities/allocations/remove/deallocation-select-activities?selectActivity=true&otherAllocationIds=" + otherAllocationIds %}
 {% elif otherAllocations | length == 1 %}
-    {% set deallocationText = otherAllocations[0].activitySummary %}
-    {% set deallocationHref = "/activities/allocations/remove/deallocate-after-allocation-date?allocationIds=" + otherAllocations[0].id + "&scheduleId=" + otherAllocations[0].scheduleId %}
+  {% set deallocationText = otherAllocations[0].activitySummary %}
+  {% set deallocationHref = "/activities/allocations/remove/deallocate-after-allocation-date?allocationIds=" + otherAllocations[0].id + "&scheduleId=" + otherAllocations[0].scheduleId %}
 {% endif %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {% if session.req.routeContext.mode == 'create' %}
-                {{ govukPanel({
-                    titleText: "Allocation complete",
-                    text: prisonerName + ' (' + prisonerNumber + ') is now allocated to ' + activityName
-                }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if session.req.routeContext.mode == 'create' %}
+        {{
+          govukPanel({
+              titleText: "Allocation complete",
+              text: prisonerName + ' (' + prisonerNumber + ') is now allocated to ' + activityName
+          })
+        }}
 
-                {% set activitiesPresentToDeallocate = otherAllocations | length > 0 %}
+        {% set activitiesPresentToDeallocate = otherAllocations | length > 0 %}
 
-                <h2 class="govuk-heading-m">What you can do next</h2>
-                <p class='govuk-body'>You can{% if not activitiesPresentToDeallocate %} either{% endif %}:</p>
-                <ul class='govuk-list govuk-list--bullet'>
-                    {% if activitiesPresentToDeallocate %}
-                        <li><a href={{ deallocationHref }} class='govuk-link'>take {{ prisonerName }} off {{ deallocationText }}</li>
-                    {% endif %}
-                    <li><a href="/activities/prisoner-allocations/{{ prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>check and manage {{ prisonerName | possessive }} allocations</a></li>
-                    <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link govuk-link--no-visited-state'>review the allocations for {{ activityName }}</a> and continue allocating</li>
-                    <li><a href="/activities/allocation-dashboard" class='govuk-link govuk-link--no-visited-state'>find other activities with vacancies</a></li>
-                </ul>
-            {% endif %}
+        <h2 class="govuk-heading-m">What you can do next</h2>
+        <p class="govuk-body">You can{% if not activitiesPresentToDeallocate %}either{% endif %}:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          {% if activitiesPresentToDeallocate %}
+            <li>
+              <a href="{{ deallocationHref }}" class="govuk-link">take {{ prisonerName }} off {{ deallocationText }}</a>
+            </li>
+          {% endif %}
+          <li>
+            <a
+              href="/activities/prisoner-allocations/{{ prisonerNumber }}"
+              class="govuk-link govuk-link--no-visited-state"
+              >check and manage {{ prisonerName | possessive }} allocations</a
+            >
+          </li>
+          <li>
+            <a href="/activities/allocation-dashboard/{{ activityId }}" class="govuk-link govuk-link--no-visited-state"
+              >review the allocations for {{ activityName }}</a
+            >
+            and continue allocating
+          </li>
+          <li>
+            <a href="/activities/allocation-dashboard" class="govuk-link govuk-link--no-visited-state"
+              >find other activities with vacancies</a
+            >
+          </li>
+        </ul>
+      {% endif %}
 
-            {% if session.req.routeContext.mode == 'remove' %}
-                {% if allocateJourney.inmates | length > 1 %}
-                    {{ govukPanel({
-                        titleText: "Removal complete",
-                        text: allocateJourney.inmates | length + ' prisoners are now scheduled to be removed from ' + activityName + ' on ' + allocateJourney.endDate | formatDate
-                    }) }}
-                {% else %}
-                    {{ govukPanel({
-                        titleText: "Removal complete",
-                        text: prisonerName + ' (' + prisonerNumber + ') is now scheduled to be removed from ' + activityName + ' on ' + allocateJourney.endDate | formatDate
-                    }) }}
-                {% endif %}
+      {% if session.req.routeContext.mode == 'remove' %}
+        {% if allocateJourney.inmates | length > 1 %}
+          {{
+            govukPanel({
+                titleText: "Removal complete",
+                text: allocateJourney.inmates | length + ' prisoners are now scheduled to be removed from ' + activityName + ' on ' + allocateJourney.endDate | formatDate
+            })
+          }}
+        {% else %}
+          {{
+            govukPanel({
+                titleText: "Removal complete",
+                text: prisonerName + ' (' + prisonerNumber + ') is now scheduled to be removed from ' + activityName + ' on ' + allocateJourney.endDate | formatDate
+            })
+          }}
+        {% endif %}
 
-                <h2 class="govuk-heading-m">What you can do next</h2>
-                <p class='govuk-body'>You can{% if not deallocateMultipleActivitiesMode %} either{% endif %}:</p>
-                <ul class='govuk-list govuk-list--bullet'>
-                    <li><a href="/activities/prisoner-allocations/{{ prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>check and manage {{ prisonerName | possessive}} allocations</a></li>
-                    {% if not deallocateMultipleActivitiesMode %}<li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link govuk-link--no-visited-state'>review the allocations for {{ activityName }}</a> and continue allocating</li>{% endif %}
-                    <li><a href="/activities/allocation-dashboard" class='govuk-link govuk-link--no-visited-state'>find other activities with vacancies</a></li>
-                </ul>
-            {% endif %}
-        </div>
+        <h2 class="govuk-heading-m">What you can do next</h2>
+        <p class="govuk-body">You can{% if not deallocateMultipleActivitiesMode %}either{% endif %}:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>
+            <a
+              href="/activities/prisoner-allocations/{{ prisonerNumber }}"
+              class="govuk-link govuk-link--no-visited-state"
+              >check and manage {{ prisonerName | possessive }} allocations</a
+            >
+          </li>
+          {% if not deallocateMultipleActivitiesMode %}<li>
+            <a href="/activities/allocation-dashboard/{{ activityId }}" class="govuk-link govuk-link--no-visited-state"
+              >review the allocations for {{ activityName }}</a
+            >
+            and continue allocating
+          </li>{% endif %}
+          <li>
+            <a href="/activities/allocation-dashboard" class="govuk-link govuk-link--no-visited-state"
+              >find other activities with vacancies</a
+            >
+          </li>
+        </ul>
+      {% endif %}
     </div>
+  </div>
 {% endblock %}

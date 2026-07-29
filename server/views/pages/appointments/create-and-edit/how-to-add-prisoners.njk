@@ -1,64 +1,71 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("add more attendees - Appointments - DPS", session.appointmentJourney) %}
-    {% set pageHeading = "How do you want to select additional attendees?" %}
+  {% set pageTitle = appointmentJourneyTitle("add more attendees - Appointments - DPS", session.appointmentJourney) %}
+  {% set pageHeading = "How do you want to select additional attendees?" %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Add attendees - Appointments - DPS", session.appointmentJourney) %}
-    {% set pageHeading = "How do you want to select attendees?" %}
+  {% set pageTitle = appointmentJourneyTitle("Add attendees - Appointments - DPS", session.appointmentJourney) %}
+  {% set pageHeading = "How do you want to select attendees?" %}
 {% endif %}
 
 {% set pageId = 'appointments-create-how-to-add-prisoners-page' %}
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session) }}
 
-            <form method="POST" action="how-to-add-prisoners{{ '?preserveHistory=true' if preserveHistory else '' }}">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      <form method="POST" action="how-to-add-prisoners{{ '?preserveHistory=true' if preserveHistory else '' }}">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ govukRadios({
-                    name: "howToAdd",
-                    fieldset: {
-                        legend: {
-                            text: pageHeading,
-                            classes: "govuk-fieldset__legend--l",
-                            isPageHeading: true
-                        }
-                    },
-                    errorMessage: validationErrors | findError('howToAdd'),
-                    items: [
-                        {
-                            value: HowToAddOptions.SEARCH,
-                            text: "Search for them one by one",
-                            checked: formResponses.howToAdd == HowToAddOptions.SEARCH
-                        },
-                        {
-                            value: HowToAddOptions.CSV,
-                            text: "Add a group of people using a CSV file",
-                            checked: formResponses.howToAdd == HowToAddOptions.CSV
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              name: "howToAdd",
+              fieldset: {
+                  legend: {
+                      text: pageHeading,
+                      classes: "govuk-fieldset__legend--l",
+                      isPageHeading: true
+                  }
+              },
+              errorMessage: validationErrors | findError('howToAdd'),
+              items: [
+                  {
+                      value: HowToAddOptions.SEARCH,
+                      text: "Search for them one by one",
+                      checked: formResponses.howToAdd == HowToAddOptions.SEARCH
+                  },
+                  {
+                      value: HowToAddOptions.CSV,
+                      text: "Add a group of people using a CSV file",
+                      checked: formResponses.howToAdd == HowToAddOptions.CSV
+                  }
+              ]
+          })
+        }}
 
-                <div class='govuk-button-group'>
-                    {{ govukButton({ 
-                        text: "Continue",
-                        preventDoubleClick: true 
-                        }) }}
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+            text: "Continue",
+            preventDoubleClick: true
+            })
+          }}
 
-                    {% if appointmentJourney.mode == AppointmentJourneyMode.COPY %}
-                        <a class="govuk-link govuk-link--no-visited-state" href="/appointments/{{ appointmentJourney.originalAppointmentId }}">Cancel and return to appointment</a>
-                    {% endif %}
-                </div>
-            </form>
+          {% if appointmentJourney.mode == AppointmentJourneyMode.COPY %}
+            <a
+              class="govuk-link govuk-link--no-visited-state"
+              href="/appointments/{{ appointmentJourney.originalAppointmentId }}"
+              >Cancel and return to appointment</a
+            >
+          {% endif %}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

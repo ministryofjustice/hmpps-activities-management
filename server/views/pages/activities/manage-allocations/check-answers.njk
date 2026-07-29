@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -11,261 +10,279 @@
 {% set pageId = 'check-answers-page' %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
-            {% if session.req.routeContext.mode == 'create' %}
-                <h1 class="govuk-heading-l">Check and confirm this allocation</h1>
-            {% elseif session.req.routeContext.mode == 'remove' or session.req.routeContext.mode == 'edit' %}
-                <h1 class="govuk-heading-l">Check and confirm who you're taking off the activity</h1>
-            {% endif %}
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
+      {% if session.req.routeContext.mode == 'create' %}
+        <h1 class="govuk-heading-l">Check and confirm this allocation</h1>
+        {% elseif session.req.routeContext.mode == 'remove' or session.req.routeContext.mode == 'edit' %}
+        <h1 class="govuk-heading-l">Check and confirm who you're taking off the activity</h1>
+      {% endif %}
     </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {% set prisonerDetailsHtml %}
-                {% if allocateJourney.inmates | length == 1 %}
-                    <ul class="govuk-list">
-                        <li>{{ allocateJourney.inmate.prisonerName }}</li>
-                        <li>{{ allocateJourney.inmate.prisonerNumber }}</li>
-                        <li>{{ statusBasedCellLocation(allocateJourney.inmate.cellLocation, allocateJourney.inmate.status, allocateJourney.inmate.prisonCode == user.activeCaseLoadId) }}</li>
-                    </ul>
-                {% else %}
-                    <ul class="govuk-list">
-                        {% for inmate in allocateJourney.inmates %}
-                            <li>{{ inmate.prisonerName + ' (' + inmate.prisonerNumber + ')'}}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endset %}
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% set prisonerDetailsHtml %}
+        {% if allocateJourney.inmates | length == 1 %}
+          <ul class="govuk-list">
+            <li>{{ allocateJourney.inmate.prisonerName }}</li>
+            <li>{{ allocateJourney.inmate.prisonerNumber }}</li>
+            <li>
+              {{ statusBasedCellLocation(allocateJourney.inmate.cellLocation, allocateJourney.inmate.status, allocateJourney.inmate.prisonCode == user.activeCaseLoadId) }}
+            </li>
+          </ul>
+        {% else %}
+          <ul class="govuk-list">
+            {% for inmate in allocateJourney.inmates %}
+              <li>{{ inmate.prisonerName + ' (' + inmate.prisonerNumber + ')' }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endset %}
 
-            {% set scheduleHtml %}
-                {% for week, slots in dailySlots %}
-                    {% if dailySlots | length > 1 %}
-                        <div class='govuk-heading-s govuk-!-margin-bottom-1'>
-                            Week {{ week }}
-                            {{ govukTag({
-                                text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
-                            }) if currentWeek == week }}
-                        </div>
-                    {% endif %}
-                    {{ daysAndCustomTimes(slots, false, false) }}
-                {% endfor %}
-            {% endset %}
 
-            {% set endDateOption = ('remove-end-date-option' if allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
+      {% set scheduleHtml %}
+        {% for week, slots in dailySlots %}
+          {% if dailySlots | length > 1 %}
+            <div class="govuk-heading-s govuk-!-margin-bottom-1">
+              Week {{ week }}
+              {{
+                govukTag({
+                    text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
+                }) if currentWeek == week
+              }}
+            </div>
+          {% endif %}
+          {{ daysAndCustomTimes(slots, false, false) }}
+        {% endfor %}
+      {% endset %}
 
-            {% if session.req.routeContext.mode == 'create' %}
-                {% if allocateJourney.scheduledInstance %}
-                    {% set nextSessionSlot = allocateJourney.scheduledInstance.timeSlot %}
-                    {% set nextSessionDate =  allocateJourney.scheduledInstance.date | toDate | formatDate %}
-                    {% if allocateJourney.startDateOption == 'NEXT_SESSION' and (now | formatDate) == nextSessionDate %}
-                        {% set startDateText = "today's " + nextSessionSlot + " session" %}
-                    {% else %}
-                        {% set startDateText = allocateJourney.startDate | formatDate %}
-                    {% endif %}
-                {% else %}
-                    {% set startDateText = allocateJourney.startDate | formatDate %}
-                {% endif %}
+      {% set endDateOption = ('remove-end-date-option' if allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
 
-                {{ govukSummaryList({
-                    rows: [
-                        {
-                            key: { text: "Prisoner details" },
-                            value: { html: prisonerDetailsHtml }
-                        },
-                        {
-                            key: { text: "Activity" },
-                            value: { text: allocateJourney.activity.name }
-                        },
-                        {
-                            key: { text: "Location" },
-                            value: { text: showLocation(user.externalActivitiesRolledOut, allocateJourney.activity) }
-                        },
-                        {
-                            key: { text: "Start of allocation" },
-                            value: {
-                                text: startDateText
-                                },
-                            actions: {
-                                items: [{
-                                    href: "start-date?preserveHistory=true",
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: "change start date"
-                                }]
-                            }
-                        },
-                        {
-                            key: { text: "End of allocation" },
-                            value: {
-                                text: allocateJourney.endDate | formatDate if allocateJourney.endDate else "No date set"
-                            },
-                            actions: {
-                                items: [{
-                                    href: endDateOption,
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: "change end date"
-                                }]
-                            }
-                        },
-                        {
-                            key: { text: "Pay rate" },
-                            value: {
-                                html: payRate(allocateJourney.inmate.payBand, allocateJourney.inmate.incentiveLevel)
-                            },
-                            actions: {
-                                items: [{
-                                    href: "pay-band?preserveHistory=true",
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: "change pay rate"
-                                }]
-                            } if allocateJourney.inmate.payBand
-                        },
-                        {
-                            key: { text: "Schedule" },
-                            value: {
-                                html: scheduleHtml
-                            },
-                            actions: {
-                                items: [{
-                                    href: "exclusions?preserveHistory=true",
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: "change schedule"
-                                }]
-                            }
-                        }
-                    ]
-                }) }}
-            {% endif %}
+      {% if session.req.routeContext.mode == 'create' %}
+        {% if allocateJourney.scheduledInstance %}
+          {% set nextSessionSlot = allocateJourney.scheduledInstance.timeSlot %}
+          {% set nextSessionDate =  allocateJourney.scheduledInstance.date | toDate | formatDate %}
+          {% if allocateJourney.startDateOption == 'NEXT_SESSION' and (now | formatDate) == nextSessionDate %}
+            {% set startDateText = "today's " + nextSessionSlot + " session" %}
+          {% else %}
+            {% set startDateText = allocateJourney.startDate | formatDate %}
+          {% endif %}
+        {% else %}
+          {% set startDateText = allocateJourney.startDate | formatDate %}
+        {% endif %}
 
-            {% if session.req.routeContext.mode == 'remove' or session.req.routeContext.mode == 'edit' %}
-                {% set eligibleForCaseNote = true if
-                    deallocationReason.code in ['WITHDRAWN_STAFF', 'DISMISSED', 'SECURITY', 'OTHER']
-                        and allocateJourney.inmates | length == 1
-                %}
+        {{
+          govukSummaryList({
+              rows: [
+                  {
+                      key: { text: "Prisoner details" },
+                      value: { html: prisonerDetailsHtml }
+                  },
+                  {
+                      key: { text: "Activity" },
+                      value: { text: allocateJourney.activity.name }
+                  },
+                  {
+                      key: { text: "Location" },
+                      value: { text: showLocation(user.externalActivitiesRolledOut, allocateJourney.activity) }
+                  },
+                  {
+                      key: { text: "Start of allocation" },
+                      value: {
+                          text: startDateText
+                          },
+                      actions: {
+                          items: [{
+                              href: "start-date?preserveHistory=true",
+                              classes: 'govuk-link--no-visited-state',
+                              text: "Change",
+                              visuallyHiddenText: "change start date"
+                          }]
+                      }
+                  },
+                  {
+                      key: { text: "End of allocation" },
+                      value: {
+                          text: allocateJourney.endDate | formatDate if allocateJourney.endDate else "No date set"
+                      },
+                      actions: {
+                          items: [{
+                              href: endDateOption,
+                              classes: 'govuk-link--no-visited-state',
+                              text: "Change",
+                              visuallyHiddenText: "change end date"
+                          }]
+                      }
+                  },
+                  {
+                      key: { text: "Pay rate" },
+                      value: {
+                          html: payRate(allocateJourney.inmate.payBand, allocateJourney.inmate.incentiveLevel)
+                      },
+                      actions: {
+                          items: [{
+                              href: "pay-band?preserveHistory=true",
+                              classes: 'govuk-link--no-visited-state',
+                              text: "Change",
+                              visuallyHiddenText: "change pay rate"
+                          }]
+                      } if allocateJourney.inmate.payBand
+                  },
+                  {
+                      key: { text: "Schedule" },
+                      value: {
+                          html: scheduleHtml
+                      },
+                      actions: {
+                          items: [{
+                              href: "exclusions?preserveHistory=true",
+                              classes: 'govuk-link--no-visited-state',
+                              text: "Change",
+                              visuallyHiddenText: "change schedule"
+                          }]
+                      }
+                  }
+              ]
+          })
+        }}
+      {% endif %}
 
-                {{ govukSummaryList({
-                    rows: [
-                        {
-                            key: { text: "People you're taking off" },
-                            value: { html: prisonerDetailsHtml }
-                        },
-                        {
-                            key: { text: "Activity" },
-                            value: { text: allocateJourney.activity.name }
-                        },
-                        {
-                            key: { text: "End of allocation" },
-                            value: {
-                                text: allocateJourney.endDate | formatDate if allocateJourney.endDate
-                            },
-                            actions: {
-                                items: [{
-                                    href: 'deallocate-today-option?preserveHistory=true',
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: "change end date"
-                                }]
-                            }
-                        },
-                        {
-                            key: {
-                                text: "Reason for allocation ending"
-                            },
-                            value: {
-                                text: deallocationReason.description
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "reason?preserveHistory=true",
-                                        classes: 'govuk-link--no-visited-state',
-                                        text: "Change",
-                                        visuallyHiddenText: "change deallocation reason"
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            key: {
-                                text: "Do you want to add a case note?"
-                            },
-                            value: {
-                                text: "Yes" if allocateJourney.deallocationCaseNote else "No"
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "case-note-question?preserveHistory=true",
-                                        classes: 'govuk-link--no-visited-state',
-                                        text: "Change"
-                                    }
-                                ]
-                            }
-                        } if eligibleForCaseNote,
-                        {
-                            key: {
-                                text: "Case note type"
-                            },
-                            value: {
-                                text: "General" if allocateJourney.deallocationCaseNote.type == 'GEN' else "Negative"
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "case-note?preserveHistory=true",
-                                        classes: 'govuk-link--no-visited-state',
-                                        text: "Change",
-                                        visuallyHiddenText: "change deallocation case note type"
-                                    }
-                                ]
-                            }
-                        } if eligibleForCaseNote and allocateJourney.deallocationCaseNote,
-                        {
-                            key: {
-                                text: "Case note"
-                            },
-                            value: {
-                                text: allocateJourney.deallocationCaseNote.text
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "case-note?preserveHistory=true",
-                                        classes: 'govuk-link--no-visited-state',
-                                        text: "Change",
-                                        visuallyHiddenText: "change deallocation case note"
-                                    }
-                                ]
-                            }
-                        } if eligibleForCaseNote and allocateJourney.deallocationCaseNote
-                    ]
-                }) }}
-            {% endif %}
+      {% if session.req.routeContext.mode == 'remove' or session.req.routeContext.mode == 'edit' %}
+        {%
+          set eligibleForCaseNote = true if
+          deallocationReason.code in ['WITHDRAWN_STAFF', 'DISMISSED', 'SECURITY', 'OTHER']
+              and allocateJourney.inmates | length == 1
+        %}
 
-            <form method="POST" data-module="form-spinner" data-loading-text="{{ 'Removing prisoner' if session.req.routeContext.mode == 'remove' or session.req.routeContext.mode == 'edit' else 'Allocating prisoner' }}">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <div class="govuk-button-group">
-                    {{ govukButton({ 
-                        text: "Confirm this allocation" if session.req.routeContext.mode == 'create' else "Confirm and remove",
-                        preventDoubleClick: true
-                    }) }}
-                    <a href="cancel" class="govuk-link govuk-link--no-visited-state">{{ 'Cancel' + (' and return to the list of candidates' if session.req.routeContext.mode == 'create')}}</a>
-                </div>
-            </form>
+        {{
+          govukSummaryList({
+              rows: [
+                  {
+                      key: { text: "People you're taking off" },
+                      value: { html: prisonerDetailsHtml }
+                  },
+                  {
+                      key: { text: "Activity" },
+                      value: { text: allocateJourney.activity.name }
+                  },
+                  {
+                      key: { text: "End of allocation" },
+                      value: {
+                          text: allocateJourney.endDate | formatDate if allocateJourney.endDate
+                      },
+                      actions: {
+                          items: [{
+                              href: 'deallocate-today-option?preserveHistory=true',
+                              classes: 'govuk-link--no-visited-state',
+                              text: "Change",
+                              visuallyHiddenText: "change end date"
+                          }]
+                      }
+                  },
+                  {
+                      key: {
+                          text: "Reason for allocation ending"
+                      },
+                      value: {
+                          text: deallocationReason.description
+                      },
+                      actions: {
+                          items: [
+                              {
+                                  href: "reason?preserveHistory=true",
+                                  classes: 'govuk-link--no-visited-state',
+                                  text: "Change",
+                                  visuallyHiddenText: "change deallocation reason"
+                              }
+                          ]
+                      }
+                  },
+                  {
+                      key: {
+                          text: "Do you want to add a case note?"
+                      },
+                      value: {
+                          text: "Yes" if allocateJourney.deallocationCaseNote else "No"
+                      },
+                      actions: {
+                          items: [
+                              {
+                                  href: "case-note-question?preserveHistory=true",
+                                  classes: 'govuk-link--no-visited-state',
+                                  text: "Change"
+                              }
+                          ]
+                      }
+                  } if eligibleForCaseNote,
+                  {
+                      key: {
+                          text: "Case note type"
+                      },
+                      value: {
+                          text: "General" if allocateJourney.deallocationCaseNote.type == 'GEN' else "Negative"
+                      },
+                      actions: {
+                          items: [
+                              {
+                                  href: "case-note?preserveHistory=true",
+                                  classes: 'govuk-link--no-visited-state',
+                                  text: "Change",
+                                  visuallyHiddenText: "change deallocation case note type"
+                              }
+                          ]
+                      }
+                  } if eligibleForCaseNote and allocateJourney.deallocationCaseNote,
+                  {
+                      key: {
+                          text: "Case note"
+                      },
+                      value: {
+                          text: allocateJourney.deallocationCaseNote.text
+                      },
+                      actions: {
+                          items: [
+                              {
+                                  href: "case-note?preserveHistory=true",
+                                  classes: 'govuk-link--no-visited-state',
+                                  text: "Change",
+                                  visuallyHiddenText: "change deallocation case note"
+                              }
+                          ]
+                      }
+                  } if eligibleForCaseNote and allocateJourney.deallocationCaseNote
+              ]
+          })
+        }}
+      {% endif %}
+
+      <form
+        method="POST"
+        data-module="form-spinner"
+        data-loading-text="{{ 'Removing prisoner' if session.req.routeContext.mode == 'remove' or session.req.routeContext.mode == 'edit' else 'Allocating prisoner' }}"
+      >
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Confirm this allocation" if session.req.routeContext.mode == 'create' else "Confirm and remove",
+                preventDoubleClick: true
+            })
+          }}
+          <a href="cancel" class="govuk-link govuk-link--no-visited-state"
+            >{{ 'Cancel' + (' and return to the list of candidates' if session.req.routeContext.mode == 'create') }}</a
+          >
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}
 
 {% macro payRate(payBand, incentiveLevel) %}
-    {% if payBand %}
-        <div>{{ incentiveLevel }} incentive level:</div>
-        <div>{{ payBand.alias }} - {{ payBand.rate | toMoney }}</div>
-    {% else %}
-        No pay rate for this activity
-    {% endif %}
+  {% if payBand %}
+    <div>{{ incentiveLevel }} incentive level:</div>
+    <div>{{ payBand.alias }} - {{ payBand.rate | toMoney }}</div>
+  {% else %}
+    No pay rate for this activity
+  {% endif %}
 {% endmacro %}

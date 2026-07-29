@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
@@ -13,26 +12,32 @@
     <div class="govuk-grid-column-two-thirds">
       <span class="govuk-caption-l">Record activity attendance</span>
       <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Are you sure you want to cancel the session?</h1>
-      <span class="govuk-caption-m govuk-!-margin-bottom-3">Cancelling the session will record an acceptable absence for all prisoners.</span>
+      <span class="govuk-caption-m govuk-!-margin-bottom-3"
+        >Cancelling the session will record an acceptable absence for all prisoners.</span
+      >
 
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {{ govukRadios({
-          name: "confirm",
-          items: [{
-            value: 'yes',
-            text: 'Yes'
-          },{
-            value: 'no',
-            text: 'No'
-          }]
-        }) }}
+        {{
+          govukRadios({
+            name: "confirm",
+            items: [{
+              value: 'yes',
+              text: 'Yes'
+            },{
+              value: 'no',
+              text: 'No'
+            }]
+          })
+        }}
 
-        {{ govukButton({
-          text: "Confirm",
-          preventDoubleClick: true
-        }) }}
+        {{
+          govukButton({
+            text: "Confirm",
+            preventDoubleClick: true
+          })
+        }}
       </form>
     </div>
   </div>

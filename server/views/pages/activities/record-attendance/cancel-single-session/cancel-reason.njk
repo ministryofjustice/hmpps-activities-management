@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/attendance/cancelReasonList.njk" import cancelReasonList %}
 
@@ -11,18 +10,24 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <span class="govuk-caption-l">Cancel activity session</span>
-      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Why are you cancelling this session of {{ activityName }}?</h1>
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">
+        Why are you cancelling this session of {{ activityName }}?
+      </h1>
 
-      <span class="govuk-caption-m govuk-!-margin-bottom-3">This will be recorded as an acceptable absence for everyone who was due to attend.</span>
+      <span class="govuk-caption-m govuk-!-margin-bottom-3"
+        >This will be recorded as an acceptable absence for everyone who was due to attend.</span
+      >
 
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
         {{ cancelReasonList(cancellationReasons, comment, reason) }}
 
-        {{ govukButton({
-          text: "Continue"
-        }) }}
+        {{
+          govukButton({
+            text: "Continue"
+          })
+        }}
       </form>
     </div>
   </div>

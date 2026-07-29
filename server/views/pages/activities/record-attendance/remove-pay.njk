@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
@@ -9,43 +8,48 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <span class="govuk-caption-l">Record activity attendance</span>
-                <h1 class="govuk-heading-l">Are you sure you want to remove pay for {{ attendee.name | toTitleCase }}?</h1>
-                {{ govukRadios({
-                  name: "removePayOption",
-                  errorMessage: validationErrors | findError('removePayOption'),
-                  items: [
-                    {
-                      value: "yes",
-                      text: "Yes",
-                      conditional: {
-                          html: nestedCaseNote()
-                      },
-                      checked: "yes" == formResponses.removePayOption
-                    },
-                    {
-                      value: "no",
-                      text: "No",
-                      checked: "no" == formResponses.removePayOption
-                    }
-                  ]
-                }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <span class="govuk-caption-l">Record activity attendance</span>
+        <h1 class="govuk-heading-l">Are you sure you want to remove pay for {{ attendee.name | toTitleCase }}?</h1>
+        {{
+          govukRadios({
+            name: "removePayOption",
+            errorMessage: validationErrors | findError('removePayOption'),
+            items: [
+              {
+                value: "yes",
+                text: "Yes",
+                conditional: {
+                    html: nestedCaseNote()
+                },
+                checked: "yes" == formResponses.removePayOption
+              },
+              {
+                value: "no",
+                text: "No",
+                checked: "no" == formResponses.removePayOption
+              }
+            ]
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Confirm",
-                    preventDoubleClick: true
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Confirm",
+              preventDoubleClick: true
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}
 
 {% macro nestedCaseNote() %}
-    {{ govukCharacterCount({
+  {{
+    govukCharacterCount({
         label: {
             text: "Provide a short explanation for your decision, this will be added to their case notes."
         },
@@ -54,5 +58,6 @@
         value: formResponses.caseNote,
         maxlength: "3800",
         errorMessage: validationErrors | findError('caseNote')
-    }) }}
+    })
+  }}
 {% endmacro %}

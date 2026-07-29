@@ -7,62 +7,72 @@
 {% set hardBackLinkHref = dpsUrl %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Activities, unlock and attendance</h1>
+  <h1 class="govuk-heading-l">Activities, unlock and attendance</h1>
 {% endblock %}
 
 {% block content %}
-    <div class="card-group govuk-grid-row">
-        {% if 'ROLE_ACTIVITY_HUB' in user.roles %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "href": "/activities/allocations",
-                    "clickable": "true",
-                    "heading": "Allocate people to activities",
-                    "description": "Set up and edit activities. Allocate, suspend, and remove people, and edit allocations.",
-                    "data-qa": "allocate-to-activities-card"
-                }) }}
-            </div>
-        {% endif %}
+  <div class="card-group govuk-grid-row">
+    {% if 'ROLE_ACTIVITY_HUB' in user.roles %}
+      <div class="govuk-grid-column-one-third card-group__item">
+        {{
+          card({
+              "href": "/activities/allocations",
+              "clickable": "true",
+              "heading": "Allocate people to activities",
+              "description": "Set up and edit activities. Allocate, suspend, and remove people, and edit allocations.",
+              "data-qa": "allocate-to-activities-card"
+          })
+        }}
+      </div>
+    {% endif %}
 
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/unlock-list",
-                "clickable": "true",
-                "heading": "Manage unlock and movement",
-                "description": "Create and print unlock and movement lists.",
-                "data-qa": "unlock-and-movement-card"
-            }) }}
-        </div>
-
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/attendance",
-                "clickable": "true",
-                "heading": "Record activity attendance",
-                "description": "Mark attendance, cancel activity sessions and see daily attendance summaries.",
-                "data-qa": "record-attendance-card"
-            }) }}
-        </div>
-
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/waitlist-dashboard",
-                "clickable": "true",
-                "heading": "View applications and waitlists",
-                "description": "View people's applications to be allocated to activities, or select an activity to view the waitlist.",
-                "data-qa": "view-waitlists"
-            }) }}
-        </div>
-        {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/admin",
-                "clickable": "true",
-                "heading": "Admin",
-                "description": "Administer activities and appointments.",
-                "data-qa": "admin"
-            }) }}
-        {% endif %}
-        </div>
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "href": "/activities/unlock-list",
+            "clickable": "true",
+            "heading": "Manage unlock and movement",
+            "description": "Create and print unlock and movement lists.",
+            "data-qa": "unlock-and-movement-card"
+        })
+      }}
     </div>
+
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "href": "/activities/attendance",
+            "clickable": "true",
+            "heading": "Record activity attendance",
+            "description": "Mark attendance, cancel activity sessions and see daily attendance summaries.",
+            "data-qa": "record-attendance-card"
+        })
+      }}
+    </div>
+
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "href": "/activities/waitlist-dashboard",
+            "clickable": "true",
+            "heading": "View applications and waitlists",
+            "description": "View people's applications to be allocated to activities, or select an activity to view the waitlist.",
+            "data-qa": "view-waitlists"
+        })
+      }}
+    </div>
+    {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
+      <div class="govuk-grid-column-one-third card-group__item">
+        {{
+          card({
+              "href": "/activities/admin",
+              "clickable": "true",
+              "heading": "Admin",
+              "description": "Administer activities and appointments.",
+              "data-qa": "admin"
+          })
+        }}
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}

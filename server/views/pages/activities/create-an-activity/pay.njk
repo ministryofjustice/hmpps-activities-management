@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
@@ -15,129 +14,151 @@
 {% set editMode = session.req.routeContext.mode == 'edit' and iep and band %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(createJourney) }}
-            {% if editMode %}
-                <h1 class="govuk-heading-l">Change {{ iep }} incentive level: {{ band.alias }}</h1>
-            {% else %}
-                {% if payRateType === "single" %}
-                    <h1 class="govuk-heading-l">Enter pay amount and pay band name for the {{ createJourney.incentiveLevel }} incentive level pay rate</h1>
-                {% else %}
-                    <h1 class="govuk-heading-l">Enter pay amount and pay band name for the flat-rate incentive level pay rate</h1>
-                {% endif %}
-            {% endif %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ activityJourneyCaption(createJourney) }}
+      {% if editMode %}
+        <h1 class="govuk-heading-l">Change {{ iep }} incentive level: {{ band.alias }}</h1>
+      {% else %}
+        {% if payRateType === "single" %}
+          <h1 class="govuk-heading-l">
+            Enter pay amount and pay band name for the {{ createJourney.incentiveLevel }} incentive level pay rate
+          </h1>
+        {% else %}
+          <h1 class="govuk-heading-l">Enter pay amount and pay band name for the flat-rate incentive level pay rate</h1>
+        {% endif %}
+      {% endif %}
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% if editMode %}
-                    {{ govukInsetText({
-                        text: 'Any changes you make to this pay rate will take effect from tomorrow.'
-                    }) }}
-                 {% endif %}
+        {% if editMode %}
+          {{
+            govukInsetText({
+                text: 'Any changes you make to this pay rate will take effect from tomorrow.'
+            })
+          }}
+        {% endif %}
 
-                {{ govukInput({
-                    id: "rate",
-                    name: "rate",
-                    label: {
-                        text: "1. How much will someone be paid for a session?",
-                        classes: "govuk-label--s"
-                    },
-                    hint: {
-                        text: 'Minimum pay for people in your prison is £' + (minimumPayRate / 100) | toFixed + ' and maximum pay is £' + (maximumPayRate / 100) | toFixed + ' per session.'
-                    },
-                    prefix: {
-                        text: "£"
-                    },
-                    classes: "govuk-input--width-5",
-                    errorMessage: validationErrors | findError('rate'),
-                    value: formResponses.rate or (rate / 100) | toFixed
-                }) }}
+        {{
+          govukInput({
+              id: "rate",
+              name: "rate",
+              label: {
+                  text: "1. How much will someone be paid for a session?",
+                  classes: "govuk-label--s"
+              },
+              hint: {
+                  text: 'Minimum pay for people in your prison is £' + (minimumPayRate / 100) | toFixed + ' and maximum pay is £' + (maximumPayRate / 100) | toFixed + ' per session.'
+              },
+              prefix: {
+                  text: "£"
+              },
+              classes: "govuk-input--width-5",
+              errorMessage: validationErrors | findError('rate'),
+              value: formResponses.rate or (rate / 100) | toFixed
+          })
+        }}
 
-                {% if session.req.routeContext.mode == 'create' %}
-                    {{ govukDetails({
-                        summaryText: "What to do if the pay amount is due to change soon",
-                        text: "Finish setting up the activity with the current pay rates. Then edit the activity. You can schedule changes to pay rates up to 30 days in advance.",
-                        attributes: { 'data-qa': 'futurePayRateDetails' }
-                    }) }}
-                {% endif %}
+        {% if session.req.routeContext.mode == 'create' %}
+          {{
+            govukDetails({
+                summaryText: "What to do if the pay amount is due to change soon",
+                text: "Finish setting up the activity with the current pay rates. Then edit the activity. You can schedule changes to pay rates up to 30 days in advance.",
+                attributes: { 'data-qa': 'futurePayRateDetails' }
+            })
+          }}
+        {% endif %}
 
-                {% set payBandOptions = [
+        {%
+          set payBandOptions = [
+              {
+                  value: 0,
+                  text: "-"
+              }
+          ]
+        %}
+        {% for payBand in payBands %}
+          {%
+            set payBandOptions = (payBandOptions.push(
+                {
+                    value: payBand.id,
+                    text: payBand.alias,
+                    selected: payBand.id == formResponses.bandId or (payBand.id == band.id and not formResponses)
+                }
+            ), payBandOptions)
+          %}
+        {% endfor %}
+        {{
+          govukSelect({
+              id: "bandId",
+              name: "bandId",
+              label: {
+                  text: "2. Select the pay band",
+                  classes: "govuk-label--s"
+              },
+              classes: "govuk-input--width-10",
+              errorMessage: validationErrors | findError('bandId'),
+              items: payBandOptions
+          })
+        }}
+
+        {{
+          govukDetails({
+              summaryText: "What is a pay band?",
+              html: '
+                      <p>\'Pay band\' is a label to help you easily tell the difference between the pay rates that someone can be paid for
+                      this activity.</p>
+                      <p>For example you might have a pay band called \'unskilled\' and another called \'skilled\'.</p>
+                    '
+          })
+        }}
+
+        {% if payRateType === "single" %}
+          {% if session.req.routeContext.mode == 'create' and createJourney.incentiveLevel !== null %}
+            <input type="hidden" name="incentiveLevel" value="{{ createJourney.incentiveLevel }}" />
+            {% elseif session.req.routeContext.mode == 'edit' and (hasAllocations or iep) %}
+            <input type="hidden" name="incentiveLevel" value="{{ iep }}" />
+          {% else %}
+            {% set incentiveLevelOptions = [] %}
+            {% for incentiveLevel in incentiveLevels %}
+              {%
+                set incentiveLevelOptions = (incentiveLevelOptions.push(
                     {
-                        value: 0,
-                        text: "-"
+                        value: incentiveLevel.levelName,
+                        text: incentiveLevel.levelName,
+                        checked: incentiveLevel.levelName == formResponses.incentiveLevel or (incentiveLevel.levelName == iep and not formResponses)
                     }
-                ] %}
-                {% for payBand in payBands %}
-                    {% set payBandOptions = (payBandOptions.push(
-                        {
-                            value: payBand.id,
-                            text: payBand.alias,
-                            selected: payBand.id == formResponses.bandId or (payBand.id == band.id and not formResponses)
-                        }
-                    ), payBandOptions) %}
-                {% endfor %}
-                {{ govukSelect({
-                    id: "bandId",
-                    name: "bandId",
-                    label: {
-                        text: "2. Select the pay band",
-                        classes: "govuk-label--s"
-                    },
-                    classes: "govuk-input--width-10",
-                    errorMessage: validationErrors | findError('bandId'),
-                    items: payBandOptions
-                }) }}
+                ), incentiveLevelOptions)
+              %}
+            {% endfor %}
+            {{
+              govukRadios({
+                  name: "incentiveLevel",
+                  fieldset: {
+                      legend: {
+                          text: "3. Select the incentive level",
+                          classes: "govuk-fieldset__legend--s"
+                      }
+                  },
+                  hint: {
+                      text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
+                  },
+                  items: incentiveLevelOptions,
+                  errorMessage: validationErrors | findError('incentiveLevel'),
+                  attributes: {"data-qa": "incentiveLevelRadios"}
 
-                {{ govukDetails({
-                    summaryText: "What is a pay band?",
-                    html: '
-                            <p>\'Pay band\' is a label to help you easily tell the difference between the pay rates that someone can be paid for
-                            this activity.</p>
-                            <p>For example you might have a pay band called \'unskilled\' and another called \'skilled\'.</p>
-                          '
-                }) }}
+              })
+            }}
+          {% endif %}
+        {% endif %}
 
-                {% if payRateType === "single" %}
-                    {% if session.req.routeContext.mode == 'create' and createJourney.incentiveLevel !== null %}
-                        <input type='hidden' name='incentiveLevel' value='{{ createJourney.incentiveLevel }}' >
-                    {% elseif session.req.routeContext.mode == 'edit' and (hasAllocations or iep) %}
-                        <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
-                    {% else %}
-                        {% set incentiveLevelOptions = [] %}
-                        {% for incentiveLevel in incentiveLevels %}
-                            {% set incentiveLevelOptions = (incentiveLevelOptions.push(
-                                {
-                                    value: incentiveLevel.levelName,
-                                    text: incentiveLevel.levelName,
-                                    checked: incentiveLevel.levelName == formResponses.incentiveLevel or (incentiveLevel.levelName == iep and not formResponses)
-                                }
-                            ), incentiveLevelOptions) %}
-                        {% endfor %}
-                        {{ govukRadios({
-                            name: "incentiveLevel",
-                            fieldset: {
-                                legend: {
-                                    text: "3. Select the incentive level",
-                                    classes: "govuk-fieldset__legend--s"
-                                }
-                            },
-                            hint: {
-                                text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
-                            },
-                            items: incentiveLevelOptions,
-                            errorMessage: validationErrors | findError('incentiveLevel'),
-                            attributes: {"data-qa": "incentiveLevelRadios"}
-
-                        }) }}
-                    {% endif %}
-                {% endif %}
-
-                {{ govukButton({
-                    text: "Save and continue"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Save and continue"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

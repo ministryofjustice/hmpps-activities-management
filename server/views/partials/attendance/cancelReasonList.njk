@@ -2,22 +2,27 @@
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 
 {% macro cancelReasonList(cancellationReasons, comment, reason) %}
-    {% set cancellationReasonsValues = [] %}
-    {% for key, text in cancellationReasons %}
-      {% set cancellationReasonsValues = (cancellationReasonsValues.push({
+  {% set cancellationReasonsValues = [] %}
+  {% for key, text in cancellationReasons %}
+    {%
+      set cancellationReasonsValues = (cancellationReasonsValues.push({
         value: key,
         text: text,
         checked: formResponses.reason == key or reason == text
-      }), cancellationReasonsValues) %}
-    {% endfor %}
+      }), cancellationReasonsValues)
+    %}
+  {% endfor %}
 
-    {{ govukRadios({
+  {{
+    govukRadios({
       name: "reason",
       items: cancellationReasonsValues,
       errorMessage: validationErrors | findError('reason')
-    }) }}
+    })
+  }}
 
-    {{ govukCharacterCount({
+  {{
+    govukCharacterCount({
       label: {
         text: "More details (optional)"
       },
@@ -27,5 +32,6 @@
       maxlength: "100",
       value: formResponses.comment or comment,
       errorMessage: validationErrors | findError('comment')
-    }) }}
+    })
+  }}
 {% endmacro %}

@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 
@@ -9,35 +8,39 @@
 {% set hardBackLinkHref = "/appointments" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+        <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
 
-                {{ mojDatePicker({
-                    id: "startDate",
-                    name: "startDate",
-                    leadingZeros: 'true',
-                    label: {
-                        text: "What date do you want to view appointments for?",
-                        classes: "govuk-label--l",
-                        isPageHeading: true
-                    },
-                    hint: {
-                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
-                    },
-                    errorMessage: validationErrors | findError('startDate'),
-                    classes: 'moj-datepicker--fixed-width',
-                    value: formResponses.startDate or startDate
-                }) }}
-                
-                {{ govukButton({
-                    text: "Continue",
-                    preventDoubleClick: true
-                }) }}
-            </form>
-        </div>
+        {{
+          mojDatePicker({
+              id: "startDate",
+              name: "startDate",
+              leadingZeros: 'true',
+              label: {
+                  text: "What date do you want to view appointments for?",
+                  classes: "govuk-label--l",
+                  isPageHeading: true
+              },
+              hint: {
+                  text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
+              },
+              errorMessage: validationErrors | findError('startDate'),
+              classes: 'moj-datepicker--fixed-width',
+              value: formResponses.startDate or startDate
+          })
+        }}
+
+        {{
+          govukButton({
+              text: "Continue",
+              preventDoubleClick: true
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

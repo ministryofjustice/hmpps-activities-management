@@ -4,10 +4,13 @@
   {% if liveIssueOutageBannerEnabled or plannedDowntimeOutageBannerEnabled %}
     {% include 'partials/serviceOutageBanner.njk' %}
   {% endif %}
-  <div class="govuk-width-container {{ containerClasses }}">
-    {% include 'partials/beforeContent.njk' %}
-  </div>
-  <main class="govuk-main-wrapper {{ mainClasses }}" id="main-content" role="main"{% if mainLang %} lang="{{ mainLang }}"{% endif %}>
+  <div class="govuk-width-container {{ containerClasses }}">{% include 'partials/beforeContent.njk' %}</div>
+  <main
+    class="govuk-main-wrapper {{ mainClasses }}"
+    id="main-content"
+    role="main"
+    {% if mainLang %}lang="{{ mainLang }}"{% endif %}
+  >
     <div class="govuk-width-container">{% block heading %}{% endblock %}</div>
     <div class="homepage-content">
       <div class="govuk-width-container">{% block content %}{% endblock %}</div>

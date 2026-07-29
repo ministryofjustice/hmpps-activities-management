@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
@@ -10,60 +9,68 @@
 
 {% set outsideWork = user.externalActivitiesRolledOut and instance.activitySchedule.activity.outsideWork %}
 {% set caseNoteHref %}
-    <p>
-        <a href='{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}/case-notes' class='govuk-link govuk-link--no-visited-state' target='_blank' rel='noopener noreferrer'>
-            Go to {{ attendee.name | toTitleCase | possessive }} case notes to add more details (opens in new tab)
-        </a>
-    </p>
+  <p>
+    <a
+      href="{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}/case-notes"
+      class="govuk-link govuk-link--no-visited-state"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Go to {{ attendee.name | toTitleCase | possessive }} case notes to add more details (opens in new tab)
+    </a>
+  </p>
 {% endset %}
 
 {% macro renderPay(attendance, payable) %}
-    {% if outsideWork and not payable %}
-        Managed by an external employer
+  {% if outsideWork and not payable %}
+    Managed by an external employer
+  {% else %}
+    {% if attendance.issuePayment %}
+      {{ '£' + (attendance.payAmount / 100) | toFixed }}
+      {% elseif payable %}
+      None
     {% else %}
-        {% if attendance.issuePayment %}
-            {{ '£' + (attendance.payAmount / 100) | toFixed }}
-        {% elseif payable %}
-            None
-        {% else %}
-            Unpaid
-        {% endif %}
+      Unpaid
     {% endif %}
+  {% endif %}
 {% endmacro %}
 
 {% macro renderPayHistory(attendance, payable, attendanceHistory) %}
-    {% if outsideWork and not payable %}
-      Managed by an external employer
+  {% if outsideWork and not payable %}
+    Managed by an external employer
+  {% else %}
+    {% if attendanceHistory.issuePayment %}
+      {{ '£' + (attendance.payAmount / 100) | toFixed }}
     {% else %}
-        {% if attendanceHistory.issuePayment %}
-            {{ '£' + (attendance.payAmount / 100) | toFixed }}
-        {% else %}
-            None
-        {% endif %}
+      None
     {% endif %}
+  {% endif %}
 {% endmacro %}
 
 {% set summaryListRows = [] %}
-{% set summaryListRows = (summaryListRows.push(
-     {
-        key: {
-            text: "Attendance"
-        },
-        value: {
-            text: attendance.attendanceReason.description or "Not recorded yet"
-        },
-        actions: {
-            items: [{
-                href: attendance.id + "/edit-attendance",
-                text: "Change",
-                visuallyHiddenText: "Change attendance option"
-            }]
-        } if instance.activitySchedule.activity.attendanceRequired and attendance.editable and attendance.status !== 'WAITING' and attendance.attendanceReason.code !== 'NOT_REQUIRED'
-     }
-), summaryListRows) %}
+{%
+  set summaryListRows = (summaryListRows.push(
+       {
+          key: {
+              text: "Attendance"
+          },
+          value: {
+              text: attendance.attendanceReason.description or "Not recorded yet"
+          },
+          actions: {
+              items: [{
+                  href: attendance.id + "/edit-attendance",
+                  text: "Change",
+                  visuallyHiddenText: "Change attendance option"
+              }]
+          } if instance.activitySchedule.activity.attendanceRequired and attendance.editable and attendance.status !== 'WAITING' and attendance.attendanceReason.code !== 'NOT_REQUIRED'
+       }
+  ), summaryListRows)
+%}
 
 {% if attendance.attendanceReason.code == 'CANCELLED' %}
-    {% set summaryListRows = (summaryListRows.push(
+  {%
+    set summaryListRows = (summaryListRows.push(
         {
             key: {
                 text: "Cancellation reason"
@@ -72,10 +79,12 @@
                 text: attendance.comment
             }
         }
-    ), summaryListRows) %}
+    ), summaryListRows)
+  %}
 {% endif %}
 {% if attendance.otherAbsenceReason %}
-    {% set summaryListRows = (summaryListRows.push(
+  {%
+    set summaryListRows = (summaryListRows.push(
         {
             key: {
                 text: "Absence reason"
@@ -84,38 +93,44 @@
                 text: attendance.otherAbsenceReason
             }
         }
-    ), summaryListRows) %}
+    ), summaryListRows)
+  %}
 {% endif %}
-{% set summaryListRows = (summaryListRows.push(
-    {
-        key: {
-            text: "Pay"
-        },
-        value: {
-            text: renderPay(attendance, activity.paid)
-        },
-        actions: {
-            items: [{
-                href: attendance.id + "/change-pay",
-                text: "Change",
-                visuallyHiddenText: "Change attendance option"
-            }]
-        } if instance.activitySchedule.activity.attendanceRequired and attendance.editable and attendance.attendanceReason.code === 'NOT_REQUIRED' and isInFutureOrToday
-    }
-), summaryListRows) %}
+{%
+  set summaryListRows = (summaryListRows.push(
+      {
+          key: {
+              text: "Pay"
+          },
+          value: {
+              text: renderPay(attendance, activity.paid)
+          },
+          actions: {
+              items: [{
+                  href: attendance.id + "/change-pay",
+                  text: "Change",
+                  visuallyHiddenText: "Change attendance option"
+              }]
+          } if instance.activitySchedule.activity.attendanceRequired and attendance.editable and attendance.attendanceReason.code === 'NOT_REQUIRED' and isInFutureOrToday
+      }
+  ), summaryListRows)
+%}
 
 {% if attendance.incentiveLevelWarningIssued %}
-    {% set summaryListRows = (summaryListRows.push(
+  {%
+    set summaryListRows = (summaryListRows.push(
         {
             key: {
                 text: "Incentive Level Warning"
             },
             value: { text: "Yes" if attendance.incentiveLevelWarningIssued else "No"}
         }
-    ), summaryListRows) %}
+    ), summaryListRows)
+  %}
 {% endif %}
 {% if attendance.caseNoteText %}
-    {% set summaryListRows = (summaryListRows.push(
+  {%
+    set summaryListRows = (summaryListRows.push(
         {
             key: {
                 text: "Case Note"
@@ -124,11 +139,13 @@
                 html: attendance.caseNoteText + caseNoteHref
             }
         }
-    ), summaryListRows) %}
+    ), summaryListRows)
+  %}
 {% endif %}
 {# Always show "comment" row if comments are applicable to attendance reason #}
 {% if attendance.attendanceReason.code == 'SICK' %}
-    {% set summaryListRows = (summaryListRows.push(
+  {%
+    set summaryListRows = (summaryListRows.push(
         {
             key: {
                 text: "Comment"
@@ -137,189 +154,223 @@
                 text: attendance.comment
             }
         }
-    ), summaryListRows) %}
+    ), summaryListRows)
+  %}
 {% endif %}
 
-{% set summaryListRows = (summaryListRows.push(
-    {
-        key: {
-         text: "Reset by" if attendance.status === 'WAITING' else "Recorded by"
-        },
-        value: {
-         text: serviceUserName(userMap.get(attendance.recordedBy))
-        }
-    },
-    {
-        key: {
-         text: "Date and time"
-        },
-        value: {
-         text: attendance.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
-        }
-    }
-), summaryListRows) %}
+{%
+  set summaryListRows = (summaryListRows.push(
+      {
+          key: {
+           text: "Reset by" if attendance.status === 'WAITING' else "Recorded by"
+          },
+          value: {
+           text: serviceUserName(userMap.get(attendance.recordedBy))
+          }
+      },
+      {
+          key: {
+           text: "Date and time"
+          },
+          value: {
+           text: attendance.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
+          }
+      }
+  ), summaryListRows)
+%}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <span class="govuk-caption-l" data-qa="caption">{{ activity.summary }}</span>
-                <h1 class="govuk-heading-l">Attendance record for {{ attendee.name | toTitleCase }}</h1>
-                <div class="govuk-inset-text">
-                    <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a>
-                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }})
-               </div>
-               {% if attendance.status === 'WAITING' %}
-                   <h2 class="govuk-heading-m">Attendance record reset</h2>
-               {% endif %}
-                {{ govukSummaryList({
-                    rows: summaryListRows,
-                    classes: "govuk-!-margin-bottom-9",
-                    attributes: { 'data-qa': 'appointment-details' }
-                }) }}
-
-                {% if attendance.attendanceReason.code == 'NOT_REQUIRED' and attendance.editable %}
-                    <div class="govuk-button-group">
-                        {{ govukButton({
-                            text: "Reset as required to attend",
-                            href: attendance.id + "/reset-attendance",
-                            attributes: { 'data-qa': 'view-selection' }
-                        }) }}
-                    </div>
-                {% endif %}
-
-              {% if attendance.issuePayment and attendance.attendanceReason.code == 'ATTENDED' and attendance.editable %}
-                {{ govukButton({
-                  text: "Remove pay and add case note",
-                  classes: "govuk-button--warning"
-                }) }}
-              {% endif %}
-
-                {% if attendance.attendanceHistory | length %}
-                    <h2 class="govuk-heading-m" data-qa="history-heading">Change history for this attendance record</h2>
-                    {% set changeNo = attendance.attendanceHistory | length %}
-                    {% for attendanceHistory in attendance.attendanceHistory %}
-                        {% set recordedTime = attendanceHistory.recordedTime.split('T') %}
-                        <h3 class="govuk-heading-s" data-qa="history-heading">Change {{ changeNo }}</h3>
-                        {% set historyListRows = [] %}
-                        {% set historyListRows = (historyListRows.push(
-                             {
-                                key: {
-                                    text: "Attendance"
-                                },
-                                value: {
-                                    text: attendanceHistory.attendanceReason.description or "Not recorded yet"
-                                }
-                             }
-                        ), historyListRows) %}
-
-                        {% if attendanceHistory.attendanceReason.code == 'CANCELLED' %}
-                            {% set historyListRows = (historyListRows.push(
-                                {
-                                    key: {
-                                        text: "Cancellation reason"
-                                    },
-                                    value: {
-                                        text: attendanceHistory.comment
-                                    }
-                                }
-                            ), historyListRows) %}
-                        {% endif %}
-
-                        {% if attendanceHistory.otherAbsenceReason %}
-                            {% set historyListRows = (historyListRows.push(
-                                {
-                                    key: {
-                                        text: "Absence reason"
-                                    },
-                                    value: {
-                                        text: attendanceHistory.otherAbsenceReason
-                                    }
-                                }
-                            ), historyListRows) %}
-                        {% endif %}
-
-                        {% set historyListRows = (historyListRows.push(
-                            {
-                                key: {
-                                    text: "Pay"
-                                },
-                                value: { text: renderPayHistory(attendance, activity.paid, attendanceHistory) }
-                            }
-                        ), historyListRows) %}
-
-                        {% if attendanceHistory.incentiveLevelWarningIssued %}
-                            {% set historyListRows = (historyListRows.push(
-                                {
-                                    key: {
-                                        text: "Incentive Level Warning"
-                                    },
-                                    value: { text: "Yes" if attendanceHistory.incentiveLevelWarningIssued else "No"}
-                                }
-                            ), historyListRows) %}
-                            {% set historyListRows = (historyListRows.push(
-                                {
-                                    key: {
-                                        text: "Case Note"
-                                    },
-                                    value: {
-                                        text: attendanceHistory.caseNoteText
-                                    }
-                                }
-                            ), historyListRows) %}
-                        {% endif %}
-
-                        {# Always show "comment" row if comments are applicable to attendance reason #}
-                        {% if attendanceHistory.attendanceReason.code == 'SICK' %}
-                            {% set historyListRows = (historyListRows.push(
-                                {
-                                    key: {
-                                        text: "Comment"
-                                    },
-                                    value: {
-                                        text: attendanceHistory.comment
-                                    }
-                                }
-                            ), historyListRows) %}
-                        {% endif %}
-
-                        {% set historyListRows = (historyListRows.push(
-                            {
-                                key: {
-                                 text: "Recorded by"
-                                },
-                                value: {
-                                 text: serviceUserName(userMap.get(attendanceHistory.recordedBy))
-                                }
-                            }, {
-                                key: {
-                                    text: "Date and time"
-                                },
-                                value: {
-                                    text: attendanceHistory.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
-                                }
-                            }
-                        ), historyListRows) %}
-
-                        {{ govukSummaryList({
-                            rows: historyListRows,
-                            classes: "history-list-row-count govuk-!-margin-bottom-9",
-                            attributes: { 'data-qa': 'attendance-history' }
-                        }) }}
-
-                        {% set changeNo = changeNo - 1 %}
-                    {% endfor %}
-                {% endif %}
-
-                {% if attendee.prisonId == user.activeCaseLoadId %}
-                    <p class="govuk-body govuk-!-display-none-print no-js-hidden">
-                        <a href="{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">
-                            View the prisoner's profile
-                        </a>
-                    </p>
-                {% endif %}
-            </form>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <span class="govuk-caption-l" data-qa="caption">{{ activity.summary }}</span>
+        <h1 class="govuk-heading-l">Attendance record for {{ attendee.name | toTitleCase }}</h1>
+        <div class="govuk-inset-text">
+          <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state"
+            >{{ instance.activitySchedule.activity.summary }}</a
+          >
+          on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }})
         </div>
+        {% if attendance.status === 'WAITING' %}
+          <h2 class="govuk-heading-m">Attendance record reset</h2>
+        {% endif %}
+        {{
+          govukSummaryList({
+              rows: summaryListRows,
+              classes: "govuk-!-margin-bottom-9",
+              attributes: { 'data-qa': 'appointment-details' }
+          })
+        }}
+
+        {% if attendance.attendanceReason.code == 'NOT_REQUIRED' and attendance.editable %}
+          <div class="govuk-button-group">
+            {{
+              govukButton({
+                  text: "Reset as required to attend",
+                  href: attendance.id + "/reset-attendance",
+                  attributes: { 'data-qa': 'view-selection' }
+              })
+            }}
+          </div>
+        {% endif %}
+
+        {% if attendance.issuePayment and attendance.attendanceReason.code == 'ATTENDED' and attendance.editable %}
+          {{
+            govukButton({
+              text: "Remove pay and add case note",
+              classes: "govuk-button--warning"
+            })
+          }}
+        {% endif %}
+
+        {% if attendance.attendanceHistory | length %}
+          <h2 class="govuk-heading-m" data-qa="history-heading">Change history for this attendance record</h2>
+          {% set changeNo = attendance.attendanceHistory | length %}
+          {% for attendanceHistory in attendance.attendanceHistory %}
+            {% set recordedTime = attendanceHistory.recordedTime.split('T') %}
+            <h3 class="govuk-heading-s" data-qa="history-heading">Change {{ changeNo }}</h3>
+            {% set historyListRows = [] %}
+            {%
+              set historyListRows = (historyListRows.push(
+                   {
+                      key: {
+                          text: "Attendance"
+                      },
+                      value: {
+                          text: attendanceHistory.attendanceReason.description or "Not recorded yet"
+                      }
+                   }
+              ), historyListRows)
+            %}
+
+            {% if attendanceHistory.attendanceReason.code == 'CANCELLED' %}
+              {%
+                set historyListRows = (historyListRows.push(
+                    {
+                        key: {
+                            text: "Cancellation reason"
+                        },
+                        value: {
+                            text: attendanceHistory.comment
+                        }
+                    }
+                ), historyListRows)
+              %}
+            {% endif %}
+
+            {% if attendanceHistory.otherAbsenceReason %}
+              {%
+                set historyListRows = (historyListRows.push(
+                    {
+                        key: {
+                            text: "Absence reason"
+                        },
+                        value: {
+                            text: attendanceHistory.otherAbsenceReason
+                        }
+                    }
+                ), historyListRows)
+              %}
+            {% endif %}
+
+            {%
+              set historyListRows = (historyListRows.push(
+                  {
+                      key: {
+                          text: "Pay"
+                      },
+                      value: { text: renderPayHistory(attendance, activity.paid, attendanceHistory) }
+                  }
+              ), historyListRows)
+            %}
+
+            {% if attendanceHistory.incentiveLevelWarningIssued %}
+              {%
+                set historyListRows = (historyListRows.push(
+                    {
+                        key: {
+                            text: "Incentive Level Warning"
+                        },
+                        value: { text: "Yes" if attendanceHistory.incentiveLevelWarningIssued else "No"}
+                    }
+                ), historyListRows)
+              %}
+              {%
+                set historyListRows = (historyListRows.push(
+                    {
+                        key: {
+                            text: "Case Note"
+                        },
+                        value: {
+                            text: attendanceHistory.caseNoteText
+                        }
+                    }
+                ), historyListRows)
+              %}
+            {% endif %}
+
+            {# Always show "comment" row if comments are applicable to attendance reason #}
+            {% if attendanceHistory.attendanceReason.code == 'SICK' %}
+              {%
+                set historyListRows = (historyListRows.push(
+                    {
+                        key: {
+                            text: "Comment"
+                        },
+                        value: {
+                            text: attendanceHistory.comment
+                        }
+                    }
+                ), historyListRows)
+              %}
+            {% endif %}
+
+            {%
+              set historyListRows = (historyListRows.push(
+                  {
+                      key: {
+                       text: "Recorded by"
+                      },
+                      value: {
+                       text: serviceUserName(userMap.get(attendanceHistory.recordedBy))
+                      }
+                  }, {
+                      key: {
+                          text: "Date and time"
+                      },
+                      value: {
+                          text: attendanceHistory.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
+                      }
+                  }
+              ), historyListRows)
+            %}
+
+            {{
+              govukSummaryList({
+                  rows: historyListRows,
+                  classes: "history-list-row-count govuk-!-margin-bottom-9",
+                  attributes: { 'data-qa': 'attendance-history' }
+              })
+            }}
+
+            {% set changeNo = changeNo - 1 %}
+          {% endfor %}
+        {% endif %}
+
+        {% if attendee.prisonId == user.activeCaseLoadId %}
+          <p class="govuk-body govuk-!-display-none-print no-js-hidden">
+            <a
+              href="{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}"
+              class="govuk-link govuk-link--no-visited-state"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View the prisoner's profile
+            </a>
+          </p>
+        {% endif %}
+      </form>
     </div>
+  </div>
 {% endblock %}

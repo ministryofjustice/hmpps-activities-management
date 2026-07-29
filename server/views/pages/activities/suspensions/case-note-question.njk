@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
@@ -8,46 +7,55 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Manage suspensions</span>
-            <h1 class='govuk-heading-l'>Do you want to add a case note about why {{ session.suspendJourney.inmate.prisonerName | safe }} is being suspended?</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">Manage suspensions</span>
+      <h1 class="govuk-heading-l">
+        Do you want to add a case note about why {{ session.suspendJourney.inmate.prisonerName | safe }} is being
+        suspended?
+      </h1>
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ govukRadios({
-                    classes: "govuk-radios--inline",
-                    name: "choice",
-                    fieldset: {
-                        legend: {
-                            text: "Choice",
-                            isPageHeading: false,
-                            classes: "govuk-visually-hidden"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('choice'),
-                    items: [
-                        {
-                            value: "yes",
-                            text: "Yes",
-                            checked: true if session.suspendJourney.caseNote else false
-                        },
-                        {
-                            value: "no",
-                            text: "No",
-                            checked: true if session.req.query.preserveHistory and not session.suspendJourney.caseNote else false
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              classes: "govuk-radios--inline",
+              name: "choice",
+              fieldset: {
+                  legend: {
+                      text: "Choice",
+                      isPageHeading: false,
+                      classes: "govuk-visually-hidden"
+                  }
+              },
+              errorMessage: validationErrors | findError('choice'),
+              items: [
+                  {
+                      value: "yes",
+                      text: "Yes",
+                      checked: true if session.suspendJourney.caseNote else false
+                  },
+                  {
+                      value: "no",
+                      text: "No",
+                      checked: true if session.req.query.preserveHistory and not session.suspendJourney.caseNote else false
+                  }
+              ]
+          })
+        }}
 
-                <div class='govuk-button-group'>
-                    {{ govukButton({ text: "Continue"}) }}
-                    {% if not session.req.query.preserveHistory %}
-                        <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
-                    {% endif %}
-                </div>
-            </form>
+        <div class="govuk-button-group">
+          {{ govukButton({ text: "Continue"}) }}
+          {% if not session.req.query.preserveHistory %}
+            <a
+              class="govuk-link govuk-link--no-visited-state"
+              href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}"
+              >Cancel and return to the prisoner's activities</a
+            >
+          {% endif %}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

@@ -3,62 +3,79 @@
 {% from "partials/showLocation.njk" import showLocation %}
 
 {% macro showUnlockEvents(events) %}
-    {% for event in events %}
-        <div class="govuk-body-s govuk-!-margin-0 unlock-list-event">
-            <div class="govuk-!-margin-right-2 event-details">
-                <div class="govuk-!-font-weight-bold">
-                    {% if event.eventType === 'ACTIVITY' and event.eventSource === 'SAA' %}
-                        <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list"
-                        class="govuk-link govuk-link--no-visited-state"
-                        target="_blank">
-                            {{- event.summary | trim -}}<span class="govuk-visually-hidden"> (opens in new tab)</span>
-                        </a>
-                    {% elseif event.eventType === 'APPOINTMENT' and event.eventSource === 'SAA'%}
-                        <a href="/appointments/{{ event.appointmentId }}?preserveHistory=true"
-                        class="govuk-link govuk-link--no-visited-state"
-                        target="_blank">
-                            {{- event.summary | trim -}}<span class="govuk-visually-hidden"> (opens in new tab)</span>
-                        </a>
-                        <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
-                        {% if prisonerExtraInformationEnabled and (event.comments or event.prisonerComments) %}
-                            <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow govuk-!-display-none-print', attributes: { 'data-qa': 'extra-info-tag-' + event.appointmentId } }) }}</div>
-                        {% elseif event.comments %}
-                            <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow govuk-!-display-none-print', attributes: { 'data-qa': 'extra-info-tag-' + event.appointmentId } }) }}</div>
-                        {% endif %}
-                    {% else %}
-                        {{ event.summary | trim }}
-                    {% endif %}
-                    {% if event.cancelled or event.status === 'Cancelled' or event.status === 'Paused'  %}
-                        <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red', attributes: { "data-qa": "cancelled-badge" } }) }}</div>
-                    {% endif %}
-                </div>
-
-                {% if event.suspended %}
-                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Prisoner suspended', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
-                {% endif %}
-
-                {% if event.autoSuspended %}
-                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Temporarily absent', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
-                {% endif %}
-
-                {% if event.attendanceReasonCode === 'NOT_REQUIRED' and not event.suspended and not event.autoSuspended %}
-                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Not required', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
-                {% endif %}
-
-                {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
-                    <div>{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
-                    <div>{{ showLocation(user.externalActivitiesRolledOut, event) }}</div>
-                {% endif %}
+  {% for event in events %}
+    <div class="govuk-body-s govuk-!-margin-0 unlock-list-event">
+      <div class="govuk-!-margin-right-2 event-details">
+        <div class="govuk-!-font-weight-bold">
+          {% if event.eventType === 'ACTIVITY' and event.eventSource === 'SAA' %}
+            <a
+              href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list"
+              class="govuk-link govuk-link--no-visited-state"
+              target="_blank"
+            >
+              {{- event.summary | trim -}}<span class="govuk-visually-hidden"> (opens in new tab)</span>
+            </a>
+            {% elseif event.eventType === 'APPOINTMENT' and event.eventSource === 'SAA' %}
+            <a
+              href="/appointments/{{ event.appointmentId }}?preserveHistory=true"
+              class="govuk-link govuk-link--no-visited-state"
+              target="_blank"
+            >
+              {{- event.summary | trim -}}<span class="govuk-visually-hidden"> (opens in new tab)</span>
+            </a>
+            <div class="govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+              {{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}
             </div>
-            <div class="checkbox-container print-only">
-                {% if not (event.cancelled or event.status === 'Cancelled' or event.status === 'Paused') %}
-                    <div class="print-checkbox"></div>
-                    <div class="print-checkbox"></div>
-                    <div class="print-checkbox"></div>
-                {% endif %}
+            {% if prisonerExtraInformationEnabled and (event.comments or event.prisonerComments) %}
+              <div class="govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+                {{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow govuk-!-display-none-print', attributes: { 'data-qa': 'extra-info-tag-' + event.appointmentId } }) }}
+              </div>
+              {% elseif event.comments %}
+              <div class="govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+                {{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow govuk-!-display-none-print', attributes: { 'data-qa': 'extra-info-tag-' + event.appointmentId } }) }}
+              </div>
+            {% endif %}
+          {% else %}
+            {{ event.summary | trim }}
+          {% endif %}
+          {% if event.cancelled or event.status === 'Cancelled' or event.status === 'Paused' %}
+            <div class="govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+              {{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red', attributes: { "data-qa": "cancelled-badge" } }) }}
             </div>
+          {% endif %}
         </div>
-        {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
-    {% endfor %}
-{% endmacro %}
 
+        {% if event.suspended %}
+          <div class="govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+            {{ govukTag({ text: 'Prisoner suspended', classes: 'govuk-tag--red govuk-tag--small' }) }}
+          </div>
+        {% endif %}
+
+        {% if event.autoSuspended %}
+          <div class="govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+            {{ govukTag({ text: 'Temporarily absent', classes: 'govuk-tag--red govuk-tag--small' }) }}
+          </div>
+        {% endif %}
+
+        {% if event.attendanceReasonCode === 'NOT_REQUIRED' and not event.suspended and not event.autoSuspended %}
+          <div class="govuk-!-margin-top-1 govuk-!-margin-bottom-1">
+            {{ govukTag({ text: 'Not required', classes: 'govuk-tag--red govuk-tag--small' }) }}
+          </div>
+        {% endif %}
+
+        {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
+          <div>{{ event.startTime }}{% if event.endTime %}- {{ event.endTime }}{% endif %}</div>
+          <div>{{ showLocation(user.externalActivitiesRolledOut, event) }}</div>
+        {% endif %}
+      </div>
+      <div class="checkbox-container print-only">
+        {% if not (event.cancelled or event.status === 'Cancelled' or event.status === 'Paused') %}
+          <div class="print-checkbox"></div>
+          <div class="print-checkbox"></div>
+          <div class="print-checkbox"></div>
+        {% endif %}
+      </div>
+    </div>
+    {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border" />{% endif %}
+  {% endfor %}
+{% endmacro %}

@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
@@ -16,46 +15,53 @@
 
 {% set applyToItems = [] %}
 {% for applyToOption in applyToOptions %}
-    {% set applyToItems = (applyToItems.push({
+  {%
+    set applyToItems = (applyToItems.push({
         value: applyToOption.applyTo,
         text: applyToOption.description,
         hint: {
             html: applyToOption.additionalDescription
         }
-    } ), categoryOptions) %}
+    } ), categoryOptions)
+  %}
 {% endfor %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
-            <h1 class="govuk-heading-l">{{ editHeadingMessage }}</h1>
-            <p class="govuk-hint">{{ editHintMessage }}</p>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session) }}
+      <h1 class="govuk-heading-l">{{ editHeadingMessage }}</h1>
+      <p class="govuk-hint">{{ editHintMessage }}</p>
 
-            {{ addPrisonerList(editAppointmentJourney.addPrisoners, user) }}
+      {{ addPrisonerList(editAppointmentJourney.addPrisoners, user) }}
 
-            <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments" >
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukRadios({
-                    name: "applyTo",
-                    errorMessage: validationErrors | findError('applyTo'),
-                    items: applyToItems
-                }) }}
+      <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          govukRadios({
+              name: "applyTo",
+              errorMessage: validationErrors | findError('applyTo'),
+              items: applyToItems
+          })
+        }}
+        {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
-                {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+        {% if frequencyText %}
+          {{
+            govukInsetText({
+                text: frequencyText,
+                attributes: { 'data-qa': 'frequency-text' }
+            })
+          }}
+        {% endif %}
 
-                {% if frequencyText %}
-                    {{ govukInsetText({
-                        text: frequencyText,
-                        attributes: { 'data-qa': 'frequency-text' }
-                    }) }}
-                {% endif %}
-
-                {{ govukButton({
-                    text: getAppointmentEditApplyToCta(session.appointmentJourney, editAppointmentJourney),
-                    preventDoubleClick: true
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: getAppointmentEditApplyToCta(session.appointmentJourney, editAppointmentJourney),
+              preventDoubleClick: true
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

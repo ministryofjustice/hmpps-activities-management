@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
@@ -10,63 +9,67 @@
 {% set hardBackLinkText = "Back" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukRadios({
-                    name: "datePresetOption",
-                    attributes: { "data-qa": "datePresetOption" },
-                    fieldset: {
-                        legend: {
-                            html: '<span class="govuk-caption-l">Review changes in circumstances</span>Select a date to review changes',
-                            text: "Select a date to review changes",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('datePresetOption'),
-                    items: [
-                        {
-                            value: "today",
-                            text: todayOptionText,
-                            checked: formResponses.datePresetOption == 'today'
-                        },
-                        {
-                            value: "yesterday",
-                            text: yesterdayOptionText,
-                            checked: formResponses.datePresetOption == 'yesterday'
-                        },
-                        {
-                            value: "other",
-                            text: "A different date",
-                            checked: formResponses.datePresetOption == 'other',
-                            conditional: {
-                                html: mojDatePicker({
-                                    id: 'date',
-                                    name: 'date',
-                                    label: {
-                                        text: 'Date',
-                                        classes: "govuk-visually-hidden"
-                                    },
-                                    leadingZeros: 'true',
-                                    hint: {
-                                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
-                                    },
-                                    classes: 'moj-datepicker--fixed-width',
-                                    maxDate: maxDate,
-                                    errorMessage: validationErrors | findError('date'),
-                                    value: formResponses.date or allocateJourney.date | isoDateToDatePickerDate
-                                })
-                            }
-                        }
-                    ]
-                }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          govukRadios({
+              name: "datePresetOption",
+              attributes: { "data-qa": "datePresetOption" },
+              fieldset: {
+                  legend: {
+                      html: '<span class="govuk-caption-l">Review changes in circumstances</span>Select a date to review changes',
+                      text: "Select a date to review changes",
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--l"
+                  }
+              },
+              errorMessage: validationErrors | findError('datePresetOption'),
+              items: [
+                  {
+                      value: "today",
+                      text: todayOptionText,
+                      checked: formResponses.datePresetOption == 'today'
+                  },
+                  {
+                      value: "yesterday",
+                      text: yesterdayOptionText,
+                      checked: formResponses.datePresetOption == 'yesterday'
+                  },
+                  {
+                      value: "other",
+                      text: "A different date",
+                      checked: formResponses.datePresetOption == 'other',
+                      conditional: {
+                          html: mojDatePicker({
+                              id: 'date',
+                              name: 'date',
+                              label: {
+                                  text: 'Date',
+                                  classes: "govuk-visually-hidden"
+                              },
+                              leadingZeros: 'true',
+                              hint: {
+                                  text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
+                              },
+                              classes: 'moj-datepicker--fixed-width',
+                              maxDate: maxDate,
+                              errorMessage: validationErrors | findError('date'),
+                              value: formResponses.date or allocateJourney.date | isoDateToDatePickerDate
+                          })
+                      }
+                  }
+              ]
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Continue"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

@@ -18,314 +18,365 @@
 {% set hardBackLinkHref = 'select-date-and-location?date='+date+'&locationKey='+location.key+'&activitySlot='+timeSlot %}
 
 {% block content %}
-    <div class="govuk-table govuk-!-margin-0 unlock-list">
-        <div class="govuk-table__head">
-            <div class="govuk-table__row">
-                <div>
-                    <div class="govuk-grid-row govuk-!-margin-bottom-1">
-                        <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-one-half govuk-!-margin-bottom-1">
-                            <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ location.name }} - Unlock list</h1>
-                            <div class="govuk-caption-l govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ timeSlot }} session</div>
-                            <div class="govuk-caption-l">{{ date | formatDate }}</div>
-                            <div class="govuk-!-margin-top-2">
-                                <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
-                                    {{ unlockListItems.length }} people to unlock
-                            </div>
-                                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.leavingWing }} leaving wing
-                            </div>
-                                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.stayingOnWing }} staying on wing
-                            </div>
-                            </div>
-                            <div class="search-input search-input--inline-search govuk-!-margin-top-6 govuk-!-display-none-print">
-                                <div class="search-input__form-inputs">
-                                    <div class="govuk-form-group">
-                                        <label class="govuk-label govuk-label--s" for="searchTerm">Search by name or prison number, or event name</label>
-                                        <input class="govuk-input" id="searchTerm" name="searchTerm" type="search" form="filter-form" value="{{ unlockListJourney.searchTerm }}">
-                                    </div>
-                                    <button type="submit" class="govuk-button" data-module="govuk-button" form="filter-form">Search</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="govuk-grid-column-one-third govuk-!-print-grid-column-one-half">
-                            <div class='related-tasks govuk-!-display-none-print'>
-                                <h2 class='govuk-heading-m govuk-!-margin-bottom-2'>Related tasks</h2>
-                                <ul class='govuk-list'>
-                                    <li><a href="/activities/attendance/attend-all/select-people-by-residential-location?date={{date}}&sessionFilters={{timeSlot}}&locationKey={{location.key}}" class="govuk-link govuk-link--no-visited-state">Record activity attendance for people on {{ location.name }}</a></li>
-                                </ul>
-                            </div>
-                            <div class="print-only">
-                                <div class="printable-textarea">Notes</div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr class="govuk-section-break govuk-section-break--visible print-only"/>
+  <div class="govuk-table govuk-!-margin-0 unlock-list">
+    <div class="govuk-table__head">
+      <div class="govuk-table__row">
+        <div>
+          <div class="govuk-grid-row govuk-!-margin-bottom-1">
+            <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-one-half govuk-!-margin-bottom-1">
+              <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ location.name }} - Unlock list</h1>
+              <div class="govuk-caption-l govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ timeSlot }} session</div>
+              <div class="govuk-caption-l">{{ date | formatDate }}</div>
+              <div class="govuk-!-margin-top-2">
+                <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
+                  {{ unlockListItems.length }} people to unlock
                 </div>
-            </div>
-        </div>
-        <div class="govuk-table__body">
-            <div class="govuk-table__row">
-                <div>
-                    {% set accordionFilterItems = [] %}
-
-                    {% set residentialLocation %}
-                    {% include 'partials/activities/unlock-list/filterSections/residentalLocationHtml.njk' %}
-                    {% endset %}
-
-                    {% if location.children | length %}
-                        {% set accordionFilterItems = (accordionFilterItems.push({
-                            heading: {
-                                text: "Residential location"
-                            },
-                            content: {
-                                html: residentialLocation
-                            },
-                            expanded: true
-                        }), accordionFilterItems) %}
-                    {% endif %}
-
-                    {% set stayingOrLeavingWing %}
-                    {% include 'partials/activities/unlock-list/filterSections/stayingOrLeavingWingHtml.njk' %}
-                    {% endset %}
-
-                    {% set accordionFilterItems = (accordionFilterItems.push({
-                        heading: {
-                            text: "Staying or leaving wing"
-                        },
-                        content: {
-                            html: stayingOrLeavingWing
-                        },
-                        expanded: true
-                    }), accordionFilterItems) %}
-
-                    {% set activityCategoryFiltersHtml %}
-                    {% include 'partials/activities/unlock-list/filterSections/activityCategoryFiltersHtml.njk' %}
-                    {% endset %}
-
-                    {% if activityCategories %}
-                        {% set accordionFilterItems = (accordionFilterItems.push({
-                            heading: {
-                                text: "Activity category"
-                            },
-                            content: {
-                                html: activityCategoryFiltersHtml
-                            },
-                            expanded: true
-                        }), accordionFilterItems) %}
-                    {% endif %}
-
-                    {% set peopleWithOrWithoutEvents %}
-                    {% include 'partials/activities/unlock-list/filterSections/peopleWithOrWithoutEventsHtml.njk' %}
-                    {% endset %}
-
-                    {% set alertsAccordionHtml %}
-                    {{ alertFilters(alertOptions, unlockListJourney.alertFilters, true) }}
-                    {% endset %}
-
-                    {% set cancelledEventsHtml %}
-                    {% include 'partials/activities/unlock-list/filterSections/cancelledEvents.njk' %}
-                    {% endset %}
-
-                    {% set accordionFilterItems = (accordionFilterItems.push({
-                        heading: {
-                            text: "Alerts"
-                        },
-                        content: {
-                            html: alertsAccordionHtml
-                        },
-                        expanded: true
-                    },
-                    {
-                        heading: {
-                            text: "Show cancelled events"
-                        },
-                        content: {
-                            html: cancelledEventsHtml
-                        },
-                        expanded: true
-                    },
-                    {
-                        heading: {
-                            text: "People with or without events"
-                        },
-                        content: {
-                            html: peopleWithOrWithoutEvents
-                        },
-                        expanded: true
-                    }), accordionFilterItems) %}
-
-                    {% set filterOptionsHtml %}
-                    {{ govukAccordion({
-                            id: "filter-accordion",
-                            items: accordionFilterItems
-                        }) }}
-                    <button class="govuk-button govuk-!-margin-top-3 govuk-!-margin-bottom-3" data-module="govuk-button">Apply filters</button>
-                    {% endset %}
-
-                    <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
-
-                        <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
-                            <form id="filter-form" method="POST" action="update-filters" novalidate>
-                                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                                {{ mojFilter({
-                                    heading: {
-                                        text: 'Filters'
-                                    },
-                                    attributes: {
-                                        'data-filter-start-shown': 'true'
-                                    },
-                                    optionsHtml: filterOptionsHtml
-                                }) }}
-                            </form>
-                        </div>
-                        <div class="moj-filter-layout__content">
-                            <div class="moj-action-bar govuk-!-display-none-print">
-                              <div class="moj-action-bar__filter"></div>
-                              {# we're using '| dump' filter in the below component so that the values
-                              for the metrics attributes are recorded correctly, pls do not remove #}
-                              {{ govukButton({
-                                attributes: {
-                                  id: 'print-unlock',
-                                  'data-track-click-event': 'SAA-Unlock-List-Printed',
-                                  'data-track-event-properties': {
-                                    user: user.username,
-                                    prisonCode: user.activeCaseLoadId,
-                                    unlockDate: date,
-                                    timePeriod: timeSlot,
-                                    location: location.name
-                                  } | dump,
-                                  'data-track-event-measurements': {
-                                    prisonerCount: unlockListItems | length
-                                  } | dump
-                                },
-                                text: "Print this unlock list",
-                                classes: "govuk-button--blue js-print no-js-hidden",
-                                preventDoubleClick: true
-                              }) }}
-                            </div>
-
-                            {% if unlockListItems | length > 0 %}
-                                {% set rows = [] %}
-                                {% for item in unlockListItems %}
-                                    {% set row = [] %}
-                                    {% set row = (row.push(
-                                    {
-                                        attributes: {
-                                            id: 'activity-' + loop.index,
-                                            "data-sort-value": item | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
-                                        },
-                                        html: showProfileLink({
-                                            firstName: item.firstName,
-                                            middleNames: item.middleNames,
-                                            lastName: item.lastName,
-                                            prisonerNumber: item.prisonerNumber
-                                        }),
-                                        classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
-                                    },
-                                    {
-                                        attributes: { id: 'cell-location-' + loop.index },
-                                        text: item.cellLocation,
-                                        classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
-                                    }
-                                ), row) %}
-
-                                    {% if unlockListJourney.alertFilters.length > 0 %}
-                                        {% set row = (row.push({
-                                        html: alertsList({ alerts: item.alerts, category: item.category }),
-                                        classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
-                                    }), row) %}
-                                    {% endif %}
-
-                                    {% set row = (row.push(
-                                    {
-                                        attributes: {
-                                            id: 'activity-' + loop.index,
-                                            "data-sort-value": (item.events[0].summary) | lower,
-                                            colspan: 4
-                                        },
-                                        html: showUnlockEvents(item.events),
-                                        classes: 'govuk-table__cell govuk-table__cell--vertical-align-top govuk-!-padding-right-0'
-                                    }
-                                ), row) %}
-
-                                    {% set rows = (rows.push(row), rows) %}
-                                {% endfor %}
-
-                                {% set headRows = [
-                                {
-                                    text: "Name",
-                                    attributes: { "aria-sort": "none" },
-                                    classes: 'govuk-table__header'
-                                },
-                                {
-                                    text: "Cell location",
-                                    attributes: { "aria-sort": "ascending" },
-                                    classes: 'govuk-table__header'
-                                }
-                            ] %}
-
-                                {% if unlockListJourney.alertFilters.length > 0 %}
-                                    {% set headRows = (headRows.push(
-                                    {
-                                        text: "Relevant alerts",
-                                        classes: 'govuk-table__header'
-                                    }
-                                ), headRows) %}
-                                {% endif %}
-
-                                {% set headRows = (headRows.push(
-                                {
-                                    html: "Event details",
-                                    attributes: { "aria-sort": "none", colspan: 4 },
-                                    classes: 'govuk-table__header govuk-!-display-none-print ' + ('hmpps-width-40-percent' if unlockListJourney.alertFilters else 'hmpps-width-50-percent')
-                                },
-                                {
-                                    html: "Event details",
-                                    attributes: { "aria-sort": "none" },
-                                    classes: 'govuk-table__header print-only ' + ('hmpps-width-30-percent' if unlockListJourney.alertFilters else 'hmpps-width-40-percent')
-                                },
-                                {
-                                    html: "<span><span class=\"text-underline\">R</span>efused</span>",
-                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
-                                },
-                                {
-                                    html: "<span>Rest in <span class=\"text-underline\">C</span>ell</span>",
-                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
-                                },
-                                {
-                                    html: "<span><span class=\"text-underline\">U</span>nlocked</span>",
-                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
-                                }
-                            ), headRows) %}
-
-                                {{ govukTable({
-                                attributes: {
-                                    id: 'unlock-list-table',
-                                    'data-module': 'moj-sortable-table'
-                                },
-                                caption: "Prisoners",
-                                classes: "fixed-layout-table alternating-row-shading sticky-header",
-                                captionClasses: "govuk-visually-hidden",
-                                head: headRows,
-                                rows: rows
-                            }) }}
-                            {% elseif unlockListJourney.searchTerm %}
-                                <p class="govuk-body govuk-!-margin-top-4">There are no matching search results.</p> 
-                                <p class="govuk-body">You can:</p>
-                                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
-                                    <li>try a different search</li>
-                                    <li>check the filters, to make sure the person or event is included</li>
-                                </ul>
-                            {% endif %}
-                        </div>
-                    </div>
+                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.leavingWing }} leaving wing</div>
+                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.stayingOnWing }} staying on wing</div>
+              </div>
+              <div class="search-input search-input--inline-search govuk-!-margin-top-6 govuk-!-display-none-print">
+                <div class="search-input__form-inputs">
+                  <div class="govuk-form-group">
+                    <label class="govuk-label govuk-label--s" for="searchTerm"
+                      >Search by name or prison number, or event name</label
+                    >
+                    <input
+                      class="govuk-input"
+                      id="searchTerm"
+                      name="searchTerm"
+                      type="search"
+                      form="filter-form"
+                      value="{{ unlockListJourney.searchTerm }}"
+                    />
+                  </div>
+                  <button type="submit" class="govuk-button" data-module="govuk-button" form="filter-form">
+                    Search
+                  </button>
                 </div>
+              </div>
             </div>
-        </div>
-        <div class="print-only">
-            <div class="govuk-!-padding-top-1 govuk-body-s">
-                    Printed at {{ now | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}
+
+            <div class="govuk-grid-column-one-third govuk-!-print-grid-column-one-half">
+              <div class="related-tasks govuk-!-display-none-print">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Related tasks</h2>
+                <ul class="govuk-list">
+                  <li>
+                    <a
+                      href="/activities/attendance/attend-all/select-people-by-residential-location?date={{ date }}&sessionFilters={{ timeSlot }}&locationKey={{ location.key }}"
+                      class="govuk-link govuk-link--no-visited-state"
+                      >Record activity attendance for people on {{ location.name }}</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="print-only">
+                <div class="printable-textarea">Notes</div>
+              </div>
             </div>
+          </div>
+          <hr class="govuk-section-break govuk-section-break--visible print-only" />
         </div>
+      </div>
     </div>
+    <div class="govuk-table__body">
+      <div class="govuk-table__row">
+        <div>
+          {% set accordionFilterItems = [] %}
+
+
+          {% set residentialLocation %}
+            {% include 'partials/activities/unlock-list/filterSections/residentalLocationHtml.njk' %}
+          {% endset %}
+
+          {% if location.children | length %}
+            {%
+              set accordionFilterItems = (accordionFilterItems.push({
+                  heading: {
+                      text: "Residential location"
+                  },
+                  content: {
+                      html: residentialLocation
+                  },
+                  expanded: true
+              }), accordionFilterItems)
+            %}
+          {% endif %}
+
+
+          {% set stayingOrLeavingWing %}
+            {% include 'partials/activities/unlock-list/filterSections/stayingOrLeavingWingHtml.njk' %}
+          {% endset %}
+
+          {%
+            set accordionFilterItems = (accordionFilterItems.push({
+                heading: {
+                    text: "Staying or leaving wing"
+                },
+                content: {
+                    html: stayingOrLeavingWing
+                },
+                expanded: true
+            }), accordionFilterItems)
+          %}
+
+
+          {% set activityCategoryFiltersHtml %}
+            {% include 'partials/activities/unlock-list/filterSections/activityCategoryFiltersHtml.njk' %}
+          {% endset %}
+
+          {% if activityCategories %}
+            {%
+              set accordionFilterItems = (accordionFilterItems.push({
+                  heading: {
+                      text: "Activity category"
+                  },
+                  content: {
+                      html: activityCategoryFiltersHtml
+                  },
+                  expanded: true
+              }), accordionFilterItems)
+            %}
+          {% endif %}
+
+
+          {% set peopleWithOrWithoutEvents %}
+            {% include 'partials/activities/unlock-list/filterSections/peopleWithOrWithoutEventsHtml.njk' %}
+          {% endset %}
+
+
+          {% set alertsAccordionHtml %}
+            {{ alertFilters(alertOptions, unlockListJourney.alertFilters, true) }}
+          {% endset %}
+
+
+          {% set cancelledEventsHtml %}
+            {% include 'partials/activities/unlock-list/filterSections/cancelledEvents.njk' %}
+          {% endset %}
+
+          {%
+            set accordionFilterItems = (accordionFilterItems.push({
+                heading: {
+                    text: "Alerts"
+                },
+                content: {
+                    html: alertsAccordionHtml
+                },
+                expanded: true
+            },
+            {
+                heading: {
+                    text: "Show cancelled events"
+                },
+                content: {
+                    html: cancelledEventsHtml
+                },
+                expanded: true
+            },
+            {
+                heading: {
+                    text: "People with or without events"
+                },
+                content: {
+                    html: peopleWithOrWithoutEvents
+                },
+                expanded: true
+            }), accordionFilterItems)
+          %}
+
+
+          {% set filterOptionsHtml %}
+            {{
+              govukAccordion({
+                  id: "filter-accordion",
+                  items: accordionFilterItems
+              })
+            }}
+            <button class="govuk-button govuk-!-margin-top-3 govuk-!-margin-bottom-3" data-module="govuk-button">
+              Apply filters
+            </button>
+          {% endset %}
+
+          <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+            <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
+              <form id="filter-form" method="POST" action="update-filters" novalidate>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{
+                  mojFilter({
+                      heading: {
+                          text: 'Filters'
+                      },
+                      attributes: {
+                          'data-filter-start-shown': 'true'
+                      },
+                      optionsHtml: filterOptionsHtml
+                  })
+                }}
+              </form>
+            </div>
+            <div class="moj-filter-layout__content">
+              <div class="moj-action-bar govuk-!-display-none-print">
+                <div class="moj-action-bar__filter"></div>
+                {# we're using '| dump' filter in the below component so that the values
+                              for the metrics attributes are recorded correctly, pls do not remove #}
+                {{
+                  govukButton({
+                    attributes: {
+                      id: 'print-unlock',
+                      'data-track-click-event': 'SAA-Unlock-List-Printed',
+                      'data-track-event-properties': {
+                        user: user.username,
+                        prisonCode: user.activeCaseLoadId,
+                        unlockDate: date,
+                        timePeriod: timeSlot,
+                        location: location.name
+                      } | dump,
+                      'data-track-event-measurements': {
+                        prisonerCount: unlockListItems | length
+                      } | dump
+                    },
+                    text: "Print this unlock list",
+                    classes: "govuk-button--blue js-print no-js-hidden",
+                    preventDoubleClick: true
+                  })
+                }}
+              </div>
+
+              {% if unlockListItems | length > 0 %}
+                {% set rows = [] %}
+                {% for item in unlockListItems %}
+                  {% set row = [] %}
+                  {%
+                    set row = (row.push(
+                        {
+                            attributes: {
+                                id: 'activity-' + loop.index,
+                                "data-sort-value": item | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+                            },
+                            html: showProfileLink({
+                                firstName: item.firstName,
+                                middleNames: item.middleNames,
+                                lastName: item.lastName,
+                                prisonerNumber: item.prisonerNumber
+                            }),
+                            classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
+                        },
+                        {
+                            attributes: { id: 'cell-location-' + loop.index },
+                            text: item.cellLocation,
+                            classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
+                        }
+                    ), row)
+                  %}
+
+                  {% if unlockListJourney.alertFilters.length > 0 %}
+                    {%
+                      set row = (row.push({
+                          html: alertsList({ alerts: item.alerts, category: item.category }),
+                          classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
+                      }), row)
+                    %}
+                  {% endif %}
+
+                  {%
+                    set row = (row.push(
+                        {
+                            attributes: {
+                                id: 'activity-' + loop.index,
+                                "data-sort-value": (item.events[0].summary) | lower,
+                                colspan: 4
+                            },
+                            html: showUnlockEvents(item.events),
+                            classes: 'govuk-table__cell govuk-table__cell--vertical-align-top govuk-!-padding-right-0'
+                        }
+                    ), row)
+                  %}
+
+                  {% set rows = (rows.push(row), rows) %}
+                {% endfor %}
+
+                {%
+                  set headRows = [
+                      {
+                          text: "Name",
+                          attributes: { "aria-sort": "none" },
+                          classes: 'govuk-table__header'
+                      },
+                      {
+                          text: "Cell location",
+                          attributes: { "aria-sort": "ascending" },
+                          classes: 'govuk-table__header'
+                      }
+                  ]
+                %}
+
+                {% if unlockListJourney.alertFilters.length > 0 %}
+                  {%
+                    set headRows = (headRows.push(
+                        {
+                            text: "Relevant alerts",
+                            classes: 'govuk-table__header'
+                        }
+                    ), headRows)
+                  %}
+                {% endif %}
+
+                {%
+                  set headRows = (headRows.push(
+                      {
+                          html: "Event details",
+                          attributes: { "aria-sort": "none", colspan: 4 },
+                          classes: 'govuk-table__header govuk-!-display-none-print ' + ('hmpps-width-40-percent' if unlockListJourney.alertFilters else 'hmpps-width-50-percent')
+                      },
+                      {
+                          html: "Event details",
+                          attributes: { "aria-sort": "none" },
+                          classes: 'govuk-table__header print-only ' + ('hmpps-width-30-percent' if unlockListJourney.alertFilters else 'hmpps-width-40-percent')
+                      },
+                      {
+                          html: "<span><span class=\"text-underline\">R</span>efused</span>",
+                          classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
+                      },
+                      {
+                          html: "<span>Rest in <span class=\"text-underline\">C</span>ell</span>",
+                          classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
+                      },
+                      {
+                          html: "<span><span class=\"text-underline\">U</span>nlocked</span>",
+                          classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
+                      }
+                  ), headRows)
+                %}
+
+                {{
+                  govukTable({
+                      attributes: {
+                          id: 'unlock-list-table',
+                          'data-module': 'moj-sortable-table'
+                      },
+                      caption: "Prisoners",
+                      classes: "fixed-layout-table alternating-row-shading sticky-header",
+                      captionClasses: "govuk-visually-hidden",
+                      head: headRows,
+                      rows: rows
+                  })
+                }}
+                {% elseif unlockListJourney.searchTerm %}
+                <p class="govuk-body govuk-!-margin-top-4">There are no matching search results.</p>
+                <p class="govuk-body">You can:</p>
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+                  <li>try a different search</li>
+                  <li>check the filters, to make sure the person or event is included</li>
+                </ul>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="print-only">
+      <div class="govuk-!-padding-top-1 govuk-body-s">
+        Printed at {{ now | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}
+      </div>
+    </div>
+  </div>
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
@@ -14,156 +13,172 @@
 {% set stateFilterParams = (('stateFilter=' + filters.stateFilter | urlencode) if filters.stateFilter else '') %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Activities dashboard</h1>
-            <p class="govuk-body-l">Select an activity to edit details including pay rates, requirements and schedule. You can also end an activity.</p>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Activities dashboard</h1>
+      <p class="govuk-body-l">
+        Select an activity to edit details including pay rates, requirements and schedule. You can also end an activity.
+      </p>
     </div>
+  </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
-
-                <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
-                    <form method='GET'>
-                        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                        {{ mojFilter({
-                            heading: {
-                                text: 'Filters'
-                            },
-                            optionsHtml: activitiesFilters(filters)
-                        }) }}
-                    </form>
-                </div>
-                <hr class="print-only"/>
-                <div class="moj-filter-layout__content govuk-grid-column-full govuk-!-padding-0">
-                    <div class="moj-action-bar govuk-!-display-none-print">
-                        <div class="moj-action-bar__filter"></div>
-                    </div>
-
-                    {% if user.externalActivitiesRolledOut %}
-                        {{ mojSubNavigation({
-                            label: "Sub navigation",
-                            attributes: {
-                                "data-qa": "moj-sub-navigation"
-                            },
-                            items: [{
-                                text: "In-prison activities",
-                                href: "dashboard?" + stateFilterParams + "&isOutsideWorkFilter=false",
-                                active: true if filters.isOutsideWorkFilter === 'false' else false
-                            }, {
-                                text: "Outside activities",
-                                href: "dashboard?" + stateFilterParams + "&isOutsideWorkFilter=true",
-                                active: true if filters.isOutsideWorkFilter === 'true' else false
-                            }]
-                        }) }}
-
-                        <h2 class="govuk-heading-m govuk-!-margin-top-6" data-qa="location-heading">{{ 'Outside' if filters.isOutsideWorkFilter === 'true' else 'In-prison' }} activities</h2>
-                    {% endif %}
-
-                    {% if activities | length %}
-                        {% set rows = [] %}
-                        {% for activity in activities %}
-                            {% set rows = (rows.push([
-                                    {
-                                        attributes: {
-                                            id: 'activity-' + loop.index,
-                                            "data-sort-value": activity.activityName
-                                        },
-                                        html: '
-                                                <p class="govuk-heading-m govuk-!-margin-bottom-3">
-                                                    <a href="/activities/view/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + (activity.activityName | escape) + '</a>
-                                                </p>
-                                            '
-                                    },
-                                    {
-                                        attributes: {
-                                            id: 'activity-' + loop.index,
-                                            "data-sort-value": activity.createdTime | getUnixTime 
-                                        },
-                                        text: activity.createdTime | parseISODate | formatDate('d MMM yyyy')
-                                    },
-                                    {
-                                        attributes: {
-                                            id: 'activity-' + loop.index,
-                                            "data-sort-value": activity.category.name
-                                        },
-                                        text: activity.category.name
-                                    },
-                                    {
-                                        attributes: {
-                                            id: 'activity-' + loop.index,
-                                            "data-sort-value": activity.activityState
-                                        },
-                                        text: renderActivityState(activity.activityState)
-                                    }
-                                ]), rows) %}
-                        {% endfor %}
-
-                        {{ govukTable({
-                            attributes: {
-                                'data-qa': 'activities-table'
-                            },
-                            caption: ("Outside" if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter === 'true' else "In-prison") + " activities with the date created, activity category and current state",
-                            captionClasses: "govuk-visually-hidden",
-                            classes: 'sticky-header',
-                            head: [
-                                {
-                                    text: "Activity name",
-                                    attributes: {
-                                        "aria-sort": "ascending"
-                                    }
-                                },
-                                {
-                                    text: "Date created",
-                                    attributes: {
-                                        "aria-sort": "none"
-                                    }
-                                },
-                                {
-                                    text: "Activity category",
-                                    attributes: {
-                                        "aria-sort": "none"
-                                    }
-                                },
-                                {
-                                    text: "State",
-                                    attributes: {
-                                        "aria-sort": "none"
-                                    }
-                                }
-                            ],
-                            rows: rows
-                        }) }}
-                    {% else %}
-                        <p class="govuk-body-l" data-qa="no-activities">There are no {{ filters.stateFilter }} {{ 'outside ' if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter == 'true' }}activities.</p>
-                    {% endif %}
-
-                </div>
-            </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+        <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
+          <form method="GET">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            {{
+              mojFilter({
+                  heading: {
+                      text: 'Filters'
+                  },
+                  optionsHtml: activitiesFilters(filters)
+              })
+            }}
+          </form>
         </div>
+        <hr class="print-only" />
+        <div class="moj-filter-layout__content govuk-grid-column-full govuk-!-padding-0">
+          <div class="moj-action-bar govuk-!-display-none-print">
+            <div class="moj-action-bar__filter"></div>
+          </div>
+
+          {% if user.externalActivitiesRolledOut %}
+            {{
+              mojSubNavigation({
+                  label: "Sub navigation",
+                  attributes: {
+                      "data-qa": "moj-sub-navigation"
+                  },
+                  items: [{
+                      text: "In-prison activities",
+                      href: "dashboard?" + stateFilterParams + "&isOutsideWorkFilter=false",
+                      active: true if filters.isOutsideWorkFilter === 'false' else false
+                  }, {
+                      text: "Outside activities",
+                      href: "dashboard?" + stateFilterParams + "&isOutsideWorkFilter=true",
+                      active: true if filters.isOutsideWorkFilter === 'true' else false
+                  }]
+              })
+            }}
+
+            <h2 class="govuk-heading-m govuk-!-margin-top-6" data-qa="location-heading">
+              {{ 'Outside' if filters.isOutsideWorkFilter === 'true' else 'In-prison' }} activities
+            </h2>
+          {% endif %}
+
+          {% if activities | length %}
+            {% set rows = [] %}
+            {% for activity in activities %}
+              {%
+                set rows = (rows.push([
+                    {
+                        attributes: {
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.activityName
+                        },
+                        html: '
+                                <p class="govuk-heading-m govuk-!-margin-bottom-3">
+                                    <a href="/activities/view/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + (activity.activityName | escape) + '</a>
+                                </p>
+                            '
+                    },
+                    {
+                        attributes: {
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.createdTime | getUnixTime
+                        },
+                        text: activity.createdTime | parseISODate | formatDate('d MMM yyyy')
+                    },
+                    {
+                        attributes: {
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.category.name
+                        },
+                        text: activity.category.name
+                    },
+                    {
+                        attributes: {
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.activityState
+                        },
+                        text: renderActivityState(activity.activityState)
+                    }
+                ]), rows)
+              %}
+            {% endfor %}
+
+            {{
+              govukTable({
+                  attributes: {
+                      'data-qa': 'activities-table'
+                  },
+                  caption: ("Outside" if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter === 'true' else "In-prison") + " activities with the date created, activity category and current state",
+                  captionClasses: "govuk-visually-hidden",
+                  classes: 'sticky-header',
+                  head: [
+                      {
+                          text: "Activity name",
+                          attributes: {
+                              "aria-sort": "ascending"
+                          }
+                      },
+                      {
+                          text: "Date created",
+                          attributes: {
+                              "aria-sort": "none"
+                          }
+                      },
+                      {
+                          text: "Activity category",
+                          attributes: {
+                              "aria-sort": "none"
+                          }
+                      },
+                      {
+                          text: "State",
+                          attributes: {
+                              "aria-sort": "none"
+                          }
+                      }
+                  ],
+                  rows: rows
+              })
+            }}
+          {% else %}
+            <p class="govuk-body-l" data-qa="no-activities">
+              There are no {{ filters.stateFilter }}
+              {{ 'outside ' if user.externalActivitiesRolledOut and filters.isOutsideWorkFilter == 'true' }}activities.
+            </p>
+          {% endif %}
+        </div>
+      </div>
     </div>
+  </div>
 {% endblock %}
 
 {% macro renderActivityState(activityState) %}
-    {% if activityState === 'LIVE' %}
-        {{ govukTag({
-            text: activityState,
-            classes: "govuk-tag--blue"
-           })
-        }}
-    {% else %}
-        {{ govukTag({
-            text: activityState,
-            classes: "govuk-tag--red"
-           })
-        }}
-    {% endif %}
+  {% if activityState === 'LIVE' %}
+    {{
+      govukTag({
+       text: activityState,
+       classes: "govuk-tag--blue"
+      })
+    }}
+  {% else %}
+    {{
+      govukTag({
+       text: activityState,
+       classes: "govuk-tag--red"
+      })
+    }}
+  {% endif %}
 {% endmacro %}
 
 {% macro activitiesFilters(filters) %}
-    {% set stateOptions = [
+  {%
+    set stateOptions = [
         {
             value: "live",
             text: "Live",
@@ -177,9 +192,11 @@
             text: "Both (live or archived)",
             checked: filters.stateFilter == "all"
         }
-    ] %}
+    ]
+  %}
 
-    {{ govukRadios({
+  {{
+    govukRadios({
         id: "stateFilter",
         name: "stateFilter",
         classes: "govuk-radios--small",
@@ -190,5 +207,6 @@
             }
         },
         items: stateOptions
-    }) }}
+    })
+  }}
 {% endmacro %}

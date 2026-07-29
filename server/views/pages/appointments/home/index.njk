@@ -7,74 +7,86 @@
 {% set hardBackLinkHref = dpsUrl %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Appointments</h1>
+  <h1 class="govuk-heading-l">Appointments</h1>
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="card-group govuk-grid-row">
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "createGroupAppointmentCard",
-                        "href": "/appointments/create/start-group",
-                        "clickable": "true",
-                        "heading": "Schedule an appointment",
-                        "description": "Set up a one-off or repeating appointment for one or more people.",
-                        "data-qa": "create-group-appointment-card"
-                    }) }}
-                </div>
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "createAppointmentSetCard",
-                        "href": "/appointments/create/start-set",
-                        "clickable": "true",
-                        "heading": "Schedule a set of back-to-back appointments",
-                        "description": "Set up appointments for a pre-prepared list of people to attend on the same day.",
-                        "data-qa": "create-appointment-set-card"
-                    }) }}
-                </div>
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "searchAppointmentsCard",
-                        "href": "/appointments/search/select-date",
-                        "clickable": "true",
-                        "heading": "Manage existing appointments",
-                        "description": "Edit appointment details, add and remove people, cancel and copy appointments, and print movement slips.",
-                        "data-qa": "search-appointments-card"
-                    }) }}
-                </div>
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "recordAppointmentAttendanceCard",
-                        "href": "/appointments/attendance/select-date",
-                        "clickable": "true",
-                        "heading": "Record appointment attendance",
-                        "description": "Record, view and change appointment attendance.",
-                        "data-qa": "record-appointment-attendance-card"
-                    }) }}
-                </div>
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "viewAppointmentsAttendanceSummary",
-                        "href": "/appointments/attendance-summary/select-date",
-                        "clickable": "true",
-                        "heading": "View appointments attendance summary",
-                        "description": "See attendance figures, including details of who did not attend, where attendance has not been recorded yet, tiers, and cancellations.",
-                        "data-qa": "view-appointments-attendance-summary-card"
-                    }) }}
-                </div>
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "videoDailySchedule",
-                        "href": videoConferenceScheduleUrl,
-                        "clickable": "true",
-                        "heading": "Video link daily schedule",
-                        "description": "View official video link bookings for a VCC, PCVL, or legal visits area, and print off schedules.",
-                        "data-qa": "video-daily-schedule-card"
-                    }) }}
-                </div>
-            </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <div class="card-group govuk-grid-row">
+        <div class="govuk-grid-column-one-third card-group__item">
+          {{
+            card({
+                "id": "createGroupAppointmentCard",
+                "href": "/appointments/create/start-group",
+                "clickable": "true",
+                "heading": "Schedule an appointment",
+                "description": "Set up a one-off or repeating appointment for one or more people.",
+                "data-qa": "create-group-appointment-card"
+            })
+          }}
         </div>
+        <div class="govuk-grid-column-one-third card-group__item">
+          {{
+            card({
+                "id": "createAppointmentSetCard",
+                "href": "/appointments/create/start-set",
+                "clickable": "true",
+                "heading": "Schedule a set of back-to-back appointments",
+                "description": "Set up appointments for a pre-prepared list of people to attend on the same day.",
+                "data-qa": "create-appointment-set-card"
+            })
+          }}
+        </div>
+        <div class="govuk-grid-column-one-third card-group__item">
+          {{
+            card({
+                "id": "searchAppointmentsCard",
+                "href": "/appointments/search/select-date",
+                "clickable": "true",
+                "heading": "Manage existing appointments",
+                "description": "Edit appointment details, add and remove people, cancel and copy appointments, and print movement slips.",
+                "data-qa": "search-appointments-card"
+            })
+          }}
+        </div>
+        <div class="govuk-grid-column-one-third card-group__item">
+          {{
+            card({
+                "id": "recordAppointmentAttendanceCard",
+                "href": "/appointments/attendance/select-date",
+                "clickable": "true",
+                "heading": "Record appointment attendance",
+                "description": "Record, view and change appointment attendance.",
+                "data-qa": "record-appointment-attendance-card"
+            })
+          }}
+        </div>
+        <div class="govuk-grid-column-one-third card-group__item">
+          {{
+            card({
+                "id": "viewAppointmentsAttendanceSummary",
+                "href": "/appointments/attendance-summary/select-date",
+                "clickable": "true",
+                "heading": "View appointments attendance summary",
+                "description": "See attendance figures, including details of who did not attend, where attendance has not been recorded yet, tiers, and cancellations.",
+                "data-qa": "view-appointments-attendance-summary-card"
+            })
+          }}
+        </div>
+        <div class="govuk-grid-column-one-third card-group__item">
+          {{
+            card({
+                "id": "videoDailySchedule",
+                "href": videoConferenceScheduleUrl,
+                "clickable": "true",
+                "heading": "Video link daily schedule",
+                "description": "View official video link bookings for a VCC, PCVL, or legal visits area, and print off schedules.",
+                "data-qa": "video-daily-schedule-card"
+            })
+          }}
+        </div>
+      </div>
     </div>
+  </div>
 {% endblock %}

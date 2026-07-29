@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
@@ -14,61 +13,69 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-l">Appointment deletion preview</h2>
-            {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Delete appointments from"
-                        },
-                        value: {
-                            text: fromDate | parseISODate | formatDate("EEEE, d MMMM yyyy")
-                        }
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h2 class="govuk-heading-l">Appointment deletion preview</h2>
+      {{
+        govukSummaryList({
+            rows: [
+                {
+                    key: {
+                        text: "Delete appointments from"
                     },
-                    {
-                        key: {
-                            text: "Total to be deleted"
-                        },
-                        value: {
-                            text: totalAppointments
-                        }
+                    value: {
+                        text: fromDate | parseISODate | formatDate("EEEE, d MMMM yyyy")
                     }
-                ]
-            }) }}
+                },
+                {
+                    key: {
+                        text: "Total to be deleted"
+                    },
+                    value: {
+                        text: totalAppointments
+                    }
+                }
+            ]
+        })
+      }}
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <input type="hidden" name="categories" value="{{ categories }}" />
-                <input type="hidden" name="fromDate" value="{{ fromDate }}" />
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="categories" value="{{ categories }}" />
+        <input type="hidden" name="fromDate" value="{{ fromDate }}" />
 
-                {% set rows = [] %}
-                {% for summary in appointmentMigrationSummaries %}
-                    {% set rows = (rows.push([
-                        {
-                            text: summary.appointmentCategorySummary.description
-                        },
-                        {
-                            text: summary.appointmentCategorySummary.code
-                        },
-                        {
-                            text: summary.count
-                        }
-                    ]), rows) %}
-                {% endfor %}
-                {{ govukTable({
-                    caption: "Preview",
-                    captionClasses: "govuk-visually-hidden",
-                    head: [ { text: "Category Description" }, { text: "Category Code" }, { text: "Appointments" }],
-                    rows: rows,
-                    classes: "govuk-!-margin-bottom-6"
-                }) }}
+        {% set rows = [] %}
+        {% for summary in appointmentMigrationSummaries %}
+          {%
+            set rows = (rows.push([
+                {
+                    text: summary.appointmentCategorySummary.description
+                },
+                {
+                    text: summary.appointmentCategorySummary.code
+                },
+                {
+                    text: summary.count
+                }
+            ]), rows)
+          %}
+        {% endfor %}
+        {{
+          govukTable({
+              caption: "Preview",
+              captionClasses: "govuk-visually-hidden",
+              head: [ { text: "Category Description" }, { text: "Category Code" }, { text: "Appointments" }],
+              rows: rows,
+              classes: "govuk-!-margin-bottom-6"
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Delete migrated appointments"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Delete migrated appointments"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

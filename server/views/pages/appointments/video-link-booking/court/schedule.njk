@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
@@ -8,319 +7,335 @@
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-
 {% set pageId = 'appointment-schedule-page' %}
 {% set jsBackLink = true %}
 {% set pageHeading = "Review scheduled events to avoid clashes" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session) }}
+      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
     </div>
+  </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Appointment name"
-                        },
-                        value: {
-                            text: "Video Link - Court Hearing"
-                        }
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{
+        govukSummaryList({
+            rows: [
+                {
+                    key: {
+                        text: "Appointment name"
                     },
-                    {
-                        key: {
-                            text: "Name of attendee"
-                        },
-                        value: {
-                            html: showProfileLink({
-                                firstName: session.bookACourtHearingJourney.prisoner.firstName,
-                                middleNames: session.bookACourtHearingJourney.prisoner.middleNames,
-                                lastName: session.bookACourtHearingJourney.prisoner.lastName,
-                                prisonerNumber: session.bookACourtHearingJourney.prisoner.number,
-                                cellLocation: statusBasedCellLocation(session.bookACourtHearingJourney.prisoner.cellLocation, session.bookACourtHearingJourney.prisoner.status, session.bookACourtHearingJourney.prisoner.prisonCode == user.activeCaseLoadId),
-                                inCaseLoad: session.bookACourtHearingJourney.prisoner.prisonCode == user.activeCaseLoadId
-                            })
-                        }
+                    value: {
+                        text: "Video Link - Court Hearing"
+                    }
+                },
+                {
+                    key: {
+                        text: "Name of attendee"
                     },
-                    {
-                        key: {
-                            text: "Date"
-                        },
-                        value: {
-                            text: session.bookACourtHearingJourney.date | parseISODate | formatDate
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
-                                    text: "Change",
-                                    visuallyHiddenText: "date",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        }
+                    value: {
+                        html: showProfileLink({
+                            firstName: session.bookACourtHearingJourney.prisoner.firstName,
+                            middleNames: session.bookACourtHearingJourney.prisoner.middleNames,
+                            lastName: session.bookACourtHearingJourney.prisoner.lastName,
+                            prisonerNumber: session.bookACourtHearingJourney.prisoner.number,
+                            cellLocation: statusBasedCellLocation(session.bookACourtHearingJourney.prisoner.cellLocation, session.bookACourtHearingJourney.prisoner.status, session.bookACourtHearingJourney.prisoner.prisonCode == user.activeCaseLoadId),
+                            inCaseLoad: session.bookACourtHearingJourney.prisoner.prisonCode == user.activeCaseLoadId
+                        })
+                    }
+                },
+                {
+                    key: {
+                        text: "Date"
                     },
-                    {
-                        key: {
-                            text: "Pre-court hearing time"
-                        },
-                        value: {
-                            text: (session.bookACourtHearingJourney.preHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.preHearingEndTime | parseISODate | formatDate('HH:mm'))
-                        }
-                    } if session.bookACourtHearingJourney.preLocationId,
-                    {
-                        key: {
-                            text: "Pre-court hearing room"
-                        },
-                        value: {
-                            text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.preLocationId)).description
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
-                                    text: "Change",
-                                    visuallyHiddenText: "pre-court hearing room",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        }
-                    } if session.bookACourtHearingJourney.preLocationId,
-                    {
-                        key: {
-                            text: "Main hearing time"
-                        },
-                        value: {
-                            text: (session.bookACourtHearingJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.endTime | parseISODate | formatDate('HH:mm'))
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
-                                    text: "Change",
-                                    visuallyHiddenText: "main hearing time",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        }
+                    value: {
+                        text: session.bookACourtHearingJourney.date | parseISODate | formatDate
                     },
-                    {
-                        key: {
-                            text: "Main hearing room"
-                        },
-                        value: {
-                            text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.locationId)).description
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "location" + ("?preserveHistory=true" if session.req.query.preserveHistory),
-                                    text: "Change",
-                                    visuallyHiddenText: "main hearing room",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Post-court hearing time"
-                        },
-                        value: {
-                            text: (session.bookACourtHearingJourney.postHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.postHearingEndTime | parseISODate | formatDate('HH:mm'))
-                        }
-                    } if session.bookACourtHearingJourney.postLocationId,
-                    {
-                        key: {
-                            text: "Post-court hearing room"
-                        },
-                        value: {
-                            text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.postLocationId)).description
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
-                                    text: "Change",
-                                    visuallyHiddenText: "post-court hearing room",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        }
-                    } if session.bookACourtHearingJourney.postLocationId
-                ]
-            }) }}
-        </div>
-    </div>
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">Attendee events on {{ session.bookACourtHearingJourney.date | parseISODate | formatDate }}</h2>
-            <div class="govuk-summary-card appointment-schedule">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title">{{ session.bookACourtHearingJourney.prisoner.name | toTitleCase}}, {{ session.bookACourtHearingJourney.prisoner.number }}</h3>
-                </div>
-                <div class="govuk-summary-card__content">
-                    {% set events = prisonerScheduledEvents | filter('cancelled', false) %}
-                    {% for appointmentId in session.bookACourtHearingJourney.appointmentIds %}
-                        {% set events = events | filterNot('appointmentId', appointmentId) %}
-                    {% endfor %}
-                    {% if events.length > 0 %}
-                        {% set scheduledEventRows = [] %}
-                        {% for scheduledEvent in events %}
-                            {% set scheduledEventRows = (scheduledEventRows.push([
-                                {
-                                    text: timeText(scheduledEvent),
-                                    attributes: {
-                                        'data-sort-value': scheduledEvent.startTime | parseDate('HH:mm') | formatDate("HHmm")
-                                    }
-                                },
-                                {
-                                    text: scheduledEvent.summary | trim
-                                },
-                                {
-                                    text: eventTypeText(scheduledEvent),
-                                    classes: "no-break"
-                                },
-                                {
-                                    text: locationText(scheduledEvent)
-                                }
-                            ]), scheduledEventRows) %}
-                        {% endfor %}
-
-                        {{ govukTable({
-                            head: [
-                                {
-                                    text: "Time",
-                                    classes: "govuk-!-border-bottom-2",
-                                    attributes: { "aria-sort": "ascending" }
-                                },
-                                {
-                                    text: "Event name",
-                                    attributes: { "aria-sort": "none" }
-                                },
-                                {
-                                    text: "Type",
-                                    attributes: { "aria-sort": "none" }
-                                },
-                                {
-                                    text: "Location",
-                                    attributes: { "aria-sort": "none" }
-                                }
-                            ],
-                            rows: scheduledEventRows,
-                            classes: 'govuk-!-margin-bottom-2',
-                            attributes: {
-                                'data-module': 'moj-sortable-table'
+                    actions: {
+                        items: [
+                            {
+                                href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
+                                text: "Change",
+                                visuallyHiddenText: "date",
+                                classes: "govuk-link--no-visited-state"
                             }
-                        }) }}
-                    {% else %}
-                        <p class="govuk-body">No other events scheduled.</p>
-                    {% endif %}
-                </div>
-            </div>
+                        ]
+                    }
+                },
+                {
+                    key: {
+                        text: "Pre-court hearing time"
+                    },
+                    value: {
+                        text: (session.bookACourtHearingJourney.preHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.preHearingEndTime | parseISODate | formatDate('HH:mm'))
+                    }
+                } if session.bookACourtHearingJourney.preLocationId,
+                {
+                    key: {
+                        text: "Pre-court hearing room"
+                    },
+                    value: {
+                        text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.preLocationId)).description
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
+                                text: "Change",
+                                visuallyHiddenText: "pre-court hearing room",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    }
+                } if session.bookACourtHearingJourney.preLocationId,
+                {
+                    key: {
+                        text: "Main hearing time"
+                    },
+                    value: {
+                        text: (session.bookACourtHearingJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.endTime | parseISODate | formatDate('HH:mm'))
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
+                                text: "Change",
+                                visuallyHiddenText: "main hearing time",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    }
+                },
+                {
+                    key: {
+                        text: "Main hearing room"
+                    },
+                    value: {
+                        text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.locationId)).description
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "location" + ("?preserveHistory=true" if session.req.query.preserveHistory),
+                                text: "Change",
+                                visuallyHiddenText: "main hearing room",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    }
+                },
+                {
+                    key: {
+                        text: "Post-court hearing time"
+                    },
+                    value: {
+                        text: (session.bookACourtHearingJourney.postHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.postHearingEndTime | parseISODate | formatDate('HH:mm'))
+                    }
+                } if session.bookACourtHearingJourney.postLocationId,
+                {
+                    key: {
+                        text: "Post-court hearing room"
+                    },
+                    value: {
+                        text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.postLocationId)).description
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
+                                text: "Change",
+                                visuallyHiddenText: "post-court hearing room",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    }
+                } if session.bookACourtHearingJourney.postLocationId
+            ]
+        })
+      }}
+    </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h2 class="govuk-heading-m">
+        Attendee events on {{ session.bookACourtHearingJourney.date | parseISODate | formatDate }}
+      </h2>
+      <div class="govuk-summary-card appointment-schedule">
+        <div class="govuk-summary-card__title-wrapper">
+          <h3 class="govuk-summary-card__title">
+            {{ session.bookACourtHearingJourney.prisoner.name | toTitleCase }},
+            {{ session.bookACourtHearingJourney.prisoner.number }}
+          </h3>
         </div>
-    </div>
+        <div class="govuk-summary-card__content">
+          {% set events = prisonerScheduledEvents | filter('cancelled', false) %}
+          {% for appointmentId in session.bookACourtHearingJourney.appointmentIds %}
+            {% set events = events | filterNot('appointmentId', appointmentId) %}
+          {% endfor %}
+          {% if events.length > 0 %}
+            {% set scheduledEventRows = [] %}
+            {% for scheduledEvent in events %}
+              {%
+                set scheduledEventRows = (scheduledEventRows.push([
+                    {
+                        text: timeText(scheduledEvent),
+                        attributes: {
+                            'data-sort-value': scheduledEvent.startTime | parseDate('HH:mm') | formatDate("HHmm")
+                        }
+                    },
+                    {
+                        text: scheduledEvent.summary | trim
+                    },
+                    {
+                        text: eventTypeText(scheduledEvent),
+                        classes: "no-break"
+                    },
+                    {
+                        text: locationText(scheduledEvent)
+                    }
+                ]), scheduledEventRows)
+              %}
+            {% endfor %}
 
-    <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">Room schedules on {{ session.bookACourtHearingJourney.date | parseISODate | formatDate }}</h2>
-
-                {% for location in internalLocationEvents %}
-                    <div class="govuk-summary-card appointment-schedule">
-                        <div class="govuk-summary-card__title-wrapper">
-                            <h3 class="govuk-summary-card__title">{{ location.description }}</h3>
-                        </div>
-                        <div class="govuk-summary-card__content">
-                            {% set events = location.events | filter('cancelled', false) %}
-                            {% for appointmentId in session.bookACourtHearingJourney.appointmentIds %}
-                                {% set events = events | filterNot('appointmentId', appointmentId) %}
-                            {% endfor %}
-                            {% if events.length > 0 %}
-                                {% set scheduledEventRows = [] %}
-                                {% for scheduledEvent in events %}
-                                    {% set scheduledEventRows = (scheduledEventRows.push([
-                                        {
-                                            text: timeText(scheduledEvent),
-                                            attributes: {
-                                                'data-sort-value': scheduledEvent.startTime | parseDate('HH:mm') | formatDate("HHmm")
-                                            }
-                                        },
-                                        {
-                                            text: scheduledEvent.summary | trim
-                                        }
-                                    ]), scheduledEventRows) %}
-                                {% endfor %}
-
-                                {{ govukTable({
-                                    head: [
-                                        {
-                                            text: "Time",
-                                            classes: "govuk-!-border-bottom-2",
-                                            attributes: { "aria-sort": "ascending" }
-                                        },
-                                        {
-                                            text: "Scheduled appointment",
-                                            attributes: { "aria-sort": "none" }
-                                        }
-                                    ],
-                                    rows: scheduledEventRows,
-                                    classes: 'govuk-!-margin-bottom-2',
-                                    attributes: {
-                                        'data-module': 'moj-sortable-table'
-                                    }
-                                }) }}
-                            {% else %}
-                                <p class="govuk-body">No scheduled events.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-    </div>
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST" {% if session.req.routeContext.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing schedule" {% endif %}>
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
-            </form>
+            {{
+              govukTable({
+                  head: [
+                      {
+                          text: "Time",
+                          classes: "govuk-!-border-bottom-2",
+                          attributes: { "aria-sort": "ascending" }
+                      },
+                      {
+                          text: "Event name",
+                          attributes: { "aria-sort": "none" }
+                      },
+                      {
+                          text: "Type",
+                          attributes: { "aria-sort": "none" }
+                      },
+                      {
+                          text: "Location",
+                          attributes: { "aria-sort": "none" }
+                      }
+                  ],
+                  rows: scheduledEventRows,
+                  classes: 'govuk-!-margin-bottom-2',
+                  attributes: {
+                      'data-module': 'moj-sortable-table'
+                  }
+              })
+            }}
+          {% else %}
+            <p class="govuk-body">No other events scheduled.</p>
+          {% endif %}
         </div>
+      </div>
     </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h2 class="govuk-heading-m">
+        Room schedules on {{ session.bookACourtHearingJourney.date | parseISODate | formatDate }}
+      </h2>
+
+      {% for location in internalLocationEvents %}
+        <div class="govuk-summary-card appointment-schedule">
+          <div class="govuk-summary-card__title-wrapper">
+            <h3 class="govuk-summary-card__title">{{ location.description }}</h3>
+          </div>
+          <div class="govuk-summary-card__content">
+            {% set events = location.events | filter('cancelled', false) %}
+            {% for appointmentId in session.bookACourtHearingJourney.appointmentIds %}
+              {% set events = events | filterNot('appointmentId', appointmentId) %}
+            {% endfor %}
+            {% if events.length > 0 %}
+              {% set scheduledEventRows = [] %}
+              {% for scheduledEvent in events %}
+                {%
+                  set scheduledEventRows = (scheduledEventRows.push([
+                      {
+                          text: timeText(scheduledEvent),
+                          attributes: {
+                              'data-sort-value': scheduledEvent.startTime | parseDate('HH:mm') | formatDate("HHmm")
+                          }
+                      },
+                      {
+                          text: scheduledEvent.summary | trim
+                      }
+                  ]), scheduledEventRows)
+                %}
+              {% endfor %}
+
+              {{
+                govukTable({
+                    head: [
+                        {
+                            text: "Time",
+                            classes: "govuk-!-border-bottom-2",
+                            attributes: { "aria-sort": "ascending" }
+                        },
+                        {
+                            text: "Scheduled appointment",
+                            attributes: { "aria-sort": "none" }
+                        }
+                    ],
+                    rows: scheduledEventRows,
+                    classes: 'govuk-!-margin-bottom-2',
+                    attributes: {
+                        'data-module': 'moj-sortable-table'
+                    }
+                })
+              }}
+            {% else %}
+              <p class="govuk-body">No scheduled events.</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form
+        method="POST"
+        {% if session.req.routeContext.mode == 'amend' %}data-module="form-spinner" data-loading-text="Changing
+        schedule"{% endif %}
+      >
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          govukButton({
+              text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
 {% endblock %}
 
 {% macro timeText(scheduledEvent) %}
-    {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
-        {{ scheduledEvent.startTime + (" to " + scheduledEvent.endTime if scheduledEvent.endTime) }}
-    {% endif %}
+  {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
+    {{ scheduledEvent.startTime + (" to " + scheduledEvent.endTime if scheduledEvent.endTime) }}
+  {% endif %}
 {% endmacro %}
 
 {% macro eventTypeText(scheduledEvent) %}
-    {% if scheduledEvent.eventType == EventType.ACTIVITY %}
-        Activity
-    {% elseif scheduledEvent.eventType == EventType.APPOINTMENT %}
-        Appointment
-    {% elseif scheduledEvent.eventType == EventType.COURT_HEARING %}
-        Court hearing
-    {% elseif scheduledEvent.eventType == EventType.VISIT %}
-        Visit
-    {% elseif scheduledEvent.eventType == EventType.EXTERNAL_TRANSFER %}
-        External transfer
-    {% elseif scheduledEvent.eventType == EventType.ADJUDICATION_HEARING %}
-        Adjudication hearing
-    {% endif %}
+  {% if scheduledEvent.eventType == EventType.ACTIVITY %}
+    Activity {% elseif scheduledEvent.eventType == EventType.APPOINTMENT %} Appointment
+    {% elseif scheduledEvent.eventType == EventType.COURT_HEARING %} Court hearing
+    {% elseif scheduledEvent.eventType == EventType.VISIT %} Visit
+    {% elseif scheduledEvent.eventType == EventType.EXTERNAL_TRANSFER %} External transfer
+    {% elseif scheduledEvent.eventType == EventType.ADJUDICATION_HEARING %} Adjudication hearing
+  {% endif %}
 {% endmacro %}
 
 {% macro locationText(scheduledEvent) %}
-    {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
-        {{ showLocation(user.externalActivitiesRolledOut, scheduledEvent) }}
-    {% endif %}
+  {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
+    {{ showLocation(user.externalActivitiesRolledOut, scheduledEvent) }}
+  {% endif %}
 {% endmacro %}

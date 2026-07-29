@@ -2,43 +2,50 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% block headerEnd %}
-{{ govukPhaseBanner({
-  attributes: {
-    role: "complementary"
-  },
-  tag: {
-    text: "Beta"
-  },
-  classes: 'govuk-!-display-none-print',
-  html: 'This is a new service. <a href="' + feedbackUrl + '" class="govuk-link govuk-link--no-visited-state" rel="noopener noreferrer" target="_blank">Give feedback</a> to help us improve it.'
-}) }}
+  {{
+    govukPhaseBanner({
+      attributes: {
+        role: "complementary"
+      },
+      tag: {
+        text: "Beta"
+      },
+      classes: 'govuk-!-display-none-print',
+      html: 'This is a new service. <a href="' + feedbackUrl + '" class="govuk-link govuk-link--no-visited-state" rel="noopener noreferrer" target="_blank">Give feedback</a> to help us improve it.'
+    })
+  }}
 {% endblock %}
 
 {% if jsBackLink or (hardBackLinkHref and hardBackLinkText) or (serviceReturnLinkHref and serviceReturnLinkText) %}
   <nav class="govuk-!-display-none-print">
     {% if jsBackLink %}
-      {{ govukBackLink({
-        text: "Back",
-        classes: 'js-backlink'
-      }) }}
+      {{
+        govukBackLink({
+          text: "Back",
+          classes: 'js-backlink'
+        })
+      }}
     {% endif %}
 
     {% if hardBackLinkHref and hardBackLinkText %}
-      {{ govukBackLink({
-        text: hardBackLinkText,
-        href: hardBackLinkHref
-      }) }}
+      {{
+        govukBackLink({
+          text: hardBackLinkText,
+          href: hardBackLinkHref
+        })
+      }}
     {% endif %}
 
     {% if serviceReturnLinkHref and serviceReturnLinkText %}
-      <a href="{{ serviceReturnLinkHref }}"
-        class="govuk-link govuk-link--no-visited-state govuk-!-margin-top-3 govuk-!-margin-bottom-3 float-right">
+      <a
+        href="{{ serviceReturnLinkHref }}"
+        class="govuk-link govuk-link--no-visited-state govuk-!-margin-top-3 govuk-!-margin-bottom-3 float-right"
+      >
         {{ serviceReturnLinkText }}
       </a>
     {% endif %}
   </nav>
 {% endif %}
-
 {% include './formErrorSummary.njk' %}
 {% include './successMessage.njk' %}
 <span class="govuk-visually-hidden" id="{{ pageId }}"></span>

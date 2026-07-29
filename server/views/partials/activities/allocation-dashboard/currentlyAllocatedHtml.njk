@@ -1,28 +1,38 @@
 {% set rows = [] %}
 {% for row in currentlyAllocated %}
-    {% set otherAllocationsHtml %}
-        <ul class='govuk-list'>
-            {% for allocation in row.otherAllocations %}
-                <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName | escape }}</a></li>
-            {% else %}
-                <li>None</li>
-            {% endfor %}
-        </ul>
-    {% endset %}
+  {% set otherAllocationsHtml %}
+    <ul class="govuk-list">
+      {% for allocation in row.otherAllocations %}
+        <li>
+          <a
+            href="/activities/allocation-dashboard/{{ allocation.activityId }}"
+            class="govuk-link govuk-link--no-visited-state"
+            target="_blank"
+            >{{ allocation.scheduleName | escape }}</a
+          >
+        </li>
+      {% else %}
+        <li>None</li>
+      {% endfor %}
+    </ul>
+  {% endset %}
 
-    {% set allocatedDatesHtml %}
-        <div>{{ row.startDate | formatDate('d MMMM yyyy')}}</div>
-        {% if row.endDate %}
-            <div>to {{ row.endDate | formatDate('d MMMM yyyy') }}</div>
-        {% endif %}
-        {{ suspensionBadge(row.status, row.plannedSuspension, now) }}
-    {% endset %}
 
-    {% set nonAssociationsLinkHtml %}
-        {{ nonAssociationsHtml(row, row | formatName(NameFormatStyle.firstLast, false)) }}
-    {% endset %}
+  {% set allocatedDatesHtml %}
+    <div>{{ row.startDate | formatDate('d MMMM yyyy') }}</div>
+    {% if row.endDate %}
+      <div>to {{ row.endDate | formatDate('d MMMM yyyy') }}</div>
+    {% endif %}
+    {{ suspensionBadge(row.status, row.plannedSuspension, now) }}
+  {% endset %}
 
-    {% set rows = (rows.push({
+
+  {% set nonAssociationsLinkHtml %}
+    {{ nonAssociationsHtml(row, row | formatName(NameFormatStyle.firstLast, false)) }}
+  {% endset %}
+
+  {%
+    set rows = (rows.push({
         visuallyHiddenText: 'Select ' + row | formatName(NameFormatStyle.lastCommaFirst, false),
         value: row.allocationId,
         selectable: true,
@@ -45,7 +55,7 @@
             {
                 html: allocatedDatesHtml,
                 attributes: {
-                    "data-sort-value": row.startDate | getUnixTime 
+                    "data-sort-value": row.startDate | getUnixTime
                 }
             },
             {
@@ -57,16 +67,18 @@
             {
                 html: earliestReleaseDate(row.earliestReleaseDate),
                 attributes: {
-                    "data-sort-value": row.earliestReleaseDate.releaseDate | getUnixTime 
+                    "data-sort-value": row.earliestReleaseDate.releaseDate | getUnixTime
                 }
             }
         ]
-    }), rows) %}
+    }), rows)
+  %}
 {% endfor %}
 
-<form method='POST'>
-    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-    {{ stickySelect({
+<form method="POST">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  {{
+    stickySelect({
         idPrefix: 'allocated',
         type: 'check',
         selectAllAvailable: true,
@@ -111,5 +123,6 @@
         ],
         itemsDescription: 'person',
         itemsDescriptionPlural: 'people'
-    }) }}
+    })
+  }}
 </form>

@@ -3,91 +3,102 @@
 {% from "partials/showLocation.njk" import showLocation %}
 
 {% macro nonAssociationsTable(nonAssociations, prisonerName) %}
-    {% set rows = [] %}
-        {% for row in nonAssociations %}
-            {% set nonAssociation = row.otherPrisonerDetails %}
-            {% set nonAssociationsHtml %}
-                <p class="govuk-body govuk-!-margin-bottom-0">Where to keep apart: {{ row.restrictionTypeDescription }}</p>
-                <hr class="mid-grey-tint-20-hr dash-border">
-                <p class="govuk-body govuk-!-margin-bottom-0">Reason: {{row.reasonDescription }}</p>
-                <hr class="mid-grey-tint-20-hr dash-border">
-                <p class="govuk-body govuk-!-margin-bottom-0">Comments: {{ row.comments | safe }}</p>
-                <hr class="mid-grey-tint-20-hr dash-border">
-                <p class="govuk-body govuk-!-margin-bottom-0">{{ prisonerName | possessive }} role: {{ row.roleDescription }}</p>
-            {% endset %}
-            {% set allocationsHtml %}
-                {% for allocation in row.allocations %}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href="/activities/allocation-dashboard/{{ allocation.activityId }}" data-qa="allocation-{{allocation.activityId}}">{{ allocation.activitySummary }}</a></p>
-                <p class="govuk-body">{{ showLocation(user.externalActivitiesRolledOut, allocation.schedule.activity, allocation.schedule.internalLocation.description) }}</p>
-                {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
-                {% endfor %}
-            {% endset %}
+  {% set rows = [] %}
+  {% for row in nonAssociations %}
+    {% set nonAssociation = row.otherPrisonerDetails %}
+    {% set nonAssociationsHtml %}
+      <p class="govuk-body govuk-!-margin-bottom-0">Where to keep apart: {{ row.restrictionTypeDescription }}</p>
+      <hr class="mid-grey-tint-20-hr dash-border" />
+      <p class="govuk-body govuk-!-margin-bottom-0">Reason: {{ row.reasonDescription }}</p>
+      <hr class="mid-grey-tint-20-hr dash-border" />
+      <p class="govuk-body govuk-!-margin-bottom-0">Comments: {{ row.comments | safe }}</p>
+      <hr class="mid-grey-tint-20-hr dash-border" />
+      <p class="govuk-body govuk-!-margin-bottom-0">{{ prisonerName | possessive }} role: {{ row.roleDescription }}</p>
+    {% endset %}
+    {% set allocationsHtml %}
+      {% for allocation in row.allocations %}
+        <p class="govuk-body govuk-!-margin-bottom-0">
+          <a
+            href="/activities/allocation-dashboard/{{ allocation.activityId }}"
+            data-qa="allocation-{{ allocation.activityId }}"
+            >{{ allocation.activitySummary }}</a
+          >
+        </p>
+        <p class="govuk-body">
+          {{ showLocation(user.externalActivitiesRolledOut, allocation.schedule.activity, allocation.schedule.internalLocation.description) }}
+        </p>
+        {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border" />{% endif %}
+      {% endfor %}
+    {% endset %}
 
-        {% set rows = (rows.push(
-                [{
-                    html: showProfileLink({
-                        firstName: nonAssociation.firstName,
-                        middleNames: nonAssociation.middleNames,
-                        lastName: nonAssociation.lastName,
-                        prisonerNumber: nonAssociation.prisonerNumber
-                    }),
-                    attributes: {
-                        "data-sort-value": nonAssociation | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
-                    }
-                },
-                {
-                    text: nonAssociation.cellLocation,
-                    attributes: {
-                        "data-sort-value": nonAssociation.cellLocation
-                    }
-                },
-                {
-                    html: allocationsHtml                
-                },
-                {
-                    html: nonAssociationsHtml,
-                    classes: 'naDetailsColumn'
-                },
-                {
-                    text: row.whenUpdated | parseISODate | formatDate('d MMMM yyyy'),
-                    attributes: {
-                        "data-sort-value": row.whenUpdated | getUnixTime
-                    }
-                }]
-        ), rows) %}
-    {% endfor %} 
+    {%
+      set rows = (rows.push(
+              [{
+                  html: showProfileLink({
+                      firstName: nonAssociation.firstName,
+                      middleNames: nonAssociation.middleNames,
+                      lastName: nonAssociation.lastName,
+                      prisonerNumber: nonAssociation.prisonerNumber
+                  }),
+                  attributes: {
+                      "data-sort-value": nonAssociation | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+                  }
+              },
+              {
+                  text: nonAssociation.cellLocation,
+                  attributes: {
+                      "data-sort-value": nonAssociation.cellLocation
+                  }
+              },
+              {
+                  html: allocationsHtml
+              },
+              {
+                  html: nonAssociationsHtml,
+                  classes: 'naDetailsColumn'
+              },
+              {
+                  text: row.whenUpdated | parseISODate | formatDate('d MMMM yyyy'),
+                  attributes: {
+                      "data-sort-value": row.whenUpdated | getUnixTime
+                  }
+              }]
+      ), rows)
+    %}
+  {% endfor %}
 
-{{ govukTable({
-    caption: caption,
-    captionClasses: "govuk-visually-hidden",
-    name: 'nonAssociations',
-    attributes: { "data-qa": "na-table", 'data-module': 'moj-sortable-table' },
-    head: [{
-            text: "Name",
-            attributes: {
-                "aria-sort": "none"
-            }
-        },
-        {
-            text: "Cell location",
-            attributes: {
-                "aria-sort": "none"
-            }
-        },
-        {
-            text: "Allocations"
-        },
-        {
-            text: "Non-association details"
-        },
-        {
-            text: "Last updated",
-            attributes: {
-                "aria-sort": "descending"
-            }
-        }],
-    rows: rows,
-    classes: 'govuk-!-margin-bottom-9'
-}) }}
-
+  {{
+    govukTable({
+        caption: caption,
+        captionClasses: "govuk-visually-hidden",
+        name: 'nonAssociations',
+        attributes: { "data-qa": "na-table", 'data-module': 'moj-sortable-table' },
+        head: [{
+                text: "Name",
+                attributes: {
+                    "aria-sort": "none"
+                }
+            },
+            {
+                text: "Cell location",
+                attributes: {
+                    "aria-sort": "none"
+                }
+            },
+            {
+                text: "Allocations"
+            },
+            {
+                text: "Non-association details"
+            },
+            {
+                text: "Last updated",
+                attributes: {
+                    "aria-sort": "descending"
+                }
+            }],
+        rows: rows,
+        classes: 'govuk-!-margin-bottom-9'
+    })
+  }}
 {% endmacro %}

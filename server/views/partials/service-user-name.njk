@@ -1,9 +1,8 @@
 {% macro serviceUserName(user) %}
   {% if user.username == 'PRISONER_MANAGER_API' %}
-    DPS user
-  {% elseif user.name === ServiceAsUsername %}
+    DPS user {% elseif user.name === ServiceAsUsername %}
     {{ user.name }}
-  {% elseif user.name === "External user" %}
+    {% elseif user.name === "External user" %}
     {{ user.name }}
   {% else %}
     {{ user.username + " - " + (user.name | toTitleCase | initialiseName or "Unknown user") }}

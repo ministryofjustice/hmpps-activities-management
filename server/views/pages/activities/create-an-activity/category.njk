@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
@@ -10,7 +9,8 @@
 
 {% set categoryOptions = [] %}
 {% for category in categories %}
-    {% set categoryOptions = (categoryOptions.push(
+  {%
+    set categoryOptions = (categoryOptions.push(
         {
             value: category.id,
             text: category.name,
@@ -19,43 +19,50 @@
             },
             checked: formResponses.category == category.id or createJourney.category.id == category.id
         }
-    ), categoryOptions) %}
+    ), categoryOptions)
+  %}
 {% endfor %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ activityJourneyCaption(createJourney) }}
-                {{ govukRadios({
-                    fieldset: {
-                        legend: {
-                            text: "Change the activity category" if session.req.routeContext.mode == 'edit' else "Select a category for the new activity",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    name: "category",
-                    errorMessage: validationErrors | findError('category'),
-                    items: categoryOptions,
-                    attributes: {"data-qa": "category-radio-options"}
-                }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{ activityJourneyCaption(createJourney) }}
+        {{
+          govukRadios({
+              fieldset: {
+                  legend: {
+                      text: "Change the activity category" if session.req.routeContext.mode == 'edit' else "Select a category for the new activity",
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--l"
+                  }
+              },
+              name: "category",
+              errorMessage: validationErrors | findError('category'),
+              items: categoryOptions,
+              attributes: {"data-qa": "category-radio-options"}
+          })
+        }}
 
-                {% if session.req.routeContext.mode == 'edit' %}
-                    <div class="govuk-button-group">
-                        {{ govukButton({
-                            text: "Update activity category",
-                            preventDoubleClick: true
-                        }) }}
-                        <a class="govuk-link js-backlink" href="/">Cancel</a>
-                    </div>
-                {% else %}
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                {% endif %}
-            </form>
-        </div>
+        {% if session.req.routeContext.mode == 'edit' %}
+          <div class="govuk-button-group">
+            {{
+              govukButton({
+                  text: "Update activity category",
+                  preventDoubleClick: true
+              })
+            }}
+            <a class="govuk-link js-backlink" href="/">Cancel</a>
+          </div>
+        {% else %}
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
+        {% endif %}
+      </form>
     </div>
+  </div>
 {% endblock %}

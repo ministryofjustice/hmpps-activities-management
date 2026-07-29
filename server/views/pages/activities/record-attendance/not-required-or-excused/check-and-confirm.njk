@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 
@@ -11,7 +10,11 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <span class="govuk-caption-l">Record activity attendance</span>
-      <h1 class="govuk-heading-l">Check and confirm that {{ "1 person is" if selectedPrisoners | length == 1 else selectedPrisoners | length + " people are" }} not required for {{ "this session" if instances | length == 1 else " these sessions" }}</h1>
+      <h1 class="govuk-heading-l">
+        Check and confirm that
+        {{ "1 person is" if selectedPrisoners | length == 1 else selectedPrisoners | length + " people are" }} not
+        required for {{ "this session" if instances | length == 1 else " these sessions" }}
+      </h1>
       <p class="govuk-body">People not required:</p>
       <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
         {% for prisoner in selectedPrisoners %}
@@ -19,19 +22,27 @@
         {% endfor %}
       </ul>
       {% if isPaid %}
-        <p class="govuk-body govuk-!-margin-bottom-6">They will be paid overnight on {{ instance.date | formatDate }}.</p>
-        {% else %}
+        <p class="govuk-body govuk-!-margin-bottom-6">
+          They will be paid overnight on {{ instance.date | formatDate }}.
+        </p>
+      {% else %}
         <p class="govuk-body govuk-!-margin-bottom-6">They will not be paid for this session.</p>
       {% endif %}
 
       <form method="POST">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
         <div class="govuk-button-group">
-          {{ govukButton({
-            text: "Confirm as not required",
-            preventDoubleClick: true
-          }) }}
-          <a class="govuk-link js-backlink" href="/activities/attendance/{{ recordAttendanceJourney.activityId }}/activities/{{ instance.id }}/attendance-list">Cancel</a>
+          {{
+            govukButton({
+              text: "Confirm as not required",
+              preventDoubleClick: true
+            })
+          }}
+          <a
+            class="govuk-link js-backlink"
+            href="/activities/attendance/{{ recordAttendanceJourney.activityId }}/activities/{{ instance.id }}/attendance-list"
+            >Cancel</a
+          >
         </div>
       </form>
     </div>

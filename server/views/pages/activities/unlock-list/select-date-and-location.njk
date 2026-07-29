@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
@@ -10,131 +9,146 @@
 {% set hardBackLinkHref = "/activities/unlock-list" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-l">Create an unlock list</span>
-            <h1 class="govuk-heading-l">Choose unlock list details</h1>
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <span class="govuk-caption-l">Create an unlock list</span>
+      <h1 class="govuk-heading-l">Choose unlock list details</h1>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% set otherDateHintHtml %}
-                  <div class="govuk-!-margin-bottom-2">Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
-                  <div>You can get unlock lists for up to 60 days from today.</div>
-                {% endset %}
+        {% set otherDateHintHtml %}
+          <div class="govuk-!-margin-bottom-2">
+            Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.
+          </div>
+          <div>You can get unlock lists for up to 60 days from today.</div>
+        {% endset %}
 
-                {% set hintHtml %}
-                  <div class="govuk-!-margin-bottom-4">You can get unlock lists for dates from up to 60 days from today.</div>
-                  {% if user.externalActivitiesRolledOut %}
-                    <div class="govuk-!-margin-bottom-2">Some temporary absences are not shown on lists until the day of the absence.</div>
-                  {% endif %}
-                {% endset %}
 
-                {{ govukRadios({
-                    name: "datePresetOption",
-                    fieldset: {
-                        legend: {
-                            text: "Unlock date",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    hint: {
-                        html: hintHtml
-                    },
-                    errorMessage: validationErrors | findError('datePresetOption'),
-                    items: [
-                        {
-                            value: "today",
-                            text: "Today - " + now | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
-                        },
-                        {
-                            value: "tomorrow",
-                            text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.datePresetOption == 'tomorrow' or datePresetOption == 'tomorrow'
-                        },
-                        {
-                            value: "other",
-                            text: "A different date",
-                            label: { text: "Unlock date "},
-                            checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
-                            conditional: { html:
-                              mojDatePicker({
-                                id: 'date',
-                                name: 'date',
-                                leadingZeros: 'true',
-                                label: {
-                                    text: 'Other date',
-                                    classes: 'govuk-visually-hidden'
-                                },
-                                classes: 'moj-datepicker--fixed-width',
-                                hint: { html: otherDateHintHtml },
-                                errorMessage: validationErrors | findError('date'),
-                                value: formResponses.date or date
-                              })
-                           }
-                        }
-                    ]
-                }) }}
+        {% set hintHtml %}
+          <div class="govuk-!-margin-bottom-4">You can get unlock lists for dates from up to 60 days from today.</div>
+          {% if user.externalActivitiesRolledOut %}
+            <div class="govuk-!-margin-bottom-2">
+              Some temporary absences are not shown on lists until the day of the absence.
+            </div>
+          {% endif %}
+        {% endset %}
 
-                {{ govukRadios({
-                    name: "activitySlot",
-                    fieldset: {
-                        legend: {
-                            text: "Time period",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('activitySlot'),
-                    items: [
-                        {
-                            value: "AM",
-                            text: "AM (morning)",
-                            checked: formResponses.activitySlot == 'AM' or activitySlot == 'AM'
-                        },
-                        {
-                            value: "PM",
-                            text: "PM (afternoon)",
-                            checked: formResponses.activitySlot == 'PM' or activitySlot == 'PM'
-                        },
-                        {
-                            value: "ED",
-                            text: "ED (evening)",
-                            checked: formResponses.activitySlot == 'ED' or activitySlot == 'ED'
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              name: "datePresetOption",
+              fieldset: {
+                  legend: {
+                      text: "Unlock date",
+                      classes: "govuk-fieldset__legend--m"
+                  }
+              },
+              hint: {
+                  html: hintHtml
+              },
+              errorMessage: validationErrors | findError('datePresetOption'),
+              items: [
+                  {
+                      value: "today",
+                      text: "Today - " + now | formatDate('d MMMM yyyy', false),
+                      checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
+                  },
+                  {
+                      value: "tomorrow",
+                      text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
+                      checked: formResponses.datePresetOption == 'tomorrow' or datePresetOption == 'tomorrow'
+                  },
+                  {
+                      value: "other",
+                      text: "A different date",
+                      label: { text: "Unlock date "},
+                      checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
+                      conditional: { html:
+                        mojDatePicker({
+                          id: 'date',
+                          name: 'date',
+                          leadingZeros: 'true',
+                          label: {
+                              text: 'Other date',
+                              classes: 'govuk-visually-hidden'
+                          },
+                          classes: 'moj-datepicker--fixed-width',
+                          hint: { html: otherDateHintHtml },
+                          errorMessage: validationErrors | findError('date'),
+                          value: formResponses.date or date
+                        })
+                     }
+                  }
+              ]
+          })
+        }}
 
-                {% set items = [] %}
-                {% for location in locationGroups %}
-                    {% set items = (items.push({
-                        value: location.key,
-                        text: location.name,
-                        checked: formResponses.location == location.key or locationKey == location.key
-                    }), items) %}
-                {% endfor %}
+        {{
+          govukRadios({
+              name: "activitySlot",
+              fieldset: {
+                  legend: {
+                      text: "Time period",
+                      classes: "govuk-fieldset__legend--m"
+                  }
+              },
+              errorMessage: validationErrors | findError('activitySlot'),
+              items: [
+                  {
+                      value: "AM",
+                      text: "AM (morning)",
+                      checked: formResponses.activitySlot == 'AM' or activitySlot == 'AM'
+                  },
+                  {
+                      value: "PM",
+                      text: "PM (afternoon)",
+                      checked: formResponses.activitySlot == 'PM' or activitySlot == 'PM'
+                  },
+                  {
+                      value: "ED",
+                      text: "ED (evening)",
+                      checked: formResponses.activitySlot == 'ED' or activitySlot == 'ED'
+                  }
+              ]
+          })
+        }}
 
-                {{ govukRadios({
-                    idPrefix: "locationKey",
-                    name: "locationKey",
-                    fieldset: {
-                        legend: {
-                            text: "Locations",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('locationKey'),
-                    items: items
-                }) }}
+        {% set items = [] %}
+        {% for location in locationGroups %}
+          {%
+            set items = (items.push({
+                value: location.key,
+                text: location.name,
+                checked: formResponses.location == location.key or locationKey == location.key
+            }), items)
+          %}
+        {% endfor %}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Continue",
-                        type: "submit",
-                        preventDoubleClick: true,
-                        attributes: { 'data-qa': 'view-selection' }
-                    }) }}
-                </div>
-            </form>
+        {{
+          govukRadios({
+              idPrefix: "locationKey",
+              name: "locationKey",
+              fieldset: {
+                  legend: {
+                      text: "Locations",
+                      classes: "govuk-fieldset__legend--m"
+                  }
+              },
+              errorMessage: validationErrors | findError('locationKey'),
+              items: items
+          })
+        }}
+
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Continue",
+                type: "submit",
+                preventDoubleClick: true,
+                attributes: { 'data-qa': 'view-selection' }
+            })
+          }}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

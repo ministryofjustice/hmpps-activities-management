@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
@@ -9,161 +8,186 @@
 {% set jsBackLink = true %}
 
 {% macro renderPay(advanceAttendance, payable) %}
-    {% if advanceAttendance.issuePayment %}
-        {{ '£' + (advanceAttendance.payAmount / 100) | toFixed }}
+  {% if advanceAttendance.issuePayment %}
+    {{ '£' + (advanceAttendance.payAmount / 100) | toFixed }}
     {% elseif payable %}
-        No
-    {% else %}
-        Unpaid
-    {% endif %}
+    No
+  {% else %}
+    Unpaid
+  {% endif %}
 {% endmacro %}
 
 {% set summaryListRows = [] %}
-{% set summaryListRows = (summaryListRows.push({
-    key: {
-        text: "Attendance"
-    },
-    value: {
-        text: "Not required or excused"
-    }
-}), summaryListRows) %}
+{%
+  set summaryListRows = (summaryListRows.push({
+      key: {
+          text: "Attendance"
+      },
+      value: {
+          text: "Not required or excused"
+      }
+  }), summaryListRows)
+%}
 
-{% set summaryListRows = (summaryListRows.push({
-    key: {
-        text: "Pay"
-    },
-    value: {
-        text: renderPay(advanceAttendance, instance.activitySchedule.activity.paid)
-    },
-    actions: {
-        items: [{
-            href: advanceAttendance.id + "/change-pay",
-            text: "Change to no pay" if advanceAttendance.issuePayment else "Change to pay"
-        }] if instance.activitySchedule.activity.paid
-    }
-}), summaryListRows) %}
+{%
+  set summaryListRows = (summaryListRows.push({
+      key: {
+          text: "Pay"
+      },
+      value: {
+          text: renderPay(advanceAttendance, instance.activitySchedule.activity.paid)
+      },
+      actions: {
+          items: [{
+              href: advanceAttendance.id + "/change-pay",
+              text: "Change to no pay" if advanceAttendance.issuePayment else "Change to pay"
+          }] if instance.activitySchedule.activity.paid
+      }
+  }), summaryListRows)
+%}
 
-{% set summaryListRows = (summaryListRows.push({
-    key: {
-        text: "Reset by" if advanceAttendance.status === 'WAITING' else 
-            "Recorded by"
-    },
-    value: {
-        text: serviceUserName(userMap.get(advanceAttendance.recordedBy))
-    }
-}, {
-    key: {
-        text: "Date and time"
-    },
-    value: {
-        text: advanceAttendance.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
-    }
-}), summaryListRows) %}
+{%
+  set summaryListRows = (summaryListRows.push({
+      key: {
+          text: "Reset by" if advanceAttendance.status === 'WAITING' else
+              "Recorded by"
+      },
+      value: {
+          text: serviceUserName(userMap.get(advanceAttendance.recordedBy))
+      }
+  }, {
+      key: {
+          text: "Date and time"
+      },
+      value: {
+          text: advanceAttendance.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
+      }
+  }), summaryListRows)
+%}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                <span class="govuk-caption-l" data-qa="caption">{{ instance.activitySchedule.activity.summary }}</span>
-                <h1 class="govuk-heading-l">Attendance record for {{ attendee | firstNameLastName | toTitleCase }}</h1>
-                <div class="govuk-inset-text">
-                    <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a>
-                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }}) 
-                </div>
-                {{ govukSummaryList({
-                    rows: summaryListRows,
-                    classes: "govuk-!-margin-bottom-9",
-                    attributes: { 'data-qa': 'appointment-details' }
-                }) }}
-
-                {% if attendee.prisonId == user.activeCaseLoadId %}
-                    <p class="govuk-body govuk-!-display-none-print no-js-hidden">
-                        <a href="{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">
-                            View the prisoner's profile
-                        </a>
-                    </p>
-                {% endif %}
-
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Reset as required to attend",
-                        type: "submit",
-                        attributes: { 'data-qa': 'view-selection' }
-                    }) }}
-                </div>
-            </form>
-
-
-            {% if advanceAttendance.attendanceHistory | length %}
-                <h2 class="govuk-heading-m" data-qa="history-heading">Change history for this attendance record</h2>
-                {% set changeNo = advanceAttendance.attendanceHistory | length %}
-                {% for attendanceHistory in advanceAttendance.attendanceHistory %}
-                    {% set recordedTime = attendanceHistory.recordedTime.split('T') %}
-                    <h3 class="govuk-heading-s" data-qa="history-heading">Change {{ changeNo }}</h3>
-                    {% set historyListRows = [] %}
-                    {% set historyListRows = (historyListRows.push(
-                            {
-                            key: {
-                                text: "Attendance"
-                            },
-                            value: {
-                                text: attendanceHistory.attendanceReason.description or "Not recorded yet"
-                            }
-                            }
-                    ), historyListRows) %}
-
-                    {% set historyListRows = (historyListRows.push(
-                        {
-                            key: {
-                                text: "Pay"
-                            },
-                            value: { text: 'Yes' if attendanceHistory.issuePayment else 'No' }
-                        }
-                    ), historyListRows) %}
-
-                    {# Always show "comment" row if comments are applicable to attendance reason #}
-                    {% if attendanceHistory.attendanceReason.code == 'SICK' %}
-                        {% set historyListRows = (historyListRows.push(
-                            {
-                                key: {
-                                    text: "Comment"
-                                },
-                                value: {
-                                    text: attendanceHistory.comment
-                                }
-                            }
-                        ), historyListRows) %}
-                    {% endif %}
-
-                    {% set historyListRows = (historyListRows.push(
-                        {
-                            key: {
-                                text: "Recorded by"
-                            },
-                            value: {
-                                text: serviceUserName(userMap.get(attendanceHistory.recordedBy))
-                            }
-                        }, {
-                            key: {
-                                text: "Date and time"
-                            },
-                            value: {
-                                text: attendanceHistory.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
-                            }
-                        }
-                    ), historyListRows) %}
-
-                    {{ govukSummaryList({
-                        rows: historyListRows,
-                        classes: "history-list-row-count govuk-!-margin-bottom-9",
-                        attributes: { 'data-qa': 'attendance-history' }
-                    }) }}
-
-                    {% set changeNo = changeNo - 1 %}
-                {% endfor %}
-            {% endif %}
-
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <span class="govuk-caption-l" data-qa="caption">{{ instance.activitySchedule.activity.summary }}</span>
+        <h1 class="govuk-heading-l">Attendance record for {{ attendee | firstNameLastName | toTitleCase }}</h1>
+        <div class="govuk-inset-text">
+          <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state"
+            >{{ instance.activitySchedule.activity.summary }}</a
+          >
+          on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }})
         </div>
+        {{
+          govukSummaryList({
+              rows: summaryListRows,
+              classes: "govuk-!-margin-bottom-9",
+              attributes: { 'data-qa': 'appointment-details' }
+          })
+        }}
+
+        {% if attendee.prisonId == user.activeCaseLoadId %}
+          <p class="govuk-body govuk-!-display-none-print no-js-hidden">
+            <a
+              href="{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}"
+              class="govuk-link govuk-link--no-visited-state"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View the prisoner's profile
+            </a>
+          </p>
+        {% endif %}
+
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Reset as required to attend",
+                type: "submit",
+                attributes: { 'data-qa': 'view-selection' }
+            })
+          }}
+        </div>
+      </form>
+
+      {% if advanceAttendance.attendanceHistory | length %}
+        <h2 class="govuk-heading-m" data-qa="history-heading">Change history for this attendance record</h2>
+        {% set changeNo = advanceAttendance.attendanceHistory | length %}
+        {% for attendanceHistory in advanceAttendance.attendanceHistory %}
+          {% set recordedTime = attendanceHistory.recordedTime.split('T') %}
+          <h3 class="govuk-heading-s" data-qa="history-heading">Change {{ changeNo }}</h3>
+          {% set historyListRows = [] %}
+          {%
+            set historyListRows = (historyListRows.push(
+                    {
+                    key: {
+                        text: "Attendance"
+                    },
+                    value: {
+                        text: attendanceHistory.attendanceReason.description or "Not recorded yet"
+                    }
+                    }
+            ), historyListRows)
+          %}
+
+          {%
+            set historyListRows = (historyListRows.push(
+                {
+                    key: {
+                        text: "Pay"
+                    },
+                    value: { text: 'Yes' if attendanceHistory.issuePayment else 'No' }
+                }
+            ), historyListRows)
+          %}
+
+          {# Always show "comment" row if comments are applicable to attendance reason #}
+          {% if attendanceHistory.attendanceReason.code == 'SICK' %}
+            {%
+              set historyListRows = (historyListRows.push(
+                  {
+                      key: {
+                          text: "Comment"
+                      },
+                      value: {
+                          text: attendanceHistory.comment
+                      }
+                  }
+              ), historyListRows)
+            %}
+          {% endif %}
+
+          {%
+            set historyListRows = (historyListRows.push(
+                {
+                    key: {
+                        text: "Recorded by"
+                    },
+                    value: {
+                        text: serviceUserName(userMap.get(attendanceHistory.recordedBy))
+                    }
+                }, {
+                    key: {
+                        text: "Date and time"
+                    },
+                    value: {
+                        text: attendanceHistory.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
+                    }
+                }
+            ), historyListRows)
+          %}
+
+          {{
+            govukSummaryList({
+                rows: historyListRows,
+                classes: "history-list-row-count govuk-!-margin-bottom-9",
+                attributes: { 'data-qa': 'attendance-history' }
+            })
+          }}
+
+          {% set changeNo = changeNo - 1 %}
+        {% endfor %}
+      {% endif %}
     </div>
+  </div>
 {% endblock %}

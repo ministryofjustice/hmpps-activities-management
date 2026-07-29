@@ -1,51 +1,53 @@
 <div class="govuk-grid-column-one-third govuk-!-margin-bottom-9">
-    <div class="information-card">
-        {{ govukTable({
-            caption: "Current allocation",
-            captionClasses: "govuk-table__caption--m",
-            firstCellIsHeader: true,
-            rows: [
-                [
-                    {
-                        text: "Vacancies:"
-                    },
-                    {
-                        text: schedule.activity.capacity - schedule.activity.allocated
-                    }
-                ],
-                [
-                    {
-                        text: "Allocated and due to attend:"
-                    },
-                    {
-                        text: activeAllocations
-                    }
-                ],
-                [
-                    {
-                        text: "Allocated but not started yet:"
-                    },
-                    {
-                        text: schedule.activity.allocated - activeAllocations
-                    }
-                ],
-                [
-                    {
-                        text: "Capacity:"
-                    },
-                    {
-                        text: schedule.activity.capacity
-                    }
-                ],
-                [
-                    {
-                        text: "On waitlist:"
-                    },
-                    {
-                        text: waitlistSize
-                    }
-                ] if not activity.outsideWork
-            ]
-        }) }}
-    </div>
+  <div class="information-card">
+    {{
+      govukTable({
+          caption: "Current allocation",
+          captionClasses: "govuk-table__caption--m",
+          firstCellIsHeader: true,
+          rows: [
+              [
+                  {
+                      text: "Vacancies:"
+                  },
+                  {
+                      text: schedule.activity.capacity - schedule.activity.allocated
+                  }
+              ],
+              [
+                  {
+                      text: "Allocated and due to attend:"
+                  },
+                  {
+                      text: activeAllocations
+                  }
+              ],
+              [
+                  {
+                      text: "Allocated but not started yet:"
+                  },
+                  {
+                      text: schedule.activity.allocated - activeAllocations
+                  }
+              ],
+              [
+                  {
+                      text: "Capacity:"
+                  },
+                  {
+                      text: schedule.activity.capacity
+                  }
+              ],
+              [
+                  {
+                      text: "On waitlist:"
+                  },
+                  {
+                      text: waitlistSize
+                  }
+              ] if not activity.outsideWork
+          ]
+      })
+    }}
+  </div>
 </div>

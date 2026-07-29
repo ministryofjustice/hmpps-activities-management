@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 
@@ -14,30 +13,34 @@
       <h1 class="govuk-heading-l">Should people be paid for this cancelled session of {{ activityName }}?</h1>
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-        {{ govukRadios({
-          name: "issuePayOption",
-          errorMessage: validationErrors | findError('issuePayOption'),
-          items: [
-            {
-              value: "yes",
-              text: "Yes",
-              checked: "yes" == formResponses.issuePayOption
-            },
-            {
-              value: "no",
-              text: "No",
-              checked: "no" == formResponses.issuePayOption,
-              hint: {
-                text: "Anyone already marked as ‘Attended’ will now not be paid. Their attendance will change to ‘Cancelled’."
+        {{
+          govukRadios({
+            name: "issuePayOption",
+            errorMessage: validationErrors | findError('issuePayOption'),
+            items: [
+              {
+                value: "yes",
+                text: "Yes",
+                checked: "yes" == formResponses.issuePayOption
+              },
+              {
+                value: "no",
+                text: "No",
+                checked: "no" == formResponses.issuePayOption,
+                hint: {
+                  text: "Anyone already marked as ‘Attended’ will now not be paid. Their attendance will change to ‘Cancelled’."
+                }
               }
-            }
-          ]
-        }) }}
+            ]
+          })
+        }}
 
-        {{ govukButton({
-          text: "Continue",
-          preventDoubleClick: true
-        }) }}
+        {{
+          govukButton({
+            text: "Continue",
+            preventDoubleClick: true
+          })
+        }}
       </form>
     </div>
   </div>

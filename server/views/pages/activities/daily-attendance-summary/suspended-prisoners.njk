@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
@@ -15,219 +14,244 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    {% set filterOptionsHtml %}
-    {% set categoryFilters = [] %}
+  {% set filterOptionsHtml %}
+  {% set categoryFilters = [] %}
     {% for category in uniqueCategories %}
-        {% set categoryFilters = (categoryFilters.push({value: category.name, text: category.name, checked: category.name in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
+      {% set categoryFilters = (categoryFilters.push({value: category.name, text: category.name, checked: category.name in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
     {% endfor %}
 
-    {{ govukCheckboxes({
-            idPrefix: 'categoryFilters',
-            name: 'categoryFilters',
-            hint: {
-                text: "Select all that apply."
-            },
-            fieldset: {
-                legend: {
-                    text: 'Categories',
-                    classes: 'govuk-fieldset__legend--m'
-                }
-            },
-            items: categoryFilters
-        }) }}
+    {{
+      govukCheckboxes({
+          idPrefix: 'categoryFilters',
+          name: 'categoryFilters',
+          hint: {
+              text: "Select all that apply."
+          },
+          fieldset: {
+              legend: {
+                  text: 'Categories',
+                  classes: 'govuk-fieldset__legend--m'
+              }
+          },
+          items: categoryFilters
+      })
+    }}
 
     <div class="govuk-!-margin-bottom-4">
-        <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
+      <a
+        href="#"
+        class="govuk-link govuk-link--no-visited-state"
+        data-module="select-all-link"
+        data-checkbox-name="categoryFilters"
+      ></a>
     </div>
 
-    {{ govukRadios({
-            idPrefix: 'reasonFilter',
-            name: 'reasonFilter',
-            fieldset: {
-                legend: {
-                    text: 'Reason',
-                    classes: 'govuk-fieldset__legend--m'
+    {{
+      govukRadios({
+          idPrefix: 'reasonFilter',
+          name: 'reasonFilter',
+          fieldset: {
+              legend: {
+                  text: 'Reason',
+                  classes: 'govuk-fieldset__legend--m'
+              }
+          },
+          items: [
+              {
+                  value: "SUSPENDED",
+                  text: "Suspended",
+                  checked: "SUSPENDED" == attendanceSummaryJourney.reasonFilter
+              },
+              {
+                  value: "AUTO_SUSPENDED",
+                  text: "Temporarily released or transferred",
+                  checked: "AUTO_SUSPENDED" == attendanceSummaryJourney.reasonFilter
+              },
+              {
+                  value: "BOTH",
+                  text: "Both",
+                  checked: "BOTH" == attendanceSummaryJourney.reasonFilter or not attendanceSummaryJourney.reasonFilter
+              }
+          ]
+      })
+    }}
+
+    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">Apply filters</button>
+  {% endset %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
+        Prisoners suspended or temporarily absent
+        <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
+      </h1>
+
+      {{
+        searchInput({
+            classes: "search-input--inline-search",
+            input: {
+                id: 'searchTerm',
+                name: 'searchTerm',
+                type: "search",
+                label: {
+                    text: 'Search by name or prison number',
+                    classes: 'govuk-label--s'
+                },
+                value: attendanceSummaryJourney.searchTerm,
+                attributes: {
+                    form: 'filter-form'
                 }
             },
+            button: {
+                text: "Search",
+                attributes: {
+                    form: 'filter-form'
+                }
+            }
+        })
+      }}
+    </div>
+    <div class="govuk-grid-column-one-third govuk-!-text-align-right">
+      <div class="govuk-hint govuk-!-font-size-16">
+        Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}
+      </div>
+      {{
+        govukButton({
+            text: "Refresh",
+            classes: "govuk-button--blue",
+            attributes: {
+                form: 'filter-form'
+            }
+        })
+      }}
+    </div>
+  </div>
+
+  <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+    <div class="moj-filter-layout__filter moj-filter-layout__flex">
+      <form id="filter-form" method="POST" action="update-filters" novalidate>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          mojFilter({
+              heading: {
+                  text: 'Filter'
+              },
+              optionsHtml: filterOptionsHtml
+          })
+        }}
+      </form>
+    </div>
+
+    <div class="moj-filter-layout__content">
+      <div class="moj-action-bar">
+        <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+      </div>
+      {{
+        govukTabs({
+            classes: "govuk-tabs--borderless",
             items: [
                 {
-                    value: "SUSPENDED",
-                    text: "Suspended",
-                    checked: "SUSPENDED" == attendanceSummaryJourney.reasonFilter
+                    label: "Daily summary",
+                    id: "day-tab",
+                    panel: {
+                    html: summaryHtml("DAY", "daily", activityDate)
+                }
                 },
                 {
-                    value: "AUTO_SUSPENDED",
-                    text: "Temporarily released or transferred",
-                    checked: "AUTO_SUSPENDED" == attendanceSummaryJourney.reasonFilter
+                    label: "AM session",
+                    id: "am-tab",
+                    panel: {
+                    html: summaryHtml("AM", "morning", activityDate)
+                }
                 },
                 {
-                    value: "BOTH",
-                    text: "Both",
-                    checked: "BOTH" == attendanceSummaryJourney.reasonFilter or not attendanceSummaryJourney.reasonFilter
+                    label: "PM session",
+                    id: "pm-tab",
+                    panel: {
+                    html: summaryHtml("PM", "afternoon", activityDate)
+                }
+                },
+                {
+                    label: "ED session",
+                    id: "ed-tab",
+                    panel: {
+                    html: summaryHtml("ED", "evening", activityDate)
+                }
                 }
             ]
-        }) }}
-
-    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
-            Apply filters
-        </button>
-    {% endset %}
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
-                    Prisoners suspended or temporarily absent
-                    <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
-            </h1>
-
-            {{ searchInput({
-                    classes: "search-input--inline-search",
-                    input: {
-                        id: 'searchTerm',
-                        name: 'searchTerm',
-                        type: "search",
-                        label: {
-                            text: 'Search by name or prison number',
-                            classes: 'govuk-label--s'
-                        },
-                        value: attendanceSummaryJourney.searchTerm,
-                        attributes: {
-                            form: 'filter-form'
-                        }
-                    },
-                    button: {
-                        text: "Search",
-                        attributes: {
-                            form: 'filter-form'
-                        }
-                    }
-                }) }}
-        </div>
-        <div class="govuk-grid-column-one-third govuk-!-text-align-right">
-            <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
-            {{ govukButton({
-                    text: "Refresh",
-                    classes: "govuk-button--blue",
-                    attributes: {
-                        form: 'filter-form'
-                    }
-                }) }}
-        </div>
+        })
+      }}
     </div>
-
-    <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
-        <div class="moj-filter-layout__filter moj-filter-layout__flex">
-            <form id="filter-form" method="POST" action="update-filters" novalidate>
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                {{ mojFilter({
-                    heading: {
-                        text: 'Filter'
-                    },
-                    optionsHtml: filterOptionsHtml
-                }) }}
-            </form>
-        </div>
-
-        <div class="moj-filter-layout__content">
-            <div class="moj-action-bar">
-                <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
-            </div>
-            {{ govukTabs({
-                    classes: "govuk-tabs--borderless",
-                    items: [
-                        {
-                            label: "Daily summary",
-                            id: "day-tab",
-                            panel: {
-                            html: summaryHtml("DAY", "daily", activityDate)
-                        }
-                        },
-                        {
-                            label: "AM session",
-                            id: "am-tab",
-                            panel: {
-                            html: summaryHtml("AM", "morning", activityDate)
-                        }
-                        },
-                        {
-                            label: "PM session",
-                            id: "pm-tab",
-                            panel: {
-                            html: summaryHtml("PM", "afternoon", activityDate)
-                        }
-                        },
-                        {
-                            label: "ED session",
-                            id: "ed-tab",
-                            panel: {
-                            html: summaryHtml("ED", "evening", activityDate)
-                        }
-                        }
-                    ]
-                }) }}
-        </div>
-    </div>
+  </div>
 {% endblock %}
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
-    {% set suspendedPrisonersRows = [] %}
-    {% for suspendedPrisoner in suspendedAttendancesByPrisoner %}
-        {% if timeSlot === 'DAY' or timeSlot in suspendedPrisoner.timeSlots %}
-            {% set sessions %}
-            {% for session in (suspendedPrisoner.sessions if timeSlot === 'DAY' else
-                suspendedPrisoner.sessions | filter('sessionSlot', timeSlot)
-            ) %}
-                <div class="govuk-body-s govuk-!-margin-0">
-                    <div class="govuk-!-margin-right-2">
-                        <div class="govuk-!-font-weight-bold">
-                            <a href="/activities/attendance/activities/{{ session.sessionId }}/attendance-list"
-                                   class="govuk-link govuk-link--no-visited-state" target='_blank'>{{ session.sessionSummary }}</a>
-                        </div>
-                        <div>{{ session.sessionStartTime }} - {{ session.sessionEndTime }}</div>
-                        <div>{{ session.sessionLocation }}</div>
-                    </div>
-                </div>
-                {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
-            {% endfor %}
-            {% endset %}
-            {% set nameForSorting = suspendedPrisoner.firstName + ' ' + suspendedPrisoner.lastName %}
-            {% set suspendedPrisonersRows = (suspendedPrisonersRows.push([
-                {
-                    attributes: { id: 'prisoner-' + loop.index, "data-sort-value": suspendedPrisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false) },
-                    html: showProfileLink({
-                        firstName: suspendedPrisoner.firstName,
-                        middleNames: suspendedPrisoner.middleNames,
-                        lastName: suspendedPrisoner.lastName,
-                        prisonerNumber: suspendedPrisoner.prisonerNumber,
-                        inCaseLoad: suspendedPrisoner.prisonCode == user.activeCaseLoadId,
-                        classes: 'hmpps-inline-block'
-                    }),
-                    classes: 'govuk-table_cell'
-                },
-                {
-                    attributes: { id: 'cell-location-' + loop.index },
-                    text: statusBasedCellLocation(suspendedPrisoner.cellLocation, suspendedPrisoner.status, suspendedPrisoner.prisonCode == user.activeCaseLoadId),
-                    classes: 'govuk-table_cell'
-                },
-                {
-                    attributes: { id: 'activities-' + loop.index },
-                    html: sessions,
-                    classes: 'govuk-table_cell'
-                },
-                {
-                    attributes: { id: 'activities-' + loop.index },
-                    text: suspendedPrisoner.reason,
-                    classes: 'govuk-table_cell'
-                }
-            ]), suspendedPrisonersRows) %}
-        {% endif %}
-    {% endfor %}
+  {% set suspendedPrisonersRows = [] %}
+  {% for suspendedPrisoner in suspendedAttendancesByPrisoner %}
+    {% if timeSlot === 'DAY' or timeSlot in suspendedPrisoner.timeSlots %}
+      {% set sessions %}
+        {%
+          for session in (suspendedPrisoner.sessions if timeSlot === 'DAY' else
+              suspendedPrisoner.sessions | filter('sessionSlot', timeSlot)
+          )
+        %}
+          <div class="govuk-body-s govuk-!-margin-0">
+            <div class="govuk-!-margin-right-2">
+              <div class="govuk-!-font-weight-bold">
+                <a
+                  href="/activities/attendance/activities/{{ session.sessionId }}/attendance-list"
+                  class="govuk-link govuk-link--no-visited-state"
+                  target="_blank"
+                  >{{ session.sessionSummary }}</a
+                >
+              </div>
+              <div>{{ session.sessionStartTime }} - {{ session.sessionEndTime }}</div>
+              <div>{{ session.sessionLocation }}</div>
+            </div>
+          </div>
+          {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border" />{% endif %}
+        {% endfor %}
+      {% endset %}
+      {% set nameForSorting = suspendedPrisoner.firstName + ' ' + suspendedPrisoner.lastName %}
+      {%
+        set suspendedPrisonersRows = (suspendedPrisonersRows.push([
+            {
+                attributes: { id: 'prisoner-' + loop.index, "data-sort-value": suspendedPrisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false) },
+                html: showProfileLink({
+                    firstName: suspendedPrisoner.firstName,
+                    middleNames: suspendedPrisoner.middleNames,
+                    lastName: suspendedPrisoner.lastName,
+                    prisonerNumber: suspendedPrisoner.prisonerNumber,
+                    inCaseLoad: suspendedPrisoner.prisonCode == user.activeCaseLoadId,
+                    classes: 'hmpps-inline-block'
+                }),
+                classes: 'govuk-table_cell'
+            },
+            {
+                attributes: { id: 'cell-location-' + loop.index },
+                text: statusBasedCellLocation(suspendedPrisoner.cellLocation, suspendedPrisoner.status, suspendedPrisoner.prisonCode == user.activeCaseLoadId),
+                classes: 'govuk-table_cell'
+            },
+            {
+                attributes: { id: 'activities-' + loop.index },
+                html: sessions,
+                classes: 'govuk-table_cell'
+            },
+            {
+                attributes: { id: 'activities-' + loop.index },
+                text: suspendedPrisoner.reason,
+                classes: 'govuk-table_cell'
+            }
+        ]), suspendedPrisonersRows)
+      %}
+    {% endif %}
+  {% endfor %}
 
-    <h2 class="govuk-heading-m">
-        {{ suspendedPrisonersRows | length }}
-        prisoner{% if suspendedPrisonersRows | length != 1 %}s{% endif %} suspended
-    </h2>
+  <h2 class="govuk-heading-m">
+    {{ suspendedPrisonersRows | length }} prisoner{% if suspendedPrisonersRows | length != 1 %}s{% endif %} suspended
+  </h2>
 
-    {{ govukTable({
+  {{
+    govukTable({
         attributes: {
             'data-module': 'moj-sortable-table',
             id: 'attendee-list-table'
@@ -259,5 +283,6 @@
             attributes: { "colspan": "4" },
             classes: 'govuk-table_cell govuk-!-text-align-centre'
         }]]
-    }) }}
+    })
+  }}
 {% endmacro %}

@@ -10,97 +10,109 @@
 {% set pageId = 'activities-allocate-multiple-review-upload-prisoner-list-page' %}
 {% set jsBackLink = true %}
 
-
 {% set allocatedInmatesRows = [] %}
 {% for allocatedInmate in allocatedInmates %}
-  {% set allocatedInmatesRows = (allocatedInmatesRows.push([
-    {
-      html: showProfileLink({
-      firstName: allocatedInmate.firstName,
-      middleNames: allocatedInmate.middleNames,
-      lastName: allocatedInmate.lastName,
-      prisonerNumber: allocatedInmate.prisonerNumber
-    }),
-      classes: 'govuk-!-margin-0',
-      attributes: {
-        "data-sort-value": allocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
-    }
-    },
-    {
-      text: allocatedInmate.startDate | toDate | formatDate('d MMMM yyyy', false),
-      classes: 'govuk-!-display-none-print',
-      attributes: { id: 'allocated-inmate-start-date', "data-qa": "allocated-inmate-start-date" }
-    }
-  ]), allocatedInmatesRows) %}
+  {%
+    set allocatedInmatesRows = (allocatedInmatesRows.push([
+      {
+        html: showProfileLink({
+        firstName: allocatedInmate.firstName,
+        middleNames: allocatedInmate.middleNames,
+        lastName: allocatedInmate.lastName,
+        prisonerNumber: allocatedInmate.prisonerNumber
+      }),
+        classes: 'govuk-!-margin-0',
+        attributes: {
+          "data-sort-value": allocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+      }
+      },
+      {
+        text: allocatedInmate.startDate | toDate | formatDate('d MMMM yyyy', false),
+        classes: 'govuk-!-display-none-print',
+        attributes: { id: 'allocated-inmate-start-date', "data-qa": "allocated-inmate-start-date" }
+      }
+    ]), allocatedInmatesRows)
+  %}
 {% endfor %}
 
 {% set unallocatedInmatesRows = [] %}
 {% for unallocatedInmate in unallocatedInmates %}
   {% set currentAllocationsHtml %}
-    <ul class='govuk-list'>
+    <ul class="govuk-list">
       {% for allocation in unallocatedInmate.otherAllocations %}
-        <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
+        <li>
+          <a
+            href="/activities/allocation-dashboard/{{ allocation.activityId }}"
+            class="govuk-link govuk-link--no-visited-state"
+            target="_blank"
+            >{{ allocation.activitySummary }}</a
+          >
+        </li>
       {% else %}
         <li>None</li>
       {% endfor %}
     </ul>
   {% endset %}
-  {% set unallocatedInmatesRows = (unallocatedInmatesRows.push([
-    {
-      html: showProfileLink({
-      firstName: unallocatedInmate.firstName,
-      middleNames: unallocatedInmate.middleNames,
-      lastName: unallocatedInmate.lastName,
-      prisonerNumber: unallocatedInmate.prisonerNumber
-      }),
-      classes: 'govuk-!-margin-0',
-      attributes: {
-        "data-sort-value": unallocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+  {%
+    set unallocatedInmatesRows = (unallocatedInmatesRows.push([
+      {
+        html: showProfileLink({
+        firstName: unallocatedInmate.firstName,
+        middleNames: unallocatedInmate.middleNames,
+        lastName: unallocatedInmate.lastName,
+        prisonerNumber: unallocatedInmate.prisonerNumber
+        }),
+        classes: 'govuk-!-margin-0',
+        attributes: {
+          "data-sort-value": unallocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+        }
+      },
+      {
+        text: statusBasedCellLocation(unallocatedInmate.cellLocation, unallocatedInmate.status, unallocatedInmate.prisonCode == user.activeCaseLoadId),
+        classes: 'govuk-!-display-none-print',
+        attributes: { id: 'unallocated-inmate-cell-location', "data-qa": "unallocated-inmate-cell-location" }
+      },
+      {
+        html: nonAssociationsHtml(unallocatedInmate, unallocatedInmate.prisonerNumber, allocateJourney.activity.activityId),
+        classes: 'govuk-!-display-none-print',
+        attributes: { id: 'unallocated-inmate-non-associations', "data-qa": "unallocated-inmate-non-associations" }
+      },
+      {
+        html: currentAllocationsHtml,
+        attributes: { id: 'unallocated-inmate-current-allocations', "data-qa": "unallocated-inmate-current-allocations" }
+      },
+      {
+        html: '<a href="review-upload-prisoner-list/' + unallocatedInmate.prisonerNumber + '/remove' + ('?preserveHistory=true' if preserveHistory else '') + '"
+                            class="govuk-link--no-visited-state">
+                            Remove<span class="govuk-visually-hidden"> prison number ' + unallocatedInmate.prisonerNumber + '</span>
+                        </a>',
+        attributes: { 'data-qa': 'remove-uploaded-prison-number-' + unallocatedInmate.prisonerNumber }
       }
-    },
-    {
-      text: statusBasedCellLocation(unallocatedInmate.cellLocation, unallocatedInmate.status, unallocatedInmate.prisonCode == user.activeCaseLoadId),
-      classes: 'govuk-!-display-none-print',
-      attributes: { id: 'unallocated-inmate-cell-location', "data-qa": "unallocated-inmate-cell-location" }
-    },
-    {
-      html: nonAssociationsHtml(unallocatedInmate, unallocatedInmate.prisonerNumber, allocateJourney.activity.activityId),
-      classes: 'govuk-!-display-none-print',
-      attributes: { id: 'unallocated-inmate-non-associations', "data-qa": "unallocated-inmate-non-associations" }
-    },
-    {
-      html: currentAllocationsHtml,
-      attributes: { id: 'unallocated-inmate-current-allocations', "data-qa": "unallocated-inmate-current-allocations" }
-    },
-    {
-      html: '<a href="review-upload-prisoner-list/' + unallocatedInmate.prisonerNumber + '/remove' + ('?preserveHistory=true' if preserveHistory else '') + '"
-                          class="govuk-link--no-visited-state">
-                          Remove<span class="govuk-visually-hidden"> prison number ' + unallocatedInmate.prisonerNumber + '</span>
-                      </a>',
-      attributes: { 'data-qa': 'remove-uploaded-prison-number-' + unallocatedInmate.prisonerNumber }
-    }
-  ]), unallocatedInmatesRows) %}
+    ]), unallocatedInmatesRows)
+  %}
 {% endfor %}
 
 {% set withoutMatchingIncentiveLevelInmatesRows = [] %}
 {% for withoutMatchingIncentiveLevelInmate in withoutMatchingIncentiveLevelInmates %}
-  {% set withoutMatchingIncentiveLevelInmatesRows = (withoutMatchingIncentiveLevelInmatesRows.push([
-    {
-      html: showProfileLink({
-      firstName: withoutMatchingIncentiveLevelInmate.firstName,
-      middleNames: withoutMatchingIncentiveLevelInmate.middleNames,
-      lastName: withoutMatchingIncentiveLevelInmate.lastName,
-      prisonerNumber: withoutMatchingIncentiveLevelInmate.prisonerNumber
-    }),
-      classes: 'govuk-!-margin-0',
-      attributes: {
-      "data-sort-value": withoutMatchingIncentiveLevelInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
-    }
-    },
-    {
-      text: withoutMatchingIncentiveLevelInmate.incentiveLevel
-    }
-  ]), withoutMatchingIncentiveLevelInmatesRows) %}
+  {%
+    set withoutMatchingIncentiveLevelInmatesRows = (withoutMatchingIncentiveLevelInmatesRows.push([
+      {
+        html: showProfileLink({
+        firstName: withoutMatchingIncentiveLevelInmate.firstName,
+        middleNames: withoutMatchingIncentiveLevelInmate.middleNames,
+        lastName: withoutMatchingIncentiveLevelInmate.lastName,
+        prisonerNumber: withoutMatchingIncentiveLevelInmate.prisonerNumber
+      }),
+        classes: 'govuk-!-margin-0',
+        attributes: {
+        "data-sort-value": withoutMatchingIncentiveLevelInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+      }
+      },
+      {
+        text: withoutMatchingIncentiveLevelInmate.incentiveLevel
+      }
+    ]), withoutMatchingIncentiveLevelInmatesRows)
+  %}
 {% endfor %}
 
 {% set allocationsAvailable = unallocatedInmatesRows | length > 0 %}
@@ -113,63 +125,73 @@
         <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
         <h2 class="govuk-heading-m">No prison numbers in your CSV file could be used</h2>
         <p class="govuk-body">This may be because the numbers were wrong, or the people are out.</p>
-        {{ govukButton({
-            text: "Return to the activity",
-            classes: "govuk-!-margin-top-5",
-            href: '/activities/allocation-dashboard/'+allocateJourney.activity.activityId
-        }) }}
+        {{
+          govukButton({
+              text: "Return to the activity",
+              classes: "govuk-!-margin-top-5",
+              href: '/activities/allocation-dashboard/'+allocateJourney.activity.activityId
+          })
+        }}
       {% elif allocationsAvailable %}
         <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
-          {% if csv %} 
-            <p class="govuk-body">You can remove anyone who is not required. If you want to add someone, change the list of prison numbers in the CSV file and <a href="upload-prisoner-list" class="govuk-link--no-visited-state">upload it again</a>.</p>
-          {% else %}
-            <p class="govuk-body">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>     
-          {% endif %}
-        {{ govukTable({
-          head: [
-            {
-              text: "Name",
-              classes: "govuk-!-display-none-print",
-              attributes: { "aria-sort": "ascending", "data-qa": "unallocated-inmate-name" }
-            },
-            {
-              text: "Cell location",
-              classes: "govuk-!-display-none-print",
-              attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-cell-location"}
-            },
-            {
-              text: "Non-associations",
-              classes: "govuk-!-display-none-print",
-              attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-non-associations"}
-            },
-            {
-              text: "Current allocations",
-              classes: "govuk-!-display-none-print",
-              attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-current-allocations"}
-            },
-            {
-              html: '<span class="govuk-visually-hidden">Actions</span>',
-              classes: "govuk-!-display-none-print"
+        {% if csv %}
+          <p class="govuk-body">
+            You can remove anyone who is not required. If you want to add someone, change the list of prison numbers in
+            the CSV file and <a href="upload-prisoner-list" class="govuk-link--no-visited-state">upload it again</a>.
+          </p>
+        {% else %}
+          <p class="govuk-body">
+            Remove anyone who should not be allocated, or continue with the current list of people to allocate.
+          </p>
+        {% endif %}
+        {{
+          govukTable({
+            head: [
+              {
+                text: "Name",
+                classes: "govuk-!-display-none-print",
+                attributes: { "aria-sort": "ascending", "data-qa": "unallocated-inmate-name" }
+              },
+              {
+                text: "Cell location",
+                classes: "govuk-!-display-none-print",
+                attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-cell-location"}
+              },
+              {
+                text: "Non-associations",
+                classes: "govuk-!-display-none-print",
+                attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-non-associations"}
+              },
+              {
+                text: "Current allocations",
+                classes: "govuk-!-display-none-print",
+                attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-current-allocations"}
+              },
+              {
+                html: '<span class="govuk-visually-hidden">Actions</span>',
+                classes: "govuk-!-display-none-print"
+              }
+            ],
+            rows: unallocatedInmatesRows,
+            attributes: {
+              'data-module': 'moj-sortable-table',
+              'data-qa': 'inmate-list'
             }
-          ],
-          rows: unallocatedInmatesRows,
-          attributes: {
-            'data-module': 'moj-sortable-table',
-            'data-qa': 'inmate-list'
-          }
-        }) }}
+          })
+        }}
 
         {% if allocateJourney.notFoundPrisoners.length > 0 %}
-          <h1 class="govuk-heading-m govuk-!-margin-bottom-7">Some prison numbers in your CSV file could not be used</h1>
-            <p class="govuk-body">These numbers did not match anyone in your prison:</p>
-              <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-4">
-                {% for prisonNumber in allocateJourney.notFoundPrisoners %}
-                  <li>{{ prisonNumber }}</li>
-                {% endfor %}
-              </ul>
-            <p class="govuk-body">This may be because the number is wrong, or the person is no longer in your prison</p>
+          <h1 class="govuk-heading-m govuk-!-margin-bottom-7">
+            Some prison numbers in your CSV file could not be used
+          </h1>
+          <p class="govuk-body">These numbers did not match anyone in your prison:</p>
+          <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-4">
+            {% for prisonNumber in allocateJourney.notFoundPrisoners %}
+              <li>{{ prisonNumber }}</li>
+            {% endfor %}
+          </ul>
+          <p class="govuk-body">This may be because the number is wrong, or the person is no longer in your prison</p>
         {% endif %}
-      
       {% else %}
         <h1 class="govuk-heading-l govuk-!-margin-bottom-7">{{ nobodyToAllocateTitle }}</h1>
         <p class="govuk-body">Check the list of people you’re using is correct. You may need to:</p>
@@ -178,51 +200,64 @@
           <li>edit people’s allocations</li>
           <li>change activity requirements</li>
         </ul>
-        {{ govukButton({
-            text: "Return to the activity",
-            classes: "govuk-!-margin-top-5",
-            href: '/activities/allocation-dashboard/'+allocateJourney.activity.activityId
-        }) }}
+        {{
+          govukButton({
+              text: "Return to the activity",
+              classes: "govuk-!-margin-top-5",
+              href: '/activities/allocation-dashboard/'+allocateJourney.activity.activityId
+          })
+        }}
       {% endif %}
-
 
       {% set totalCannotBeAllocated = withoutMatchingIncentiveLevelInmates.length + allocatedInmates.length %}
       {% if totalCannotBeAllocated > 0 %}
-          {% if not allocationsAvailable %}
-          <p class="govuk-heading-m govuk-!-margin-top-3" data-qa="cannot-allocate-title">Why people could not be allocated</p>
-          {% else %}
-          <p class="govuk-heading-m govuk-!-margin-top-3" data-qa="cannot-allocate-title">{{ cannotAllocateMessage }}</p>
-          {% endif %}
+        {% if not allocationsAvailable %}
+          <p class="govuk-heading-m govuk-!-margin-top-3" data-qa="cannot-allocate-title">
+            Why people could not be allocated
+          </p>
+        {% else %}
+          <p class="govuk-heading-m govuk-!-margin-top-3" data-qa="cannot-allocate-title">
+            {{ cannotAllocateMessage }}
+          </p>
+        {% endif %}
       {% endif %}
       {% if withoutMatchingIncentiveLevelInmates.length > 0 %}
         <p class="govuk-body" data-qa="incentive-level-text">
           {% if withoutMatchingIncentiveLevelInmates.length == 1 %}
             There is 1 person with an incentive level that does not match a pay rate for this activity.
           {% else %}
-            There are {{ withoutMatchingIncentiveLevelInmates | length }} people with an incentive level that does not match a pay rate for this activity.
+            There are {{ withoutMatchingIncentiveLevelInmates | length }} people with an incentive level that does not
+            match a pay rate for this activity.
           {% endif %}
-          <a href='/activities/view/{{ allocateJourney.activity.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>You can edit the activity to change pay rates</a>
+          <a
+            href="/activities/view/{{ allocateJourney.activity.activityId }}"
+            class="govuk-link govuk-link--no-visited-state"
+            target="_blank"
+            >You can edit the activity to change pay rates</a
+          >
         </p>
 
-        {{ govukTable({
-          head: [
-            {
-              text: "Name",
-              classes: "govuk-!-display-none-print",
-              attributes: { "aria-sort": "ascending", "data-qa": "incentive-level-prisoner-name" }
-            },
-            {
-              text: "Incentive Level",
-              classes: "govuk-!-display-none-print",
-              attributes: { "aria-sort": "none", "data-qa": "incentive-level"}
+        {{
+          govukTable({
+            head: [
+              {
+                text: "Name",
+                classes: "govuk-!-display-none-print",
+                attributes: { "aria-sort": "ascending", "data-qa": "incentive-level-prisoner-name" }
+              },
+              {
+                text: "Incentive Level",
+                classes: "govuk-!-display-none-print",
+                attributes: { "aria-sort": "none", "data-qa": "incentive-level"}
+              }
+            ],
+            rows: withoutMatchingIncentiveLevelInmatesRows,
+            attributes: {
+              'data-module': 'moj-sortable-table',
+              'data-qa': 'incentive-level-list'
             }
-          ],
-          rows: withoutMatchingIncentiveLevelInmatesRows,
-          attributes: {
-            'data-module': 'moj-sortable-table',
-            'data-qa': 'incentive-level-list'
-          }
-        }) }}
+          })
+        }}
       {% endif %}
 
       {% if allocatedInmates.length > 0 %}
@@ -234,38 +269,41 @@
           {% endif %}
         </p>
 
-        {{ govukTable({
-          head: [
-            {
-              text: "Name",
-              classes: "govuk-!-display-none-print",
-              attributes: { "aria-sort": "ascending", "data-qa": "allocated-inmate-name" }
-            },
-            {
-              text: "Start date on " + allocateJourney.activity.name,
-              classes: "govuk-!-display-none-print",
-              attributes: { "aria-sort": "none", "data-qa": "allocated-inmate-start-date"}
+        {{
+          govukTable({
+            head: [
+              {
+                text: "Name",
+                classes: "govuk-!-display-none-print",
+                attributes: { "aria-sort": "ascending", "data-qa": "allocated-inmate-name" }
+              },
+              {
+                text: "Start date on " + allocateJourney.activity.name,
+                classes: "govuk-!-display-none-print",
+                attributes: { "aria-sort": "none", "data-qa": "allocated-inmate-start-date"}
+              }
+            ],
+            rows: allocatedInmatesRows,
+            attributes: {
+              'data-module': 'moj-sortable-table',
+              'data-qa': 'allocated-inmate-list'
             }
-          ],
-          rows: allocatedInmatesRows,
-          attributes: {
-            'data-module': 'moj-sortable-table',
-            'data-qa': 'allocated-inmate-list'
-          }
-        }) }}
+          })
+        }}
       {% endif %}
 
       {% if allocationsAvailable %}
         <form method="POST">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-            {{ govukButton({
+          {{
+            govukButton({
               text: "Continue",
               preventDoubleClick: true,
               classes: 'govuk-!-margin-top-3'
-            }) }}
+            })
+          }}
         </form>
       {% endif %}
     </div>
   </div>
-
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
@@ -9,41 +8,45 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(createJourney) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ activityJourneyCaption(createJourney) }}
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukRadios({
-                    fieldset: {
-                        legend: {
-                            text: "Do people allocated to this activity need certain education levels or other qualifications?",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    name: "qualificationOption",
-                    errorMessage: validationErrors | findError('qualificationOption'),
-                    classes: 'govuk-radios--inline',
-                    items: [
-                        {
-                            value: "yes",
-                            html: "Yes",
-                            checked: formResponses.qualificationOption == 'yes' or createJourney.qualificationOption == 'yes'
-                        },
-                        {
-                            value: "no",
-                            html: "No",
-                            checked: formResponses.qualificationOption == 'no' or createJourney.qualificationOption == 'no'
-                        }
-                    ]
-                }) }}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          govukRadios({
+              fieldset: {
+                  legend: {
+                      text: "Do people allocated to this activity need certain education levels or other qualifications?",
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--l"
+                  }
+              },
+              name: "qualificationOption",
+              errorMessage: validationErrors | findError('qualificationOption'),
+              classes: 'govuk-radios--inline',
+              items: [
+                  {
+                      value: "yes",
+                      html: "Yes",
+                      checked: formResponses.qualificationOption == 'yes' or createJourney.qualificationOption == 'yes'
+                  },
+                  {
+                      value: "no",
+                      html: "No",
+                      checked: formResponses.qualificationOption == 'no' or createJourney.qualificationOption == 'no'
+                  }
+              ]
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Continue"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

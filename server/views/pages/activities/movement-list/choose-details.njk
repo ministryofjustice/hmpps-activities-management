@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
@@ -10,99 +9,107 @@
 {% set hardBackLinkHref = "/activities/unlock-list" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l">Choose movement list details</h1>
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <h1 class="govuk-heading-l">Choose movement list details</h1>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% set otherDateHintHtml %}
-                  <div class="govuk-!-margin-bottom-2">Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
-                  <div>You can get movement lists for dates up to 60 days from today.</div>
-                {% endset %}
+        {% set otherDateHintHtml %}
+          <div class="govuk-!-margin-bottom-2">
+            Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.
+          </div>
+          <div>You can get movement lists for dates up to 60 days from today.</div>
+        {% endset %}
 
-                {{ govukRadios({
-                    name: "dateOption",
-                    fieldset: {
-                        legend: {
-                            text: "Movement date",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    hint: {
-                        text: "You can get movement lists for dates up to 60 days from today."
-                    },
-                    errorMessage: validationErrors | findError('dateOption'),
-                    items: [
-                        {
-                            value: DateOption.TODAY,
-                            text: "Today - " + now | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.dateOption == DateOption.TODAY or dateOption == DateOption.TODAY
-                        },
-                        {
-                            value: DateOption.TOMORROW,
-                            text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.dateOption == DateOption.TOMORROW or dateOption == DateOption.TOMORROW
-                        },
-                        {
-                            value: DateOption.OTHER,
-                            text: "A different date",
-                            label: { text: "Movement date "},
-                            checked: formResponses.dateOption == DateOption.OTHER or dateOption == DateOption.OTHER,
-                            conditional: { 
-                                html: mojDatePicker({
-                                id: 'date',
-                                name: 'date',
-                                leadingZeros: 'true',
-                                classes: 'moj-datepicker--fixed-width',
-                                label: {
-                                    text: 'Other date',
-                                    classes: 'govuk-visually-hidden'
-                                },
-                                hint: { html: otherDateHintHtml },
-                                errorMessage: validationErrors | findError('date'),
-                                value: formResponses.date or date
-                              })
-                           }
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              name: "dateOption",
+              fieldset: {
+                  legend: {
+                      text: "Movement date",
+                      classes: "govuk-fieldset__legend--m"
+                  }
+              },
+              hint: {
+                  text: "You can get movement lists for dates up to 60 days from today."
+              },
+              errorMessage: validationErrors | findError('dateOption'),
+              items: [
+                  {
+                      value: DateOption.TODAY,
+                      text: "Today - " + now | formatDate('d MMMM yyyy', false),
+                      checked: formResponses.dateOption == DateOption.TODAY or dateOption == DateOption.TODAY
+                  },
+                  {
+                      value: DateOption.TOMORROW,
+                      text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
+                      checked: formResponses.dateOption == DateOption.TOMORROW or dateOption == DateOption.TOMORROW
+                  },
+                  {
+                      value: DateOption.OTHER,
+                      text: "A different date",
+                      label: { text: "Movement date "},
+                      checked: formResponses.dateOption == DateOption.OTHER or dateOption == DateOption.OTHER,
+                      conditional: {
+                          html: mojDatePicker({
+                          id: 'date',
+                          name: 'date',
+                          leadingZeros: 'true',
+                          classes: 'moj-datepicker--fixed-width',
+                          label: {
+                              text: 'Other date',
+                              classes: 'govuk-visually-hidden'
+                          },
+                          hint: { html: otherDateHintHtml },
+                          errorMessage: validationErrors | findError('date'),
+                          value: formResponses.date or date
+                        })
+                     }
+                  }
+              ]
+          })
+        }}
 
-                {{ govukRadios({
-                    name: "timeSlot",
-                    fieldset: {
-                        legend: {
-                            text: "Time period",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('timeSlot'),
-                    items: [
-                        {
-                            value: TimeSlot.AM,
-                            text: "AM (morning)",
-                            checked: formResponses.timeSlot == TimeSlot.AM or timeSlot == TimeSlot.AM
-                        },
-                        {
-                            value: TimeSlot.PM,
-                            text: "PM (afternoon)",
-                            checked: formResponses.timeSlot == TimeSlot.PM or timeSlot == TimeSlot.PM
-                        },
-                        {
-                            value: TimeSlot.ED,
-                            text: "ED (evening duty)",
-                            checked: formResponses.timeSlot == TimeSlot.ED or timeSlot == TimeSlot.ED
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              name: "timeSlot",
+              fieldset: {
+                  legend: {
+                      text: "Time period",
+                      classes: "govuk-fieldset__legend--m"
+                  }
+              },
+              errorMessage: validationErrors | findError('timeSlot'),
+              items: [
+                  {
+                      value: TimeSlot.AM,
+                      text: "AM (morning)",
+                      checked: formResponses.timeSlot == TimeSlot.AM or timeSlot == TimeSlot.AM
+                  },
+                  {
+                      value: TimeSlot.PM,
+                      text: "PM (afternoon)",
+                      checked: formResponses.timeSlot == TimeSlot.PM or timeSlot == TimeSlot.PM
+                  },
+                  {
+                      value: TimeSlot.ED,
+                      text: "ED (evening duty)",
+                      checked: formResponses.timeSlot == TimeSlot.ED or timeSlot == TimeSlot.ED
+                  }
+              ]
+          })
+        }}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Continue",
-                        preventDoubleClick: true
-                    }) }}
-                </div>
-            </form>
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Continue",
+                preventDoubleClick: true
+            })
+          }}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

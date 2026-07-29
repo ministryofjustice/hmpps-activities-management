@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
@@ -9,54 +8,60 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ activityJourneyCaption(createJourney) }}
-                {{ govukRadios({
-                    classes: "govuk-radios--inline",
-                    name: "attendanceRequired",
-                    fieldset: {
-                        legend: {
-                            text: "Should attendance be recorded for this activity?",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    hint: {
-                        text: 'You can choose to not record attendance for activities people do not go to - like ‘Unemployed’ or ‘Retired’. If you select ‘No’, the activity is not included in the attendance statistics. Attendance must be recorded if the activity is paid.'
-                    },
-                    items: [
-                        {
-                            value: "YES",
-                            text: "Yes",
-                            checked: createJourney.attendanceRequired == true
-                        },
-                        {
-                            value: "NO",
-                            text: "No",
-                            checked: createJourney.attendanceRequired == false
-                        }
-                    ],
-                    errorMessage: validationErrors | findError('attendanceRequired')
-                }) }}
+        {{ activityJourneyCaption(createJourney) }}
+        {{
+          govukRadios({
+              classes: "govuk-radios--inline",
+              name: "attendanceRequired",
+              fieldset: {
+                  legend: {
+                      text: "Should attendance be recorded for this activity?",
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--l"
+                  }
+              },
+              hint: {
+                  text: 'You can choose to not record attendance for activities people do not go to - like ‘Unemployed’ or ‘Retired’. If you select ‘No’, the activity is not included in the attendance statistics. Attendance must be recorded if the activity is paid.'
+              },
+              items: [
+                  {
+                      value: "YES",
+                      text: "Yes",
+                      checked: createJourney.attendanceRequired == true
+                  },
+                  {
+                      value: "NO",
+                      text: "No",
+                      checked: createJourney.attendanceRequired == false
+                  }
+              ],
+              errorMessage: validationErrors | findError('attendanceRequired')
+          })
+        }}
 
-                {% if session.req.routeContext.mode == 'edit' %}
-                    <div class="govuk-button-group">
-                        {{ govukButton({
-                            text: "Update attendance required",
-                            preventDoubleClick: true
-                        }) }}
-                        <a class="govuk-link js-backlink" href="/activities/view/{{ createJourney.activityId }}">Cancel</a>
-                    </div>
-                {% else %}
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                {% endif %}
-            </form>
-        </div>
+        {% if session.req.routeContext.mode == 'edit' %}
+          <div class="govuk-button-group">
+            {{
+              govukButton({
+                  text: "Update attendance required",
+                  preventDoubleClick: true
+              })
+            }}
+            <a class="govuk-link js-backlink" href="/activities/view/{{ createJourney.activityId }}">Cancel</a>
+          </div>
+        {% else %}
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
+        {% endif %}
+      </form>
     </div>
+  </div>
 {% endblock %}

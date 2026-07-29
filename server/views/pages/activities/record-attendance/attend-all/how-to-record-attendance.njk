@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
@@ -9,50 +8,54 @@
 {% set hardBackLinkHref = "/activities/attendance" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-l">Record activity attendance</span>
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <span class="govuk-caption-l">Record activity attendance</span>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ govukRadios({
-                    name: "howToRecord",
-                    fieldset: {
-                        legend: {
-                            text: "Select how you want to record attendance",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('howToRecord'),
-                    items: [
-                        {
-                            value: "FULL_LIST",
-                            text: "Select activities from the full list",
-                            checked: formResponses.howToRecord == 'FULL_LIST' or howToRecord == 'FULL_LIST'
-                        },
-                        {
-                            value: "RESIDENTIAL_LOCATION",
-                            text: "By residential location",
-                            checked: formResponses.howToRecord == 'RESIDENTIAL_LOCATION' or howToRecord == 'RESIDENTIAL_LOCATION',
-                            hint: {
-                              text: "Select to record attendance for people on the same wing, unit or houseblock."
-                            }
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              name: "howToRecord",
+              fieldset: {
+                  legend: {
+                      text: "Select how you want to record attendance",
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--l"
+                  }
+              },
+              errorMessage: validationErrors | findError('howToRecord'),
+              items: [
+                  {
+                      value: "FULL_LIST",
+                      text: "Select activities from the full list",
+                      checked: formResponses.howToRecord == 'FULL_LIST' or howToRecord == 'FULL_LIST'
+                  },
+                  {
+                      value: "RESIDENTIAL_LOCATION",
+                      text: "By residential location",
+                      checked: formResponses.howToRecord == 'RESIDENTIAL_LOCATION' or howToRecord == 'RESIDENTIAL_LOCATION',
+                      hint: {
+                        text: "Select to record attendance for people on the same wing, unit or houseblock."
+                      }
+                  }
+              ]
+          })
+        }}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Continue",
-                        type: "submit",
-                        preventDoubleClick: true,
-                        attributes: { 'data-qa': 'view-selection' }
-                    }) }}
-                </div>
-            </form>
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Continue",
+                type: "submit",
+                preventDoubleClick: true,
+                attributes: { 'data-qa': 'view-selection' }
+            })
+          }}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}
 
 {# Previous options available, might be required again in future:

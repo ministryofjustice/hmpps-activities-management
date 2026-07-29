@@ -1,211 +1,250 @@
 {% set prisonerName = prisoner | firstNameLastName | toTitleCase %}
 {% set activeAllocationRows = [] %}
-    {% for allocation in allocationsData %}
-            {% set deallocationHref = "/activities/allocations/remove/end-date?allocationIds=" + allocation.id + "&scheduleId=" + allocation.scheduleId %}
-            {% set removeEndDateHref = '/activities/allocations/edit/' + allocation.id + '/remove-end-date-option' %}
-        
-            {% set activityNameHtml%}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></p>
-            {% endset %}
-            {% set activityStartDateHtml%}
-                <p class="govuk-body govuk-!-margin-bottom-0">{{ allocation.startDate | formatDate('d MMMM yyyy') }}</p>
-            {% endset %}
-            {% set activityEndDateHtml%}
-                {% if allocation.endDate %}
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ allocation.endDate | formatDate('d MMMM yyyy') }}</p>
-                {% else %}
-                    <p class="govuk-body govuk-!-margin-bottom-0">None set</p>
-                {% endif %}
-            {% endset %}
-            {% set suspensionHtml %}
-             <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocations/view/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state'>Edit or suspend allocation</a></p>
-            {% endset %}
-            {% set removeHtml %}
-                {% if allocation.endDate %}
-                    <p class="govuk-body govuk-!-margin-bottom-0"><a href={{ removeEndDateHref }} class='govuk-link govuk-link--no-visited-state'>Remove end date</a></p>
-                {% else %}
-                    <p class="govuk-body govuk-!-margin-bottom-0"><a href={{ deallocationHref }} class='govuk-link govuk-link--no-visited-state'>Remove from activity</a></p>
-                {% endif %}
-            {% endset %}   
-        {% if not allocation.plannedSuspension %}
-            {% set activeAllocationRows = (activeAllocationRows.push([
-                    {
-                        html: activityNameHtml,
-                        attributes: {
-                            "data-sort-value": allocation.activitySummary
-                        }
-                    },
-                    {
-                        html: activityStartDateHtml,
-                        attributes: {
-                            "data-sort-value": allocation.startDate | getUnixTime
-                        }
-                    },
-                    {
-                        html: activityEndDateHtml,
-                        attributes: {
-                            "data-sort-value": allocation.endDate | getUnixTime
-                        }
-                    },
-                    {
-                        html: suspensionHtml
-                    },
-                    {
-                        html: removeHtml
-                    }
-            ]), activeAllocationRows) %}
-        {% endif %}
-    {% endfor %}
+{% for allocation in allocationsData %}
+  {% set deallocationHref = "/activities/allocations/remove/end-date?allocationIds=" + allocation.id + "&scheduleId=" + allocation.scheduleId %}
+  {% set removeEndDateHref = '/activities/allocations/edit/' + allocation.id + '/remove-end-date-option' %}
+
+
+  {% set activityNameHtml %}
+    <p class="govuk-body govuk-!-margin-bottom-0">
+      <a
+        href="/activities/allocation-dashboard/{{ allocation.activityId }}"
+        class="govuk-link govuk-link--no-visited-state"
+        target="_blank"
+        >{{ allocation.activitySummary }}</a
+      >
+    </p>
+  {% endset %}
+  {% set activityStartDateHtml %}
+    <p class="govuk-body govuk-!-margin-bottom-0">{{ allocation.startDate | formatDate('d MMMM yyyy') }}</p>
+  {% endset %}
+  {% set activityEndDateHtml %}
+    {% if allocation.endDate %}
+      <p class="govuk-body govuk-!-margin-bottom-0">{{ allocation.endDate | formatDate('d MMMM yyyy') }}</p>
+    {% else %}
+      <p class="govuk-body govuk-!-margin-bottom-0">None set</p>
+    {% endif %}
+  {% endset %}
+  {% set suspensionHtml %}
+    <p class="govuk-body govuk-!-margin-bottom-0">
+      <a href="/activities/allocations/view/{{ allocation.id }}" class="govuk-link govuk-link--no-visited-state"
+        >Edit or suspend allocation</a
+      >
+    </p>
+  {% endset %}
+  {% set removeHtml %}
+    {% if allocation.endDate %}
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        <a href="{{ removeEndDateHref }}" class="govuk-link govuk-link--no-visited-state">Remove end date</a>
+      </p>
+    {% else %}
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        <a href="{{ deallocationHref }}" class="govuk-link govuk-link--no-visited-state">Remove from activity</a>
+      </p>
+    {% endif %}
+  {% endset %}
+  {% if not allocation.plannedSuspension %}
+    {%
+      set activeAllocationRows = (activeAllocationRows.push([
+              {
+                  html: activityNameHtml,
+                  attributes: {
+                      "data-sort-value": allocation.activitySummary
+                  }
+              },
+              {
+                  html: activityStartDateHtml,
+                  attributes: {
+                      "data-sort-value": allocation.startDate | getUnixTime
+                  }
+              },
+              {
+                  html: activityEndDateHtml,
+                  attributes: {
+                      "data-sort-value": allocation.endDate | getUnixTime
+                  }
+              },
+              {
+                  html: suspensionHtml
+              },
+              {
+                  html: removeHtml
+              }
+      ]), activeAllocationRows)
+    %}
+  {% endif %}
+{% endfor %}
 
 {% set suspendedAllocationRows = [] %}
-    {% for allocation in allocationsData %}
-        {% if allocation.plannedSuspension %}
-            {% set suspendedAllocationRows = (suspendedAllocationRows.push([
-            {
-                html: '<a class=govuk-link--no-visited-state target=_blank href=/activities/allocation-dashboard/'+allocation.activityId+'>' +allocation.activitySummary+'</a>'
-            },
-            {
-                text: allocation.plannedSuspension.plannedStartDate | formatDate('d MMMM yyyy')
-            },
-            {
-                text:  allocation.plannedSuspension.plannedEndDate | subDays(1) | formatDate('d MMMM yyyy') if allocation.plannedSuspension.plannedEndDate != null else 'No end date set'
-            },
-            {
-                text: 'Yes' if allocation.plannedSuspension.paid else 'No'
-            },
-            {
-                html: '<a class=govuk-link--no-visited-state href=/activities/suspensions/prisoner/' + session.req.params.prisonerNumber + '/view-suspensions?allocationId=' + allocation.id +' data-qa="end-suspension-'+allocation.id+'">View or end suspension</a>'
-            }
-            ]), suspendedAllocationRows) %}
-        {% endif %}
-    {% endfor %}
+{% for allocation in allocationsData %}
+  {% if allocation.plannedSuspension %}
+    {%
+      set suspendedAllocationRows = (suspendedAllocationRows.push([
+      {
+          html: '<a class=govuk-link--no-visited-state target=_blank href=/activities/allocation-dashboard/'+allocation.activityId+'>' +allocation.activitySummary+'</a>'
+      },
+      {
+          text: allocation.plannedSuspension.plannedStartDate | formatDate('d MMMM yyyy')
+      },
+      {
+          text:  allocation.plannedSuspension.plannedEndDate | subDays(1) | formatDate('d MMMM yyyy') if allocation.plannedSuspension.plannedEndDate != null else 'No end date set'
+      },
+      {
+          text: 'Yes' if allocation.plannedSuspension.paid else 'No'
+      },
+      {
+          html: '<a class=govuk-link--no-visited-state href=/activities/suspensions/prisoner/' + session.req.params.prisonerNumber + '/view-suspensions?allocationId=' + allocation.id +' data-qa="end-suspension-'+allocation.id+'">View or end suspension</a>'
+      }
+      ]), suspendedAllocationRows)
+    %}
+  {% endif %}
+{% endfor %}
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full govuk-!-margin-bottom-5">
-            <div class="govuk-!-margin-bottom-5">
-                <h2 class="govuk-heading-m">Allocations</h2>
-                    {% if not allocationsData %}
-                        <p class="govuk-body">{{ prisonerName }} is not allocated to any activities.</p>
-                    {% elif allocationsData | length == suspendedAllocationRows | length %}
-                        <p class="govuk-body">{{ prisonerName }} is currently suspended from every activity they're allocated to.</p>
-                    {% else %}
-                    {% endif %}
-            </div>
+  <div class="govuk-grid-column-full govuk-!-margin-bottom-5">
+    <div class="govuk-!-margin-bottom-5">
+      <h2 class="govuk-heading-m">Allocations</h2>
+      {% if not allocationsData %}
+        <p class="govuk-body">{{ prisonerName }} is not allocated to any activities.</p>
+      {% elif allocationsData | length == suspendedAllocationRows | length %}
+        <p class="govuk-body">{{ prisonerName }} is currently suspended from every activity they're allocated to.</p>
+      {% else %}
 
-        <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "Allocate to an activity",
-                    href:'/activities/prisoner-allocations/allocate/' + session.req.params.prisonerNumber +  '/waitlist-allocation' if pendingApplications.length or approvedApplications.length else '/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/select-activity',
-                    attributes: {
-                        "data-qa": ""
-                    }
-                }) }}
-            {% if allocationsData | length == suspendedAllocationRows | length or not allocationsData %}
-            {% else %}
-            {{ govukButton({
-                        text: "Suspend all allocations",
-                        href: '/activities/suspensions/suspend/' + session.req.params.prisonerNumber + '/suspend-from?allocationIds=' + activeAllocationIdsForSuspending,
-                        attributes: {
-                            "data-qa": "suspend-all-allocations-button"
-                        },
-                        classes: "govuk-button--secondary"
-                    }) }}
-            {% endif %}
-            {% if allocationsData | length == suspendedAllocationRows | length or not allocationsData %}
-            {% else %}
-            <p class="govuk-body">
-                <a class="govuk-link govuk-link--no-visited-state" href="{{ prisonerUrl }}/prisoner/{{ session.req.params.prisonerNumber }}/schedule" class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ prisonerName }}'s schedule (opens in new tab)</a>
-            </p>
-            {% endif %}
-        </div>
+      {% endif %}
+    </div>
 
-        {% if allocationsData | length != suspendedAllocationRows | length %}
-            {{ govukTable({
-                attributes: {
-                    'data-module': 'moj-sortable-table',
-                    'data-table-fixed-rows': 'true'
-                },
-                idPrefix: 'allocations',
-                caption: "Current allocations",
-                captionClasses: "govuk-visually-hidden",
-                name: 'selectedAllocations',
-                head: [
-                    {
-                        text: "Activity",
-                        attributes: { "aria-sort": "ascending" }
-                    },
-                    {
-                        text: "Allocation start date",
-                        attributes: { "aria-sort": "none" }
-                    },
-                    {
-                        text: "Allocation end date",
-                        attributes: { "aria-sort": "none" }
-                    },
-                    {
-                        text: ''
-                    },
-                    {
-                        text: ''
-                    }
-                ],
-                rows: activeAllocationRows
-            }) }}
-        {% endif %}
+    <div class="govuk-button-group">
+      {{
+        govukButton({
+            text: "Allocate to an activity",
+            href:'/activities/prisoner-allocations/allocate/' + session.req.params.prisonerNumber +  '/waitlist-allocation' if pendingApplications.length or approvedApplications.length else '/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/select-activity',
+            attributes: {
+                "data-qa": ""
+            }
+        })
+      }}
+      {% if allocationsData | length == suspendedAllocationRows | length or not allocationsData %}
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full govuk-!-margin-bottom-3">
-                {% if suspendedAllocationRows | length %}
-                    <h2 class="govuk-heading-m">Suspended allocations</h2>
-                {% endif %}
-            </div>
-        </div>
+      {% else %}
+        {{
+          govukButton({
+              text: "Suspend all allocations",
+              href: '/activities/suspensions/suspend/' + session.req.params.prisonerNumber + '/suspend-from?allocationIds=' + activeAllocationIdsForSuspending,
+              attributes: {
+                  "data-qa": "suspend-all-allocations-button"
+              },
+              classes: "govuk-button--secondary"
+          })
+        }}
+      {% endif %}
+      {% if allocationsData | length == suspendedAllocationRows | length or not allocationsData %}
 
-        {% if suspendedAllocationRows | length %}
-            {{ govukTable({
-                attributes: {
-                    'data-module': 'moj-sortable-table',
-                    'data-table-fixed-rows': 'true',
-                    "data-qa": 'suspended-allocations'
-                },
-                caption: "Activities " + prisonerName + " is suspended from",
-                captionClasses: "govuk-visually-hidden",
-                firstCellIsHeader: false,
-                head: [
-                    {
+      {% else %}
+        <p class="govuk-body">
+          <a
+            class="govuk-link govuk-link--no-visited-state"
+            href="{{ prisonerUrl }}/prisoner/{{ session.req.params.prisonerNumber }}/schedule"
+            class="govuk-link govuk-link--no-visited-state"
+            target="_blank"
+            >{{ prisonerName }}'s schedule (opens in new tab)</a
+          >
+        </p>
+      {% endif %}
+    </div>
+
+    {% if allocationsData | length != suspendedAllocationRows | length %}
+      {{
+        govukTable({
+            attributes: {
+                'data-module': 'moj-sortable-table',
+                'data-table-fixed-rows': 'true'
+            },
+            idPrefix: 'allocations',
+            caption: "Current allocations",
+            captionClasses: "govuk-visually-hidden",
+            name: 'selectedAllocations',
+            head: [
+                {
                     text: "Activity",
                     attributes: { "aria-sort": "ascending" }
-                    },
-                    {
-                    text: "First day of suspension",
-                    attributes: { "aria-sort": "none" }
-                    },
-                    {
-                    text: "Last day of suspension",
-                    attributes: { "aria-sort": "none" }
-                    },
-                    {
-                    text: "Paid while suspended?"
-                    },
-                    {
-                    html: "<p class='govuk-visually-hidden'>View or end suspension</p>"
-                    }
-                ],
-                rows: suspendedAllocationRows
-            }) }}
-        {% endif %}
-
-
-        {% if allocationsData.length > 0 and allocationsData | length == suspendedAllocationRows | length  %}
-            {{ govukButton({
-                text: "End all suspensions",
-                href: '/activities/suspensions/prisoner/' + session.req.params.prisonerNumber + '/view-suspensions',
-                attributes: {
-                    "data-qa": "end-all-suspensions-button"
                 },
-                classes: "govuk-button--warning"
-            }) }}
-        {% else %}
+                {
+                    text: "Allocation start date",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Allocation end date",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: ''
+                },
+                {
+                    text: ''
+                }
+            ],
+            rows: activeAllocationRows
+        })
+      }}
+    {% endif %}
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full govuk-!-margin-bottom-3">
+        {% if suspendedAllocationRows | length %}
+          <h2 class="govuk-heading-m">Suspended allocations</h2>
         {% endif %}
+      </div>
     </div>
+
+    {% if suspendedAllocationRows | length %}
+      {{
+        govukTable({
+            attributes: {
+                'data-module': 'moj-sortable-table',
+                'data-table-fixed-rows': 'true',
+                "data-qa": 'suspended-allocations'
+            },
+            caption: "Activities " + prisonerName + " is suspended from",
+            captionClasses: "govuk-visually-hidden",
+            firstCellIsHeader: false,
+            head: [
+                {
+                text: "Activity",
+                attributes: { "aria-sort": "ascending" }
+                },
+                {
+                text: "First day of suspension",
+                attributes: { "aria-sort": "none" }
+                },
+                {
+                text: "Last day of suspension",
+                attributes: { "aria-sort": "none" }
+                },
+                {
+                text: "Paid while suspended?"
+                },
+                {
+                html: "<p class='govuk-visually-hidden'>View or end suspension</p>"
+                }
+            ],
+            rows: suspendedAllocationRows
+        })
+      }}
+    {% endif %}
+
+    {% if allocationsData.length > 0 and allocationsData | length == suspendedAllocationRows | length %}
+      {{
+        govukButton({
+            text: "End all suspensions",
+            href: '/activities/suspensions/prisoner/' + session.req.params.prisonerNumber + '/view-suspensions',
+            attributes: {
+                "data-qa": "end-all-suspensions-button"
+            },
+            classes: "govuk-button--warning"
+        })
+      }}
+    {% else %}
+
+    {% endif %}
+  </div>
 </div>

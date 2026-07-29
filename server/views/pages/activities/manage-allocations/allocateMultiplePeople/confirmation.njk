@@ -1,30 +1,41 @@
 {% extends "layout.njk" %}
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
- 
+
 {% set pageTitle = "Multiple allocation confirmation - Activities - DPS" %}
 {% set pageId = 'multiple-allocation-confirmation-page' %}
 {% set activityId = allocateJourney.activity.activityId %}
 {% set activityName = allocateJourney.activity.name %}
 
 {% if allocateJourney.inmates | length > 1 %}
-    {% set panelText = allocateJourney.inmates | length + ' people are now allocated to ' + activityName %}
+  {% set panelText = allocateJourney.inmates | length + ' people are now allocated to ' + activityName %}
 {% else %}
-    {% set panelText = allocateJourney.inmates[0] | formatName(NameFormatStyle.firstLast, false) + ' is now allocated to ' + activityName %}
+  {% set panelText = allocateJourney.inmates[0] | formatName(NameFormatStyle.firstLast, false) + ' is now allocated to ' + activityName %}
 {% endif %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-                {{ govukPanel({
-                    titleText: "Allocations complete",
-                    text: panelText
-                }) }}
-                <h2 class="govuk-heading-m">What you can do next</h2>
-                <p class='govuk-body'>You can:</p>
-                <ul class='govuk-list govuk-list--bullet'>
-                    <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link' data-qa="activity-page-link">review the allocations for {{ activityName }}</a> and continue allocating</li>
-                    <li><a href="/activities/allocation-dashboard" class='govuk-link' data-qa="allocations-dash-link">find other activities with vacancies</a></li>
-                </ul>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{
+        govukPanel({
+            titleText: "Allocations complete",
+            text: panelText
+        })
+      }}
+      <h2 class="govuk-heading-m">What you can do next</h2>
+      <p class="govuk-body">You can:</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>
+          <a href="/activities/allocation-dashboard/{{ activityId }}" class="govuk-link" data-qa="activity-page-link"
+            >review the allocations for {{ activityName }}</a
+          >
+          and continue allocating
+        </li>
+        <li>
+          <a href="/activities/allocation-dashboard" class="govuk-link" data-qa="allocations-dash-link"
+            >find other activities with vacancies</a
+          >
+        </li>
+      </ul>
     </div>
+  </div>
 {% endblock %}

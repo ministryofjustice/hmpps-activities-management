@@ -1,9 +1,9 @@
 {% macro activityJourneyCaption(createJourney) %}
-  {% if createJourney.activityId and createJourney.name  %}
+  {% if createJourney.activityId and createJourney.name %}
     <span class="govuk-caption-l" data-qa="caption">{{ createJourney.name }}</span>
   {% elif createJourney.outsideWork %}
     <span class="govuk-caption-l" data-qa="caption">Create an outside activity</span>
-  {% else %} 
+  {% else %}
     <span class="govuk-caption-l" data-qa="caption">Create an activity</span>
   {% endif %}
 {% endmacro %}

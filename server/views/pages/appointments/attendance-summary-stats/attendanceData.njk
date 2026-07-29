@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
@@ -18,7 +17,8 @@
 
 {% set rows = [] %}
 {% for appointment in appointments %}
-  {% set rows = (rows.push([
+  {%
+    set rows = (rows.push([
       {html: showProfileLink({
             firstName: appointment.firstName,
             middleNames: appointment.middleNames,
@@ -39,41 +39,46 @@
         attributes: {
           "data-sort-value": appointment.timeDateSortingValue | getUnixTime
         } }
-    ]), rows) %}
+    ]), rows)
+  %}
 {% endfor %}
+
 
 {% set otherDateHintHtml %}
-<div>For example {{ exampleDatePickerDate() }}</div>
+  <div>For example {{ exampleDatePickerDate() }}</div>
 {% endset %}
 
-{% set appointmentNameOptions = [
-  {
-    value: "",
-    text: ""
-  }
-] %}
+{%
+  set appointmentNameOptions = [
+    {
+      value: "",
+      text: ""
+    }
+  ]
+%}
 {% for category in categories %}
   {% set appointmentNameOptions = (appointmentNameOptions.push({text: category.description, value: category.code}), appointmentNameOptions) %}
-
 {% endfor %}
 
+
 {% set filterOptionsHtml %}
-{{
-      mojDatePicker({
-        id: 'date',
-        name: 'date',
-        leadingZeros: 'true',
-        classes: 'moj-datepicker--fixed-width',
-        label: {
-            text: 'Date',
-            classes: 'govuk-!-font-weight-bold'
-        },
-        hint: { html: otherDateHintHtml },
-        errorMessage: validationErrors | findError('date'),
-        value: date | isoDateToDatePickerDate
-      })
-    }}
-{{ govukSelect({
+  {{
+    mojDatePicker({
+      id: 'date',
+      name: 'date',
+      leadingZeros: 'true',
+      classes: 'moj-datepicker--fixed-width',
+      label: {
+          text: 'Date',
+          classes: 'govuk-!-font-weight-bold'
+      },
+      hint: { html: otherDateHintHtml },
+      errorMessage: validationErrors | findError('date'),
+      value: date | isoDateToDatePickerDate
+    })
+  }}
+  {{
+    govukSelect({
       id: "appointmentName",
       name: "appointmentName",
       label: {
@@ -83,8 +88,10 @@
       errorMessage: validationErrors | findError('appointmentName'),
       items: appointmentNameOptions,
       value: appointmentName
-    }) }}
-{{ govukInput({
+    })
+  }}
+  {{
+    govukInput({
       label: {
         text: "Appointment custom name",
         classes: "govuk-label--s"
@@ -92,44 +99,45 @@
       id: "customAppointmentName",
       name: "customAppointmentName",
       value: customAppointmentName
-    }) }}
-    {% if showHostsFilter %}
-      {{ govukRadios({
-        classes: "govuk-radios--small",
-        name: "organiserCode",
-        fieldset: {
-          legend: {
-            text: "Hosts",
-            classes: "govuk-fieldset__legend--m"
-          }
-        },
-        items: [
-          {
-            value: EventOrganiser.PRISON_STAFF,
-            text: "Prison staff",
-            checked: organiserCode === EventOrganiser.PRISON_STAFF
-          },
-          {
-            value: EventOrganiser.PRISONER,
-            text: "A group of prisoners",
-            checked: organiserCode === EventOrganiser.PRISONER
-          },
-          {
-            value: EventOrganiser.EXTERNAL_PROVIDER,
-            text: "An external provider",
-            checked: organiserCode === EventOrganiser.EXTERNAL_PROVIDER
-          },
-          {
-            value: EventOrganiser.OTHER,
-            text: "Someone else",
-            checked: organiserCode === EventOrganiser.OTHER
-          }
-        ]
-}) }}
-    {% endif %}
-<button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button" type="submit">
-      Apply filters
-    </button>
+    })
+  }}
+  {% if showHostsFilter %}
+    {{
+      govukRadios({
+              classes: "govuk-radios--small",
+              name: "organiserCode",
+              fieldset: {
+                legend: {
+                  text: "Hosts",
+                  classes: "govuk-fieldset__legend--m"
+                }
+              },
+              items: [
+                {
+                  value: EventOrganiser.PRISON_STAFF,
+                  text: "Prison staff",
+                  checked: organiserCode === EventOrganiser.PRISON_STAFF
+                },
+                {
+                  value: EventOrganiser.PRISONER,
+                  text: "A group of prisoners",
+                  checked: organiserCode === EventOrganiser.PRISONER
+                },
+                {
+                  value: EventOrganiser.EXTERNAL_PROVIDER,
+                  text: "An external provider",
+                  checked: organiserCode === EventOrganiser.EXTERNAL_PROVIDER
+                },
+                {
+                  value: EventOrganiser.OTHER,
+                  text: "Someone else",
+                  checked: organiserCode === EventOrganiser.OTHER
+                }
+              ]
+      })
+    }}
+  {% endif %}
+  <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button" type="submit">Apply filters</button>
 {% endset %}
 
 {% block content %}
@@ -140,26 +148,31 @@
     </div>
     <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
       {% if not isOlderThanSevenDays %}
-        <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
-        {{ govukButton({
-            text: "Refresh",
-            classes: "govuk-button--blue",
-            attributes: {
-              form: 'filter-form',
-              'data-qa': 'refresh-button'
-            }
-        }) }}
+        <div class="govuk-hint govuk-!-font-size-16">
+          Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}
+        </div>
+        {{
+          govukButton({
+              text: "Refresh",
+              classes: "govuk-button--blue",
+              attributes: {
+                form: 'filter-form',
+                'data-qa': 'refresh-button'
+              }
+          })
+        }}
       {% endif %}
     </div>
   </div>
-       <form id="filter-form" method="POST" novalidate>
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-          <input type="hidden" name="attendanceState" value="{{ attendanceState }}"/>
-          <input type="hidden" name="eventTier" value="{{ eventTier }}"/>
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-half">
-          <label class="govuk-label" for="search-input">Search by name or prison number</label>
-          {{ searchBar({
+  <form id="filter-form" method="POST" novalidate>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <input type="hidden" name="attendanceState" value="{{ attendanceState }}" />
+    <input type="hidden" name="eventTier" value="{{ eventTier }}" />
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
+        <label class="govuk-label" for="search-input">Search by name or prison number</label>
+        {{
+          searchBar({
               inputParams: {
                   id: 'search-input',
                   name: 'searchTerm',
@@ -171,53 +184,59 @@
                     "data-qa": "searchbar-submit"
                   }
               }
-          }) }}
-    </div>
-  </div>
-  <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
-    <div class="moj-filter-layout__filter moj-filter-layout__flex moj-filter-layout__filter--small">
-        {{ mojFilter({
-            heading: {
-                text: 'Filter'
-            },
-            optionsHtml: filterOptionsHtml
-        }) }}
-    </div>
-    <div class="moj-filter-layout__content moj-filter-layout__content--grow">
-      <div class="moj-action-bar">
-        <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
-      </div>
-      <div>
-        <h2 class="govuk-heading-l" data-qa="subTitle">{{ subTitle }}</h2>
-        {% if rows.length %}
-                {{ govukTable({
-                attributes: {
-                    'data-module': 'moj-sortable-table',
-                    'data-qa': 'appointment-attendance-data'
-                },
-                head: [
-                    {
-                        text: "Attendee",
-                        attributes: { "aria-sort": "ascending" }
-                    }, {
-                        text: "Cell location",
-                        attributes: { "aria-sort": "none" }
-                    }, {
-                        text: "Appointment",
-                        attributes: { "aria-sort": "none" }
-                    }, {
-                        text: "Time and date",
-                        attributes: { "aria-sort": "none" }
-                    }],
-                rows: rows,
-                classes: 'sticky-header'
-            }) }}
-        {% endif %}
+          })
+        }}
       </div>
     </div>
-    </form>
-  {% endblock %}
+    <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+      <div class="moj-filter-layout__filter moj-filter-layout__flex moj-filter-layout__filter--small">
+        {{
+          mojFilter({
+              heading: {
+                  text: 'Filter'
+              },
+              optionsHtml: filterOptionsHtml
+          })
+        }}
+      </div>
+      <div class="moj-filter-layout__content moj-filter-layout__content--grow">
+        <div class="moj-action-bar">
+          <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+        </div>
+        <div>
+          <h2 class="govuk-heading-l" data-qa="subTitle">{{ subTitle }}</h2>
+          {% if rows.length %}
+            {{
+              govukTable({
+                  attributes: {
+                      'data-module': 'moj-sortable-table',
+                      'data-qa': 'appointment-attendance-data'
+                  },
+                  head: [
+                      {
+                          text: "Attendee",
+                          attributes: { "aria-sort": "ascending" }
+                      }, {
+                          text: "Cell location",
+                          attributes: { "aria-sort": "none" }
+                      }, {
+                          text: "Appointment",
+                          attributes: { "aria-sort": "none" }
+                      }, {
+                          text: "Time and date",
+                          attributes: { "aria-sort": "none" }
+                      }],
+                  rows: rows,
+                  classes: 'sticky-header'
+              })
+            }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </form>
+{% endblock %}
 
-  {% block meta %}
-    <meta name="autocompleteElements" content="appointmentName"/>
-  {% endblock %}
+{% block meta %}
+  <meta name="autocompleteElements" content="appointmentName" />
+{% endblock %}

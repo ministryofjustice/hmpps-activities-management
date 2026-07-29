@@ -1,7 +1,5 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
-
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 {% from "components/timePicker.njk" import timePicker %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
@@ -12,32 +10,36 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ mojDatePicker({
-                    id: "startDate",
-                    name: "startDate",
-                    leadingZeros: 'true',
-                    label: {
-                        text: "When are the appointments?",
-                        classes: "govuk-label--l",
-                        isPageHeading: true
-                    },
-                    hint: {
-                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
-                    },
-                    errorMessage: validationErrors | findError('startDate'),
-                    classes: 'moj-datepicker--fixed-width',
-                    value: formResponses.startDate or ((editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
-                }) }}
-                {{ govukButton({
-                    text: "Confirm and save" if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "Continue",
-                    preventDoubleClick: true
-                }) }}
-            </form>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session) }}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          mojDatePicker({
+              id: "startDate",
+              name: "startDate",
+              leadingZeros: 'true',
+              label: {
+                  text: "When are the appointments?",
+                  classes: "govuk-label--l",
+                  isPageHeading: true
+              },
+              hint: {
+                  text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
+              },
+              errorMessage: validationErrors | findError('startDate'),
+              classes: 'moj-datepicker--fixed-width',
+              value: formResponses.startDate or ((editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
+          })
+        }}
+        {{
+          govukButton({
+              text: "Confirm and save" if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "Continue",
+              preventDoubleClick: true
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

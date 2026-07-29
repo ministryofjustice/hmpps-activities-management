@@ -1,28 +1,30 @@
-{{ govukRadios({
-    idPrefix: 'activityFilter',
-    name: 'activityFilter',
-    classes: "govuk-radios--small",
-    fieldset: {
-        legend: {
-            text: 'People with or without events:',
-            classes: 'govuk-visually-hidden'
-        }
-    },
-    items:[
-        {
-            value: 'With',
-            text: 'Show people with events',
-            checked: 'With' == unlockListJourney.activityFilter
-        },
-        {
-            value: 'Without',
-            text: 'Show people without events',
-            checked: 'Without' == unlockListJourney.activityFilter
-        },
-        {
-            value: 'Both',
-            text: 'Show everyone',
-            checked: 'Both' == unlockListJourney.activityFilter
-        }
-    ]
-}) }}
+{{
+  govukRadios({
+      idPrefix: 'activityFilter',
+      name: 'activityFilter',
+      classes: "govuk-radios--small",
+      fieldset: {
+          legend: {
+              text: 'People with or without events:',
+              classes: 'govuk-visually-hidden'
+          }
+      },
+      items:[
+          {
+              value: 'With',
+              text: 'Show people with events',
+              checked: 'With' == unlockListJourney.activityFilter
+          },
+          {
+              value: 'Without',
+              text: 'Show people without events',
+              checked: 'Without' == unlockListJourney.activityFilter
+          },
+          {
+              value: 'Both',
+              text: 'Show everyone',
+              checked: 'Both' == unlockListJourney.activityFilter
+          }
+      ]
+  })
+}}

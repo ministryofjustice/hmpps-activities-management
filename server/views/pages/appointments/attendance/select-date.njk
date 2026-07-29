@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
@@ -10,67 +9,71 @@
 {% set hardBackLinkHref = "/appointments" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% set otherDateHintHtml %}
-                  <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
-                {% endset %}
+        {% set otherDateHintHtml %}
+          <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
+        {% endset %}
 
-                {{ govukRadios({
-                    name: "dateOption",
-                    fieldset: {
-                        legend: {
-                            text: "What date do you want to record attendance for?",
-                            classes: "govuk-fieldset__legend--l",
-                            isPageHeading: true
-                        }
-                    },
-                    errorMessage: validationErrors | findError('dateOption'),
-                    items: [
-                        {
-                            value: DateOption.TODAY,
-                            text: "Today - " + now | formatDate,
-                            checked: formResponses.dateOption == DateOption.TODAY
-                        },
-                        {
-                            value: DateOption.YESTERDAY,
-                            text: "Yesterday - " + now | addDays(-1) | formatDate,
-                            checked: formResponses.dateOption == DateOption.TOMORROW
-                        },
-                        {
-                            value: DateOption.OTHER,
-                            text: "A different date",
-                            label: { text: "Movement date "},
-                            checked: formResponses.dateOption == DateOption.OTHER,
-                            conditional: { 
-                                html: mojDatePicker({
-                                id: 'date',
-                                name: 'date',
-                                leadingZeros: 'true',
-                                classes: 'moj-datepicker--fixed-width',
-                                label: {
-                                    text: 'Date',
-                                    classes: 'govuk-visually-hidden'
-                                },
-                                hint: { html: otherDateHintHtml },
-                                errorMessage: validationErrors | findError('date'),
-                                value: formResponses.date
-                              })
-                           }
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              name: "dateOption",
+              fieldset: {
+                  legend: {
+                      text: "What date do you want to record attendance for?",
+                      classes: "govuk-fieldset__legend--l",
+                      isPageHeading: true
+                  }
+              },
+              errorMessage: validationErrors | findError('dateOption'),
+              items: [
+                  {
+                      value: DateOption.TODAY,
+                      text: "Today - " + now | formatDate,
+                      checked: formResponses.dateOption == DateOption.TODAY
+                  },
+                  {
+                      value: DateOption.YESTERDAY,
+                      text: "Yesterday - " + now | addDays(-1) | formatDate,
+                      checked: formResponses.dateOption == DateOption.TOMORROW
+                  },
+                  {
+                      value: DateOption.OTHER,
+                      text: "A different date",
+                      label: { text: "Movement date "},
+                      checked: formResponses.dateOption == DateOption.OTHER,
+                      conditional: {
+                          html: mojDatePicker({
+                          id: 'date',
+                          name: 'date',
+                          leadingZeros: 'true',
+                          classes: 'moj-datepicker--fixed-width',
+                          label: {
+                              text: 'Date',
+                              classes: 'govuk-visually-hidden'
+                          },
+                          hint: { html: otherDateHintHtml },
+                          errorMessage: validationErrors | findError('date'),
+                          value: formResponses.date
+                        })
+                     }
+                  }
+              ]
+          })
+        }}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                </div>
-            </form>
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

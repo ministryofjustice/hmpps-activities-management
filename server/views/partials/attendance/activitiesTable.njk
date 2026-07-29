@@ -3,46 +3,55 @@
 {% from "partials/showLocation.njk" import showLocation %}
 
 {% macro activitiesTable(activities, activityDate, filterParams, now, isUncancelPage, roles) %}
-    {% set formActions = [] %}
-    {% set activityDateString = activityDate | formatDate('yyyy-MM-dd') %}
-    {% set todayDateString = now | formatDate('yyyy-MM-dd') %}
+  {% set formActions = [] %}
+  {% set activityDateString = activityDate | formatDate('yyyy-MM-dd') %}
+  {% set todayDateString = now | formatDate('yyyy-MM-dd') %}
 
-    {% set isPastActivityDate = activityDateString < todayDateString %}
-    {% set isTodayActivityDate = activityDateString == todayDateString %}
-    {% set isFutureActivityDate = activityDateString > todayDateString %}
-    {% set isTodayOrFutureActivityDate = activityDateString >= todayDateString %}
-    {% set isTodayOrPastActivityDate = activityDateString <= todayDateString %}
+  {% set isPastActivityDate = activityDateString < todayDateString %}
+  {% set isTodayActivityDate = activityDateString == todayDateString %}
+  {% set isFutureActivityDate = activityDateString > todayDateString %}
+  {% set isTodayOrFutureActivityDate = activityDateString >= todayDateString %}
+  {% set isTodayOrPastActivityDate = activityDateString <= todayDateString %}
 
-    {% if isFutureActivityDate %}
-      {% set formActions = (formActions.push({
+  {% if isFutureActivityDate %}
+    {%
+      set formActions = (formActions.push({
         text: 'Find attendees to mark as not required',
         maxItems: 1,
         formAction: 'activities/attendance-list'
-      }), formActions) %}
-    {% endif %}
+      }), formActions)
+    %}
+  {% endif %}
 
-    {% if isTodayOrFutureActivityDate %}
-      {% set formActions = (formActions.push({
+  {% if isTodayOrFutureActivityDate %}
+    {%
+      set formActions = (formActions.push({
         text: 'Mark as cancelled',
         formAction: 'activities/cancel-multiple'
-      }), formActions) %}
-    {% endif %}
+      }), formActions)
+    %}
+  {% endif %}
 
-    {% if isTodayOrPastActivityDate %}
-      {% set formActions = (formActions.push({
+  {% if isTodayOrPastActivityDate %}
+    {%
+      set formActions = (formActions.push({
         text: 'Record or edit attendance',
         formAction: 'activities/attendance-list'
-      }), formActions) %}
-    {% endif %}
+      }), formActions)
+    %}
+  {% endif %}
 
-    {% if isUncancelPage and isTodayOrFutureActivityDate %}
-      {% set formActions = [{
+  {% if isUncancelPage and isTodayOrFutureActivityDate %}
+    {%
+      set formActions = [{
         text: 'Uncancel',
         formAction: 'uncancel-multiple/next'
-      }] %}
-    {% endif %}
+      }]
+    %}
+  {% endif %}
 
-    {% set pagination =  {
+  {%
+    set pagination =  {
       previous: {
         title: 'Previous day',
         label: activityDate | addDays(-1) | formatDate,
@@ -53,98 +62,102 @@
         label: activityDate | addDays(1) | formatDate,
         href: 'activities?date=' + activityDate | addDays(1) | formatDate('yyyy-MM-dd') + filterParams
       }
-    } %}
+    }
+  %}
 
-    {% if isUncancelPage %}
-      {% set pagination =  {} %}
-    {% endif %}
+  {% if isUncancelPage %}
+    {% set pagination =  {} %}
+  {% endif %}
 
-    {% set rows = [] %}
-    {% for activity in activities %}
-        {% set activityLocation = showLocation(user.externalActivitiesRolledOut, activity, makeCapitals = true) %}
+  {% set rows = [] %}
+  {% for activity in activities %}
+    {% set activityLocation = showLocation(user.externalActivitiesRolledOut, activity, makeCapitals = true) %}
 
-        {% if activityDateString == todayDateString %}
-            {% set scheduledCount = activity.attendanceSummary.attendees or 0 %}
-        {% else %}
-            {% set scheduledCount = activity.attendanceSummary.allocations or 0 %}
-        {% endif %}
-
-        {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + activity.summary + ' ' + (activity.session),
-            value: activity.scheduledInstanceId,
-            selectable: activity.allowSelection,
-            items: [
-                {
-                    attributes: {
-                        id: 'activity-' + loop.index,
-                        "data-sort-value": activity.summary
-                    },
-                    classes: 'attendance-activities govuk-table__cell--alpha',
-                    html: '
-                        <p class="govuk-heading-s govuk-!-margin-bottom-0">
-                            <a href="../activities/' + activity.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (activity.summary | escape) + '<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
-                        </p>
-                        <div>' + activityCancelledTag(activity.cancelled) + '</div>'
-                },
-                {
-                    attributes: {
-                        id: 'location-' + loop.index,
-                        "data-sort-value": activityLocation
-                    },
-                    classes: 'govuk-table__cell--alpha',
-                    text: activityLocation
-                },
-                {
-                    attributes: {
-                        id: 'time-' + loop.index,
-                        "data-sort-value": activity.startTime + ' to ' + activity.endTime
-                    },
-                    classes: 'govuk-table__cell--alpha',
-                    text: activity.startTime + ' to ' + activity.endTime
-                },
-                {
-                    attributes: {
-                        id: 'scheduled-' + loop.index,
-                        "data-sort-value": scheduledCount
-                    },
-                    classes: 'govuk-table__cell--numeric',
-                    text: scheduledCount
-                },
-                {
-                    attributes: {
-                        id: 'attended-' + loop.index,
-                        "data-sort-value": activity.attendanceSummary.attended or 0
-                    },
-                    classes: 'govuk-table__cell--numeric',
-                    text: attendanceStat(activity.attendanceSummary.attended, activity.attendanceRequired)
-                },
-                {
-                    attributes: {
-                        id: 'notRecorded-' + loop.index,
-                        "data-sort-value": activity.attendanceSummary.notRecorded or 0
-                    },
-                    classes: 'govuk-table__cell--numeric',
-                    text: attendanceStat(activity.attendanceSummary.notRecorded, activity.attendanceRequired)
-                },
-                {
-                    attributes: {
-                        id: 'notAttended-' + loop.index,
-                        "data-sort-value": activity.attendanceSummary.absences or 0
-                    },
-                    classes: 'govuk-table__cell--numeric',
-                    text: attendanceStat(activity.attendanceSummary.absences, activity.attendanceRequired)
-                }
-            ]
-        }), rows) %}
-    {% endfor %}
-
-    {% if isUncancelPage %}
-        {% set selectAllAvailable = true %}
+    {% if activityDateString == todayDateString %}
+      {% set scheduledCount = activity.attendanceSummary.attendees or 0 %}
     {% else %}
-        {% set selectAllAvailable = 'ROLE_ACTIVITY_HUB' in roles %}
+      {% set scheduledCount = activity.attendanceSummary.allocations or 0 %}
     {% endif %}
 
-    {{ stickySelect({
+    {%
+      set rows = (rows.push({
+          visuallyHiddenText: 'Select ' + activity.summary + ' ' + (activity.session),
+          value: activity.scheduledInstanceId,
+          selectable: activity.allowSelection,
+          items: [
+              {
+                  attributes: {
+                      id: 'activity-' + loop.index,
+                      "data-sort-value": activity.summary
+                  },
+                  classes: 'attendance-activities govuk-table__cell--alpha',
+                  html: '
+                      <p class="govuk-heading-s govuk-!-margin-bottom-0">
+                          <a href="../activities/' + activity.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (activity.summary | escape) + '<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+                      </p>
+                      <div>' + activityCancelledTag(activity.cancelled) + '</div>'
+              },
+              {
+                  attributes: {
+                      id: 'location-' + loop.index,
+                      "data-sort-value": activityLocation
+                  },
+                  classes: 'govuk-table__cell--alpha',
+                  text: activityLocation
+              },
+              {
+                  attributes: {
+                      id: 'time-' + loop.index,
+                      "data-sort-value": activity.startTime + ' to ' + activity.endTime
+                  },
+                  classes: 'govuk-table__cell--alpha',
+                  text: activity.startTime + ' to ' + activity.endTime
+              },
+              {
+                  attributes: {
+                      id: 'scheduled-' + loop.index,
+                      "data-sort-value": scheduledCount
+                  },
+                  classes: 'govuk-table__cell--numeric',
+                  text: scheduledCount
+              },
+              {
+                  attributes: {
+                      id: 'attended-' + loop.index,
+                      "data-sort-value": activity.attendanceSummary.attended or 0
+                  },
+                  classes: 'govuk-table__cell--numeric',
+                  text: attendanceStat(activity.attendanceSummary.attended, activity.attendanceRequired)
+              },
+              {
+                  attributes: {
+                      id: 'notRecorded-' + loop.index,
+                      "data-sort-value": activity.attendanceSummary.notRecorded or 0
+                  },
+                  classes: 'govuk-table__cell--numeric',
+                  text: attendanceStat(activity.attendanceSummary.notRecorded, activity.attendanceRequired)
+              },
+              {
+                  attributes: {
+                      id: 'notAttended-' + loop.index,
+                      "data-sort-value": activity.attendanceSummary.absences or 0
+                  },
+                  classes: 'govuk-table__cell--numeric',
+                  text: attendanceStat(activity.attendanceSummary.absences, activity.attendanceRequired)
+              }
+          ]
+      }), rows)
+    %}
+  {% endfor %}
+
+  {% if isUncancelPage %}
+    {% set selectAllAvailable = true %}
+  {% else %}
+    {% set selectAllAvailable = 'ROLE_ACTIVITY_HUB' in roles %}
+  {% endif %}
+
+  {{
+    stickySelect({
         idPrefix: 'activities',
         type: 'check',
         selectAllAvailable: selectAllAvailable,
@@ -190,19 +203,21 @@
         itemsDescription: 'session',
         itemsDescriptionPlural: 'sessions',
         pagination: pagination
-    }) }}
-
+    })
+  }}
 {% endmacro %}
 
 {% macro activityCancelledTag(cancelled) %}
-    {% if cancelled %}
-        {{ govukTag({
-            text: "Cancelled",
-            classes: "govuk-tag--red govuk-!-margin-top-1"
-        }) }}
-    {% endif %}
+  {% if cancelled %}
+    {{
+      govukTag({
+          text: "Cancelled",
+          classes: "govuk-tag--red govuk-!-margin-top-1"
+      })
+    }}
+  {% endif %}
 {% endmacro %}
 
 {% macro attendanceStat(stat, attendanceRequired=true) %}
-    {{ stat if stat !== null and attendanceRequired === true else '-' }}
+  {{ stat if stat !== null and attendanceRequired === true else '-' }}
 {% endmacro %}

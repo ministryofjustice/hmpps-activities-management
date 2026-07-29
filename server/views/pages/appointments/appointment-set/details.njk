@@ -1,10 +1,8 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
-
 {% from "partials/service-user-name.njk" import serviceUserName %}
 {% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
@@ -16,8 +14,9 @@
 
 {% set appointmentTableRows = [] %}
 {% for appointment in appointmentSet.appointments %}
-    {% set prisoner = appointment.attendees[0].prisoner %}
-    {% set appointmentTableRows = (appointmentTableRows.push([
+  {% set prisoner = appointment.attendees[0].prisoner %}
+  {%
+    set appointmentTableRows = (appointmentTableRows.push([
         {
             html: showProfileLink({
                 firstName: prisoner.firstName,
@@ -66,127 +65,145 @@
             classes: 'govuk-!-text-align-right govuk-!-display-none-print',
             attributes: { 'data-qa': 'view-and-edit-appointment-' + appointment.id }
         }
-    ]), appointmentTableRows) %}
+    ]), appointmentTableRows)
+  %}
 {% endfor %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
-            <div class="govuk-!-display-none-print">
-                <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-                <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ appointmentSet.appointmentName }} – set overview</h1>
-                <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ appointmentSet.startDate | toDate | formatDate }}</span>
-            </div>
-            <div class="govuk-grid-row print-only">
-                <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointmentSet.appointmentName }}</h1>
-                    <span class="govuk-caption-l">{{ appointmentSet.startDate | toDate | formatDate }}</span>
-                    <span class="govuk-caption-l">{{ showLocation(user.externalActivitiesRolledOut, appointmentSet) }}</span>
-                    <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ appointmentSet.appointments | length + (" attendee" if appointmentSet.appointments.length == 1 else " attendees") }}</h2>
-                </div>
-            </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
+      <div class="govuk-!-display-none-print">
+        <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ appointmentSet.appointmentName }} – set overview</h1>
+        <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption"
+          >{{ appointmentSet.startDate | toDate | formatDate }}</span
+        >
+      </div>
+      <div class="govuk-grid-row print-only">
+        <div class="govuk-grid-column-two-thirds">
+          <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointmentSet.appointmentName }}</h1>
+          <span class="govuk-caption-l">{{ appointmentSet.startDate | toDate | formatDate }}</span>
+          <span class="govuk-caption-l">{{ showLocation(user.externalActivitiesRolledOut, appointmentSet) }}</span>
+          <h2 class="govuk-heading-m govuk-!-margin-top-6">
+            {{ appointmentSet.appointments | length + (" attendee" if appointmentSet.appointments.length == 1 else " attendees") }}
+          </h2>
+        </div>
+      </div>
 
-            {{ govukSummaryList({
-                card: {
-                    title: {
-                        text: "Set history"
+      {{
+        govukSummaryList({
+            card: {
+                title: {
+                    text: "Set history"
+                }
+            },
+            rows: [
+                {
+                    key: {
+                        text: "Created by"
+                    },
+                    value: {
+                        text: serviceUserName(userMap.get(appointmentSet.createdBy))
                     }
-                },
-                rows: [
+                }, {
+                    key: {
+                        text: "Date created"
+                    },
+                    value: {
+                        text: appointmentSet.createdTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
+                    }
+                }
+            ],
+            attributes: {
+                'data-qa': 'appointment-set-details'
+            },
+            classes: 'govuk-!-display-none-print'
+        })
+      }}
+
+      {# we're using '| dump' filter in the below component so that the values
+            for the metrics attributes are recorded correctly, pls do not remove #}
+      {{
+        govukButton({
+            id: 'print-movement-list',
+            text: "Print attendance list",
+            attributes: {
+                'data-track-click-event': 'SAA-Appointment-Set-Attendee-List-Printed',
+                'data-track-event-properties': {
+                    user: user.username,
+                    prisonCode: user.activeCaseLoadId,
+                    appointmentSetId: appointmentSet.id
+                } | dump,
+                'data-track-event-measurements': {
+                    appointmentCount: appointmentSet.appointments | length
+                } | dump
+            },
+            classes: "govuk-button--blue govuk-!-margin-bottom-2 js-print no-js-hidden govuk-!-display-none-print",
+            preventDoubleClick: true
+        })
+      }}
+
+      <div class="govuk-summary-card">
+        <div class="govuk-summary-card__title-wrapper">
+          <h2 class="govuk-summary-card__title">
+            {{ appointmentSet.appointments.length + " appointment" + ("s" if appointmentSet.appointments.length > 0) }}
+          </h2>
+          {% if showPrintMovementSlipsLink %}
+            <ul class="govuk-summary-card__actions">
+              <li class="govuk-summary-card__action">
+                <a
+                  class="govuk-link govuk-link--no-visited-state"
+                  href="{{ "/appointments/set/" + appointmentSet.id + "/movement-slip" }}"
+                  target="_blank"
+                  data-qa="print-movement-slip"
+                >
+                  Print movement slip{{ "s" if appointmentSet.appointments.length > 1 }}
+                </a>
+              </li>
+            </ul>
+          {% endif %}
+        </div>
+        <div class="govuk-summary-card__content">
+          {{
+            govukTable({
+                head: [
                     {
-                        key: {
-                            text: "Created by"
-                        },
-                        value: {
-                            text: serviceUserName(userMap.get(appointmentSet.createdBy))
-                        }
+                        text: "Name of attendee",
+                        attributes: { "aria-sort": "none" },
+                        classes: "govuk-!-display-none-print"
                     }, {
-                        key: {
-                            text: "Date created"
-                        },
-                        value: {
-                            text: appointmentSet.createdTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
-                        }
+                        text: "Attended",
+                        classes: "print-only"
+                    }, {
+                        text: "Name",
+                        classes: "print-only"
+                    }, {
+                        text: "Prison number",
+                        classes: "print-only"
+                    }, {
+                        text: "Cell location",
+                        classes: "print-only"
+                    }, {
+                        text: "Start time",
+                        attributes: { "aria-sort": "ascending" }
+                    }, {
+                        text: "End time",
+                        attributes: { "aria-sort": "none" }
+                    }, {
+                        html: '<span class="govuk-visually-hidden">Status</span>'
+                    }, {
+                        html: '<span class="govuk-visually-hidden">Actions</span>'
                     }
                 ],
+                rows: appointmentTableRows,
                 attributes: {
-                    'data-qa': 'appointment-set-details'
-                },
-                classes: 'govuk-!-display-none-print'
-            }) }}
-
-            {# we're using '| dump' filter in the below component so that the values
-            for the metrics attributes are recorded correctly, pls do not remove #}
-            {{ govukButton({
-                id: 'print-movement-list',
-                text: "Print attendance list",
-                attributes: {
-                    'data-track-click-event': 'SAA-Appointment-Set-Attendee-List-Printed',
-                    'data-track-event-properties': {
-                        user: user.username,
-                        prisonCode: user.activeCaseLoadId,
-                        appointmentSetId: appointmentSet.id
-                    } | dump,
-                    'data-track-event-measurements': {
-                        appointmentCount: appointmentSet.appointments | length
-                    } | dump
-                },
-                classes: "govuk-button--blue govuk-!-margin-bottom-2 js-print no-js-hidden govuk-!-display-none-print",
-                preventDoubleClick: true
-            }) }}
-
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">{{ appointmentSet.appointments.length + " appointment" + ("s" if appointmentSet.appointments.length > 0) }}</h2>
-                    {% if showPrintMovementSlipsLink %}
-                        <ul class="govuk-summary-card__actions">
-                            <li class="govuk-summary-card__action">
-                                <a class="govuk-link govuk-link--no-visited-state" href="{{ "/appointments/set/" + appointmentSet.id + "/movement-slip" }}" target="_blank" data-qa="print-movement-slip">
-                                    Print movement slip{{ "s" if appointmentSet.appointments.length > 1 }}
-                                </a>
-                            </li>
-                        </ul>
-                    {% endif %}
-                </div>
-                <div class="govuk-summary-card__content">
-                    {{ govukTable({
-                        head: [
-                            {
-                                text: "Name of attendee",
-                                attributes: { "aria-sort": "none" },
-                                classes: "govuk-!-display-none-print"
-                            }, {
-                                text: "Attended",
-                                classes: "print-only"
-                            }, {
-                                text: "Name",
-                                classes: "print-only"
-                            }, {
-                                text: "Prison number",
-                                classes: "print-only"
-                            }, {
-                                text: "Cell location",
-                                classes: "print-only"
-                            }, {
-                                text: "Start time",
-                                attributes: { "aria-sort": "ascending" }
-                            }, {
-                                text: "End time",
-                                attributes: { "aria-sort": "none" }
-                            }, {
-                                html: '<span class="govuk-visually-hidden">Status</span>'
-                            }, {
-                                html: '<span class="govuk-visually-hidden">Actions</span>'
-                            }
-                        ],
-                        rows: appointmentTableRows,
-                        attributes: {
-                            'data-module': 'moj-sortable-table',
-                            'data-qa': 'appointment-set-appointments'
-                        }
-                    }) }}
-                </div>
-            </div>
+                    'data-module': 'moj-sortable-table',
+                    'data-qa': 'appointment-set-appointments'
+                }
+            })
+          }}
         </div>
+      </div>
     </div>
+  </div>
 {% endblock %}

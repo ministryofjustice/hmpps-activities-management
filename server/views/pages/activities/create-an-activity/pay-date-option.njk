@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
@@ -12,67 +11,70 @@
 {% set editMode = session.req.routeContext.mode == 'edit' and iep and band %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(createJourney) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ activityJourneyCaption(createJourney) }}
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <input type="hidden" name="rate" value="{{ rate }}" />
-                <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
-                <input type='hidden' name='bandId' value='{{ band.id }}' />
-                <input type='hidden' name='bandAlias' value='{{ band.alias }}' />
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="rate" value="{{ rate }}" />
+        <input type="hidden" name="incentiveLevel" value="{{ iep }}" />
+        <input type="hidden" name="bandId" value="{{ band.id }}" />
+        <input type="hidden" name="bandAlias" value="{{ band.alias }}" />
 
-                {% set otherDateHintHtml %}
-                  <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
-                  <br>
-                  <div>You can set the change to take effect up to 30 days from today.</div>
-                {% endset %}
+        {% set otherDateHintHtml %}
+          <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
+          <br />
+          <div>You can set the change to take effect up to 30 days from today.</div>
+        {% endset %}
 
-                {{ govukRadios({
-                    name: "dateOption",
-                    fieldset: {
-                        legend: {
-                            text: "When does the change to " + iep + ": " + band.alias + " take effect?",
-                            classes: "govuk-fieldset__legend--l",
-                            isPageHeading: true
-                        }
-                    },
-                    items: [
-                        {
-                            value: DateOption.TOMORROW,
-                            text: "Tomorrow - " + now | addDays(1) | formatDate,
-                            checked: formResponses.dateOption == DateOption.TOMORROW
-                        },
-                        {
-                            value: DateOption.OTHER,
-                            text: "A different date",
-                            label: { text: "Pay start date "},
-                            checked: formResponses.dateOption == DateOption.OTHER,
-                            conditional: {
-                                html: mojDatePicker({
-                                id: 'startDate',
-                                name: 'startDate',
-                                leadingZeros: 'true',
-                                classes: 'moj-datepicker--fixed-width',
-                                label: {
-                                    text: 'startDate',
-                                    classes: 'govuk-visually-hidden'
-                                },
-                                hint: { html: otherDateHintHtml },
-                                errorMessage: validationErrors | findError('startDate'),
-                                value: formResponses.startDate
-                              })
-                           }
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              name: "dateOption",
+              fieldset: {
+                  legend: {
+                      text: "When does the change to " + iep + ": " + band.alias + " take effect?",
+                      classes: "govuk-fieldset__legend--l",
+                      isPageHeading: true
+                  }
+              },
+              items: [
+                  {
+                      value: DateOption.TOMORROW,
+                      text: "Tomorrow - " + now | addDays(1) | formatDate,
+                      checked: formResponses.dateOption == DateOption.TOMORROW
+                  },
+                  {
+                      value: DateOption.OTHER,
+                      text: "A different date",
+                      label: { text: "Pay start date "},
+                      checked: formResponses.dateOption == DateOption.OTHER,
+                      conditional: {
+                          html: mojDatePicker({
+                          id: 'startDate',
+                          name: 'startDate',
+                          leadingZeros: 'true',
+                          classes: 'moj-datepicker--fixed-width',
+                          label: {
+                              text: 'startDate',
+                              classes: 'govuk-visually-hidden'
+                          },
+                          hint: { html: otherDateHintHtml },
+                          errorMessage: validationErrors | findError('startDate'),
+                          value: formResponses.startDate
+                        })
+                     }
+                  }
+              ]
+          })
+        }}
 
-
-                {{ govukButton({
-                    text: "Confirm"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Confirm"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
@@ -9,38 +8,42 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ activityJourneyCaption(createJourney) }}
-                {{ govukRadios({
-                    name: "removeEndDate",
-                    fieldset: {
-                        legend: {
-                            text: "Select if you want to change or remove this activity's end date",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    items: [
-                        {
-                            value: "change",
-                            text: "Change the end date to a different date"
-                        },
-                        {
-                            value: "remove",
-                            text: "Remove the end date"
-                        }
-                    ],
-                    errorMessage: validationErrors | findError('removeEndDate')
-                }) }}
+        {{ activityJourneyCaption(createJourney) }}
+        {{
+          govukRadios({
+              name: "removeEndDate",
+              fieldset: {
+                  legend: {
+                      text: "Select if you want to change or remove this activity's end date",
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--l"
+                  }
+              },
+              items: [
+                  {
+                      value: "change",
+                      text: "Change the end date to a different date"
+                  },
+                  {
+                      value: "remove",
+                      text: "Remove the end date"
+                  }
+              ],
+              errorMessage: validationErrors | findError('removeEndDate')
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Continue"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

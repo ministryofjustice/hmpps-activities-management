@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -9,131 +8,135 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <span class="govuk-caption-xl">Log an activity application</span>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <span class="govuk-caption-xl">Log an activity application</span>
     </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ govukRadios({
-                    name: "requester",
-                    fieldset: {
-                        legend: {
-                            text: "Who made the application?",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--xl"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('requester'),
-                    items: [
-                        {
-                            value: WaitlistRequester.PRISONER.code,
-                            text:  prisonerName,
-                            checked: waitListApplicationJourney.requester == WaitlistRequester.PRISONER.code
-                        },
-                        {
-                            value: WaitlistRequester.GUIDANCE_STAFF.code,
-                            text: WaitlistRequester.GUIDANCE_STAFF.description,
-                            checked: waitListApplicationJourney.requester == WaitlistRequester.GUIDANCE_STAFF.code
-                        },
-                        {
-                            value: WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code,
-                            text: WaitlistRequester.MULTI_DISCIPLINARY_BOARD.description,
-                            checked: waitListApplicationJourney.requester == WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code
-                        },
-                        {
-                            value: WaitlistRequester.SOMEONE_ELSE.code,
-                            text:  WaitlistRequester.SOMEONE_ELSE.description,
-                            checked: formResponses.requester == WaitlistRequester.SOMEONE_ELSE or
-                                     (
-                                         waitListApplicationJourney.requester and
-                                         waitListApplicationJourney.requester != WaitlistRequester.PRISONER.code and
-                                         waitListApplicationJourney.requester != WaitlistRequester.GUIDANCE_STAFF.code and
-                                         waitListApplicationJourney.requester != WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code
-                                     ),
-                            conditional: {
-                                html: govukSelect({
-                                    id: "otherRequester",
-                                    name: "otherRequester",
-                                    errorMessage: validationErrors | findError('otherRequester'),
-                                    label: {
-                                        text: "Other requester",
-                                        classes: 'govuk-visually-hidden'
-                                    },
-                                    items: [
-                                        {
-                                            value: "",
-                                            text: "Select an option",
-                                            disabled: true,
-                                            selected: true
-                                        },
-                                        {
-                                            value: WaitlistRequester.EDUCATION_STAFF.code,
-                                            text: WaitlistRequester.EDUCATION_STAFF.description,
-                                            selected: waitListApplicationJourney.requester == WaitlistRequester.EDUCATION_STAFF.code
-                                        },
-                                        {
-                                            value: WaitlistRequester.WORKSHOP_STAFF.code,
-                                            text: WaitlistRequester.WORKSHOP_STAFF.description,
-                                            selected: waitListApplicationJourney.requester == WaitlistRequester.WORKSHOP_STAFF.code
-                                        },
-                                        {
-                                            value: WaitlistRequester.ACTIVITY_LEADER.code,
-                                            text: WaitlistRequester.ACTIVITY_LEADER.description,
-                                            selected: waitListApplicationJourney.requester == WaitlistRequester.ACTIVITY_LEADER.code
-                                        },
-                                        {
-                                            value: WaitlistRequester.MENTAL_HEALTH_STAFF.code,
-                                            text: WaitlistRequester.MENTAL_HEALTH_STAFF.description,
-                                            selected: waitListApplicationJourney.requester == WaitlistRequester.MENTAL_HEALTH_STAFF.code
-                                        },
-                                        {
-                                            value: WaitlistRequester.OMU_STAFF.code,
-                                            text: WaitlistRequester.OMU_STAFF.description,
-                                            selected: waitListApplicationJourney.requester == WaitlistRequester.OMU_STAFF.code
-                                        },
-                                        {
-                                            value: WaitlistRequester.WING_STAFF.code,
-                                            text: WaitlistRequester.WING_STAFF.description,
-                                            selected: waitListApplicationJourney.requester == WaitlistRequester.WING_STAFF.code
-                                        },
-                                        {
-                                            value: WaitlistRequester.POM_STAFF.code,
-                                            text: WaitlistRequester.POM_STAFF.description,
-                                            selected: waitListApplicationJourney.requester == WaitlistRequester.POM_STAFF.code
-                                        },
-                                        {
-                                            value: WaitlistRequester.RECP_STAFF.code,
-                                            text: WaitlistRequester.RECP_STAFF.description,
-                                            selected: waitListApplicationJourney.requester == WaitlistRequester.RECP_STAFF.code
-                                        },
-                                        {
-                                            value: WaitlistRequester.RED_BAND.code,
-                                            text: WaitlistRequester.RED_BAND.description,
-                                            selected: waitListApplicationJourney.requester == WaitlistRequester.RED_BAND.code
-                                        },
-                                        {
-                                            value: WaitlistRequester.OTHER.code,
-                                            text: WaitlistRequester.OTHER.description,
-                                            selected: waitListApplicationJourney.requester == WaitlistRequester.OTHER.code
-                                        }
-                                    ]
-                                })
-                            }
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              name: "requester",
+              fieldset: {
+                  legend: {
+                      text: "Who made the application?",
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--xl"
+                  }
+              },
+              errorMessage: validationErrors | findError('requester'),
+              items: [
+                  {
+                      value: WaitlistRequester.PRISONER.code,
+                      text:  prisonerName,
+                      checked: waitListApplicationJourney.requester == WaitlistRequester.PRISONER.code
+                  },
+                  {
+                      value: WaitlistRequester.GUIDANCE_STAFF.code,
+                      text: WaitlistRequester.GUIDANCE_STAFF.description,
+                      checked: waitListApplicationJourney.requester == WaitlistRequester.GUIDANCE_STAFF.code
+                  },
+                  {
+                      value: WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code,
+                      text: WaitlistRequester.MULTI_DISCIPLINARY_BOARD.description,
+                      checked: waitListApplicationJourney.requester == WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code
+                  },
+                  {
+                      value: WaitlistRequester.SOMEONE_ELSE.code,
+                      text:  WaitlistRequester.SOMEONE_ELSE.description,
+                      checked: formResponses.requester == WaitlistRequester.SOMEONE_ELSE or
+                               (
+                                   waitListApplicationJourney.requester and
+                                   waitListApplicationJourney.requester != WaitlistRequester.PRISONER.code and
+                                   waitListApplicationJourney.requester != WaitlistRequester.GUIDANCE_STAFF.code and
+                                   waitListApplicationJourney.requester != WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code
+                               ),
+                      conditional: {
+                          html: govukSelect({
+                              id: "otherRequester",
+                              name: "otherRequester",
+                              errorMessage: validationErrors | findError('otherRequester'),
+                              label: {
+                                  text: "Other requester",
+                                  classes: 'govuk-visually-hidden'
+                              },
+                              items: [
+                                  {
+                                      value: "",
+                                      text: "Select an option",
+                                      disabled: true,
+                                      selected: true
+                                  },
+                                  {
+                                      value: WaitlistRequester.EDUCATION_STAFF.code,
+                                      text: WaitlistRequester.EDUCATION_STAFF.description,
+                                      selected: waitListApplicationJourney.requester == WaitlistRequester.EDUCATION_STAFF.code
+                                  },
+                                  {
+                                      value: WaitlistRequester.WORKSHOP_STAFF.code,
+                                      text: WaitlistRequester.WORKSHOP_STAFF.description,
+                                      selected: waitListApplicationJourney.requester == WaitlistRequester.WORKSHOP_STAFF.code
+                                  },
+                                  {
+                                      value: WaitlistRequester.ACTIVITY_LEADER.code,
+                                      text: WaitlistRequester.ACTIVITY_LEADER.description,
+                                      selected: waitListApplicationJourney.requester == WaitlistRequester.ACTIVITY_LEADER.code
+                                  },
+                                  {
+                                      value: WaitlistRequester.MENTAL_HEALTH_STAFF.code,
+                                      text: WaitlistRequester.MENTAL_HEALTH_STAFF.description,
+                                      selected: waitListApplicationJourney.requester == WaitlistRequester.MENTAL_HEALTH_STAFF.code
+                                  },
+                                  {
+                                      value: WaitlistRequester.OMU_STAFF.code,
+                                      text: WaitlistRequester.OMU_STAFF.description,
+                                      selected: waitListApplicationJourney.requester == WaitlistRequester.OMU_STAFF.code
+                                  },
+                                  {
+                                      value: WaitlistRequester.WING_STAFF.code,
+                                      text: WaitlistRequester.WING_STAFF.description,
+                                      selected: waitListApplicationJourney.requester == WaitlistRequester.WING_STAFF.code
+                                  },
+                                  {
+                                      value: WaitlistRequester.POM_STAFF.code,
+                                      text: WaitlistRequester.POM_STAFF.description,
+                                      selected: waitListApplicationJourney.requester == WaitlistRequester.POM_STAFF.code
+                                  },
+                                  {
+                                      value: WaitlistRequester.RECP_STAFF.code,
+                                      text: WaitlistRequester.RECP_STAFF.description,
+                                      selected: waitListApplicationJourney.requester == WaitlistRequester.RECP_STAFF.code
+                                  },
+                                  {
+                                      value: WaitlistRequester.RED_BAND.code,
+                                      text: WaitlistRequester.RED_BAND.description,
+                                      selected: waitListApplicationJourney.requester == WaitlistRequester.RED_BAND.code
+                                  },
+                                  {
+                                      value: WaitlistRequester.OTHER.code,
+                                      text: WaitlistRequester.OTHER.description,
+                                      selected: waitListApplicationJourney.requester == WaitlistRequester.OTHER.code
+                                  }
+                              ]
+                          })
+                      }
+                  }
+              ]
+          })
+        }}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                </div>
-            </form>
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

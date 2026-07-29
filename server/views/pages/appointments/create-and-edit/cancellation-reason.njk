@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
@@ -11,42 +10,48 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukRadios({
-                    name: "reason",
-                    fieldset: {
-                        legend: {
-                            text: "Do you want to show the cancelled appointment on the unlock list?",
-                            classes: "govuk-fieldset__legend--l",
-                            isPageHeading: true
-                        }
-                    },
-                    errorMessage: validationErrors | findError('reason'),
-                    items: [
-                        {
-                            value: AppointmentCancellationReason.CANCELLED,
-                            text: "Yes - show the appointment as cancelled on the unlock list"
-                        },
-                        {
-                            value: AppointmentCancellationReason.CREATED_IN_ERROR,
-                            text: "No - cancel the appointment and delete it from the unlock list"
-                        }
-                    ]
-                }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session) }}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          govukRadios({
+              name: "reason",
+              fieldset: {
+                  legend: {
+                      text: "Do you want to show the cancelled appointment on the unlock list?",
+                      classes: "govuk-fieldset__legend--l",
+                      isPageHeading: true
+                  }
+              },
+              errorMessage: validationErrors | findError('reason'),
+              items: [
+                  {
+                      value: AppointmentCancellationReason.CANCELLED,
+                      text: "Yes - show the appointment as cancelled on the unlock list"
+                  },
+                  {
+                      value: AppointmentCancellationReason.CREATED_IN_ERROR,
+                      text: "No - cancel the appointment and delete it from the unlock list"
+                  }
+              ]
+          })
+        }}
 
-                {{ govukDetails({
-                    summaryText: "What is an unlock list?",
-                    text: "The unlock list is used by wing officers to make sure people are let out of their cells at the right time to get to their schedued activities and appointments."
-                }) }}
+        {{
+          govukDetails({
+              summaryText: "What is an unlock list?",
+              text: "The unlock list is used by wing officers to make sure people are let out of their cells at the right time to get to their schedued activities and appointments."
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Continue"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

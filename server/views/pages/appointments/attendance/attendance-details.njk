@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
 
@@ -7,58 +6,64 @@
 {% set pageId = 'appointment-attendance-details-page' %}
 {% set jsBackLink = true %}
 
-{% set summaryListRows = [
-     {
-        key: {
-            text: "Attendance"
-        },
-        value: {
-            text: 'Attended' if attendanceDetails.attended else 'Did not attend'
-        },
-        actions: {
-            items: [{
-                href: attendanceDetails.prisonerNumber + "/edit-attendance",
-                text: "Change",
-                visuallyHiddenText: "Change attendance option"
-            }]
-        } if not isOlderThanSevenDays
-     },
-     {
-        key: {
-         text: 'Recorded by'
-        },
-        value: {
-         text: serviceUserName(userMap.get(attendanceDetails.recordedBy))
-        }
-    },
-    {
-        key: {
-         text: "Date and time"
-        },
-        value: {
-         text: attendanceDetails.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
-        }
-    }
-] %}
+{%
+  set summaryListRows = [
+       {
+          key: {
+              text: "Attendance"
+          },
+          value: {
+              text: 'Attended' if attendanceDetails.attended else 'Did not attend'
+          },
+          actions: {
+              items: [{
+                  href: attendanceDetails.prisonerNumber + "/edit-attendance",
+                  text: "Change",
+                  visuallyHiddenText: "Change attendance option"
+              }]
+          } if not isOlderThanSevenDays
+       },
+       {
+          key: {
+           text: 'Recorded by'
+          },
+          value: {
+           text: serviceUserName(userMap.get(attendanceDetails.recordedBy))
+          }
+      },
+      {
+          key: {
+           text: "Date and time"
+          },
+          value: {
+           text: attendanceDetails.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
+          }
+      }
+  ]
+%}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                <span class="govuk-caption-l" data-qa="caption">{{ attendanceDetails.appointmentName }}</span>
+        <span class="govuk-caption-l" data-qa="caption">{{ attendanceDetails.appointmentName }}</span>
 
-                <h1 class="govuk-heading-l">Attendance record for {{ attendanceDetails.prisonerName | toTitleCase }}</h1>
+        <h1 class="govuk-heading-l">Attendance record for {{ attendanceDetails.prisonerName | toTitleCase }}</h1>
 
-                <div class="govuk-inset-text" data-qa="summary">{{ attendanceDetails.appointmentName }} on {{ attendanceDetails.appointmentDate | toDate | formatDate }}</div>
-
-                {{ govukSummaryList({
-                    rows: summaryListRows,
-                    classes: "govuk-!-margin-bottom-9",
-                    attributes: { 'data-qa': 'appointment-details' }
-                }) }}
-            </form>
+        <div class="govuk-inset-text" data-qa="summary">
+          {{ attendanceDetails.appointmentName }} on {{ attendanceDetails.appointmentDate | toDate | formatDate }}
         </div>
+
+        {{
+          govukSummaryList({
+              rows: summaryListRows,
+              classes: "govuk-!-margin-bottom-9",
+              attributes: { 'data-qa': 'appointment-details' }
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

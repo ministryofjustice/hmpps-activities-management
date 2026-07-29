@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
@@ -7,189 +6,198 @@
 {% set pageId = 'check-answers-page' %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Manage suspensions</span>
-            {% if session.req.routeContext.mode == 'suspend' %}
-                <h1 class="govuk-heading-l">Check and confirm suspension details</h1>
-            {% else %}
-                <h1 class="govuk-heading-l">Check and confirm end of suspension details</h1>
-            {% endif %}
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">Manage suspensions</span>
+      {% if session.req.routeContext.mode == 'suspend' %}
+        <h1 class="govuk-heading-l">Check and confirm suspension details</h1>
+      {% else %}
+        <h1 class="govuk-heading-l">Check and confirm end of suspension details</h1>
+      {% endif %}
     </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {% set prisonerDetailsHtml %}
-                <ul class="govuk-list">
-                    <li>{{ session.suspendJourney.inmate.prisonerName }}</li>
-                    <li>{{ session.suspendJourney.inmate.prisonerNumber }}</li>
-                </ul>
-            {% endset %}
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% set prisonerDetailsHtml %}
+        <ul class="govuk-list">
+          <li>{{ session.suspendJourney.inmate.prisonerName }}</li>
+          <li>{{ session.suspendJourney.inmate.prisonerNumber }}</li>
+        </ul>
+      {% endset %}
 
-            {% set activitiesText %}
-                {% if session.suspendJourney.allocations | length == 1 %}
-                    {{ session.suspendJourney.allocations[0].activityName | safe }}
-                {% else %}
-                    <ul class="govuk-list">
-                        {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
-                            <li>{{allocation.activityName}}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endset %}
-            {% set paidText %}
-                {% if session.suspendJourney.paid == YesNo.YES and paidCount == session.suspendJourney.allocations | length %}
-                    Yes
-                {% elif session.suspendJourney.paid == YesNo.NO %}
-                    No
-                {% elif session.suspendJourney.paid == YesNo.YES and paidCount > 0 %}
-                    Yes, for:
-                    <ul class="govuk-list govuk-list--bullet">
-                        {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
-                            {% if allocation.payBand %}
-                                <li>{{allocation.activityName}}</li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    Not specified
-                {% endif %}
-            {% endset %}
 
-            {{ govukSummaryList({
-                attributes: {
-                    "data-qa": "suspension-summary"
+      {% set activitiesText %}
+        {% if session.suspendJourney.allocations | length == 1 %}
+          {{ session.suspendJourney.allocations[0].activityName | safe }}
+        {% else %}
+          <ul class="govuk-list">
+            {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
+              <li>{{ allocation.activityName }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endset %}
+      {% set paidText %}
+        {% if session.suspendJourney.paid == YesNo.YES and paidCount == session.suspendJourney.allocations | length %}
+          Yes
+        {% elif session.suspendJourney.paid == YesNo.NO %}
+          No
+        {% elif session.suspendJourney.paid == YesNo.YES and paidCount > 0 %}
+          Yes, for:
+          <ul class="govuk-list govuk-list--bullet">
+            {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
+              {% if allocation.payBand %}
+                <li>{{ allocation.activityName }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% else %}
+          Not specified
+        {% endif %}
+      {% endset %}
+
+      {{
+        govukSummaryList({
+            attributes: {
+                "data-qa": "suspension-summary"
+            },
+            rows: [
+                {
+                    key: { text: "Prisoner" },
+                    value: { html: prisonerDetailsHtml }
                 },
-                rows: [
-                    {
-                        key: { text: "Prisoner" },
-                        value: { html: prisonerDetailsHtml }
+                {
+                    key: { text: "Activity" },
+                    value: { html: activitiesText }
+                },
+                {
+                    key: { text: "First day of suspension" },
+                    value: {
+                        text: (
+                            ("Today - suspension starts immediately" if session.suspendJourney.suspendFrom == now | toDateString) or
+                            ("Tomorrow: " + session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom == now | addDays(1) | toDateString) or
+                            (session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom > now | addDays(1) | toDateString)
+                        )
                     },
-                    {
-                        key: { text: "Activity" },
-                        value: { html: activitiesText }
+                    actions: {
+                        items: [
+                            {
+                                href: "suspend-from?preserveHistory=true",
+                                classes: 'govuk-link--no-visited-state',
+                                text: "Change"
+                            }
+                        ]
+                    }
+                } if session.req.routeContext.mode == 'suspend',
+                {
+                    key: {
+                        text: "Paid while suspended?"
                     },
-                    {
-                        key: { text: "First day of suspension" },
-                        value: {
-                            text: (
-                                ("Today - suspension starts immediately" if session.suspendJourney.suspendFrom == now | toDateString) or
-                                ("Tomorrow: " + session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom == now | addDays(1) | toDateString) or
-                                (session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom > now | addDays(1) | toDateString)
-                            )
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "suspend-from?preserveHistory=true",
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change"
-                                }
-                            ]
-                        }
-                    } if session.req.routeContext.mode == 'suspend',
-                    {
-                        key: {
-                            text: "Paid while suspended?"
-                        },
-                        value: {
-                            html: paidText
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "pay?preserveHistory=true",
-                                    classes: 'govuk-link--no-visited-state',
-                                    html: "Change",
-                                    visuallyHiddenText: "if they should be paid while suspended"
-                                }
-                            ]
-                        }
-                    } if session.suspendJourney.paid != null and paidCount > 0,
-                    {
-                        key: { text: "Last day of suspension" },
-                        value: {
-                            text: (
-                                ("Immediately" if session.suspendJourney.suspendUntil == now | toDateString) or
-                                (session.suspendJourney.suspendUntil | subDays(1) | formatDate('d MMMM yyyy'))
-                            )
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "suspend-until?preserveHistory=true",
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change"
-                                }
-                            ]
-                        }
-                    } if session.req.routeContext.mode == 'unsuspend',
-                    {
-                        key: {
-                            text: "Do you want to add a case note?"
-                        },
-                        value: {
-                            text: "Yes" if session.suspendJourney.caseNote else "No"
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "case-note-question?preserveHistory=true",
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change"
-                                }
-                            ]
-                        }
-                    } if session.req.routeContext.mode == 'suspend',
-                    {
-                        key: {
-                            text: "Case note type"
-                        },
-                        value: {
-                            text: "General" if session.suspendJourney.caseNote.type == 'GEN' else "Negative"
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "case-note?preserveHistory=true",
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: "change case note type"
-                                }
-                            ]
-                        }
-                    } if session.suspendJourney.caseNote and session.req.routeContext.mode == 'suspend',
-                    {
-                        key: {
-                            text: "Case note"
-                        },
-                        value: {
-                            text: session.suspendJourney.caseNote.text
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "case-note?preserveHistory=true",
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: "change deallocation case note"
-                                }
-                            ]
-                        }
-                    } if session.suspendJourney.caseNote and session.req.routeContext.mode == 'suspend'
-                ]
-            }) }}
+                    value: {
+                        html: paidText
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "pay?preserveHistory=true",
+                                classes: 'govuk-link--no-visited-state',
+                                html: "Change",
+                                visuallyHiddenText: "if they should be paid while suspended"
+                            }
+                        ]
+                    }
+                } if session.suspendJourney.paid != null and paidCount > 0,
+                {
+                    key: { text: "Last day of suspension" },
+                    value: {
+                        text: (
+                            ("Immediately" if session.suspendJourney.suspendUntil == now | toDateString) or
+                            (session.suspendJourney.suspendUntil | subDays(1) | formatDate('d MMMM yyyy'))
+                        )
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "suspend-until?preserveHistory=true",
+                                classes: 'govuk-link--no-visited-state',
+                                text: "Change"
+                            }
+                        ]
+                    }
+                } if session.req.routeContext.mode == 'unsuspend',
+                {
+                    key: {
+                        text: "Do you want to add a case note?"
+                    },
+                    value: {
+                        text: "Yes" if session.suspendJourney.caseNote else "No"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "case-note-question?preserveHistory=true",
+                                classes: 'govuk-link--no-visited-state',
+                                text: "Change"
+                            }
+                        ]
+                    }
+                } if session.req.routeContext.mode == 'suspend',
+                {
+                    key: {
+                        text: "Case note type"
+                    },
+                    value: {
+                        text: "General" if session.suspendJourney.caseNote.type == 'GEN' else "Negative"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "case-note?preserveHistory=true",
+                                classes: 'govuk-link--no-visited-state',
+                                text: "Change",
+                                visuallyHiddenText: "change case note type"
+                            }
+                        ]
+                    }
+                } if session.suspendJourney.caseNote and session.req.routeContext.mode == 'suspend',
+                {
+                    key: {
+                        text: "Case note"
+                    },
+                    value: {
+                        text: session.suspendJourney.caseNote.text
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "case-note?preserveHistory=true",
+                                classes: 'govuk-link--no-visited-state',
+                                text: "Change",
+                                visuallyHiddenText: "change deallocation case note"
+                            }
+                        ]
+                    }
+                } if session.suspendJourney.caseNote and session.req.routeContext.mode == 'suspend'
+            ]
+        })
+      }}
 
-            <form method="POST" data-module="form-spinner" data-loading-text="Updating suspension">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Confirm and suspend" if session.req.routeContext.mode == 'suspend' else "Confirm end of suspension",
-                        preventDoubleClick: true
-                    }) }}
-                    <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
-                </div>
-            </form>
+      <form method="POST" data-module="form-spinner" data-loading-text="Updating suspension">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Confirm and suspend" if session.req.routeContext.mode == 'suspend' else "Confirm end of suspension",
+                preventDoubleClick: true
+            })
+          }}
+          <a
+            class="govuk-link govuk-link--no-visited-state"
+            href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}"
+            >Cancel and return to the prisoner's activities</a
+          >
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

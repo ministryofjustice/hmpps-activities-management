@@ -7,79 +7,93 @@
 {% set hardBackLinkText = "Back to all activities, unlock and attendance tasks" %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Allocate people to activities</h1>
+  <h1 class="govuk-heading-l">Allocate people to activities</h1>
 {% endblock %}
 
 {% block content %}
-    <div class="card-group govuk-grid-row">
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/allocation-dashboard",
-                "clickable": "true",
-                "heading": "Manage allocations",
-                "description": "Allocate people to, or take them off an activity. See vacancies, check who is currently allocated, and change allocation start and end dates and pay.",
-                "data-qa": "manage-allocations"
-            }) }}
-        </div>
-
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/dashboard?stateFilter=live",
-                "clickable": "true",
-                "heading": "Edit activity details",
-                "description": "Change the details of an existing activity including pay rates, requirements and schedule.",
-                "data-qa": "edit-activity-details"
-            }) }}
-        </div>
-
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/create/start",
-                "clickable": "true",
-                "heading": "Create an activity",
-                "description": "Set up a new activity including pay rates, requirements and schedule.",
-                "data-qa": "create-an-activity"
-            }) }}
-        </div>
-
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/change-of-circumstances/select-period",
-                "clickable": "true",
-                "heading": "Review changes in circumstances",
-                "description": "Review the changes in the prison which may affect allocation decisions.",
-                "data-qa": "change-of-circumstances"
-            }) }}
-        </div>
-
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/waitlist-dashboard",
-                "clickable": "true",
-                "heading": "Manage applications and waitlists",
-                "description": "Review applications to be allocated. If someone is suitable, you can add them to the waitlist and allocate them.",
-                "data-qa": "applications-and-waitlists"
-            }) }}
-        </div>
-
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/suspensions/select-prisoner",
-                "clickable": "true",
-                "heading": "Manage suspensions",
-                "description": "Suspend people from activities, and end suspensions so they can attend again.",
-                "data-qa": "suspensions"
-            }) }}
-        </div>
-
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/exclusions/select-prisoner",
-                "clickable": "true",
-                "heading": "Modify people in and out",
-                "description": "Edit people's schedules so they are not expected at an activity if they're due to be elsewhere at the same time.",
-                "data-qa": "exclusions"
-            }) }}
-        </div>
+  <div class="card-group govuk-grid-row">
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "href": "/activities/allocation-dashboard",
+            "clickable": "true",
+            "heading": "Manage allocations",
+            "description": "Allocate people to, or take them off an activity. See vacancies, check who is currently allocated, and change allocation start and end dates and pay.",
+            "data-qa": "manage-allocations"
+        })
+      }}
     </div>
+
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "href": "/activities/dashboard?stateFilter=live",
+            "clickable": "true",
+            "heading": "Edit activity details",
+            "description": "Change the details of an existing activity including pay rates, requirements and schedule.",
+            "data-qa": "edit-activity-details"
+        })
+      }}
+    </div>
+
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "href": "/activities/create/start",
+            "clickable": "true",
+            "heading": "Create an activity",
+            "description": "Set up a new activity including pay rates, requirements and schedule.",
+            "data-qa": "create-an-activity"
+        })
+      }}
+    </div>
+
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "href": "/activities/change-of-circumstances/select-period",
+            "clickable": "true",
+            "heading": "Review changes in circumstances",
+            "description": "Review the changes in the prison which may affect allocation decisions.",
+            "data-qa": "change-of-circumstances"
+        })
+      }}
+    </div>
+
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "href": "/activities/waitlist-dashboard",
+            "clickable": "true",
+            "heading": "Manage applications and waitlists",
+            "description": "Review applications to be allocated. If someone is suitable, you can add them to the waitlist and allocate them.",
+            "data-qa": "applications-and-waitlists"
+        })
+      }}
+    </div>
+
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "href": "/activities/suspensions/select-prisoner",
+            "clickable": "true",
+            "heading": "Manage suspensions",
+            "description": "Suspend people from activities, and end suspensions so they can attend again.",
+            "data-qa": "suspensions"
+        })
+      }}
+    </div>
+
+    <div class="govuk-grid-column-one-third card-group__item">
+      {{
+        card({
+            "href": "/activities/exclusions/select-prisoner",
+            "clickable": "true",
+            "heading": "Modify people in and out",
+            "description": "Edit people's schedules so they are not expected at an activity if they're due to be elsewhere at the same time.",
+            "data-qa": "exclusions"
+        })
+      }}
+    </div>
+  </div>
 {% endblock %}

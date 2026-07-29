@@ -1,12 +1,9 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
-
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
-
 {% from "components/timePicker.njk" import timePicker %}
 
 {% set pageTitle = "Activity session times - Activities - DPS" %}
@@ -16,79 +13,87 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            {{ activityJourneyCaption(createJourney) }}
-            {% if session.req.routeContext.mode == 'edit' %}
-            <h1 class="govuk-heading-l">{{ editPageHeading }}</h1>
-            {% else %}
-            <h1 class="govuk-heading-l">{{ createPageHeading }}</h1>
-            {% endif %}
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% for week, customSlots in sessionSlots %}
-                    {% if sessionSlots | length > 1 %}
-                        <h2 class='govuk-heading-m govuk-!-margin-bottom-1'>
-                            Week {{ week }}
-                            {{ govukTag({
-                                text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
-                            }) if currentWeek == week }}
-                        </h2>
-                    {% endif %}
-                        {% set rows = [] %}
-                        {% for customSlot in customSlots %}
-                            {% set formattedStart = customSlot.start | getSplitTime %}
-                            {% set formattedFinish = customSlot.finish | getSplitTime %}
-                            {% set rows = (rows.push([
-                                {
-                                    html: customSlot.dayOfWeek | title
-                                },
-                                {
-                                    html: customSlot.timeSlot
-                                },
-                                {
-                                    html: timePicker({
-                                        id: 'startTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
-                                        name: 'startTimes[' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('startTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
-                                        validationErrors: validationErrors,
-                                        formResponses: formResponses.startTimes[week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedStart
-                                })
-                                },
-                                {
-                                    html: timePicker({
-                                        id: 'endTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
-                                        name: 'endTimes[' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('endTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
-                                        validationErrors: validationErrors,
-                                        formResponses: formResponses.endTimes[week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedFinish
-                                        })
-                                }]), rows) %}
-                        {% endfor %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      {{ activityJourneyCaption(createJourney) }}
+      {% if session.req.routeContext.mode == 'edit' %}
+        <h1 class="govuk-heading-l">{{ editPageHeading }}</h1>
+      {% else %}
+        <h1 class="govuk-heading-l">{{ createPageHeading }}</h1>
+      {% endif %}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {% for week, customSlots in sessionSlots %}
+          {% if sessionSlots | length > 1 %}
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+              Week {{ week }}
+              {{
+                govukTag({
+                    text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
+                }) if currentWeek == week
+              }}
+            </h2>
+          {% endif %}
+          {% set rows = [] %}
+          {% for customSlot in customSlots %}
+            {% set formattedStart = customSlot.start | getSplitTime %}
+            {% set formattedFinish = customSlot.finish | getSplitTime %}
+            {%
+              set rows = (rows.push([
+              {
+                  html: customSlot.dayOfWeek | title
+              },
+              {
+                  html: customSlot.timeSlot
+              },
+              {
+                  html: timePicker({
+                      id: 'startTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                      name: 'startTimes[' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                      renderedErrorMessage: validationErrors | findError('startTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                      validationErrors: validationErrors,
+                      formResponses: formResponses.startTimes[week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedStart
+              })
+              },
+              {
+                  html: timePicker({
+                      id: 'endTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                      name: 'endTimes[' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                      renderedErrorMessage: validationErrors | findError('endTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                      validationErrors: validationErrors,
+                      formResponses: formResponses.endTimes[week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedFinish
+                      })
+              }]), rows)
+            %}
+          {% endfor %}
 
-                    {{ govukTable({
-                        head: [
-                                {
-                                text: "Day"
-                                },
-                                 {
-                                text: "Session"
-                                },
-                                {
-                                text: "Start time"
-                                },
-                                {
-                                text: "End time"
-                                }
-                            ],
-                        rows: rows,
-                        attributes: {"data-qa": "session-times-table"}
-                    }) }}
-                {% endfor %}
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
-            </form>
-        </div>
+          {{
+            govukTable({
+                head: [
+                        {
+                        text: "Day"
+                        },
+                         {
+                        text: "Session"
+                        },
+                        {
+                        text: "Start time"
+                        },
+                        {
+                        text: "End time"
+                        }
+                    ],
+                rows: rows,
+                attributes: {"data-qa": "session-times-table"}
+            })
+          }}
+        {% endfor %}
+        {{
+          govukButton({
+              text: "Continue"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

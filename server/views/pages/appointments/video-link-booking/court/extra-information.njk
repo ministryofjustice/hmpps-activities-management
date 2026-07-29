@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
@@ -15,47 +14,57 @@
       {{ appointmentTypeCaption(session) }}
 
       <h1 class="govuk-heading-l">
-         <label class="govuk-label govuk-label--l">{{ pageHeading }}</label>
+        <label class="govuk-label govuk-label--l">{{ pageHeading }}</label>
       </h1>
-      <form method="POST" {% if session.req.routeContext.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing extra information" {% endif %}>
+      <form
+        method="POST"
+        {% if session.req.routeContext.mode == 'amend' %}data-module="form-spinner" data-loading-text="Changing extra
+        information"{% endif %}
+      >
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
         <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="400">
           <div class="govuk-form-group">
-            {{ govukCharacterCount({
-                id: "notesForStaff",
-                name: "notesForStaff",
-                errorMessage: validationErrors | findError("notesForStaff"),
-                value: formResponses.notesForStaff or session.bookACourtHearingJourney.notesForStaff,
-                label: {
-                  text: "Notes for prison staff (optional)",
-                  classes: 'govuk-fieldset__legend--s'
-                },
-                hint: {
-                  html: "<div>This can include case number, co-defendant details if this is a multi-hander case, interpreter, or solicitor's details.</div><br><div>The information in this text box could potentially be shared in accordance with the Data Protection Act 2018.</div>"
-                },
-                maxlength: "400"
-            }) }}
+            {{
+              govukCharacterCount({
+                  id: "notesForStaff",
+                  name: "notesForStaff",
+                  errorMessage: validationErrors | findError("notesForStaff"),
+                  value: formResponses.notesForStaff or session.bookACourtHearingJourney.notesForStaff,
+                  label: {
+                    text: "Notes for prison staff (optional)",
+                    classes: 'govuk-fieldset__legend--s'
+                  },
+                  hint: {
+                    html: "<div>This can include case number, co-defendant details if this is a multi-hander case, interpreter, or solicitor's details.</div><br><div>The information in this text box could potentially be shared in accordance with the Data Protection Act 2018.</div>"
+                  },
+                  maxlength: "400"
+              })
+            }}
           </div>
         </div>
         <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="400">
           <div class="govuk-form-group">
-            {{ govukCharacterCount({
-                id: "notesForPrisoners",
-                name: "notesForPrisoners",
-                errorMessage: validationErrors | findError("notesForPrisoners"),
-                value: formResponses.notesForPrisoners or session.bookACourtHearingJourney.notesForPrisoners,
-                label: {
-                  text: "Notes for prisoner (optional)",
-                  classes: 'govuk-fieldset__legend--s'
-                },
-                hint: { html: "<p class='govuk-hint'>Add information the prisoner needs to know about their video link booking. This will appear on movement slips and will be seen by the prisoner.</p><p class='govuk-hint'>Do not add anything that should not be seen by or shared with a prisoner.</p>" },
-                maxlength: "400"
-            }) }}
+            {{
+              govukCharacterCount({
+                  id: "notesForPrisoners",
+                  name: "notesForPrisoners",
+                  errorMessage: validationErrors | findError("notesForPrisoners"),
+                  value: formResponses.notesForPrisoners or session.bookACourtHearingJourney.notesForPrisoners,
+                  label: {
+                    text: "Notes for prisoner (optional)",
+                    classes: 'govuk-fieldset__legend--s'
+                  },
+                  hint: { html: "<p class='govuk-hint'>Add information the prisoner needs to know about their video link booking. This will appear on movement slips and will be seen by the prisoner.</p><p class='govuk-hint'>Do not add anything that should not be seen by or shared with a prisoner.</p>" },
+                  maxlength: "400"
+              })
+            }}
           </div>
         </div>
-        {{ govukButton({
-          text: "Continue"
-        }) }}
+        {{
+          govukButton({
+            text: "Continue"
+          })
+        }}
       </form>
     </div>
   </div>

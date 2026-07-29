@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
@@ -12,25 +11,31 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <span class="govuk-caption-l">Uncancel activity sessions</span>
-      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Are you sure you want to uncancel {{ selectedInstanceIds.length }} activity sessions?</h1>
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">
+        Are you sure you want to uncancel {{ selectedInstanceIds.length }} activity sessions?
+      </h1>
       <form method="POST" data-module="form-spinner" data-loading-text="Uncancelling sessions">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {{ govukRadios({
-          name: "confirm",
-          items: [{
-            value: 'yes',
-            text: 'Yes'
-          },{
-            value: 'no',
-            text: 'No'
-          }]
-        }) }}
+        {{
+          govukRadios({
+            name: "confirm",
+            items: [{
+              value: 'yes',
+              text: 'Yes'
+            },{
+              value: 'no',
+              text: 'No'
+            }]
+          })
+        }}
 
-        {{ govukButton({
-          text: "Confirm",
-          preventDoubleClick: true
-        }) }}
+        {{
+          govukButton({
+            text: "Confirm",
+            preventDoubleClick: true
+          })
+        }}
       </form>
     </div>
   </div>

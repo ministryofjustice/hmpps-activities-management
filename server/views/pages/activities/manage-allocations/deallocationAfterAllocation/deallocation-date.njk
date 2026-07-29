@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
@@ -9,85 +8,98 @@
 {% set pageId = 'deallocate-after-allocation-date-page' %}
 {% set jsBackLink = true %}
 
-{% set dateOptions = 
-[
-    {
-        value: DeallocateAfterAllocationDateOption.TODAY,
-        text: "At the end of today",
-        checked: allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.TODAY
-    },
-    {
-        value: DeallocateAfterAllocationDateOption.FUTURE_DATE,
-        text: "At the end of a different day - they'll attend sessions that day, then be removed",
-        checked: allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.FUTURE_DATE,
-        conditional: {
-            html: mojDatePicker({
-                id: 'date',
-                name: 'date',
-                label: {
-                    text: 'Date',
-                    classes: "govuk-visually-hidden"
-                },
-                leadingZeros: 'true',
-                hint: {
-                    text: "Enter the date, for example " + exampleDatePickerDate() +", or click on the calendar to select."
-                },
-                classes: 'moj-datepicker--fixed-width',
-                errorMessage: validationErrors | findError('date'),
-                value: allocateJourney.endDate | isoDateToDatePickerDate
-            })
-        }
-    }
-] %}
+{%
+  set dateOptions =
+  [
+      {
+          value: DeallocateAfterAllocationDateOption.TODAY,
+          text: "At the end of today",
+          checked: allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.TODAY
+      },
+      {
+          value: DeallocateAfterAllocationDateOption.FUTURE_DATE,
+          text: "At the end of a different day - they'll attend sessions that day, then be removed",
+          checked: allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.FUTURE_DATE,
+          conditional: {
+              html: mojDatePicker({
+                  id: 'date',
+                  name: 'date',
+                  label: {
+                      text: 'Date',
+                      classes: "govuk-visually-hidden"
+                  },
+                  leadingZeros: 'true',
+                  hint: {
+                      text: "Enter the date, for example " + exampleDatePickerDate() +", or click on the calendar to select."
+                  },
+                  classes: 'moj-datepicker--fixed-width',
+                  errorMessage: validationErrors | findError('date'),
+                  value: allocateJourney.endDate | isoDateToDatePickerDate
+              })
+          }
+      }
+  ]
+%}
 
 {% if showImmediateDeallocationOption %}
-    {% set dateOptions = (dateOptions.unshift(
+  {%
+    set dateOptions = (dateOptions.unshift(
         {
             value: DeallocateAfterAllocationDateOption.NOW,
             text: "Now - they'll be removed from any sessions later today",
             checked: allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.NOW
         }
-    ), dateOptions) %}
+    ), dateOptions)
+  %}
 {% endif %}
 
 {% set activityName = allocateJourney.activity.name if not multipleActivitiesToRemove else " activities" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-xl">Take {{ allocateJourney.inmate.prisonerName }} off {{ activityName }}</span>
-            <h1 class="govuk-heading-l">When do you want them to be taken off {% if multipleActivitiesToRemove %} {{allocateJourney.activitiesToDeallocate | length }} activities {% endif %}?</h1>
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                {% if multipleActivitiesToRemove %}
-                    {% set activityNamesIfMultiple = allocateJourney.activitiesToDeallocate | flatMap('name') %}
-                    {% set last_item = activityNamesIfMultiple | last %}
-                    {% set other_items = activityNamesIfMultiple | sliceArray(0, -1) %}
-                    {% set list = other_items | join(', ') +" and "+ last_item %}
-                    {{ govukInsetText({
-                        text: "You’re removing " + allocateJourney.inmate.prisonerName +" from " + list
-                    }) }}
-                {% endif %}
-                {{ govukRadios({
-                    id: "deallocationAfterAllocationDate",
-                    name: "deallocationAfterAllocationDate",
-                    attributes: { "data-qa": "deallocationAfterAllocationDate" },
-                    fieldset: {
-                        legend: {
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('deallocationAfterAllocationDate'),
-                    items: dateOptions
-                }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <span class="govuk-caption-xl">Take {{ allocateJourney.inmate.prisonerName }} off {{ activityName }}</span>
+      <h1 class="govuk-heading-l">
+        When do you want them to be taken off
+        {% if multipleActivitiesToRemove %}{{ allocateJourney.activitiesToDeallocate | length }} activities{% endif %}?
+      </h1>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {% if multipleActivitiesToRemove %}
+          {% set activityNamesIfMultiple = allocateJourney.activitiesToDeallocate | flatMap('name') %}
+          {% set last_item = activityNamesIfMultiple | last %}
+          {% set other_items = activityNamesIfMultiple | sliceArray(0, -1) %}
+          {% set list = other_items | join(', ') +" and "+ last_item %}
+          {{
+            govukInsetText({
+                text: "You’re removing " + allocateJourney.inmate.prisonerName +" from " + list
+            })
+          }}
+        {% endif %}
+        {{
+          govukRadios({
+              id: "deallocationAfterAllocationDate",
+              name: "deallocationAfterAllocationDate",
+              attributes: { "data-qa": "deallocationAfterAllocationDate" },
+              fieldset: {
+                  legend: {
+                      classes: "govuk-fieldset__legend--m"
+                  }
+              },
+              errorMessage: validationErrors | findError('deallocationAfterAllocationDate'),
+              items: dateOptions
+          })
+        }}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                    <a class="govuk-link" href="cancel?deallocationAfterAllocation=true">Cancel</a> 
-                </div>
-            </form>
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
+          <a class="govuk-link" href="cancel?deallocationAfterAllocation=true">Cancel</a>
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

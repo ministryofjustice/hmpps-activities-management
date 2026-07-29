@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "partials/formatSessions.njk" import formatSessions %}
 
 {% set pageTitle = applicationName + " - Select people to record attendance for" %}
@@ -10,12 +9,17 @@
 {% set activityDate = activityDate | formatDate %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-l">
-                {{ activity.summary }} {% if isInFuture %}does{% else %}did{% endif %} not run {% if timePeriods | length !== 3 %}in the {{ formatSessions(timePeriods) }} {{' session' if timePeriods | length == 1 else ' sessions' }}{% endif %} on {{ activityDate }}
-            </h1>
-            <a class="govuk-link govuk-link--no-visited-state" href="choose-details-by-activity">Select a different activity, date or time period</a>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l">
+        {{ activity.summary }} {% if isInFuture %}does{% else %}did{% endif %} not run
+        {% if timePeriods | length !== 3 %}in the {{ formatSessions(timePeriods) }}
+        {{ ' session' if timePeriods | length == 1 else ' sessions' }}{% endif %}
+        on {{ activityDate }}
+      </h1>
+      <a class="govuk-link govuk-link--no-visited-state" href="choose-details-by-activity"
+        >Select a different activity, date or time period</a
+      >
     </div>
+  </div>
 {% endblock %}

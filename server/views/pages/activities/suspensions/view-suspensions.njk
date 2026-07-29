@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
@@ -13,84 +12,96 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-xl">Manage suspensions</span>
-            <h1 class="govuk-heading-l">Suspension details</h1>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <span class="govuk-caption-xl">Manage suspensions</span>
+      <h1 class="govuk-heading-l">Suspension details</h1>
     </div>
+  </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {% for group in groupedAllocations %}
-                {% set plannedAt = group[0].plannedSuspension.plannedAt %}
-                {% set activityNames = group | flatMap('activitySummary') %}
-                {% set startDate = group[0].plannedSuspension.plannedStartDate %}
-                {% set endDate = group[0].plannedSuspension.plannedEndDate %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% for group in groupedAllocations %}
+        {% set plannedAt = group[0].plannedSuspension.plannedAt %}
+        {% set activityNames = group | flatMap('activitySummary') %}
+        {% set startDate = group[0].plannedSuspension.plannedStartDate %}
+        {% set endDate = group[0].plannedSuspension.plannedEndDate %}
 
-                {% set paid %}
-                    {% if group[0].paidWhileSuspended == PaidType.YES %}
-                        Yes
-                    {% elif group[0].paidWhileSuspended == PaidType.NO_UNPAID %}
-                        No - activity is unpaid
-                    {% else %}
-                        No
-                    {% endif %}
-                {% endset %}
 
-                {% set addedBy = userMap.get(group[0].plannedSuspension.plannedBy) %}
-                {% set suspensionCaseNote = caseNotesMap.get(group[0].plannedSuspension.dpsCaseNoteId) %}
+        {% set paid %}
+          {% if group[0].paidWhileSuspended == PaidType.YES %}
+            Yes
+          {% elif group[0].paidWhileSuspended == PaidType.NO_UNPAID %}
+            No - activity is unpaid
+          {% else %}
+            No
+          {% endif %}
+        {% endset %}
 
-                <h2 class='govuk-heading-m'>Suspension added on {{ plannedAt | parseISODate | formatDate("EEEE, d MMMM yyyy 'at' HH:mm") }}</h2>
-                <dl data-qa="suspension-summary" class="govuk-summary-list {{ 'govuk-!-margin-bottom-0' if suspensionCaseNote }}">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Activity</dt>
-                        <dd class="govuk-summary-list__value">
-                            <ul class='govuk-list'>
-                                {% for activity in activityNames | sort %}
-                                    <li>{{ activity }}</li>
-                                {% endfor %}
-                            </ul>
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">First day of suspension</dt>
-                        <dd class="govuk-summary-list__value">{{ startDate | formatDate }}</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Last day of suspension</dt>
-                        <dd class="govuk-summary-list__value">{{ (endDate | subDays(1) | formatDate) if endDate != null else "No end date" }}</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Paid while suspended?</dt>
-                        <dd class="govuk-summary-list__value">{{ paid }}</dd>
-                    </div>
-                    <div class="govuk-summary-list__row {{ 'govuk-summary-list__row--no-border' if suspensionCaseNote }}">
-                        <dt class="govuk-summary-list__key">Added by</dt>
-                        <dd class="govuk-summary-list__value">{{ serviceUserName(addedBy) }}</dd>
-                    </div>
-                </dl>
+        {% set addedBy = userMap.get(group[0].plannedSuspension.plannedBy) %}
+        {% set suspensionCaseNote = caseNotesMap.get(group[0].plannedSuspension.dpsCaseNoteId) %}
 
-                {% if suspensionCaseNote %}
-                    <dl class="govuk-summary-list govuk-summary-list--no-keys">
-                        <div class="govuk-summary-list__row">
-                            <dd class="govuk-summary-list__value">
-                                {{ govukDetails({
-                                    summaryText: "View case note",
-                                    classes: "govuk-!-margin-0",
-                                    text: suspensionCaseNote.text
-                                }) }}
-                            </dd>
-                        </div>
-                    </dl>
-                {% endif %}
-            {% endfor %}
-            <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "End all suspensions" if groupedAllocations | length > 1 else "End suspension",
-                    href: '../../unsuspend/' + session.req.params.prisonerNumber + '/suspend-until?allocationIds=' + groupedAllocations | flatten | flatMap('id')
-                }) }}
+        <h2 class="govuk-heading-m">
+          Suspension added on {{ plannedAt | parseISODate | formatDate("EEEE, d MMMM yyyy 'at' HH:mm") }}
+        </h2>
+        <dl
+          data-qa="suspension-summary"
+          class="govuk-summary-list {{ 'govuk-!-margin-bottom-0' if suspensionCaseNote }}"
+        >
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Activity</dt>
+            <dd class="govuk-summary-list__value">
+              <ul class="govuk-list">
+                {% for activity in activityNames | sort %}
+                  <li>{{ activity }}</li>
+                {% endfor %}
+              </ul>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">First day of suspension</dt>
+            <dd class="govuk-summary-list__value">{{ startDate | formatDate }}</dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Last day of suspension</dt>
+            <dd class="govuk-summary-list__value">
+              {{ (endDate | subDays(1) | formatDate) if endDate != null else "No end date" }}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Paid while suspended?</dt>
+            <dd class="govuk-summary-list__value">{{ paid }}</dd>
+          </div>
+          <div class="govuk-summary-list__row {{ 'govuk-summary-list__row--no-border' if suspensionCaseNote }}">
+            <dt class="govuk-summary-list__key">Added by</dt>
+            <dd class="govuk-summary-list__value">{{ serviceUserName(addedBy) }}</dd>
+          </div>
+        </dl>
+
+        {% if suspensionCaseNote %}
+          <dl class="govuk-summary-list govuk-summary-list--no-keys">
+            <div class="govuk-summary-list__row">
+              <dd class="govuk-summary-list__value">
+                {{
+                  govukDetails({
+                      summaryText: "View case note",
+                      classes: "govuk-!-margin-0",
+                      text: suspensionCaseNote.text
+                  })
+                }}
+              </dd>
             </div>
-        </div>
+          </dl>
+        {% endif %}
+      {% endfor %}
+      <div class="govuk-button-group">
+        {{
+          govukButton({
+              text: "End all suspensions" if groupedAllocations | length > 1 else "End suspension",
+              href: '../../unsuspend/' + session.req.params.prisonerNumber + '/suspend-until?allocationIds=' + groupedAllocations | flatten | flatMap('id')
+          })
+        }}
+      </div>
     </div>
+  </div>
 {% endblock %}

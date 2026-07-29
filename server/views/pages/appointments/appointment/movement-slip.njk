@@ -1,6 +1,5 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-movement-slip.njk" import appointmentMovementSlip %}
-
 {% extends "layout.njk" %}
 
 {% set pageTitle = "Movement slips - Appointments - DPS" %}
@@ -10,31 +9,37 @@
 {% endblock %}
 
 {% block containerStart %}
-    <span class="govuk-visually-hidden" id="{{ pageId }}"></span>
+  <span class="govuk-visually-hidden" id="{{ pageId }}"></span>
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-l govuk-visually-hidden">{{ "Print movement slip" + ("s" if appointment.attendees.length > 1 ) }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l govuk-visually-hidden">
+        {{ "Print movement slip" + ("s" if appointment.attendees.length > 1 ) }}
+      </h1>
 
-            <div class="govuk-button-group govuk-!-display-none-print">
-                {% if appointment.attendees.length > 1 %}
-                    {{ govukButton({
-                        text: "Print one slip per page",
-                        classes: "govuk-button--blue separate-slips-print no-js-hidden",
-                        preventDoubleClick: true
-                    }) }}
-                {% endif %}
-                {{ govukButton({
-                    text: "Print multiple slips per page" if appointment.attendees.length > 1 else "Print movement slip",
-                    classes: "govuk-button--blue js-print no-js-hidden",
-                    preventDoubleClick: true
-                }) }}
-            </div>
-        </div>
+      <div class="govuk-button-group govuk-!-display-none-print">
+        {% if appointment.attendees.length > 1 %}
+          {{
+            govukButton({
+                text: "Print one slip per page",
+                classes: "govuk-button--blue separate-slips-print no-js-hidden",
+                preventDoubleClick: true
+            })
+          }}
+        {% endif %}
+        {{
+          govukButton({
+              text: "Print multiple slips per page" if appointment.attendees.length > 1 else "Print movement slip",
+              classes: "govuk-button--blue js-print no-js-hidden",
+              preventDoubleClick: true
+          })
+        }}
+      </div>
     </div>
-    {{ appointmentMovementSlip(appointment, user.activeCaseLoad.description, now) }}
+  </div>
+  {{ appointmentMovementSlip(appointment, user.activeCaseLoad.description, now) }}
 {% endblock %}
 
 {% block govukFooter %}

@@ -2,142 +2,179 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% macro stickySelect(params) %}
-    {% set selectAllId = params.selectAllId or 'select-all' %}
+  {% set selectAllId = params.selectAllId or 'select-all' %}
 
-    {% set head = [
+  {%
+    set head = [
         {
             attributes: {
                 id: selectAllId
             },
             classes: 'govuk-!-display-none-print'
         }
-    ] if params.type == 'check' and params.selectAllAvailable else [{}] %}
-    {% for column in params.head %}
-        {% set head = (head.push(column), head) %}
-    {% endfor %}
+    ] if params.type == 'check' and params.selectAllAvailable else [{}]
+  %}
+  {% for column in params.head %}
+    {% set head = (head.push(column), head) %}
+  {% endfor %}
 
-    {% set selectable = false %}
-    {% set rows = [] %}
-    {% for row in params.rows %}
-        {% if row.selectable %}
-            {% set selectable = true %}
-            {% set r = [
-                {
-                    html: '
-                            <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
-                                <input type="checkbox" name="' + params.name + '" value="' + row.value + '" class="govuk-checkboxes__input" id="' + (params.idPrefix or 'row') + '-' + loop.index + '"' + (('data-forbidden-action="' + row.forbiddenActionId + '"') if row.forbiddenActionId) + '>
-                                <label class="govuk-label govuk-checkboxes__label" for="' + (params.idPrefix or 'row') + '-' + loop.index + '">
-                                    <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
-                                </label>
-                            </div>
-                        ' if params.type == 'check' else '
-                            <div class="govuk-radios__item govuk-radios--small moj-multi-select__radio">
-                                <input type="radio" name="' + params.name + '" value="' + row.value + '" class="govuk-radios__input" id="' + (params.idPrefix or 'row') + '-' + loop.index + '"' + (('data-forbidden-action="' + row.forbiddenActionId + '"') if row.forbiddenActionId) + '>
-                                <label class="govuk-label govuk-radios__label" for="' + (params.idPrefix or 'row') + '-' + loop.index + '">
-                                    <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
-                                </label>
-                            </div>
-                        ',
-                    classes: 'govuk-!-display-none-print'
-                }
-            ] %}
-        {% else %}
-            {% set r = [{ html: '', classes: 'govuk-!-display-none-print' }] %}
-        {% endif %}
-
-        {% set r = concatArrays(r, row.items) %}
-
-        {% set rows = (rows.push(r), rows) %}
-    {% else %}
-        {% set rows = (rows.push([
-            {},
+  {% set selectable = false %}
+  {% set rows = [] %}
+  {% for row in params.rows %}
+    {% if row.selectable %}
+      {% set selectable = true %}
+      {%
+        set r = [
             {
-                text: 'No ' + params.itemsDescriptionPlural + ' to display',
-                attributes: { "colspan": (params.head | length) + 1 },
-                classes: 'govuk-table_cell govuk-!-text-align-centre'
+                html: '
+                        <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
+                            <input type="checkbox" name="' + params.name + '" value="' + row.value + '" class="govuk-checkboxes__input" id="' + (params.idPrefix or 'row') + '-' + loop.index + '"' + (('data-forbidden-action="' + row.forbiddenActionId + '"') if row.forbiddenActionId) + '>
+                            <label class="govuk-label govuk-checkboxes__label" for="' + (params.idPrefix or 'row') + '-' + loop.index + '">
+                                <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
+                            </label>
+                        </div>
+                    ' if params.type == 'check' else '
+                        <div class="govuk-radios__item govuk-radios--small moj-multi-select__radio">
+                            <input type="radio" name="' + params.name + '" value="' + row.value + '" class="govuk-radios__input" id="' + (params.idPrefix or 'row') + '-' + loop.index + '"' + (('data-forbidden-action="' + row.forbiddenActionId + '"') if row.forbiddenActionId) + '>
+                            <label class="govuk-label govuk-radios__label" for="' + (params.idPrefix or 'row') + '-' + loop.index + '">
+                                <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
+                            </label>
+                        </div>
+                    ',
+                classes: 'govuk-!-display-none-print'
             }
-        ]), rows) %}
-    {% endfor %}
-
-    {% if not selectable %}
-        {% set head = head | sliceArray(1) %}
-        {% set unselectableRows = [] %}
-        {% for row in rows %}
-            {% set unselectableRows = (unselectableRows.push(row | sliceArray(1)), unselectableRows) %}
-        {% endfor %}
-        {% set rows = unselectableRows %}
+        ]
+      %}
+    {% else %}
+      {% set r = [{ html: '', classes: 'govuk-!-display-none-print' }] %}
     {% endif %}
 
-    <div class='sticky-select' data-module='activities-sticky-select' {% if params.id %} id={{params.id}} {% endif %}>
-        {{ govukTable({
-            attributes: {
-                'data-multi-select-checkbox': '#' + selectAllId,
-                'data-module': 'moj-multi-select'
-            },
-            caption: params.caption,
-            captionClasses: params.captionClasses,
-            head: head,
-            rows: rows
-        }) }}
+    {% set r = concatArrays(r, row.items) %}
 
-        <nav class="govuk-pagination govuk-pagination--block govuk-!-display-none-print" role="navigation" aria-label="results">
-            {% if params.pagination.previous %}
-                <div class="govuk-pagination__prev">
-                    <a class="govuk-link govuk-pagination__link" href="{{ params.pagination.previous.href }}" rel="prev">
-                        <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
-                            <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
-                        </svg>
-                        <span class="govuk-pagination__link-title">{{ params.pagination.previous.title }}</span>
-                        <span class="govuk-visually-hidden">:</span>
-                        <span class="govuk-pagination__link-label">{{ params.pagination.previous.label }}</span>
-                    </a>
-                </div>
-            {% endif %}
-            {% if params.pagination.next %}
-                <div class="govuk-pagination__next">
-                    <a class="govuk-link govuk-pagination__link" href="{{ params.pagination.next.href }}" rel="next">
-                        <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
-                            <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
-                        </svg>
-                        <span class="govuk-pagination__link-title">{{ params.pagination.next.title }}</span>
-                        <span class="govuk-visually-hidden">:</span>
-                        <span class="govuk-pagination__link-label">{{ params.pagination.next.label }}</span>
-                    </a>
-                </div>
-            {% endif %}
-        </nav>
+    {% set rows = (rows.push(r), rows) %}
+  {% else %}
+    {%
+      set rows = (rows.push([
+          {},
+          {
+              text: 'No ' + params.itemsDescriptionPlural + ' to display',
+              attributes: { "colspan": (params.head | length) + 1 },
+              classes: 'govuk-table_cell govuk-!-text-align-centre'
+          }
+      ]), rows)
+    %}
+  {% endfor %}
 
-        <div class='sticky-select-action-bar {{ "sticky-select-action-bar--fixed" if params.fixed }}' role='toolbar' aria-live='polite'
-             aria-label='actions' aria-disabled='false'
-             {% if params.itemsDescription %}
-                 data-description-singular='{{ params.itemsDescription }}'
-             {% endif %}
-            {% if params.itemsDescriptionPlural %}
-                data-description-plural='{{ params.itemsDescriptionPlural }}'
-            {% endif %}
-        >
-            <div class='govuk-width-container'>
-                <div class='sticky-select-action-bar__selected-summary'>
-                    <span class='sticky-select-action-bar__count'></span>
-                    <a class='sticky-select-action-bar__clear-link'>Clear</a>
-                </div>
-                <div class='govuk-button-group'>
-                    {% for action in params.actions %}
-                        {{ govukButton({
-                            href: action.href if action.href,
-                            text: action.text,
-                            classes: 'govuk-button--white',
-                            preventDoubleClick: true,
-                            attributes: {
-                                id: params.idPrefix + '-action-' + loop.index0,
-                                formaction: action.formAction,
-                                'data-max-items': action.maxItems if action.maxItems
-                            }
-                        }) if action }}
-                    {% endfor %}
-                </div>
-            </div>
+  {% if not selectable %}
+    {% set head = head | sliceArray(1) %}
+    {% set unselectableRows = [] %}
+    {% for row in rows %}
+      {% set unselectableRows = (unselectableRows.push(row | sliceArray(1)), unselectableRows) %}
+    {% endfor %}
+    {% set rows = unselectableRows %}
+  {% endif %}
+
+  <div class="sticky-select" data-module="activities-sticky-select" {% if params.id %}id={{ params.id }}{% endif %}>
+    {{
+      govukTable({
+          attributes: {
+              'data-multi-select-checkbox': '#' + selectAllId,
+              'data-module': 'moj-multi-select'
+          },
+          caption: params.caption,
+          captionClasses: params.captionClasses,
+          head: head,
+          rows: rows
+      })
+    }}
+
+    <nav
+      class="govuk-pagination govuk-pagination--block govuk-!-display-none-print"
+      role="navigation"
+      aria-label="results"
+    >
+      {% if params.pagination.previous %}
+        <div class="govuk-pagination__prev">
+          <a class="govuk-link govuk-pagination__link" href="{{ params.pagination.previous.href }}" rel="prev">
+            <svg
+              class="govuk-pagination__icon govuk-pagination__icon--prev"
+              xmlns="http://www.w3.org/2000/svg"
+              height="13"
+              width="15"
+              aria-hidden="true"
+              focusable="false"
+              viewBox="0 0 15 13"
+            >
+              <path
+                d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"
+              ></path>
+            </svg>
+            <span class="govuk-pagination__link-title">{{ params.pagination.previous.title }}</span>
+            <span class="govuk-visually-hidden">:</span>
+            <span class="govuk-pagination__link-label">{{ params.pagination.previous.label }}</span>
+          </a>
         </div>
-    </div>
+      {% endif %}
+      {% if params.pagination.next %}
+        <div class="govuk-pagination__next">
+          <a class="govuk-link govuk-pagination__link" href="{{ params.pagination.next.href }}" rel="next">
+            <svg
+              class="govuk-pagination__icon govuk-pagination__icon--next"
+              xmlns="http://www.w3.org/2000/svg"
+              height="13"
+              width="15"
+              aria-hidden="true"
+              focusable="false"
+              viewBox="0 0 15 13"
+            >
+              <path
+                d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"
+              ></path>
+            </svg>
+            <span class="govuk-pagination__link-title">{{ params.pagination.next.title }}</span>
+            <span class="govuk-visually-hidden">:</span>
+            <span class="govuk-pagination__link-label">{{ params.pagination.next.label }}</span>
+          </a>
+        </div>
+      {% endif %}
+    </nav>
 
+    <div
+      class="sticky-select-action-bar {{ "sticky-select-action-bar--fixed" if params.fixed }}"
+      role="toolbar"
+      aria-live="polite"
+      aria-label="actions"
+      aria-disabled="false"
+      {% if params.itemsDescription %}
+        data-description-singular='{{ params.itemsDescription }}'
+      {% endif %}
+      {% if params.itemsDescriptionPlural %}
+        data-description-plural='{{ params.itemsDescriptionPlural }}'
+      {% endif %}
+    >
+      <div class="govuk-width-container">
+        <div class="sticky-select-action-bar__selected-summary">
+          <span class="sticky-select-action-bar__count"></span>
+          <a class="sticky-select-action-bar__clear-link">Clear</a>
+        </div>
+        <div class="govuk-button-group">
+          {% for action in params.actions %}
+            {{
+              govukButton({
+                  href: action.href if action.href,
+                  text: action.text,
+                  classes: 'govuk-button--white',
+                  preventDoubleClick: true,
+                  attributes: {
+                      id: params.idPrefix + '-action-' + loop.index0,
+                      formaction: action.formAction,
+                      'data-max-items': action.maxItems if action.maxItems
+                  }
+              }) if action
+            }}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
 {% endmacro %}

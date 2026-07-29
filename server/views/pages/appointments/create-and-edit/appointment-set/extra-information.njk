@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
@@ -12,83 +11,91 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
-            <h1 class="govuk-heading-l">
-              Add extra information to movement slips (optional)
-            </h1>
-            <p class="govuk-body" data-qa="first-paragraph">
-              {% if not prisonerExtraInformationEnabled %}
-                Add any important information for who’s attending about how to prepare for their appointment, like something they need to bring, or do beforehand.
-              {% else %}
-                Add details about who will be attending, or other relevant appointment information which will not be shared with the attendees. Or add information the attendees need to know about their appointment, like something they need to bring or do beforehand.
-              {% endif %}
-            </p>
-            <p class="govuk-body" data-qa="second-paragraph">
-              For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.
-            </p>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session) }}
+      <h1 class="govuk-heading-l">Add extra information to movement slips (optional)</h1>
+      <p class="govuk-body" data-qa="first-paragraph">
+        {% if not prisonerExtraInformationEnabled %}
+          Add any important information for who’s attending about how to prepare for their appointment, like something
+          they need to bring, or do beforehand.
+        {% else %}
+          Add details about who will be attending, or other relevant appointment information which will not be shared
+          with the attendees. Or add information the attendees need to know about their appointment, like something they
+          need to bring or do beforehand.
+        {% endif %}
+      </p>
+      <p class="govuk-body" data-qa="second-paragraph">
+        For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra
+        information’. Staff can check appointment details in this service to read it in full.
+      </p>
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% set prisonersList = [] %}
-                {% for appointment in appointments %}
-                    {% set prisonersList = (prisonersList.push([
-                        {
-                            html: showProfileLink({
-                                firstName: appointment.prisoner.firstName,
-                                middleNames: appointment.prisoner.middleNames,
-                                lastName: appointment.prisoner.lastName,
-                                prisonerNumber: appointment.prisoner.number,
-                                inCaseLoad: appointment.prisoner.prisonCode == user.activeCaseLoadId
-                            }),
-                            classes: 'govuk-table__cell--vertical-align-top',
-                            attributes: {
-                                'data-qa': 'prisoner-info-cell'
-                            }
-                        }, {
-                            html: extraInformationHtml(appointment),
-                            classes: 'govuk-table__cell--vertical-align-top',
-                            attributes: {
-                                'data-qa': 'extra-information-cell'
-                            }
-                        }, {
-                            html: '<a href="appointment-set-extra-information/' + appointment.prisoner.number + '" class="govuk-link govuk-link--no-visited-state">' + ('Edit' if (appointment.extraInformation or (prisonerExtraInformationEnabled and appointment.prisonerExtraInformation)) else 'Add') + ' extra information</a>',
-                            classes: 'govuk-!-text-align-right govuk-table__cell--vertical-align-top',
-                            attributes: {
-                                'data-qa': 'actions-cell'
-                            }
-                        }
-                    ]), prisonersList) %}
-                {% endfor %}
-
-                {{ govukTable({
+        {% set prisonersList = [] %}
+        {% for appointment in appointments %}
+          {%
+            set prisonersList = (prisonersList.push([
+                {
+                    html: showProfileLink({
+                        firstName: appointment.prisoner.firstName,
+                        middleNames: appointment.prisoner.middleNames,
+                        lastName: appointment.prisoner.lastName,
+                        prisonerNumber: appointment.prisoner.number,
+                        inCaseLoad: appointment.prisoner.prisonCode == user.activeCaseLoadId
+                    }),
+                    classes: 'govuk-table__cell--vertical-align-top',
                     attributes: {
-                        'data-qa': 'extra-information-table'
-                    },
-                    head: [
-                        {
-                            text: "Name",
-                            classes: 'govuk-table__header'
-                        }, {
-                            html: '<span class="govuk-visually-hidden">Extra information</span>',
-                            classes: 'govuk-!-width-one-half'
-                        }, {
-                            html: '<span class="govuk-visually-hidden">Actions</span>'
-                        }
-                    ],
-                    rows: prisonersList
-                }) }}
+                        'data-qa': 'prisoner-info-cell'
+                    }
+                }, {
+                    html: extraInformationHtml(appointment),
+                    classes: 'govuk-table__cell--vertical-align-top',
+                    attributes: {
+                        'data-qa': 'extra-information-cell'
+                    }
+                }, {
+                    html: '<a href="appointment-set-extra-information/' + appointment.prisoner.number + '" class="govuk-link govuk-link--no-visited-state">' + ('Edit' if (appointment.extraInformation or (prisonerExtraInformationEnabled and appointment.prisonerExtraInformation)) else 'Add') + ' extra information</a>',
+                    classes: 'govuk-!-text-align-right govuk-table__cell--vertical-align-top',
+                    attributes: {
+                        'data-qa': 'actions-cell'
+                    }
+                }
+            ]), prisonersList)
+          %}
+        {% endfor %}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                </div>
-            </form>
+        {{
+          govukTable({
+              attributes: {
+                  'data-qa': 'extra-information-table'
+              },
+              head: [
+                  {
+                      text: "Name",
+                      classes: 'govuk-table__header'
+                  }, {
+                      html: '<span class="govuk-visually-hidden">Extra information</span>',
+                      classes: 'govuk-!-width-one-half'
+                  }, {
+                      html: '<span class="govuk-visually-hidden">Actions</span>'
+                  }
+              ],
+              rows: prisonersList
+          })
+        }}
+
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}
 
 {% macro extraInformationHtml(appointment) %}

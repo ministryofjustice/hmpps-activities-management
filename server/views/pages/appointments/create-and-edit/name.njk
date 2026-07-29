@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
@@ -12,56 +11,62 @@
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for category in categories %}
-    {% set options = (options.push( { value: category.code, text: category.description } ), options) %}
+  {% set options = (options.push( { value: category.code, text: category.description } ), options) %}
 {% endfor %}
 
 {% block meta %}
-    <meta name="autocompleteElements" content="categoryCode"/>
+  <meta name="autocompleteElements" content="categoryCode" />
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukSelect({
-                    id: "categoryCode",
-                    name: "categoryCode",
-                    type: "search",
-                    label: {
-                        text: ("What are the appointments?" if session.appointmentJourney.type == AppointmentType.SET else "What’s the appointment?"),
-                        classes: "govuk-label--l",
-                        isPageHeading: true
-                    },
-                    hint: {
-                        text: "Start typing the appointment name and select from the list."
-                    },
-                    errorMessage: validationErrors | findError('categoryCode'),
-                    items: options,
-                    value: formResponses.categoryCode or session.appointmentJourney.category.code
-                }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session) }}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          govukSelect({
+              id: "categoryCode",
+              name: "categoryCode",
+              type: "search",
+              label: {
+                  text: ("What are the appointments?" if session.appointmentJourney.type == AppointmentType.SET else "What’s the appointment?"),
+                  classes: "govuk-label--l",
+                  isPageHeading: true
+              },
+              hint: {
+                  text: "Start typing the appointment name and select from the list."
+              },
+              errorMessage: validationErrors | findError('categoryCode'),
+              items: options,
+              value: formResponses.categoryCode or session.appointmentJourney.category.code
+          })
+        }}
 
-                {{ characterCountInput({
-                    id: "customName",
-                    name: "customName",
-                    label: {
-                        text: "Add an optional custom name",
-                        classes: "govuk-label--m"
-                    },
-                    hint: {
-                        text: ("Use the custom name to add detail about what the appointments are for. It will be displayed in this service and on unlock lists and movement slips." if session.appointmentJourney.type == AppointmentType.SET else "Use the custom name to add detail about what the appointment is for. It will be displayed in this service and on unlock lists and movement slips.")
-                    },
-                    classes: "govuk-input--width-20",
-                    value: formResponses.customName or session.appointmentJourney.customName,
-                    errorMessage: validationErrors | findError('customName'),
-                    maxlength: "40"
-                }) }}
+        {{
+          characterCountInput({
+              id: "customName",
+              name: "customName",
+              label: {
+                  text: "Add an optional custom name",
+                  classes: "govuk-label--m"
+              },
+              hint: {
+                  text: ("Use the custom name to add detail about what the appointments are for. It will be displayed in this service and on unlock lists and movement slips." if session.appointmentJourney.type == AppointmentType.SET else "Use the custom name to add detail about what the appointment is for. It will be displayed in this service and on unlock lists and movement slips.")
+              },
+              classes: "govuk-input--width-20",
+              value: formResponses.customName or session.appointmentJourney.customName,
+              errorMessage: validationErrors | findError('customName'),
+              maxlength: "40"
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Continue"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

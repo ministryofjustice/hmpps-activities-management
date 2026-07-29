@@ -1,9 +1,10 @@
 {% if activityCategories %}
-    {% set activityCategoriesFilters = [] %}
-    {% for category in activityCategories %}
-        {% set activityCategoriesFilters = (activityCategoriesFilters.push({value: category.code, text: category.name, checked: category.code in unlockListJourney.activityCategoriesFilters}), activityCategoriesFilters) %}
-    {% endfor %}
-    {{ govukCheckboxes({
+  {% set activityCategoriesFilters = [] %}
+  {% for category in activityCategories %}
+    {% set activityCategoriesFilters = (activityCategoriesFilters.push({value: category.code, text: category.name, checked: category.code in unlockListJourney.activityCategoriesFilters}), activityCategoriesFilters) %}
+  {% endfor %}
+  {{
+    govukCheckboxes({
         formGroup: {
             classes: "govuk-!-margin-bottom-2"
         },
@@ -17,9 +18,15 @@
             }
         },
         items: activityCategoriesFilters
-    }) }}
+    })
+  }}
 
-    <div>
-        <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="activityCategoriesFilters"></a>
-    </div>
+  <div>
+    <a
+      href="#"
+      class="govuk-link govuk-link--no-visited-state"
+      data-module="select-all-link"
+      data-checkbox-name="activityCategoriesFilters"
+    ></a>
+  </div>
 {% endif %}

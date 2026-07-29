@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
@@ -12,389 +11,405 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(createJourney) }}
-            <h1 class="govuk-heading-l">Check details for {{ createJourney.name }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ activityJourneyCaption(createJourney) }}
+      <h1 class="govuk-heading-l">Check details for {{ createJourney.name }}</h1>
 
-            <h2 class="govuk-heading-m">Activity details</h2>
-            {{ govukSummaryList({
-                attributes: { 'data-qa': 'activity-details' },
-                rows: [
-                    {
-                        key: {
-                            text: "Activity category"
-                        },
-                        value: {
-                            text: createJourney.category.name
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "category?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change category"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Activity name"
-                        },
-                        value: {
-                            text: createJourney.name
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "name?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change name"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Tier"
-                        },
-                        value: {
-                            text: tier
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "tier?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change tier"
-                                }
-                            ] if createJourney.category.code != 'SAA_NOT_IN_WORK'
-                        }
-                    } if not createJourney.outsideWork,
-                    {
-                        key: {
-                            text: "Organiser"
-                        },
-                        value: {
-                            text: organiser
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "organiser?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change organiser"
-                                }
-                            ]
-                        }
-                    } if createJourney.organiserCode,
-                    {
-                        key: {
-                            text: "Location"
-                        },
-                        value: {
-                            text: "Outside"
-                        }
-                    } if createJourney.outsideWork,
-                    {
-                        key: { text: "Record attendance" },
-                        value: { text: "Yes" if createJourney.attendanceRequired else "No"},
-                        actions: {
-                            items: [{
-                                href: "attendance-required?preserveHistory=true",
-                                text: "Change",
-                                visuallyHiddenText: "Change record attendance option"
-                            }] if not createJourney.paid
-
-                        }
-                    } if createJourney.tierCode === 'FOUNDATION' and not createJourney.outsideWork
-                ]
-            }) }}
-
-            {% if createJourney.outsideWork %}
-                <h2 class="govuk-heading-m">Pay</h2>
-            {% else %}
-                <h2 class="govuk-heading-m">Requirements and pay</h2>
-            {% endif %}
-            {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Suitable workplace risk assessment levels"
-                        },
-                        value: {
-                            text: ("Low" if createJourney.riskLevel == 'low') +
-                            ("Low and Medium" if createJourney.riskLevel == 'medium') +
-                            ("Low, Medium and High" if createJourney.riskLevel == 'high')
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "risk-level?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change risk level"
-                                }
-                            ]
-                        }
-                    } if not createJourney.outsideWork,
-                    {
-                        key: {
-                            text: "Education levels"
-                        },
-                        value: {
-                            html: educationLevelSummary(createJourney.educationLevels)
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "check-education-level?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change education levels"
-                                }
-                            ]
-                        }
-                    } if not createJourney.outsideWork,
-                    {
-                        key: {
-                            text: "Paid by"
-                        },
-                        value: {
-                            text: "The prison" if createJourney.whoPays == 'prison' else "An external employer"
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "who-pays?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "who pays for this activity"
-                                }
-                            ]
-                        }
-                    } if createJourney.outsideWork,
-                    {
-                        key: {
-                            text: "Pay rates"
-                        },
-                        value: {
-                            html: paySummary(incentiveLevelPays, createJourney.flat)
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: ("check-pay" if createJourney.paid else "pay-option") + "?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change pay rates"
-                                }
-                            ]
-                        }
-                    } if not createJourney.outsideWork or (createJourney.outsideWork and createJourney.whoPays == 'prison')
-                ]
-            }) }}
-
-            <h2 class="govuk-heading-m">Schedule and dates</h2>
-            {% set scheduleRows = [
+      <h2 class="govuk-heading-m">Activity details</h2>
+      {{
+        govukSummaryList({
+            attributes: { 'data-qa': 'activity-details' },
+            rows: [
                 {
                     key: {
-                        text: "Start date"
+                        text: "Activity category"
                     },
                     value: {
-                        text: createJourney.startDate | parseIsoDate | formatDate('do MMMM yyyy')
+                        text: createJourney.category.name
                     },
                     actions: {
                         items: [
                             {
-                                href: "start-date?preserveHistory=true",
+                                href: "category?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "change start date"
+                                visuallyHiddenText: "change category"
                             }
                         ]
                     }
                 },
                 {
                     key: {
-                        text: "End date"
+                        text: "Activity name"
                     },
                     value: {
-                        text: createJourney.endDate | parseIsoDate | formatDate('do MMMM yyyy') if createJourney.endDate else 'Not set'
+                        text: createJourney.name
                     },
                     actions: {
                         items: [
                             {
-                                href: "remove-end-date" if createJourney.endDate else "end-date?preserveHistory=true",
+                                href: "name?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "change end date"
+                                visuallyHiddenText: "change name"
                             }
                         ]
                     }
                 },
                 {
                     key: {
-                        text: "Repeats"
+                        text: "Tier"
                     },
                     value: {
-                        text: createJourney.scheduleWeeks + ' weekly' if createJourney.scheduleWeeks > 1 else 'Weekly'
+                        text: tier
                     },
                     actions: {
                         items: [
                             {
-                                href: "schedule-frequency?preserveHistory=true",
+                                href: "tier?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "change schedule frequency"
+                                visuallyHiddenText: "change tier"
+                            }
+                        ] if createJourney.category.code != 'SAA_NOT_IN_WORK'
+                    }
+                } if not createJourney.outsideWork,
+                {
+                    key: {
+                        text: "Organiser"
+                    },
+                    value: {
+                        text: organiser
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "organiser?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change organiser"
                             }
                         ]
                     }
-                }
-            ] %}
-            {% for week, slots in slots %}
-                {% set scheduleRows = (scheduleRows.push(
-                    {
-                        key: {
-                        text: 'Week ' + week
+                } if createJourney.organiserCode,
+                {
+                    key: {
+                        text: "Location"
                     },
-                        value: { html: daysAndCustomTimes(slots) },
-                        actions: {
+                    value: {
+                        text: "Outside"
+                    }
+                } if createJourney.outsideWork,
+                {
+                    key: { text: "Record attendance" },
+                    value: { text: "Yes" if createJourney.attendanceRequired else "No"},
+                    actions: {
                         items: [{
-                            href: "days-and-times/" + week + "?preserveHistory=true",
+                            href: "attendance-required?preserveHistory=true",
                             text: "Change",
-                            visuallyHiddenText: "Change schedule"
-                        }]
+                            visuallyHiddenText: "Change record attendance option"
+                        }] if not createJourney.paid
+
                     }
-                    }
-                ), scheduleRows) %}
-            {% endfor %}
-            {% if not createJourney.outsideWork %}
-                {% set scheduleRows = (scheduleRows.push(
-                    {
-                        key: { text: "Runs on bank holidays" },
-                        value: { html: runsOnBankHolidays(createJourney.runsOnBankHoliday, createJourney.hasAtLeastOneValidDay) },
-                        actions: {
-                            items: [{
-                                href: "bank-holiday-option?preserveHistory=true",
+                } if createJourney.tierCode === 'FOUNDATION' and not createJourney.outsideWork
+            ]
+        })
+      }}
+
+      {% if createJourney.outsideWork %}
+        <h2 class="govuk-heading-m">Pay</h2>
+      {% else %}
+        <h2 class="govuk-heading-m">Requirements and pay</h2>
+      {% endif %}
+      {{
+        govukSummaryList({
+            rows: [
+                {
+                    key: {
+                        text: "Suitable workplace risk assessment levels"
+                    },
+                    value: {
+                        text: ("Low" if createJourney.riskLevel == 'low') +
+                        ("Low and Medium" if createJourney.riskLevel == 'medium') +
+                        ("Low, Medium and High" if createJourney.riskLevel == 'high')
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "risk-level?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "Change bank holiday option"
-                            }] if createJourney.hasAtLeastOneValidDay
-                        }
+                                visuallyHiddenText: "change risk level"
+                            }
+                        ]
                     }
-                ), scheduleRows) %}
-            {% endif %}
-
-            {{ govukSummaryList({
-                rows: scheduleRows
-            }) }}
-
-            {% if createJourney.outsideWork %}
-                <h2 class="govuk-heading-m">Capacity</h2>
-                {{ govukSummaryList({
-                    rows: [
-                        {
-                            key: {
-                                text: "Capacity"
-                            },
-                            value: {
-                                text: createJourney.capacity
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "capacity?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "change capacity"
-                                    }
-                                ]
+                } if not createJourney.outsideWork,
+                {
+                    key: {
+                        text: "Education levels"
+                    },
+                    value: {
+                        html: educationLevelSummary(createJourney.educationLevels)
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "check-education-level?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change education levels"
                             }
+                        ]
+                    }
+                } if not createJourney.outsideWork,
+                {
+                    key: {
+                        text: "Paid by"
+                    },
+                    value: {
+                        text: "The prison" if createJourney.whoPays == 'prison' else "An external employer"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "who-pays?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "who pays for this activity"
+                            }
+                        ]
+                    }
+                } if createJourney.outsideWork,
+                {
+                    key: {
+                        text: "Pay rates"
+                    },
+                    value: {
+                        html: paySummary(incentiveLevelPays, createJourney.flat)
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: ("check-pay" if createJourney.paid else "pay-option") + "?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change pay rates"
+                            }
+                        ]
+                    }
+                } if not createJourney.outsideWork or (createJourney.outsideWork and createJourney.whoPays == 'prison')
+            ]
+        })
+      }}
+
+      <h2 class="govuk-heading-m">Schedule and dates</h2>
+      {%
+        set scheduleRows = [
+            {
+                key: {
+                    text: "Start date"
+                },
+                value: {
+                    text: createJourney.startDate | parseIsoDate | formatDate('do MMMM yyyy')
+                },
+                actions: {
+                    items: [
+                        {
+                            href: "start-date?preserveHistory=true",
+                            text: "Change",
+                            visuallyHiddenText: "change start date"
                         }
                     ]
-                }) }}
-            {% else %}
-                <h2 class="govuk-heading-m">Location and capacity</h2>
-                {{ govukSummaryList({
-                    rows: [
+                }
+            },
+            {
+                key: {
+                    text: "End date"
+                },
+                value: {
+                    text: createJourney.endDate | parseIsoDate | formatDate('do MMMM yyyy') if createJourney.endDate else 'Not set'
+                },
+                actions: {
+                    items: [
                         {
-                            key: {
-                                text: "Location"
-                            },
-                            value: {
-                                text: showLocation(user.externalActivitiesRolledOut, createJourney)
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "location?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "change location"
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            key: {
-                                text: "Capacity"
-                            },
-                            value: {
-                                text: createJourney.capacity
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "capacity?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "change capacity"
-                                    }
-                                ]
-                            }
+                            href: "remove-end-date" if createJourney.endDate else "end-date?preserveHistory=true",
+                            text: "Change",
+                            visuallyHiddenText: "change end date"
                         }
                     ]
-                }) }}
-            {% endif %}
+                }
+            },
+            {
+                key: {
+                    text: "Repeats"
+                },
+                value: {
+                    text: createJourney.scheduleWeeks + ' weekly' if createJourney.scheduleWeeks > 1 else 'Weekly'
+                },
+                actions: {
+                    items: [
+                        {
+                            href: "schedule-frequency?preserveHistory=true",
+                            text: "Change",
+                            visuallyHiddenText: "change schedule frequency"
+                        }
+                    ]
+                }
+            }
+        ]
+      %}
+      {% for week, slots in slots %}
+        {%
+          set scheduleRows = (scheduleRows.push(
+              {
+                  key: {
+                  text: 'Week ' + week
+              },
+                  value: { html: daysAndCustomTimes(slots) },
+                  actions: {
+                  items: [{
+                      href: "days-and-times/" + week + "?preserveHistory=true",
+                      text: "Change",
+                      visuallyHiddenText: "Change schedule"
+                  }]
+              }
+              }
+          ), scheduleRows)
+        %}
+      {% endfor %}
+      {% if not createJourney.outsideWork %}
+        {%
+          set scheduleRows = (scheduleRows.push(
+              {
+                  key: { text: "Runs on bank holidays" },
+                  value: { html: runsOnBankHolidays(createJourney.runsOnBankHoliday, createJourney.hasAtLeastOneValidDay) },
+                  actions: {
+                      items: [{
+                          href: "bank-holiday-option?preserveHistory=true",
+                          text: "Change",
+                          visuallyHiddenText: "Change bank holiday option"
+                      }] if createJourney.hasAtLeastOneValidDay
+                  }
+              }
+          ), scheduleRows)
+        %}
+      {% endif %}
 
+      {{
+        govukSummaryList({
+            rows: scheduleRows
+        })
+      }}
 
-            <form method="POST" data-module="form-spinner" data-loading-text="Creating activity">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      {% if createJourney.outsideWork %}
+        <h2 class="govuk-heading-m">Capacity</h2>
+        {{
+          govukSummaryList({
+              rows: [
+                  {
+                      key: {
+                          text: "Capacity"
+                      },
+                      value: {
+                          text: createJourney.capacity
+                      },
+                      actions: {
+                          items: [
+                              {
+                                  href: "capacity?preserveHistory=true",
+                                  text: "Change",
+                                  visuallyHiddenText: "change capacity"
+                              }
+                          ]
+                      }
+                  }
+              ]
+          })
+        }}
+      {% else %}
+        <h2 class="govuk-heading-m">Location and capacity</h2>
+        {{
+          govukSummaryList({
+              rows: [
+                  {
+                      key: {
+                          text: "Location"
+                      },
+                      value: {
+                          text: showLocation(user.externalActivitiesRolledOut, createJourney)
+                      },
+                      actions: {
+                          items: [
+                              {
+                                  href: "location?preserveHistory=true",
+                                  text: "Change",
+                                  visuallyHiddenText: "change location"
+                              }
+                          ]
+                      }
+                  },
+                  {
+                      key: {
+                          text: "Capacity"
+                      },
+                      value: {
+                          text: createJourney.capacity
+                      },
+                      actions: {
+                          items: [
+                              {
+                                  href: "capacity?preserveHistory=true",
+                                  text: "Change",
+                                  visuallyHiddenText: "change capacity"
+                              }
+                          ]
+                      }
+                  }
+              ]
+          })
+        }}
+      {% endif %}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Create activity",
-                        preventDoubleClick: true
-                    }) }}
-                </div>
-            </form>
+      <form method="POST" data-module="form-spinner" data-loading-text="Creating activity">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Create activity",
+                preventDoubleClick: true
+            })
+          }}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}
 
 {% macro paySummary(incentiveLevelPays) %}
-    {% if createJourney.paid %}
-        {% if incentiveLevelPays | length or createJourney.flat | length %}
-            {% for incentiveLevelPay in incentiveLevelPays %}
-                <div class="govuk-!-margin-bottom-2">
-                    <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
-                    {% for pay in incentiveLevelPay.pays %}
-                        <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-            {% if createJourney.flat | length %}
-                <div class="govuk-!-margin-bottom-2">
-                    <div class="govuk-!-font-weight-bold">Flat rate pay</div>
-                    {% for flatRate in createJourney.flat %}
-                        <div>{{ flatRate.prisonPayBand.alias }}: {{ flatRate.rate | toMoney }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% else %}
-            None added yet
-        {% endif %}
+  {% if createJourney.paid %}
+    {% if incentiveLevelPays | length or createJourney.flat | length %}
+      {% for incentiveLevelPay in incentiveLevelPays %}
+        <div class="govuk-!-margin-bottom-2">
+          <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
+          {% for pay in incentiveLevelPay.pays %}
+            <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      {% if createJourney.flat | length %}
+        <div class="govuk-!-margin-bottom-2">
+          <div class="govuk-!-font-weight-bold">Flat rate pay</div>
+          {% for flatRate in createJourney.flat %}
+            <div>{{ flatRate.prisonPayBand.alias }}: {{ flatRate.rate | toMoney }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
     {% else %}
-        People are not paid for this activity
+      None added yet
     {% endif %}
+  {% else %}
+    People are not paid for this activity
+  {% endif %}
 {% endmacro %}
 
 {% macro educationLevelSummary(educationLevels) %}
-    {% for educationLevel in educationLevels %}
-        <div>{{ educationLevel.studyAreaDescription }}: {{ educationLevel.educationLevelDescription }}</div>
-    {% else %}
-        None set
-    {% endfor %}
+  {% for educationLevel in educationLevels %}
+    <div>{{ educationLevel.studyAreaDescription }}: {{ educationLevel.educationLevelDescription }}</div>
+  {% else %}
+    None set
+  {% endfor %}
 {% endmacro %}
-

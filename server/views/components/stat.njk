@@ -1,20 +1,31 @@
 {% macro stat(params) %}
-    {% if params.number > 0 or params.forceDisplay %}
-        <div class="{% if params.width %} {{ params.width }} {% else %} govuk-grid-column-one-quarter {% endif %} govuk-!-margin-bottom-3" {% if params.dataQa %} data-qa="{{ params.dataQa }}" {% endif %}>
-            <div class="govuk-hint govuk-!-margin-bottom-0">{{ params.heading }}</div>
-            <span class="govuk-heading-xl govuk-!-margin-0 govuk-!-padding-0 ">
-                <span>{{ params.number }}</span>
-                {% if params.visuallyHiddenText %}<span class="govuk-visually-hidden">{{ params.visuallyHiddenText }}</span>{% endif %}
-                {% if params.percentage %}<span class="govuk-tag govuk-tag--grey govuk-!-display-inline-block">{{ params.percentage }}%</span>{% endif %}
-            </span>
+  {% if params.number > 0 or params.forceDisplay %}
+    <div
+      class="{% if params.width %}{{ params.width }}{% else %}govuk-grid-column-one-quarter{% endif %} govuk-!-margin-bottom-3"
+      {% if params.dataQa %}data-qa="{{ params.dataQa }}"{% endif %}
+    >
+      <div class="govuk-hint govuk-!-margin-bottom-0">{{ params.heading }}</div>
+      <span class="govuk-heading-xl govuk-!-margin-0 govuk-!-padding-0 ">
+        <span>{{ params.number }}</span>
+        {% if params.visuallyHiddenText %}
+          <span class="govuk-visually-hidden">{{ params.visuallyHiddenText }}</span>
+        {% endif %}
+        {% if params.percentage %}
+          <span class="govuk-tag govuk-tag--grey govuk-!-display-inline-block">{{ params.percentage }}%</span>
+        {% endif %}
+      </span>
 
-            {% if params.link %}
-                <p class="govuk-!-margin-bottom-0">
-                    <a href="{{ params.link.href }}" data-qa="{{ params.link.dataQa }}" class="govuk-!-font-weight-bold govuk-link govuk-link--no-visited-state">
-                        {{ params.link.text }}
-                    </a>
-                </p>
-            {% endif %}
-        </div>
-    {% endif %}
+      {% if params.link %}
+        <p class="govuk-!-margin-bottom-0">
+          <a
+            href="{{ params.link.href }}"
+            data-qa="{{ params.link.dataQa }}"
+            class="govuk-!-font-weight-bold govuk-link govuk-link--no-visited-state"
+          >
+            {{ params.link.text }}
+          </a>
+        </p>
+      {% endif %}
+    </div>
+  {% endif %}
 {% endmacro %}

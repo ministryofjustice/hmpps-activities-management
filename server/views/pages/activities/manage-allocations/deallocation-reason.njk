@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
@@ -15,96 +14,114 @@
 {% set caption = allocateJourney.activity.name if not deallocateAfterAllocationPath else "Take " + allocateJourney.inmate.prisonerName + " off " + activityName %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ caption }}</span>
-            {% if deallocateAfterAllocationPath %}
-                {% if multipleActivitiesToRemove %}
-                    <h1 class="govuk-heading-l">Why are you taking them off {{ allocateJourney.activitiesToDeallocate | length }} activities?</h1>
-                {% else %}
-                    <h1 class="govuk-heading-l">Why are you taking them off this activity?</h1>
-                {% endif %}
-            {% else %}
-                {% if allocateJourney.inmates | length == 1 %}
-                    <h1 class="govuk-heading-l">Why are you taking {{ allocateJourney.inmate.prisonerName }} off this activity?</h1>
-                {% else %}
-                    <h1 class="govuk-heading-l">Why are you taking {{ allocateJourney.inmates | length }} people off this activity?</h1>
-                {% endif %}
-            {% endif %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">{{ caption }}</span>
+      {% if deallocateAfterAllocationPath %}
+        {% if multipleActivitiesToRemove %}
+          <h1 class="govuk-heading-l">
+            Why are you taking them off {{ allocateJourney.activitiesToDeallocate | length }} activities?
+          </h1>
+        {% else %}
+          <h1 class="govuk-heading-l">Why are you taking them off this activity?</h1>
+        {% endif %}
+      {% else %}
+        {% if allocateJourney.inmates | length == 1 %}
+          <h1 class="govuk-heading-l">
+            Why are you taking {{ allocateJourney.inmate.prisonerName }} off this activity?
+          </h1>
+        {% else %}
+          <h1 class="govuk-heading-l">
+            Why are you taking {{ allocateJourney.inmates | length }} people off this activity?
+          </h1>
+        {% endif %}
+      {% endif %}
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% if deallocateAfterAllocationPath and multipleActivitiesToRemove %}
-                    {% set activityNamesIfMultiple = allocateJourney.activitiesToDeallocate | flatMap('name') %}
-                    {% set last_item = activityNamesIfMultiple | last %}
-                    {% set other_items = activityNamesIfMultiple | sliceArray(0, -1) %} 
-                    {% set list = other_items | join(', ') +" and "+ last_item %}
-                    {{ govukInsetText({
-                        text: "You’re removing " + allocateJourney.inmate.prisonerName +" from " + list
-                    }) }}
-                {% endif %}
+        {% if deallocateAfterAllocationPath and multipleActivitiesToRemove %}
+          {% set activityNamesIfMultiple = allocateJourney.activitiesToDeallocate | flatMap('name') %}
+          {% set last_item = activityNamesIfMultiple | last %}
+          {% set other_items = activityNamesIfMultiple | sliceArray(0, -1) %}
+          {% set list = other_items | join(', ') +" and "+ last_item %}
+          {{
+            govukInsetText({
+                text: "You’re removing " + allocateJourney.inmate.prisonerName +" from " + list
+            })
+          }}
+        {% endif %}
 
-                {% set options = [] %}
-                {% for reason in deallocationReasons %}
-                    {% set options = (options.push(
-                        {
-                            value: reason.code,
-                            text: reason.description,
-                            checked: formResponses.deallocationReason == reason.code or allocateJourney.deallocationReason == reason.code
-                        }
-                    ), options) %}
-                {% endfor %}
+        {% set options = [] %}
+        {% for reason in deallocationReasons %}
+          {%
+            set options = (options.push(
+                {
+                    value: reason.code,
+                    text: reason.description,
+                    checked: formResponses.deallocationReason == reason.code or allocateJourney.deallocationReason == reason.code
+                }
+            ), options)
+          %}
+        {% endfor %}
 
-                {{ govukRadios({
-                    fieldset: {
-                        legend: {
-                            text: "Select a deallocation reason",
-                            classes: "govuk-visually-hidden"
-                        }
-                    },
-                    name: "deallocationReason",
-                    errorMessage: validationErrors | findError('deallocationReason'),
-                    items: options
-                }) }}
+        {{
+          govukRadios({
+              fieldset: {
+                  legend: {
+                      text: "Select a deallocation reason",
+                      classes: "govuk-visually-hidden"
+                  }
+              },
+              name: "deallocationReason",
+              errorMessage: validationErrors | findError('deallocationReason'),
+              items: options
+          })
+        }}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({ 
-                        text: "Continue",
-                        preventDoubleClick: true
-                    }) }}
-                    {% if not session.req.query.preserveHistory %}
-                        <a class="govuk-link" href="cancel">Cancel</a>
-                    {% endif %}
-                </div>
-
-                {% if session.req.routeContext.mode == 'remove' and allocateJourney.inmates | length > 1 %}
-                    {% set rows = [] %}
-                    {% for inmate in allocateJourney.inmates %}
-                        {% set rows = (rows.push([
-                            {
-                                text: inmate.prisonerName
-                            },
-                            {
-                                text: inmate.prisonerNumber
-                            },
-                            {
-                                text: statusBasedCellLocation(inmate.cellLocation, inmate.status, inmate.prisonCode == user.activeCaseLoadId)
-                            }
-                        ]), rows) %}
-                    {% endfor %}
-
-                    {{ govukDetails({
-                        summaryText: "People you are taking off " + allocateJourney.activity.name,
-                        html: govukTable({
-                            caption: "People you are taking off " + allocateJourney.activity.name,
-                            captionClasses: "govuk-visually-hidden",
-                            classes: 'govuk-!-width-two-thirds',
-                            rows: rows
-                        })
-                    }) }}
-                {% endif %}
-            </form>
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Continue",
+                preventDoubleClick: true
+            })
+          }}
+          {% if not session.req.query.preserveHistory %}
+            <a class="govuk-link" href="cancel">Cancel</a>
+          {% endif %}
         </div>
+
+        {% if session.req.routeContext.mode == 'remove' and allocateJourney.inmates | length > 1 %}
+          {% set rows = [] %}
+          {% for inmate in allocateJourney.inmates %}
+            {%
+              set rows = (rows.push([
+                  {
+                      text: inmate.prisonerName
+                  },
+                  {
+                      text: inmate.prisonerNumber
+                  },
+                  {
+                      text: statusBasedCellLocation(inmate.cellLocation, inmate.status, inmate.prisonCode == user.activeCaseLoadId)
+                  }
+              ]), rows)
+            %}
+          {% endfor %}
+
+          {{
+            govukDetails({
+                summaryText: "People you are taking off " + allocateJourney.activity.name,
+                html: govukTable({
+                    caption: "People you are taking off " + allocateJourney.activity.name,
+                    captionClasses: "govuk-visually-hidden",
+                    classes: 'govuk-!-width-two-thirds',
+                    rows: rows
+                })
+            })
+          }}
+        {% endif %}
+      </form>
     </div>
+  </div>
 {% endblock %}

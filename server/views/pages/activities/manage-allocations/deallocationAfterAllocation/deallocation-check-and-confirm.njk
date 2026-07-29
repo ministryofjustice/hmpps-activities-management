@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
@@ -11,85 +10,94 @@
 {% set deallocateActivityHeadingText = allocateJourney.activity.name if allocateJourney.activity else activityNumber + " activities" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Take {{ allocateJourney.inmate.prisonerName }} off {{ deallocateActivityCaptionText }}</span>
-            <h1 class="govuk-heading-l">Check and confirm taking {{ allocateJourney.inmate.prisonerName }} off {{ deallocateActivityHeadingText }}</h1>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl"
+        >Take {{ allocateJourney.inmate.prisonerName }} off {{ deallocateActivityCaptionText }}</span
+      >
+      <h1 class="govuk-heading-l">
+        Check and confirm taking {{ allocateJourney.inmate.prisonerName }} off {{ deallocateActivityHeadingText }}
+      </h1>
     </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {% set prisonerDetailsHtml %}
-                <ul class="govuk-list">
-                    <li>{{ allocateJourney.inmate.prisonerName }}</li>
-                    <li>{{ allocateJourney.inmate.prisonerNumber }}</li>
-                    <li>{{ statusBasedCellLocation(allocateJourney.inmate.cellLocation, allocateJourney.inmate.status, allocateJourney.inmate.prisonCode == user.activeCaseLoadId) }}</li>
-                </ul>
-            {% endset %}
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% set prisonerDetailsHtml %}
+        <ul class="govuk-list">
+          <li>{{ allocateJourney.inmate.prisonerName }}</li>
+          <li>{{ allocateJourney.inmate.prisonerNumber }}</li>
+          <li>
+            {{ statusBasedCellLocation(allocateJourney.inmate.cellLocation, allocateJourney.inmate.status, allocateJourney.inmate.prisonCode == user.activeCaseLoadId) }}
+          </li>
+        </ul>
+      {% endset %}
 
+      {% set endDateOption = ('remove-end-date-option' if allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
+      {% set activityNamesIfMultiple = allocateJourney.activitiesToDeallocate | flatMap('name') | join('<br>') %}
+      {% set activityValue = { text: allocateJourney.activity.name } if allocateJourney.activity else { html: activityNamesIfMultiple } %}
 
-            {% set endDateOption = ('remove-end-date-option' if allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
-            {% set activityNamesIfMultiple = allocateJourney.activitiesToDeallocate | flatMap('name') | join('<br>') %}
-            {% set activityValue = { text: allocateJourney.activity.name } if allocateJourney.activity else { html: activityNamesIfMultiple } %}
-
-                {{ govukSummaryList({
-                    attributes: {
-                        "data-qa":"confirm-deallocation"
+      {{
+        govukSummaryList({
+            attributes: {
+                "data-qa":"confirm-deallocation"
+            },
+            rows: [
+                {
+                    key: { text: "People you're taking off" },
+                    value: { html: prisonerDetailsHtml }
+                },
+                {
+                    key: { text: "Activity" },
+                    value: activityValue
+                },
+                {
+                    key: { text: "End of allocation" },
+                    value: {
+                        text: allocateJourney.endDate | formatDate if allocateJourney.endDate
                     },
-                    rows: [
-                        {
-                            key: { text: "People you're taking off" },
-                            value: { html: prisonerDetailsHtml }
-                        },
-                        {
-                            key: { text: "Activity" },
-                            value: activityValue
-                        },
-                        {
-                            key: { text: "End of allocation" },
-                            value: {
-                                text: allocateJourney.endDate | formatDate if allocateJourney.endDate
-                            },
-                            actions: {
-                                items: [{
-                                    href: 'deallocate-after-allocation-date?preserveHistory=true',
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: "change end date"
-                                }]
+                    actions: {
+                        items: [{
+                            href: 'deallocate-after-allocation-date?preserveHistory=true',
+                            classes: 'govuk-link--no-visited-state',
+                            text: "Change",
+                            visuallyHiddenText: "change end date"
+                        }]
+                    }
+                },
+                {
+                    key: {
+                        text: "Reason for allocation ending"
+                    },
+                    value: {
+                        text: deallocationReason.description
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "reason?preserveHistory=true",
+                                classes: 'govuk-link--no-visited-state',
+                                text: "Change",
+                                visuallyHiddenText: "change deallocation reason"
                             }
-                        },
-                        {
-                            key: {
-                                text: "Reason for allocation ending"
-                            },
-                            value: {
-                                text: deallocationReason.description
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "reason?preserveHistory=true",
-                                        classes: 'govuk-link--no-visited-state',
-                                        text: "Change",
-                                        visuallyHiddenText: "change deallocation reason"
-                                    }
-                                ]
-                            }
-                        } if not activityIsUnemployment
-                    ]
-                }) }}
+                        ]
+                    }
+                } if not activityIsUnemployment
+            ]
+        })
+      }}
 
-            <form method="POST" data-module="form-spinner" data-loading-text="Removing prisoner">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <div class="govuk-button-group">
-                    {{ govukButton({ 
-                        text: "Confirm and remove",
-                        preventDoubleClick: true
-                    }) }}
-                    <a href="cancel?deallocationAfterAllocation=true" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                </div>
-            </form>
+      <form method="POST" data-module="form-spinner" data-loading-text="Removing prisoner">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Confirm and remove",
+                preventDoubleClick: true
+            })
+          }}
+          <a href="cancel?deallocationAfterAllocation=true" class="govuk-link govuk-link--no-visited-state">Cancel</a>
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

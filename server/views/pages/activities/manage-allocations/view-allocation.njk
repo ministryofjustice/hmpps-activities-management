@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
@@ -14,184 +13,192 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ allocation.activitySummary }}</span>
-            <h1 class="govuk-heading-l">Change allocation details for {{ prisonerName }} ({{ allocation.prisonerNumber }})</h1>
-        </div>
-        <div class="govuk-grid-column-two-thirds">
-        {% if not allocation.plannedSuspension %}
-            {{ govukButton({
-                text: "Suspend from this activity",
-                href: "/activities/suspensions/suspend/" + allocation.prisonerNumber + "/suspend-from?allocationIds=" + allocation.id,
-                classes: "govuk-button--secondary"
-            }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">{{ allocation.activitySummary }}</span>
+      <h1 class="govuk-heading-l">
+        Change allocation details for {{ prisonerName }} ({{ allocation.prisonerNumber }})
+      </h1>
+    </div>
+    <div class="govuk-grid-column-two-thirds">
+      {% if not allocation.plannedSuspension %}
+        {{
+          govukButton({
+              text: "Suspend from this activity",
+              href: "/activities/suspensions/suspend/" + allocation.prisonerNumber + "/suspend-from?allocationIds=" + allocation.id,
+              classes: "govuk-button--secondary"
+          })
+        }}
+      {% endif %}
+    </div>
+  </div>
+
+  {% if allocation.status == 'AUTO_SUSPENDED' %}
+    {{
+      govukWarningText({
+          text: "This prisoner has been temporarily released or transferred",
+          iconFallbackText: "Warning"
+      })
+    }}
+  {% endif %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if allocation.plannedSuspension %}
+        <h2 class="govuk-heading-m">
+          Suspension added on {{ allocation.plannedSuspension.plannedAt | parseISODate | formatDate }}
+        </h2>
+        <dl class="govuk-summary-list {{ 'govuk-!-margin-bottom-0' if suspensionCaseNote }}">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">First day of suspension</dt>
+            <dd class="govuk-summary-list__value">{{ allocation.plannedSuspension.plannedStartDate | formatDate }}</dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Last day of suspension</dt>
+            <dd class="govuk-summary-list__value">
+              {{ (allocation.plannedSuspension.plannedEndDate | formatDate) or "No end date" }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a
+                href="/activities/suspensions/unsuspend/{{ allocation.prisonerNumber }}/suspend-until?allocationIds={{ allocation.id }}"
+                class="govuk-link govuk-link--no-visited-state"
+                >End suspension</a
+              >
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row {{ 'govuk-summary-list__row--no-border' if suspensionCaseNote }}">
+            <dt class="govuk-summary-list__key">Added by</dt>
+            <dd class="govuk-summary-list__value">
+              {{ serviceUserName(userMap.get(allocation.plannedSuspension.plannedBy)) }}
+            </dd>
+          </div>
+        </dl>
+
+        {% if suspensionCaseNote %}
+          <dl class="govuk-summary-list govuk-summary-list--no-keys">
+            <div class="govuk-summary-list__row">
+              <dd class="govuk-summary-list__value">
+                {{
+                  govukDetails({
+                      summaryText: "View case note",
+                      classes: "govuk-!-margin-0",
+                      text: suspensionCaseNote.text
+                  })
+                }}
+              </dd>
+            </div>
+          </dl>
         {% endif %}
-        </div>
-    </div>
 
-    {% if allocation.status == 'AUTO_SUSPENDED' %}
-        {{ govukWarningText({
-            text: "This prisoner has been temporarily released or transferred",
-            iconFallbackText: "Warning"
-        }) }}
-    {% endif %}
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {% if allocation.plannedSuspension %}
-                <h2 class='govuk-heading-m'>Suspension added on {{ allocation.plannedSuspension.plannedAt | parseISODate | formatDate }}</h2>
-                <dl class="govuk-summary-list {{ 'govuk-!-margin-bottom-0' if suspensionCaseNote}}">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">First day of suspension</dt>
-                        <dd class="govuk-summary-list__value">{{ allocation.plannedSuspension.plannedStartDate | formatDate }}</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Last day of suspension</dt>
-                        <dd class="govuk-summary-list__value">{{ (allocation.plannedSuspension.plannedEndDate | formatDate) or "No end date" }}</dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="/activities/suspensions/unsuspend/{{ allocation.prisonerNumber }}/suspend-until?allocationIds={{ allocation.id }}" class="govuk-link govuk-link--no-visited-state">End suspension</a>
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row {{ 'govuk-summary-list__row--no-border' if suspensionCaseNote}}">
-                        <dt class="govuk-summary-list__key">Added by</dt>
-                        <dd class="govuk-summary-list__value">{{ serviceUserName(userMap.get(allocation.plannedSuspension.plannedBy)) }}</dd>
-                    </div>
-                </dl>
-
-                {% if suspensionCaseNote %}
-                    <dl class="govuk-summary-list govuk-summary-list--no-keys">
-                        <div class="govuk-summary-list__row">
-                            <dd class="govuk-summary-list__value">
-                                {{ govukDetails({
-                                    summaryText: "View case note",
-                                    classes: "govuk-!-margin-0",
-                                    text: suspensionCaseNote.text
-                                }) }}
-                            </dd>
-                        </div>
-                    </dl>
-                {% endif %}
-
-                <h2 class='govuk-heading-m'>Allocation details</h2>
+        <h2 class="govuk-heading-m">Allocation details</h2>
+      {% endif %}
+      <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">Start of allocation</dt>
+          <dd class="govuk-summary-list__value">{{ allocation.startDate | formatDate }}</dd>
+          <dd class="govuk-summary-list__actions">
+            {% if isStarted %}
+              {{
+                govukTag({
+                    text: "Started",
+                    classes: "govuk-tag--green"
+                })
+              }}
+            {% else %}
+              <a href="../edit/{{ allocation.id }}/start-date" class="govuk-link govuk-link--no-visited-state">
+                Change
+              </a>
             {% endif %}
-            <dl class="govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Start of allocation
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ allocation.startDate | formatDate }}
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        {% if isStarted %}
-                            {{ govukTag({
-                                text: "Started",
-                                classes: "govuk-tag--green"
-                            }) }}
-                        {% else %}
-                            <a href="../edit/{{ allocation.id }}/start-date"
-                               class="govuk-link govuk-link--no-visited-state">
-                                Change
-                            </a>
-                        {% endif %}
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        End of allocation
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ allocation.endDate | formatDate if allocation.endDate else "No date set " }}
-                    </dd>
-                    {% if allocation.endDate %}
-                        <dd class="govuk-summary-list__actions">
-                            <a href="../edit/{{ allocation.id }}/choose-end-date-option" data-qa="change-end-date-link"
-                               class="govuk-link govuk-link--no-visited-state">
-                                Change
-                            </a>
-                        </dd>
-                    {% endif %}
-                </div>
-                {% if allocation.endDate %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Reason for allocation ending
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {{ allocation.plannedDeallocation.plannedReason.description }}
-                        </dd>
-                    </div>
-                {% endif %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Pay rate
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ payRate(pay) }}
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        {% if activityIsPaid %}
-                        <a href="../edit/{{ allocation.id }}/pay-band"
-                            class="govuk-link govuk-link--no-visited-state">
-                            Change
-                        </a>
-                        {% endif %}
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Schedule
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        {% for week, slots in dailySlots %}
-                            {% if dailySlots | length > 1 %}
-                                <div class='govuk-heading-s govuk-!-margin-bottom-1'>
-                                    Week {{ week }}
-                                    {{ govukTag({
-                                        text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
-                                    }) if currentWeek == week }}
-                                </div>
-                            {% endif %}
-                            {{ daysAndCustomTimes(slots, false, false) }}
-                        {% endfor %}
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a href="../edit/{{ allocation.id }}/exclusions"
-                           class="govuk-link govuk-link--no-visited-state"
-                            data-qa="change-schedule-link">
-                            Change
-                        </a>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Allocated by
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ serviceUserName(userMap.get(allocation.allocatedBy)) }} on {{ allocation.allocatedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMMM yyyy \'at\' HH:mm') }}
-                    </dd>
-                </div>
-            </dl>
-            <div class="govuk-body">
-                <a href="/activities/allocation-dashboard/{{ allocation.activityId }}" class="govuk-link--no-visited-state">
-                    Go to current allocations for {{ allocation.activitySummary }}
-                </a>
-            </div>
-            <div class="govuk-body">
-                <a href="/activities/prisoner-allocations/{{ allocation.prisonerNumber }}" class="govuk-link--no-visited-state">
-                    Go to {{ prisonerName | possessive }} allocations
-                </a>
-            </div>
+          </dd>
         </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">End of allocation</dt>
+          <dd class="govuk-summary-list__value">
+            {{ allocation.endDate | formatDate if allocation.endDate else "No date set " }}
+          </dd>
+          {% if allocation.endDate %}
+            <dd class="govuk-summary-list__actions">
+              <a
+                href="../edit/{{ allocation.id }}/choose-end-date-option"
+                data-qa="change-end-date-link"
+                class="govuk-link govuk-link--no-visited-state"
+              >
+                Change
+              </a>
+            </dd>
+          {% endif %}
+        </div>
+        {% if allocation.endDate %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reason for allocation ending</dt>
+            <dd class="govuk-summary-list__value">{{ allocation.plannedDeallocation.plannedReason.description }}</dd>
+          </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">Pay rate</dt>
+          <dd class="govuk-summary-list__value">{{ payRate(pay) }}</dd>
+          <dd class="govuk-summary-list__actions">
+            {% if activityIsPaid %}
+              <a href="../edit/{{ allocation.id }}/pay-band" class="govuk-link govuk-link--no-visited-state">
+                Change
+              </a>
+            {% endif %}
+          </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">Schedule</dt>
+          <dd class="govuk-summary-list__value">
+            {% for week, slots in dailySlots %}
+              {% if dailySlots | length > 1 %}
+                <div class="govuk-heading-s govuk-!-margin-bottom-1">
+                  Week {{ week }}
+                  {{
+                    govukTag({
+                        text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
+                    }) if currentWeek == week
+                  }}
+                </div>
+              {% endif %}
+              {{ daysAndCustomTimes(slots, false, false) }}
+            {% endfor %}
+          </dd>
+          <dd class="govuk-summary-list__actions">
+            <a
+              href="../edit/{{ allocation.id }}/exclusions"
+              class="govuk-link govuk-link--no-visited-state"
+              data-qa="change-schedule-link"
+            >
+              Change
+            </a>
+          </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">Allocated by</dt>
+          <dd class="govuk-summary-list__value">
+            {{ serviceUserName(userMap.get(allocation.allocatedBy)) }} on
+            {{ allocation.allocatedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMMM yyyy \'at\' HH:mm') }}
+          </dd>
+        </div>
+      </dl>
+      <div class="govuk-body">
+        <a href="/activities/allocation-dashboard/{{ allocation.activityId }}" class="govuk-link--no-visited-state">
+          Go to current allocations for {{ allocation.activitySummary }}
+        </a>
+      </div>
+      <div class="govuk-body">
+        <a href="/activities/prisoner-allocations/{{ allocation.prisonerNumber }}" class="govuk-link--no-visited-state">
+          Go to {{ prisonerName | possessive }} allocations
+        </a>
+      </div>
     </div>
+  </div>
 {% endblock %}
 
 {% macro payRate(payBand) %}
-    {% if pay.prisonPayBand %}
-        <div>{{ pay.incentiveLevel }} incentive level:</div>
-        <div>{{ (pay.prisonPayBand.alias + ' - ' + pay.rate | toMoney) if pay else '£0' }}</div>
-    {% else %}
-        No pay rate for this activity
-    {% endif %}
+  {% if pay.prisonPayBand %}
+    <div>{{ pay.incentiveLevel }} incentive level:</div>
+    <div>{{ (pay.prisonPayBand.alias + ' - ' + pay.rate | toMoney) if pay else '£0' }}</div>
+  {% else %}
+    No pay rate for this activity
+  {% endif %}
 {% endmacro %}

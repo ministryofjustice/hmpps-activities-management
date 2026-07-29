@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
@@ -9,66 +8,76 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <h2 class="govuk-heading-l">Update a prison pay band</h2>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-l">Update a prison pay band</h2>
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% set rows = [] %}
-                {{ govukInput({
-                    id: "description",
-                    name: "description",
-                    label: {
-                        text: "Description",
-                        classes: "govuk-label--s"
-                    },
-                    disabled: true,
-                    classes: "govuk-input--width-20",
-                    errorMessage: validationErrors | findError('description'),
-                    value: prisonPayBand.description
-                }) }}
-                {{ govukInput({
-                    id: "nomisPayBand",
-                    name: "nomisPayBand",
-                    label: {
-                        text: "Nomis Pay Band",
-                        classes: "govuk-label--s"
-                    },
-                    disabled: true,
-                    classes: "govuk-input--width-2",
-                    value: prisonPayBand.nomisPayBand
-                }) }}
+        {% set rows = [] %}
+        {{
+          govukInput({
+              id: "description",
+              name: "description",
+              label: {
+                  text: "Description",
+                  classes: "govuk-label--s"
+              },
+              disabled: true,
+              classes: "govuk-input--width-20",
+              errorMessage: validationErrors | findError('description'),
+              value: prisonPayBand.description
+          })
+        }}
+        {{
+          govukInput({
+              id: "nomisPayBand",
+              name: "nomisPayBand",
+              label: {
+                  text: "Nomis Pay Band",
+                  classes: "govuk-label--s"
+              },
+              disabled: true,
+              classes: "govuk-input--width-2",
+              value: prisonPayBand.nomisPayBand
+          })
+        }}
 
-                {{ govukInput({
-                    id: "displaySequence",
-                    name: "displaySequence",
-                    label: {
-                        text: "Display Sequence",
-                        classes: "govuk-label--s"
-                    },
-                    classes: "govuk-input--width-2",
-                    errorMessage: validationErrors | findError('displaySequence'),
-                    value: formResponses.displaySequence or prisonPayBand.displaySequence
-                }) }}
+        {{
+          govukInput({
+              id: "displaySequence",
+              name: "displaySequence",
+              label: {
+                  text: "Display Sequence",
+                  classes: "govuk-label--s"
+              },
+              classes: "govuk-input--width-2",
+              errorMessage: validationErrors | findError('displaySequence'),
+              value: formResponses.displaySequence or prisonPayBand.displaySequence
+          })
+        }}
 
-                {{ govukInput({
-                    id: "alias",
-                    name: "alias",
-                    label: {
-                        text: "Alias",
-                        classes: "govuk-label--s"
-                    },
-                    classes: "govuk-input--width-20",
-                    errorMessage: validationErrors | findError('alias'),
-                    value: formResponses.alias or prisonPayBand.alias
-                }) }}
-                {{ govukButton({
-                    text: "Update",
-                    preventDoubleClick: true
-                }) }}
-            </form>
-        </div>
+        {{
+          govukInput({
+              id: "alias",
+              name: "alias",
+              label: {
+                  text: "Alias",
+                  classes: "govuk-label--s"
+              },
+              classes: "govuk-input--width-20",
+              errorMessage: validationErrors | findError('alias'),
+              value: formResponses.alias or prisonPayBand.alias
+          })
+        }}
+        {{
+          govukButton({
+              text: "Update",
+              preventDoubleClick: true
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

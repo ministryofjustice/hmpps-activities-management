@@ -7,43 +7,49 @@
 {% set hardBackLinkText = "Back to all activities, unlock and attendance tasks" %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Activities Administration</h1>
+  <h1 class="govuk-heading-l">Activities Administration</h1>
 {% endblock %}
 
 {% block content %}
-    <div class="card-group govuk-grid-row">
-        {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "href": "/activities/admin/regime",
-                    "clickable": "true",
-                    "heading": "Manage Regime Times",
-                    "description": "Create or amend site regime times.",
-                    "data-qa": "adminRegime"
-                }) }}
-            </div>
-        {% endif %}
-        {% if 'ROLE_MIGRATE_APPOINTMENTS' in user.roles %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "href": "/activities/admin/appointment-summary",
-                    "clickable": "true",
-                    "heading": "Delete Future Appointments",
-                    "description": "Deletion of future appointments.",
-                    "data-qa": "deleteAppointments"
-                }) }}
-            </div>
-        {% endif %}
-        {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "href": "/activities/admin/prison-pay-bands",
-                    "clickable": "true",
-                    "heading": "Manage Prison Pay Bands",
-                    "description": "Create or amend prison pay bands.",
-                    "data-qa": "adminPrisonPayBands"
-                }) }}
-            </div>
-        {% endif %}
-    </div>
+  <div class="card-group govuk-grid-row">
+    {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
+      <div class="govuk-grid-column-one-third card-group__item">
+        {{
+          card({
+              "href": "/activities/admin/regime",
+              "clickable": "true",
+              "heading": "Manage Regime Times",
+              "description": "Create or amend site regime times.",
+              "data-qa": "adminRegime"
+          })
+        }}
+      </div>
+    {% endif %}
+    {% if 'ROLE_MIGRATE_APPOINTMENTS' in user.roles %}
+      <div class="govuk-grid-column-one-third card-group__item">
+        {{
+          card({
+              "href": "/activities/admin/appointment-summary",
+              "clickable": "true",
+              "heading": "Delete Future Appointments",
+              "description": "Deletion of future appointments.",
+              "data-qa": "deleteAppointments"
+          })
+        }}
+      </div>
+    {% endif %}
+    {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
+      <div class="govuk-grid-column-one-third card-group__item">
+        {{
+          card({
+              "href": "/activities/admin/prison-pay-bands",
+              "clickable": "true",
+              "heading": "Manage Prison Pay Bands",
+              "description": "Create or amend prison pay bands.",
+              "data-qa": "adminPrisonPayBands"
+          })
+        }}
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}

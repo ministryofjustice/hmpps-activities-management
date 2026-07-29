@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "components/sticky-select.njk" import stickySelect %}
@@ -16,34 +15,39 @@
 {% set prisonerName = prisoner | firstNameLastName | toTitleCase %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-l">{{ prisonerName }}'s activity allocations</h1>
-            <div class="govuk-!-margin-bottom-6">
-                {{ miniProfile(prisonerProfile) }}
-            </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l">{{ prisonerName }}'s activity allocations</h1>
+      <div class="govuk-!-margin-bottom-6">{{ miniProfile(prisonerProfile) }}</div>
 
-            {% if locationStatus %}
-                <strong class="govuk-tag govuk-tag--grey no-max-width">{{ locationStatus }}</strong>
-            {% endif %}
+      {% if locationStatus %}
+        <strong class="govuk-tag govuk-tag--grey no-max-width">{{ locationStatus }}</strong>
+      {% endif %}
 
-            {% if hasNonAssociations %}
-                <div class="govuk-inset-text">
-                    <a href="/activities/prisoner-allocations/{{ prisoner.prisonerNumber }}/non-associations" class="govuk-link--no-visited-state" target="_blank">View {{ prisonerName }}'s open non-associations</a>, to check if they may come into contact with someone they must be kept apart from.
-                </div>
-            {% endif %}
+      {% if hasNonAssociations %}
+        <div class="govuk-inset-text">
+          <a
+            href="/activities/prisoner-allocations/{{ prisoner.prisonerNumber }}/non-associations"
+            class="govuk-link--no-visited-state"
+            target="_blank"
+            >View {{ prisonerName }}'s open non-associations</a
+          >, to check if they may come into contact with someone they must be kept apart from.
         </div>
+      {% endif %}
     </div>
+  </div>
 
-    {% set allocationsHtml %}
+  {% set allocationsHtml %}
     {% include 'partials/activities/allocation-dashboard/allocationsHtml.njk' %}
-    {% endset %}
+  {% endset %}
 
-    {% set prisonerWaitlistHtml %}
+
+  {% set prisonerWaitlistHtml %}
     {% include 'partials/activities/allocation-dashboard/prisonerWaitlistHtml.njk' %}
-    {% endset %}
+  {% endset %}
 
-    {{ govukTabs({
+  {{
+    govukTabs({
         classes: "govuk-tabs--borderless",
         items: [
             {
@@ -61,5 +65,6 @@
                 }
             }
         ]
-    }) }}
+    })
+  }}
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
@@ -11,66 +10,74 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Manage suspensions</span>
-            <h1 class='govuk-heading-l'>
-                {% if session.suspendJourney.allocations | length == 1 %}
-                    When should {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension from {{ session.suspendJourney.allocations[0].activityName | safe }} end?
-                {% else %}
-                    When should {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension from {{ session.suspendJourney.allocations | length }} activities end?
-                {% endif %}
-            </h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">Manage suspensions</span>
+      <h1 class="govuk-heading-l">
+        {% if session.suspendJourney.allocations | length == 1 %}
+          When should {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension from
+          {{ session.suspendJourney.allocations[0].activityName | safe }} end?
+        {% else %}
+          When should {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension from
+          {{ session.suspendJourney.allocations | length }} activities end?
+        {% endif %}
+      </h1>
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukRadios({
-                    name: "datePresetOption",
-                    errorMessage: validationErrors | findError('datePresetOption'),
-                    items: [
-                        {
-                            value: "immediately",
-                            text: "Immediately",
-                            hint: {
-                                text: "Unlock and movement lists for later today may need to be printed again."
-                            },
-                            checked: formResponses.datePresetOption == 'immediately' or session.suspendJourney.suspendUntil == now | toDateString
-                        },
-                        {
-                            value: "tomorrow",
-                            text: "At the end of today, so they can attend again from tomorrow",
-                            checked: formResponses.datePresetOption == 'tomorrow' or session.suspendJourney.suspendUntil == now | addDays(1) | toDateString
-                        },
-                        {
-                            value: "other",
-                            text: "On another date",
-                            checked: formResponses.datePresetOption == 'other' or session.suspendJourney.suspendUntil > now | addDays(1) | toDateString,
-                            conditional: {
-                                html: mojDatePicker({
-                                    id: 'date',
-                                    name: 'date',
-                                    leadingZeros: 'true',
-                                    label: {
-                                        text: 'Date',
-                                        classes: "govuk-visually-hidden"
-                                    },
-                                    hint: {
-                                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
-                                    },
-                                    classes: 'moj-datepicker--fixed-width',
-                                    errorMessage: validationErrors | findError('date'),
-                                    value: (formResponses.date | subDays(1) if formResponses.date) or (session.suspendJourney.suspendUntil | subDays(1) | formatDatePickerDate if session.suspendJourney.suspendUntil)
-                                })
-                            }
-                        }
-                    ]
-                }) }}
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          govukRadios({
+              name: "datePresetOption",
+              errorMessage: validationErrors | findError('datePresetOption'),
+              items: [
+                  {
+                      value: "immediately",
+                      text: "Immediately",
+                      hint: {
+                          text: "Unlock and movement lists for later today may need to be printed again."
+                      },
+                      checked: formResponses.datePresetOption == 'immediately' or session.suspendJourney.suspendUntil == now | toDateString
+                  },
+                  {
+                      value: "tomorrow",
+                      text: "At the end of today, so they can attend again from tomorrow",
+                      checked: formResponses.datePresetOption == 'tomorrow' or session.suspendJourney.suspendUntil == now | addDays(1) | toDateString
+                  },
+                  {
+                      value: "other",
+                      text: "On another date",
+                      checked: formResponses.datePresetOption == 'other' or session.suspendJourney.suspendUntil > now | addDays(1) | toDateString,
+                      conditional: {
+                          html: mojDatePicker({
+                              id: 'date',
+                              name: 'date',
+                              leadingZeros: 'true',
+                              label: {
+                                  text: 'Date',
+                                  classes: "govuk-visually-hidden"
+                              },
+                              hint: {
+                                  text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
+                              },
+                              classes: 'moj-datepicker--fixed-width',
+                              errorMessage: validationErrors | findError('date'),
+                              value: (formResponses.date | subDays(1) if formResponses.date) or (session.suspendJourney.suspendUntil | subDays(1) | formatDatePickerDate if session.suspendJourney.suspendUntil)
+                          })
+                      }
+                  }
+              ]
+          })
+        }}
 
-                <div class='govuk-button-group'>
-                    {{ govukButton({ text: "Continue"}) }}
-                    <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
-                </div>
-            </form>
+        <div class="govuk-button-group">
+          {{ govukButton({ text: "Continue"}) }}
+          <a
+            class="govuk-link govuk-link--no-visited-state"
+            href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}"
+            >Cancel and return to the prisoner's activities</a
+          >
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

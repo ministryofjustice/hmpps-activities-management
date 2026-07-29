@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
@@ -9,44 +8,50 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <span class="govuk-caption-l">Record activity attendance</span>
-                {{ govukRadios({
-                    name: "confirm",
-                    fieldset: {
-                        legend: {
-                            text: "Are you sure you want to reset the attendance record for " + attendee | firstNameLastName | toTitleCase + "?",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('confirm'),
-                    items: [
-                        {
-                            value: YesNo.YES,
-                            text: "Yes",
-                            checked: formResponses.confirm == YesNo.YES
-                        },
-                        {
-                            value: YesNo.NO,
-                            text: "No",
-                            checked: formResponses.confirm == YesNo.NO
-                        }
-                    ]
-                }) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <span class="govuk-caption-l">Record activity attendance</span>
+        {{
+          govukRadios({
+              name: "confirm",
+              fieldset: {
+                  legend: {
+                      text: "Are you sure you want to reset the attendance record for " + attendee | firstNameLastName | toTitleCase + "?",
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--l"
+                  }
+              },
+              errorMessage: validationErrors | findError('confirm'),
+              items: [
+                  {
+                      value: YesNo.YES,
+                      text: "Yes",
+                      checked: formResponses.confirm == YesNo.YES
+                  },
+                  {
+                      value: YesNo.NO,
+                      text: "No",
+                      checked: formResponses.confirm == YesNo.NO
+                  }
+              ]
+          })
+        }}
 
-                {{ govukInsetText({
-                  text: "The attendance record will be changed to 'not recorded yet' and this will be noted in the change history."
-                }) }}
+        {{
+          govukInsetText({
+            text: "The attendance record will be changed to 'not recorded yet' and this will be noted in the change history."
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Confirm",
-                    preventDoubleClick: true
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Confirm",
+              preventDoubleClick: true
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

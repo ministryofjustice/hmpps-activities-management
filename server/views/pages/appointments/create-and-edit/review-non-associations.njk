@@ -7,41 +7,52 @@
 {% set pageId = 'appointment-review-non-associations-page' %}
 {% set jsBackLink = true %}
 {% set pageHeading %}
-    {% if nonAssociations | length %}
-        Review {{ nonAssociations | length }} people with non-associations
-    {% else %}
-        You’ve dealt with all the non-associations between this appointment’s attendees
-    {% endif %}
+  {% if nonAssociations | length %}
+    Review {{ nonAssociations | length }} people with non-associations
+  {% else %}
+    You’ve dealt with all the non-associations between this appointment’s attendees
+  {% endif %}
 {% endset %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l">Schedule an appointment</span>
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-l">Schedule an appointment</span>
+      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-            {% if nonAssociations | length %}
-                {{ govukWarningText({
-                    text: "Check an attendee’s prisoner profile for full details of their non-associations.",
-                    iconFallbackText: "Warning"
-                }) }}
-                <p class="govuk-body" data-qa="attendee-numbers">You’re reviewing {{ nonAssociations | length }} people with non-associations out of a total of {{ attendeesTotalCount }} attendees.</p>
-                {% for attendee in nonAssociations %}
-                    {{ nonAssociationsSummaryCardWithTable(attendee) }}
-                {% endfor %}
-            {% else %}
-                <p class="govuk-body" data-qa="remaining-attendees">There {% if attendeesTotalCount === 1 %}is one attendee {% else %}are {{ attendeesTotalCount }} attendees{% endif %} remaining on the appointment list.</p>
-            {% endif %}
+      {% if nonAssociations | length %}
+        {{
+          govukWarningText({
+              text: "Check an attendee’s prisoner profile for full details of their non-associations.",
+              iconFallbackText: "Warning"
+          })
+        }}
+        <p class="govuk-body" data-qa="attendee-numbers">
+          You’re reviewing {{ nonAssociations | length }} people with non-associations out of a total of
+          {{ attendeesTotalCount }} attendees.
+        </p>
+        {% for attendee in nonAssociations %}
+          {{ nonAssociationsSummaryCardWithTable(attendee) }}
+        {% endfor %}
+      {% else %}
+        <p class="govuk-body" data-qa="remaining-attendees">
+          There
+          {% if attendeesTotalCount === 1 %}is one attendee{% else %}are {{ attendeesTotalCount }} attendees{% endif %}
+          remaining on the appointment list.
+        </p>
+      {% endif %}
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                <input type="hidden" name="nonAssociationsRemainingCount" value="{{  nonAssociations | length }}"/>
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                            text: "Continue"
-                        }) }}
-                </div>
-            </form>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="nonAssociationsRemainingCount" value="{{ nonAssociations | length }}" />
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}

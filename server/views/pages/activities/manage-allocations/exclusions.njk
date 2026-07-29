@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
@@ -11,96 +10,111 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ allocateJourney.activity.name | safe }}</span>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">{{ allocateJourney.activity.name | safe }}</span>
 
-                <h1 class="govuk-heading-l">Change {{ prisonerName | safe }}'s scheduled sessions for this activity</h1>
+      <h1 class="govuk-heading-l">Change {{ prisonerName | safe }}'s scheduled sessions for this activity</h1>
 
-            {% if session.req.routeContext.mode == 'create' %}
-                <p class='govuk-body'>Unselect a session to modify {{ prisonerName | safe }} out.</p>
-            {% else %}
-                <p class='govuk-body'>Unselect a session to modify {{ prisonerName | safe }} out.</p>
-                <p class='govuk-body'>If they are already modified out of a session, select it to add them back in.</p>
-            {% endif %}
+      {% if session.req.routeContext.mode == 'create' %}
+        <p class="govuk-body">Unselect a session to modify {{ prisonerName | safe }} out.</p>
+      {% else %}
+        <p class="govuk-body">Unselect a session to modify {{ prisonerName | safe }} out.</p>
+        <p class="govuk-body">If they are already modified out of a session, select it to add them back in.</p>
+      {% endif %}
 
-            {% if disabledSlotsExist %}
-                {{ govukInsetText({
-                    text: "Sessions that run in both weeks cannot be edited."
-                }) }}
-            {% endif %}
+      {% if disabledSlotsExist %}
+        {{
+          govukInsetText({
+              text: "Sessions that run in both weeks cannot be edited."
+          })
+        }}
+      {% endif %}
 
-          {% if (session.req.routeContext.mode == 'edit' or session.req.routeContext.mode == 'exclude') and allocationHasStarted %}
-          {{ govukDetails({
-            summaryText: "Adding sessions for people to attend today",
-            html: "If you add a session happening today, you can choose if you want the prisoner to attend today or from the next time the session runs. </br></br>
-You cannot modify people of sessions already scheduled for today. You’ll need to mark that the prisoner did not attend instead."
-          }) }}
-          {% endif %}
-
-        </div>
-        <div class="govuk-grid-column-full">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-                <div class="govuk-grid-row">
-                {% for week in weeks %}
-                    <div class="govuk-grid-column-one-half">
-                    {% if weeks.length > 1 %}
-                        <h2 class="govuk-heading-l govuk-!-margin-bottom-6">
-                            Week {{ week.weekNumber }}
-                            {{ govukTag({
-                                text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
-                            }) if week.currentWeek }}
-                        </h2>
-                    {% endif %}
-                    {% for weekDay in week.weekDays %}
-                        <div>
-                            {% if weekDay.slots | length %}
-                                {% set items = [] %}
-                                {% for slot in weekDay.slots %}
-                                    {% if slot.disabled %}
-                                        <input type='hidden' name='week{{ week.weekNumber }}[{{ weekDay.day | lower }}]' value='{{ slot.timeSlot }}'/>
-                                    {% endif %}
-                                    {% set items = items.concat(
-                                        {
-                                            value: slot.timeSlot,
-                                            text: slot.timeSlot + ' (' + slot.startTime + ' to ' + slot.endTime + ')',
-                                            checked: not slot.excluded,
-                                            disabled: slot.disabled
-                                        }
-                                    ) %}
-                                {% endfor %}
-
-                                {{ govukCheckboxes({
-                                    name: "week" + week.weekNumber + "[" + weekDay.day | lower + "]",
-                                    fieldset: {
-                                        legend: {
-                                            text: weekDay.day | toTitleCase,
-                                            classes: "govuk-fieldset__legend--m"
-                                        }
-                                    },
-                                    items: items
-                                }) }}
-                            {% else %}
-                                <span class='govuk-heading-m'>{{ weekDay.day | toTitleCase }}</span>
-                                <p class='govuk-body'>Not scheduled to run</p>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                    </div>
-                {% endfor %}
-                </div>
-
-                <div class="govuk-button-group govuk-!-margin-top-6">
-                    {{ govukButton({
-                        text: "Continue"
-                    }) }}
-                    {% if session.req.routeContext.mode == 'create' and not session.req.query.preserveHistory %}
-                        <a class="govuk-link" href="cancel">Cancel</a>
-                    {% endif %}
-                </div>
-            </form>
-        </div>
+      {% if (session.req.routeContext.mode == 'edit' or session.req.routeContext.mode == 'exclude') and allocationHasStarted %}
+        {{
+          govukDetails({
+                      summaryText: "Adding sessions for people to attend today",
+                      html: "If you add a session happening today, you can choose if you want the prisoner to attend today or from the next time the session runs. </br></br>
+          You cannot modify people of sessions already scheduled for today. You’ll need to mark that the prisoner did not attend instead."
+                    })
+        }}
+      {% endif %}
     </div>
+    <div class="govuk-grid-column-full">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        <div class="govuk-grid-row">
+          {% for week in weeks %}
+            <div class="govuk-grid-column-one-half">
+              {% if weeks.length > 1 %}
+                <h2 class="govuk-heading-l govuk-!-margin-bottom-6">
+                  Week {{ week.weekNumber }}
+                  {{
+                    govukTag({
+                        text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
+                    }) if week.currentWeek
+                  }}
+                </h2>
+              {% endif %}
+              {% for weekDay in week.weekDays %}
+                <div>
+                  {% if weekDay.slots | length %}
+                    {% set items = [] %}
+                    {% for slot in weekDay.slots %}
+                      {% if slot.disabled %}
+                        <input
+                          type="hidden"
+                          name="week{{ week.weekNumber }}[{{ weekDay.day | lower }}]"
+                          value="{{ slot.timeSlot }}"
+                        />
+                      {% endif %}
+                      {%
+                        set items = items.concat(
+                            {
+                                value: slot.timeSlot,
+                                text: slot.timeSlot + ' (' + slot.startTime + ' to ' + slot.endTime + ')',
+                                checked: not slot.excluded,
+                                disabled: slot.disabled
+                            }
+                        )
+                      %}
+                    {% endfor %}
+
+                    {{
+                      govukCheckboxes({
+                          name: "week" + week.weekNumber + "[" + weekDay.day | lower + "]",
+                          fieldset: {
+                              legend: {
+                                  text: weekDay.day | toTitleCase,
+                                  classes: "govuk-fieldset__legend--m"
+                              }
+                          },
+                          items: items
+                      })
+                    }}
+                  {% else %}
+                    <span class="govuk-heading-m">{{ weekDay.day | toTitleCase }}</span>
+                    <p class="govuk-body">Not scheduled to run</p>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="govuk-button-group govuk-!-margin-top-6">
+          {{
+            govukButton({
+                text: "Continue"
+            })
+          }}
+          {% if session.req.routeContext.mode == 'create' and not session.req.query.preserveHistory %}
+            <a class="govuk-link" href="cancel">Cancel</a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
 {% endblock %}

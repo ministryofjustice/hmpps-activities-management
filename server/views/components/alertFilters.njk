@@ -2,18 +2,21 @@
 
 {% macro alertFilters(allAlerts, selectedAlerts, hiddenLegend = false) %}
 
-    {% set legendClasses = 'govuk-visually-hidden' if hiddenLegend else 'govuk-fieldset__legend--m' %}
+  {% set legendClasses = 'govuk-visually-hidden' if hiddenLegend else 'govuk-fieldset__legend--m' %}
 
-    {% set alertFilters = [] %}
-    {% for alert in allAlerts %}
-        {% set alertFilters = (alertFilters.push({
-                value: alert.key,
-                text: alert.description,
-                checked: alert.key in selectedAlerts
-        }), alertFilters) %}
-    {% endfor %}
+  {% set alertFilters = [] %}
+  {% for alert in allAlerts %}
+    {%
+      set alertFilters = (alertFilters.push({
+              value: alert.key,
+              text: alert.description,
+              checked: alert.key in selectedAlerts
+      }), alertFilters)
+    %}
+  {% endfor %}
 
-    {{ govukCheckboxes({
+  {{
+    govukCheckboxes({
         formGroup: {
             classes: "govuk-!-margin-bottom-2"
         },
@@ -27,10 +30,15 @@
                 }
         },
         items: alertFilters
-    }) }}
+    })
+  }}
 
-    <div class={% if not hiddenLegend %}"govuk-!-margin-bottom-4"{% endif %}>
-        <a href="#" class="govuk-link govuk-link--no-visited-state"
-           data-module="select-all-link" data-checkbox-name="alertFilters"></a>
-    </div>
+  <div class="{% if not hiddenLegend %}"govuk-!-margin-bottom-4"{% endif %}">
+    <a
+      href="#"
+      class="govuk-link govuk-link--no-visited-state"
+      data-module="select-all-link"
+      data-checkbox-name="alertFilters"
+    ></a>
+  </div>
 {% endmacro %}

@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
@@ -19,52 +18,62 @@
 {% set hardBackLinkHref = "/appointments/search/select-date" %}
 
 {% macro attendeeDetails(attendeeList) %}
-    {% if attendeeList | length == 1 %}
-        {% set attendee = attendeeList[0] %}
-        {% set prisonerDetails = prisonersDetails[attendee.prisonerNumber] %}
+  {% if attendeeList | length == 1 %}
+    {% set attendee = attendeeList[0] %}
+    {% set prisonerDetails = prisonersDetails[attendee.prisonerNumber] %}
 
-        {% if prisonerDetails %}
-            {{ showProfileLink({
-                firstName: prisonerDetails.firstName,
-                middleNames: prisonerDetails.middleNames,
-                lastName: prisonerDetails.lastName,
-                prisonerNumber: prisonerDetails.prisonerNumber or attendee.prisonerNumber,
-                cellLocation: statusBasedCellLocation(
-                    prisonerDetails.cellLocation,
-                    prisonerDetails.status,
-                    prisonerDetails.prisonId == user.activeCaseLoadId
-                ),
-                inCaseLoad: prisonerDetails.prisonId == user.activeCaseLoadId,
-                link: true,
-                classes: 'hmpps-inline-block'
-            }) }}
-        {% else %}
-            {{ attendee.prisonerNumber }}
-        {% endif %}
+    {% if prisonerDetails %}
+      {{
+        showProfileLink({
+            firstName: prisonerDetails.firstName,
+            middleNames: prisonerDetails.middleNames,
+            lastName: prisonerDetails.lastName,
+            prisonerNumber: prisonerDetails.prisonerNumber or attendee.prisonerNumber,
+            cellLocation: statusBasedCellLocation(
+                prisonerDetails.cellLocation,
+                prisonerDetails.status,
+                prisonerDetails.prisonId == user.activeCaseLoadId
+            ),
+            inCaseLoad: prisonerDetails.prisonId == user.activeCaseLoadId,
+            link: true,
+            classes: 'hmpps-inline-block'
+        })
+      }}
     {% else %}
-        {{ attendeeList | length }}
+      {{ attendee.prisonerNumber }}
     {% endif %}
+  {% else %}
+    {{ attendeeList | length }}
+  {% endif %}
 {% endmacro %}
 
 {% macro appointmentResultActions(result, appointmentTime) %}
-    {% set canManage = not result.isExpired and not result.isCancelled %}
+  {% set canManage = not result.isExpired and not result.isCancelled %}
 
-    {% if result.isCancelled %}
-        {{ govukTag({
-            text: 'Cancelled',
-            classes: 'govuk-tag--red'
-        }) }}
-    {% endif %}
+  {% if result.isCancelled %}
+    {{
+      govukTag({
+          text: 'Cancelled',
+          classes: 'govuk-tag--red'
+      })
+    }}
+  {% endif %}
 
-    <a href="/appointments/{{ result.appointmentId }}" class="govuk-link--no-visited-state govuk-!-display-inline-block govuk-!-margin-top-1 govuk-!-display-none-print">
-        {{ 'Manage details' if canManage else 'View' }}<span class="govuk-visually-hidden">{% if canManage %} of{% endif %} {{ result.appointmentName }} at {{ appointmentTime }}</span>
-    </a>
+  <a
+    href="/appointments/{{ result.appointmentId }}"
+    class="govuk-link--no-visited-state govuk-!-display-inline-block govuk-!-margin-top-1 govuk-!-display-none-print"
+  >
+    {{ 'Manage details' if canManage else 'View' }}<span class="govuk-visually-hidden"
+      >{% if canManage %}of{% endif %} {{ result.appointmentName }} at {{ appointmentTime }}</span
+    >
+  </a>
 {% endmacro %}
 
 {% set resultsTableRows = [] %}
 {% for result in results %}
-    {% set appointmentTime = result.startTime + (" to " + result.endTime if result.endTime) %}
-    {% set resultsTableRows = (resultsTableRows.push([
+  {% set appointmentTime = result.startTime + (" to " + result.endTime if result.endTime) %}
+  {%
+    set resultsTableRows = (resultsTableRows.push([
         {
             text: appointmentTime,
             attributes: {
@@ -92,290 +101,331 @@
             classes: 'govuk-!-text-align-right',
             attributes: { 'data-qa': 'view-and-edit-result-' + loop.index0 }
         }
-    ]), resultsTableRows) %}
+    ]), resultsTableRows)
+  %}
 {% endfor %}
 
 {% block content %}
-    <div class="govuk-grid-row govuk-!-display-none-print">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-l govuk-!-margin-0">Appointments dashboard</h1>
-            <span class="govuk-caption-l govuk-!-margin-bottom-3" data-qa="start-date-caption">{{ startDate | parseIsoDate | formatDate }}</span>
-            <p class="govuk-body">Select an appointment to edit details, add and remove people, cancel and copy the appointment, and print movement slips.</p>
-            <p class="govuk-body govuk-!-margin-bottom-6">You cannot edit details of appointments that have already taken place.</p>
-        </div>
+  <div class="govuk-grid-row govuk-!-display-none-print">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-l govuk-!-margin-0">Appointments dashboard</h1>
+      <span class="govuk-caption-l govuk-!-margin-bottom-3" data-qa="start-date-caption"
+        >{{ startDate | parseIsoDate | formatDate }}</span
+      >
+      <p class="govuk-body">
+        Select an appointment to edit details, add and remove people, cancel and copy the appointment, and print
+        movement slips.
+      </p>
+      <p class="govuk-body govuk-!-margin-bottom-6">
+        You cannot edit details of appointments that have already taken place.
+      </p>
+    </div>
+  </div>
+
+  {% set selectedFilterCategories = [] %}
+
+  {% set selectedDateAndTime = [] %}
+  {% for slot in timeSlots %}
+    {%
+      set selectedDateAndTime = (selectedDateAndTime.push({
+          href: '?startDate=' + startDate + '&timeSlots=' + timeSlots | excludeArray(slot) | join(",") + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+          text: ("Morning (AM)" if slot == TimeSlot.AM) +
+                ("Afternoon (PM)" if slot == TimeSlot.PM) +
+                ("Evening (ED)" if slot == TimeSlot.ED)
+      }), selectedDateAndTime)
+    %}
+  {% endfor %}
+
+  {% if (selectedDateAndTime.length > 0) %}
+    {%
+      set selectedFilterCategories = (selectedFilterCategories.push({
+          heading: {
+              text: 'Session'
+          },
+          items: selectedDateAndTime
+      }), selectedFilterCategories)
+    %}
+  {% endif %}
+
+  {% set appointmentNameOptions = [{ value: "", text: "" }] %}
+  {% for appointmentNameFilter in appointmentNameFilters %}
+    {%
+      set appointmentNameOptions = (appointmentNameOptions.push({
+          text: appointmentNameFilter,
+          value: appointmentNameFilter
+      }), appointmentNameOptions)
+    %}
+    {% if (appointmentNameFilter == appointmentName) %}
+      {%
+        set selectedFilterCategories = (selectedFilterCategories.push({
+            heading: {
+                text: 'Appointment name'
+            },
+            items: [{
+                href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+                text: appointmentNameFilter
+            }]
+        }), selectedFilterCategories)
+      %}
+    {% endif %}
+  {% endfor %}
+
+  {% set locationOptions = [{ value: "", text: "" }] %}
+  {% for location in locations %}
+    {% set locationOptions = (locationOptions.push( { value: location.dpsLocationId, text: location.description }), locationOptions) %}
+    {% if (location.dpsLocationId == locationId) %}
+      {%
+        set selectedFilterCategories = (selectedFilterCategories.push({
+            heading: {
+                text: 'Location'
+            },
+            items: [{
+                href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + appointmentName + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+                text: location.description
+            }]
+        }), selectedFilterCategories)
+      %}
+    {% endif %}
+  {% endfor %}
+
+  {% if (prisonerNumber) %}
+    {%
+      set selectedFilterCategories = (selectedFilterCategories.push({
+          heading: {
+              text: 'Prison number'
+          },
+          items: [{
+              href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy,
+              text: prisonerNumber
+          }]
+      }), selectedFilterCategories)
+    %}
+  {% endif %}
+
+  {% if (createdBy) %}
+    {%
+      set selectedFilterCategories = (selectedFilterCategories.push({
+          heading: {
+              text: 'Created by'
+          },
+          items: [{
+              href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=',
+              text: ("Myself" if createdBy == user.username) +
+              ("All appointment creators" if createdBy == "all")
+          }]
+      }), selectedFilterCategories)
+    %}
+  {% endif %}
+
+  {% if (selectedFilterCategories.length > 0) %}
+    {%
+      set selectedFilters = {
+          heading: {
+              text: 'Selected filters'
+          },
+          clearLink: {
+              text: 'Clear filters',
+              href: '?startDate=' + startDate
+          },
+          categories: selectedFilterCategories
+      }
+    %}
+  {% endif %}
+
+
+  {% set filterOptionsHtml %}
+    {{
+      mojDatePicker({
+          id: 'startDate',
+          name: 'startDate',
+          leadingZeros: 'true',
+          label: {
+              text: "Date",
+              classes: "govuk-label--s"
+          },
+          errorMessage: validationErrors | findError('startDate'),
+          value: formResponses.startDate or (startDate | isoDateToDatePickerDate)
+      })
+    }}
+
+    {{
+      govukCheckboxes({
+             name: "timeSlots",
+             classes: "govuk-checkboxes--small",
+             fieldset: {
+                 legend: {
+                     text: "Session",
+                     classes: "govuk-fieldset__legend--s"
+                 }
+             },
+             errorMessage: validationErrors | findError('timeSlots'),
+             formGroup: {
+              classes: 'govuk-!-margin-bottom-4'
+             },
+             items: [
+                 {
+                     value: TimeSlot.AM,
+                     text: "Morning (AM)",
+                     checked: TimeSlot.AM in (timeSlots)
+                 },
+                 {
+                     value: TimeSlot.PM,
+                     text: "Afternoon (PM)",
+                     checked: TimeSlot.PM in (timeSlots)
+                 },
+                 {
+                     value: TimeSlot.ED,
+                     text: "Evening (ED)",
+                     checked: TimeSlot.ED in (timeSlots)
+                 }
+             ]
+      })
+    }}
+
+    {{
+      govukSelect({
+          id: "appointmentName",
+          name: "appointmentName",
+          label: {
+              text: "Appointment name",
+              classes: "govuk-label--s"
+          },
+          errorMessage: validationErrors | findError('appointmentName'),
+          items: appointmentNameOptions,
+          value: formResponses.appointmentName or appointmentName
+      })
+    }}
+
+    {{
+      govukSelect({
+          id: "locationId",
+          name: "locationId",
+          label: {
+              text: "Location",
+              classes: "govuk-label--s"
+          },
+          errorMessage: validationErrors | findError('locationId'),
+          items: locationOptions,
+          value: formResponses.locationId or locationId
+      })
+    }}
+
+    {{
+      govukInput({
+          id: "prisonerNumber",
+          name: "prisonerNumber",
+          label: {
+              text: "Prison number",
+              classes: "govuk-label--s"
+          },
+          spellcheck: false,
+          errorMessage: validationErrors | findError('prisonerNumber'),
+          value: formResponses.prisonerNumber or prisonerNumber,
+          type: 'search'
+      })
+    }}
+
+    {{
+      govukRadios({
+          name: "createdBy",
+          classes: "govuk-radios--small",
+          fieldset: {
+              legend: {
+                  text: "Created by",
+                  classes: "govuk-fieldset__legend--s"
+              }
+          },
+          errorMessage: validationErrors | findError('createdBy'),
+          items: [
+              {
+                  value: user.username,
+                  text: "Myself",
+                  checked: (formResponses.createdBy or createdBy) == user.username
+              },
+              {
+                  value: "all",
+                  text: "All appointment creators",
+                  checked: (formResponses.createdBy or createdBy) == "all"
+              }
+          ]
+      })
+    }}
+
+    <button class="govuk-button govuk-!-margin-top-7" data-module="govuk-button">Apply filters</button>
+  {% endset %}
+
+  <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+    <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{
+          mojFilter({
+              heading: {
+                  text: 'Filter'
+              },
+              selectedFilters: selectedFilters,
+              attributes: {
+                  'data-filter-start-shown': 'true'
+              },
+              optionsHtml: filterOptionsHtml
+          })
+        }}
+      </form>
     </div>
 
-    {% set selectedFilterCategories = [] %}
+    <div class="moj-filter-layout__content">
+      <div class="moj-action-bar govuk-!-display-none-print">
+        <div class="moj-action-bar__filter"></div>
+        {{
+          govukButton({
+            text: "Print these appointments",
+            classes: "govuk-button--blue js-print no-js-hidden",
+            preventDoubleClick: true
+          })
+        }}
+      </div>
 
-    {% set selectedDateAndTime = [] %}
-    {% for slot in timeSlots %}
-        {% set selectedDateAndTime = (selectedDateAndTime.push({
-                    href: '?startDate=' + startDate + '&timeSlots=' + timeSlots | excludeArray(slot) | join(",") + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
-                    text: ("Morning (AM)" if slot == TimeSlot.AM) +
-                          ("Afternoon (PM)" if slot == TimeSlot.PM) +
-                          ("Evening (ED)" if slot == TimeSlot.ED)
-                }), selectedDateAndTime) %}
-    {% endfor %}
-
-    {% if (selectedDateAndTime.length > 0) %}
-        {% set selectedFilterCategories = (selectedFilterCategories.push({
-            heading: {
-                text: 'Session'
+      {{
+        govukTable({
+            attributes: {
+                'data-module': 'moj-sortable-table',
+                'data-qa': 'search-results'
             },
-            items: selectedDateAndTime
-        }), selectedFilterCategories) %}
-    {% endif %}
-
-    {% set appointmentNameOptions = [{ value: "", text: "" }] %}
-    {% for appointmentNameFilter in appointmentNameFilters %}
-        {% set appointmentNameOptions = (appointmentNameOptions.push({
-            text: appointmentNameFilter,
-            value: appointmentNameFilter
-        }), appointmentNameOptions) %}
-        {% if (appointmentNameFilter == appointmentName) %}
-            {% set selectedFilterCategories = (selectedFilterCategories.push({
-                heading: {
-                    text: 'Appointment name'
-                },
-                items: [{
-                    href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
-                    text: appointmentNameFilter
-                }]
-            }), selectedFilterCategories) %}
-        {% endif %}
-    {% endfor %}
-
-    {% set locationOptions = [{ value: "", text: "" }] %}
-    {% for location in locations %}
-        {% set locationOptions = (locationOptions.push( { value: location.dpsLocationId, text: location.description }), locationOptions) %}
-        {% if (location.dpsLocationId == locationId) %}
-            {% set selectedFilterCategories = (selectedFilterCategories.push({
-                heading: {
-                    text: 'Location'
-                },
-                items: [{
-                    href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + appointmentName + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
-                    text: location.description
-                }]
-            }), selectedFilterCategories) %}
-        {% endif %}
-    {% endfor %}
-
-    {% if (prisonerNumber) %}
-        {% set selectedFilterCategories = (selectedFilterCategories.push({
-            heading: {
-                text: 'Prison number'
+            caption: "Showing " + results | length + " appointment" + ("s" if results | length != 1),
+            captionClasses: 'govuk-!-display-none-print',
+            classes: "sticky-header",
+            head: [
+            {
+                text: "Time",
+                attributes: { "aria-sort": "ascending" }
             },
-            items: [{
-                href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy,
-                text: prisonerNumber
-            }]
-        }), selectedFilterCategories) %}
-    {% endif %}
-
-    {% if (createdBy) %}
-        {% set selectedFilterCategories = (selectedFilterCategories.push({
-            heading: {
-                text: 'Created by'
-            },
-            items: [{
-                href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=',
-                text: ("Myself" if createdBy == user.username) +
-                ("All appointment creators" if createdBy == "all")
-            }]
-        }), selectedFilterCategories) %}
-    {% endif %}
-
-    {% if (selectedFilterCategories.length > 0) %}
-        {% set selectedFilters = {
-            heading: {
-                text: 'Selected filters'
-            },
-            clearLink: {
-                text: 'Clear filters',
-                href: '?startDate=' + startDate
-            },
-            categories: selectedFilterCategories
-        } %}
-    {% endif %}
-
-    {% set filterOptionsHtml %}
-        {{ mojDatePicker({
-            id: 'startDate',
-            name: 'startDate',
-            leadingZeros: 'true',
-            label: {
-                text: "Date",
-                classes: "govuk-label--s"
-            },
-            errorMessage: validationErrors | findError('startDate'),
-            value: formResponses.startDate or (startDate | isoDateToDatePickerDate)
-        }) }}
-
-        {{ govukCheckboxes({
-              name: "timeSlots",
-              classes: "govuk-checkboxes--small",
-              fieldset: {
-                  legend: {
-                      text: "Session",
-                      classes: "govuk-fieldset__legend--s"
-                  }
-              },
-              errorMessage: validationErrors | findError('timeSlots'),
-              formGroup: {
-               classes: 'govuk-!-margin-bottom-4'
-              },
-              items: [
-                  {
-                      value: TimeSlot.AM,
-                      text: "Morning (AM)",
-                      checked: TimeSlot.AM in (timeSlots)
-                  },
-                  {
-                      value: TimeSlot.PM,
-                      text: "Afternoon (PM)",
-                      checked: TimeSlot.PM in (timeSlots)
-                  },
-                  {
-                      value: TimeSlot.ED,
-                      text: "Evening (ED)",
-                      checked: TimeSlot.ED in (timeSlots)
-                  }
-              ]
-       }) }}
-
-        {{ govukSelect({
-            id: "appointmentName",
-            name: "appointmentName",
-            label: {
+            {
                 text: "Appointment name",
-                classes: "govuk-label--s"
+                attributes: { "aria-sort": "none" }
             },
-            errorMessage: validationErrors | findError('appointmentName'),
-            items: appointmentNameOptions,
-            value: formResponses.appointmentName or appointmentName
-        }) }}
-
-        {{ govukSelect({
-            id: "locationId",
-            name: "locationId",
-            label: {
+            {
                 text: "Location",
-                classes: "govuk-label--s"
+                attributes: { "aria-sort": "none" }
             },
-            errorMessage: validationErrors | findError('locationId'),
-            items: locationOptions,
-            value: formResponses.locationId or locationId
-        }) }}
-
-        {{ govukInput({
-            id: "prisonerNumber",
-            name: "prisonerNumber",
-            label: {
-                text: "Prison number",
-                classes: "govuk-label--s"
+            {
+                text: "Attendees",
+                attributes: { "aria-sort": "none" }
             },
-            spellcheck: false,
-            errorMessage: validationErrors | findError('prisonerNumber'),
-            value: formResponses.prisonerNumber or prisonerNumber,
-            type: 'search'
-        }) }}
-
-        {{ govukRadios({
-            name: "createdBy",
-            classes: "govuk-radios--small",
-            fieldset: {
-                legend: {
-                    text: "Created by",
-                    classes: "govuk-fieldset__legend--s"
-                }
+            {
+                text: "Appointment",
+                attributes: { "aria-sort": "none" }
             },
-            errorMessage: validationErrors | findError('createdBy'),
-            items: [
-                {
-                    value: user.username,
-                    text: "Myself",
-                    checked: (formResponses.createdBy or createdBy) == user.username
-                },
-                {
-                    value: "all",
-                    text: "All appointment creators",
-                    checked: (formResponses.createdBy or createdBy) == "all"
-                }
-            ]
-        }) }}
-
-        <button class="govuk-button govuk-!-margin-top-7" data-module="govuk-button">
-            Apply filters
-        </button>
-    {% endset %}
-
-    <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
-        <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                {{ mojFilter({
-                    heading: {
-                        text: 'Filter'
-                    },
-                    selectedFilters: selectedFilters,
-                    attributes: {
-                        'data-filter-start-shown': 'true'
-                    },
-                    optionsHtml: filterOptionsHtml
-                }) }}
-            </form>
-        </div>
-
-        <div class="moj-filter-layout__content">
-            <div class="moj-action-bar govuk-!-display-none-print">
-                <div class="moj-action-bar__filter"></div>
-                {{ govukButton({
-                  text: "Print these appointments",
-                  classes: "govuk-button--blue js-print no-js-hidden",
-                  preventDoubleClick: true
-                }) }}
-            </div>
-
-            {{ govukTable({
-                attributes: {
-                    'data-module': 'moj-sortable-table',
-                    'data-qa': 'search-results'
-                },
-                caption: "Showing " + results | length + " appointment" + ("s" if results | length != 1),
-                captionClasses: 'govuk-!-display-none-print',
-                classes: "sticky-header",
-                head: [
-                {
-                    text: "Time",
-                    attributes: { "aria-sort": "ascending" }
-                },
-                {
-                    text: "Appointment name",
-                    attributes: { "aria-sort": "none" }
-                },
-                {
-                    text: "Location",
-                    attributes: { "aria-sort": "none" }
-                },
-                {
-                    text: "Attendees",
-                    attributes: { "aria-sort": "none" }
-                },
-                {
-                    text: "Appointment",
-                    attributes: { "aria-sort": "none" }
-                },
-                {
-                    html: '<span class="govuk-visually-hidden">Actions</span>',
-                    classes: 'action-column'
-                }],
-                rows: resultsTableRows
-            }) }}
-        </div>
+            {
+                html: '<span class="govuk-visually-hidden">Actions</span>',
+                classes: 'action-column'
+            }],
+            rows: resultsTableRows
+        })
+      }}
     </div>
+  </div>
 {% endblock %}
 
 {% block meta %}
-    <meta name="autocompleteElements" content="appointmentName,locationId"/>
+  <meta name="autocompleteElements" content="appointmentName,locationId" />
 {% endblock %}

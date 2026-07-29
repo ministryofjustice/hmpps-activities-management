@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
@@ -9,71 +8,80 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(createJourney) }}
-            <h1 class="govuk-heading-l">This activity will be overallocated</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ activityJourneyCaption(createJourney) }}
+      <h1 class="govuk-heading-l">This activity will be overallocated</h1>
 
-            <p class="govuk-body">You can reduce the number of people currently allocated to this activity before you change the capacity.</p>
+      <p class="govuk-body">
+        You can reduce the number of people currently allocated to this activity before you change the capacity.
+      </p>
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ govukSummaryList({
-                    rows: [
-                        {
-                            key: {
-                                text: "Current capacity"
-                            },
-                            value: {
-                                text: createJourney.currentCapacity
-                            }
-                        },
-                        {
-                          key: {
-                              text: "People currently allocated"
-                          },
-                          value: {
-                              html: currentlyAllocated()
-                          }
-                        },
-                        {
-                            key: {
-                                text: "New capacity"
-                            },
-                            value: {
-                                text: createJourney.capacity
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "capacity",
-                                        text: "Change",
-                                        visuallyHiddenText: "change capacity",
-                                        classes: "govuk-link--no-visited-state"
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                }) }}
+        {{
+          govukSummaryList({
+              rows: [
+                  {
+                      key: {
+                          text: "Current capacity"
+                      },
+                      value: {
+                          text: createJourney.currentCapacity
+                      }
+                  },
+                  {
+                    key: {
+                        text: "People currently allocated"
+                    },
+                    value: {
+                        html: currentlyAllocated()
+                    }
+                  },
+                  {
+                      key: {
+                          text: "New capacity"
+                      },
+                      value: {
+                          text: createJourney.capacity
+                      },
+                      actions: {
+                          items: [
+                              {
+                                  href: "capacity",
+                                  text: "Change",
+                                  visuallyHiddenText: "change capacity",
+                                  classes: "govuk-link--no-visited-state"
+                              }
+                          ]
+                      }
+                  }
+              ]
+          })
+        }}
 
-                <div class="govuk-button-group">
-                  {{ govukButton({
-                    text: "Confirm capacity change",
-                    preventDoubleClick: true
-                  }) }}
-                    <a class="govuk-link js-backlink" href="capacity">Cancel</a>
-                </div>
-            </form>
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+              text: "Confirm capacity change",
+              preventDoubleClick: true
+            })
+          }}
+          <a class="govuk-link js-backlink" href="capacity">Cancel</a>
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}
 
 {% macro currentlyAllocated() %}
-    {% set overallocatedCount = (createJourney.allocations | length) - createJourney.capacity %}
-    <div class="govuk-!-margin-bottom-0">
-        <div>{{ createJourney.allocations | length }}</div>
-        <div class='govuk-hint'>There will be {{ overallocatedCount }} {{ "person" if overallocatedCount == 1 else "people" }} more than the capacity of this activity.</div>
+  {% set overallocatedCount = (createJourney.allocations | length) - createJourney.capacity %}
+  <div class="govuk-!-margin-bottom-0">
+    <div>{{ createJourney.allocations | length }}</div>
+    <div class="govuk-hint">
+      There will be {{ overallocatedCount }} {{ "person" if overallocatedCount == 1 else "people" }} more than the
+      capacity of this activity.
     </div>
+  </div>
 {% endmacro %}

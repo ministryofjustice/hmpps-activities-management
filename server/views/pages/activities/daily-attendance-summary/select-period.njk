@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
@@ -10,61 +9,65 @@
 {% set hardBackLinkText = "Back" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ govukRadios({
-                    name: "datePresetOption",
-                    fieldset: {
-                        legend: {
-                            text: title,
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    hint: {
-                        text: "You can view the summary for any of the last 15 days."
-                    },
-                    errorMessage: validationErrors | findError('datePresetOption'),
-                    items: [
-                        {
-                            value: "today",
-                            text: "Today - " + now | formatDate('d MMMM yyyy'),
-                            checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
-                        },
-                        {
-                            value: "yesterday",
-                            text: "Yesterday - " + (now - 86400000) | formatDate('d MMMM yyyy'),
-                            checked: formResponses.datePresetOption == 'yesterday' or datePresetOption == 'yesterday'
-                        },
-                        {
-                            value: "other",
-                            text: "A different date",
-                            checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
-                            conditional: {
-                                html: mojDatePicker({
-                                    id: 'date',
-                                    name: 'date',
-                                    leadingZeros: 'true',
-                                    classes: 'moj-datepicker--fixed-width',
-                                    hint: {
-                                        html: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
-                                    },
-                                    errorMessage: validationErrors | findError('date'),
-                                    value: formResponses.date or date
-                                })
-                            }
-                        }
-                    ]
-                }) }}
+        {{
+          govukRadios({
+              name: "datePresetOption",
+              fieldset: {
+                  legend: {
+                      text: title,
+                      isPageHeading: true,
+                      classes: "govuk-fieldset__legend--l"
+                  }
+              },
+              hint: {
+                  text: "You can view the summary for any of the last 15 days."
+              },
+              errorMessage: validationErrors | findError('datePresetOption'),
+              items: [
+                  {
+                      value: "today",
+                      text: "Today - " + now | formatDate('d MMMM yyyy'),
+                      checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
+                  },
+                  {
+                      value: "yesterday",
+                      text: "Yesterday - " + (now - 86400000) | formatDate('d MMMM yyyy'),
+                      checked: formResponses.datePresetOption == 'yesterday' or datePresetOption == 'yesterday'
+                  },
+                  {
+                      value: "other",
+                      text: "A different date",
+                      checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
+                      conditional: {
+                          html: mojDatePicker({
+                              id: 'date',
+                              name: 'date',
+                              leadingZeros: 'true',
+                              classes: 'moj-datepicker--fixed-width',
+                              hint: {
+                                  html: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
+                              },
+                              errorMessage: validationErrors | findError('date'),
+                              value: formResponses.date or date
+                          })
+                      }
+                  }
+              ]
+          })
+        }}
 
-                {{ govukButton({
-                    text: "Continue",
-                    preventDoubleClick: true
-                }) }}
-            </form>
-        </div>
+        {{
+          govukButton({
+              text: "Continue",
+              preventDoubleClick: true
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

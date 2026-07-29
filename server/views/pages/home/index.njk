@@ -7,33 +7,37 @@
 {% set hardBackLinkHref = dpsUrl %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Select service</h1>
+  <h1 class="govuk-heading-l">Select service</h1>
 {% endblock %}
 
 {% block content %}
-    <div class="card-group govuk-grid-row">
-        {% if user.isActivitiesRolledOut %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "href": "/activities",
-                    "clickable": "true",
-                    "heading": "Activities, unlock and attendance",
-                    "description": "Create and edit activities. Allocate people and edit allocations. Manage waitlists and applications. Print unlock lists and record activity attendance.",
-                    "data-qa": "activities-card"
-                }) }}
-            </div>
-        {% endif %}
+  <div class="card-group govuk-grid-row">
+    {% if user.isActivitiesRolledOut %}
+      <div class="govuk-grid-column-one-third card-group__item">
+        {{
+          card({
+              "href": "/activities",
+              "clickable": "true",
+              "heading": "Activities, unlock and attendance",
+              "description": "Create and edit activities. Allocate people and edit allocations. Manage waitlists and applications. Print unlock lists and record activity attendance.",
+              "data-qa": "activities-card"
+          })
+        }}
+      </div>
+    {% endif %}
 
-        {% if user.isAppointmentsRolledOut %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "href": "/appointments",
-                    "clickable": "true",
-                    "heading": "Appointments",
-                    "description": "Create, manage and edit appointments. Print movement slips. Record appointment attendance.",
-                    "data-qa": "appointments-card"
-                }) }}
-            </div>
-        {% endif %}
-    </div>
+    {% if user.isAppointmentsRolledOut %}
+      <div class="govuk-grid-column-one-third card-group__item">
+        {{
+          card({
+              "href": "/appointments",
+              "clickable": "true",
+              "heading": "Appointments",
+              "description": "Create, manage and edit appointments. Print movement slips. Record appointment attendance.",
+              "data-qa": "appointments-card"
+          })
+        }}
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}

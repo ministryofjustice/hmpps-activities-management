@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
@@ -13,201 +12,235 @@
 
 {% block meta %}
   {% if session.req.routeContext.mode == 'create' %}
-    <meta name="autocompleteElements" content="probationTeamCode"/>
+    <meta name="autocompleteElements" content="probationTeamCode" />
   {% endif %}
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session) }}
+      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
     </div>
+  </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method='POST' data-module="form-spinner" data-loading-text="Changing appointment details">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST" data-module="form-spinner" data-loading-text="Changing appointment details">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% set items = [{ text: "", value: "" }] %}
-                    {% for team in probationTeams %}
-                        {% set items = (items.push({
-                          value: team.code,
-                          text: team.description,
-                          selected: formResponses.probationTeamCode == team.code or session.bookAProbationMeetingJourney.probationTeamCode == team.code
-                        }), items) %}
-                {% endfor %}
+        {% set items = [{ text: "", value: "" }] %}
+        {% for team in probationTeams %}
+          {%
+            set items = (items.push({
+              value: team.code,
+              text: team.description,
+              selected: formResponses.probationTeamCode == team.code or session.bookAProbationMeetingJourney.probationTeamCode == team.code
+            }), items)
+          %}
+        {% endfor %}
 
-                {% if session.req.routeContext.mode == 'create' %}
-                  {% set probationTeamsHtml %}
-                    {{ govukSelect({
-                      name: "probationTeamCode",
-                      id: "probationTeamCode",
-                      label: {
-                        text: "Select the probation team the booking is for",
-                        classes: 'govuk-label--s'
-                      },
-                      items: items,
-                      errorMessage: validationErrors | findError("probationTeamCode")
-                    }) }}
-                  {% endset %}
+        {% if session.req.routeContext.mode == 'create' %}
+          {% set probationTeamsHtml %}
+            {{
+              govukSelect({
+                name: "probationTeamCode",
+                id: "probationTeamCode",
+                label: {
+                  text: "Select the probation team the booking is for",
+                  classes: 'govuk-label--s'
+                },
+                items: items,
+                errorMessage: validationErrors | findError("probationTeamCode")
+              })
+            }}
+          {% endset %}
 
-                  {{ govukRadios({
-                    idPrefix: "probationTeamRequired",
-                    name: "probationTeamRequired",
-                    errorMessage: validationErrors | findError('probationTeamRequired'),
-                    fieldset: {
-                      legend: {
-                        text: "Which probation team is this booking for?",
-                        classes: "govuk-fieldset__legend--s"
-                      }
-                    },
-                    items: [
-                      {
-                        value: 'YES',
-                        text: "Select from the list of probation teams",
-                        checked: formResponses.probationTeamRequired == 'YES' or session.bookAProbationMeetingJourney.probationTeamRequired === true,
-                        conditional: {
-                        html: probationTeamsHtml
-                      }
-                      },
-                      {
-                        value: 'NO',
-                        text: "A team that's not in the list",
-                        checked: formResponses.probationTeamRequired == 'NO' or (session.bookAProbationMeetingJourney.probationTeamRequired == false and not formResponses)
-                      }
-                    ]
-                  }) }}
-                {% else %}
-                    <span class="govuk-label govuk-label--s">Probation Team</span>
-                    <p class="govuk-body govuk-!-margin-bottom-6">{{ (probationTeams | find('code', session.bookAProbationMeetingJourney.probationTeamCode)).description or 'Team not listed'}}</p>
-                    <input type="hidden" name="probationTeamRequired" value="{{ 'YES' if session.bookAProbationMeetingJourney.probationTeamRequired == true else 'NO' }}">
-                    <input type="hidden" name="probationTeamCode" value="{{ session.bookAProbationMeetingJourney.probationTeamCode }}">
-                {% endif %}
+          {{
+            govukRadios({
+              idPrefix: "probationTeamRequired",
+              name: "probationTeamRequired",
+              errorMessage: validationErrors | findError('probationTeamRequired'),
+              fieldset: {
+                legend: {
+                  text: "Which probation team is this booking for?",
+                  classes: "govuk-fieldset__legend--s"
+                }
+              },
+              items: [
+                {
+                  value: 'YES',
+                  text: "Select from the list of probation teams",
+                  checked: formResponses.probationTeamRequired == 'YES' or session.bookAProbationMeetingJourney.probationTeamRequired === true,
+                  conditional: {
+                  html: probationTeamsHtml
+                }
+                },
+                {
+                  value: 'NO',
+                  text: "A team that's not in the list",
+                  checked: formResponses.probationTeamRequired == 'NO' or (session.bookAProbationMeetingJourney.probationTeamRequired == false and not formResponses)
+                }
+              ]
+            })
+          }}
+        {% else %}
+          <span class="govuk-label govuk-label--s">Probation Team</span>
+          <p class="govuk-body govuk-!-margin-bottom-6">
+            {{ (probationTeams | find('code', session.bookAProbationMeetingJourney.probationTeamCode)).description or 'Team not listed' }}
+          </p>
+          <input
+            type="hidden"
+            name="probationTeamRequired"
+            value="{{ 'YES' if session.bookAProbationMeetingJourney.probationTeamRequired == true else 'NO' }}"
+          />
+          <input
+            type="hidden"
+            name="probationTeamCode"
+            value="{{ session.bookAProbationMeetingJourney.probationTeamCode }}"
+          />
+        {% endif %}
 
-                {% set items = [] %}
-                {%  if meetingTypes.length > 3 %}
-                  {% if session.req.routeContext.mode == 'create' %}
-                    {% set items = [{ text: "Select meeting type", value: "" }] %}
-                  {% endif %}
-                  {% for meetingType in meetingTypes %}
-                    {% set items = (items.push({
-                      value: meetingType.code,
-                      text: meetingType.description,
-                      selected: formResponses.meetingTypeCode == meetingType.code or session.bookAProbationMeetingJourney.meetingTypeCode == meetingType.code
-                    }), items) %}
-                  {% endfor %}
+        {% set items = [] %}
+        {% if meetingTypes.length > 3 %}
+          {% if session.req.routeContext.mode == 'create' %}
+            {% set items = [{ text: "Select meeting type", value: "" }] %}
+          {% endif %}
+          {% for meetingType in meetingTypes %}
+            {%
+              set items = (items.push({
+                value: meetingType.code,
+                text: meetingType.description,
+                selected: formResponses.meetingTypeCode == meetingType.code or session.bookAProbationMeetingJourney.meetingTypeCode == meetingType.code
+              }), items)
+            %}
+          {% endfor %}
 
-                  {{ govukSelect({
-                    idPrefix: "meetingTypeCode",
-                    name: "meetingTypeCode",
-                    label: {
-                      text: "Select meeting type",
-                      classes: 'govuk-label--s'
-                    },
-                    items: items,
-                    errorMessage: validationErrors | findError("meetingTypeCode"),
-                    classes: "govuk-!-width-one-half"
-                  }) }}
-                {% else %}
-                  {% for meetingType in meetingTypes %}
-                      {% set items = (items.push({
-                        value: meetingType.code,
-                        text: meetingType.description,
-                        checked: formResponses.meetingTypeCode == meetingType.code or session.bookAProbationMeetingJourney.meetingTypeCode == meetingType.code
-                      }), items) %}
-                  {% endfor %}
+          {{
+            govukSelect({
+              idPrefix: "meetingTypeCode",
+              name: "meetingTypeCode",
+              label: {
+                text: "Select meeting type",
+                classes: 'govuk-label--s'
+              },
+              items: items,
+              errorMessage: validationErrors | findError("meetingTypeCode"),
+              classes: "govuk-!-width-one-half"
+            })
+          }}
+        {% else %}
+          {% for meetingType in meetingTypes %}
+            {%
+              set items = (items.push({
+                value: meetingType.code,
+                text: meetingType.description,
+                checked: formResponses.meetingTypeCode == meetingType.code or session.bookAProbationMeetingJourney.meetingTypeCode == meetingType.code
+              }), items)
+            %}
+          {% endfor %}
 
-                  {{ govukRadios({
-                      idPrefix: "meetingTypeCode",
-                      name: "meetingTypeCode",
-                      fieldset: {
-                          legend: {
-                            text: "Select meeting type",
-                            classes: "govuk-fieldset__legend--s"
-                          }
-                      },
-                      items: items,
-                      errorMessage: validationErrors | findError("meetingTypeCode"),
-                      classes: "govuk-!-width-one-third"
-                  }) }}
-                {% endif %}
-
-              <div class="govuk-form-group">
-                {% set probationOfficerDetailsHtml %}
-                  {{ govukInput({
-                    id: "officerFullName",
-                    name: "officerFullName",
-                    label: {
-                      text: "Full name"
-                    },
-                    errorMessage: validationErrors | findError('officerFullName'),
-                    formGroup: {
-                      classes: 'govuk-!-margin-bottom-3'
-                    },
-                    classes: "govuk-!-width-one-half",
-                    value: formResponses.officerFullName or session.bookAProbationMeetingJourney.officer.fullName
-                  }) }}
-
-                  {{ govukInput({
-                    id: "officerEmail",
-                    name: "officerEmail",
-                    label: {
-                      text: "Email address"
-                    },
-                    errorMessage: validationErrors | findError('officerEmail'),
-                    formGroup: {
-                      classes: 'govuk-!-margin-bottom-3'
-                    },
-                    classes: "govuk-!-width-one-half",
-                    value: formResponses.officerEmail or session.bookAProbationMeetingJourney.officer.email
-                  }) }}
-
-                  {{ govukInput({
-                    id: "officerTelephone",
-                    name: "officerTelephone",
-                    label: {
-                      text: "UK phone number (optional)"
-                    },
-                    errorMessage: validationErrors | findError('officerTelephone'),
-                    classes: "govuk-!-width-one-half",
-                    value: formResponses.officerTelephone or session.bookAProbationMeetingJourney.officer.telephone
-                  }) }}
-                {% endset %}
-
-                {{ govukRadios({
-                  idPrefix: "probationOfficerDetailsKnown",
-                  name: "probationOfficerDetailsKnown",
-                  errorMessage: validationErrors | findError('probationOfficerDetailsKnown'),
-                  fieldset: {
+          {{
+            govukRadios({
+                idPrefix: "meetingTypeCode",
+                name: "meetingTypeCode",
+                fieldset: {
                     legend: {
-                      text: "Do you know the details of the probation officer?",
+                      text: "Select meeting type",
                       classes: "govuk-fieldset__legend--s"
                     }
-                  },
-                  items: [
-                    {
-                      value: 'YES',
-                      text: "Yes",
-                      checked: formResponses.probationOfficerDetailsKnown == 'YES' or session.bookAProbationMeetingJourney.probationOfficerDetailsKnown === true,
-                      conditional: {
-                      html: probationOfficerDetailsHtml
-                    }
-                    },
-                    {
-                      value: 'NO',
-                      text: "No",
-                      checked: formResponses.probationOfficerDetailsKnown == 'NO' or (session.bookAProbationMeetingJourney.probationOfficerDetailsKnown === false and not formResponses)
-                    }
-                  ]
-                }) }}
-              </div>
+                },
+                items: items,
+                errorMessage: validationErrors | findError("meetingTypeCode"),
+                classes: "govuk-!-width-one-third"
+            })
+          }}
+        {% endif %}
 
-              {{ govukButton({
-                text: "Continue"
-              }) }}
-            </form>
+        <div class="govuk-form-group">
+          {% set probationOfficerDetailsHtml %}
+            {{
+              govukInput({
+                id: "officerFullName",
+                name: "officerFullName",
+                label: {
+                  text: "Full name"
+                },
+                errorMessage: validationErrors | findError('officerFullName'),
+                formGroup: {
+                  classes: 'govuk-!-margin-bottom-3'
+                },
+                classes: "govuk-!-width-one-half",
+                value: formResponses.officerFullName or session.bookAProbationMeetingJourney.officer.fullName
+              })
+            }}
+
+            {{
+              govukInput({
+                id: "officerEmail",
+                name: "officerEmail",
+                label: {
+                  text: "Email address"
+                },
+                errorMessage: validationErrors | findError('officerEmail'),
+                formGroup: {
+                  classes: 'govuk-!-margin-bottom-3'
+                },
+                classes: "govuk-!-width-one-half",
+                value: formResponses.officerEmail or session.bookAProbationMeetingJourney.officer.email
+              })
+            }}
+
+            {{
+              govukInput({
+                id: "officerTelephone",
+                name: "officerTelephone",
+                label: {
+                  text: "UK phone number (optional)"
+                },
+                errorMessage: validationErrors | findError('officerTelephone'),
+                classes: "govuk-!-width-one-half",
+                value: formResponses.officerTelephone or session.bookAProbationMeetingJourney.officer.telephone
+              })
+            }}
+          {% endset %}
+
+          {{
+            govukRadios({
+              idPrefix: "probationOfficerDetailsKnown",
+              name: "probationOfficerDetailsKnown",
+              errorMessage: validationErrors | findError('probationOfficerDetailsKnown'),
+              fieldset: {
+                legend: {
+                  text: "Do you know the details of the probation officer?",
+                  classes: "govuk-fieldset__legend--s"
+                }
+              },
+              items: [
+                {
+                  value: 'YES',
+                  text: "Yes",
+                  checked: formResponses.probationOfficerDetailsKnown == 'YES' or session.bookAProbationMeetingJourney.probationOfficerDetailsKnown === true,
+                  conditional: {
+                  html: probationOfficerDetailsHtml
+                }
+                },
+                {
+                  value: 'NO',
+                  text: "No",
+                  checked: formResponses.probationOfficerDetailsKnown == 'NO' or (session.bookAProbationMeetingJourney.probationOfficerDetailsKnown === false and not formResponses)
+                }
+              ]
+            })
+          }}
         </div>
+
+        {{
+          govukButton({
+            text: "Continue"
+          })
+        }}
+      </form>
     </div>
+  </div>
 {% endblock %}

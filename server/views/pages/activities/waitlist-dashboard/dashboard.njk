@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "components/searchBar.njk" import searchBar %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
@@ -25,238 +24,269 @@
 {% set editable = 'ROLE_ACTIVITY_HUB' in user.roles %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {% if editable %}
-                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Manage applications and waitlists</h1>
-                <p class="govuk-body">Review applications to be allocated. If someone is suitable, you can add them to the waitlist and allocate them.</p>
-                <p class="govuk-body">Once someone’s application is approved, you can allocate them.</p>
-            {% else %}
-                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">View applications and waitlists</h1>
-            {% endif %}
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if editable %}
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Manage applications and waitlists</h1>
+        <p class="govuk-body">
+          Review applications to be allocated. If someone is suitable, you can add them to the waitlist and allocate
+          them.
+        </p>
+        <p class="govuk-body">Once someone’s application is approved, you can allocate them.</p>
+      {% else %}
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">View applications and waitlists</h1>
+      {% endif %}
     </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <input type="hidden" name="dateFrom" value="{{ filters.applicationDateFrom | isoDateToDatePickerDate }}" />
-                <input type="hidden" name="dateTo" value="{{ filters.applicationDateTo | isoDateToDatePickerDate }}" />
-                <input type="hidden" name="activity" value="{{ filters.activityId }}" />
-                <input type="hidden" name="status" value="{{ filters.status }}" />
-                {{ searchBar({
-                    inputParams: {
-                        id: 'query',
-                        name: 'query',
-                        label: {
-                            text: 'Search for someone by name or prison number',
-                            classes: 'govuk-label--s'
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="dateFrom" value="{{ filters.applicationDateFrom | isoDateToDatePickerDate }}" />
+        <input type="hidden" name="dateTo" value="{{ filters.applicationDateTo | isoDateToDatePickerDate }}" />
+        <input type="hidden" name="activity" value="{{ filters.activityId }}" />
+        <input type="hidden" name="status" value="{{ filters.status }}" />
+        {{
+          searchBar({
+              inputParams: {
+                  id: 'query',
+                  name: 'query',
+                  label: {
+                      text: 'Search for someone by name or prison number',
+                      classes: 'govuk-label--s'
+                  },
+                  type: 'search',
+                  value: query
+              },
+              buttonParams: {
+                  text: 'Search'
+              }
+          })
+        }}
+      </form>
+    </div>
+    <div class="govuk-grid-column-full">
+      {% set filterOptionsHtml %}
+
+      {% set statusFilters = [] %}
+      {% for name, status in WaitingListStatus %}
+        {%
+          set statusFilters = (statusFilters.push({
+              value: status,
+              text: waitingListStatusDescription(status),
+              checked: status in filters.status
+          }), statusFilters)
+        %}
+      {% endfor %}
+
+      {{
+        govukCheckboxes({
+            idPrefix: 'status',
+            name: 'status',
+            classes: "govuk-checkboxes--small",
+            fieldset: {
+                legend: {
+                    text: 'Decision',
+                    classes: 'govuk-fieldset__legend--s'
+                }
+            },
+            errorMessage: validationErrors | findError('status'),
+            items: statusFilters
+        })
+      }}
+
+      {{
+        mojDatePicker({
+            id: 'dateFrom',
+            name: 'dateFrom',
+            leadingZeros: 'true',
+            label: {
+                text: "Request date from",
+                classes: "govuk-label--s"
+            },
+            errorMessage: validationErrors | findError('dateFrom'),
+            value: formResponses.dateFrom or (filters.applicationDateFrom | isoDateToDatePickerDate)
+        })
+      }}
+
+      {{
+        mojDatePicker({
+            id: 'dateTo',
+            name: 'dateTo',
+            leadingZeros: 'true',
+            label: {
+                text: "Request date to",
+                classes: "govuk-label--s"
+            },
+            errorMessage: validationErrors | findError('dateTo'),
+            value: formResponses.applicationDateTo or (filters.applicationDateTo | isoDateToDatePickerDate)
+        })
+      }}
+
+
+      {% set activityOptions = [{ value: "", text: "" }] %}
+        {% for activity in activities %}
+          {%
+            set activityOptions = (activityOptions.push({
+                text: activity.activityName,
+                value: activity.id
+            }), activityOptions)
+          %}
+        {% endfor %}
+        {{
+          govukSelect({
+              id: "activity",
+              name: "activity",
+              label: {
+                  text: "Activity",
+                  classes: "govuk-label--s"
+              },
+              errorMessage: validationErrors | findError('activity'),
+              items: activityOptions,
+              value: filters.activityId
+          })
+        }}
+
+        <button class="govuk-button govuk-!-margin-top-7 govuk-!-margin-bottom-0" data-module="govuk-button">
+          Apply filters
+        </button>
+      {% endset %}
+
+      <div
+        class="moj-filter-layout moj-filter-layout__flex govuk-!-margin-bottom-6"
+        data-module="activities-list-filter"
+      >
+        <div
+          class="moj-filter-layout__filter moj-filter-layout__flex moj-filter-layout__filter--small govuk-!-display-none-print"
+        >
+          <form method="POST">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <input type="hidden" name="query" value="{{ query }}" />
+            {{
+              mojFilter({
+                  heading: {
+                      text: 'Filter'
+                  },
+                  attributes: {
+                      'data-filter-start-shown': 'true'
+                  },
+                  optionsHtml: filterOptionsHtml
+              })
+            }}
+          </form>
+        </div>
+        <div class="moj-filter-layout__content">
+          <div class="moj-action-bar govuk-!-display-none-print">
+            <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+          </div>
+
+          <form method="POST">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <h2 class="govuk-heading-s govuk-!-margin-0" aria-live="polite">
+              {{ pageInfo.totalElements }} waitlist application{{ "s" if pageInfo.totalElements | length != 1 }}
+            </h2>
+            {% set rows = [] %}
+            {% for application in applications %}
+              {%
+                set rows = (rows.push({
+                    visuallyHiddenText: 'Select ' + application.prisoner | fullName,
+                    value: application.id,
+                    selectable: true,
+                    forbiddenActionId: 'waitlist-action-1' if application.status != 'APPROVED',
+                    items: [
+                        {
+                            html: showProfileLink({
+                                firstName: application.prisoner.firstName,
+                                middleNames: application.prisoner.middleNames,
+                                lastName: application.prisoner.lastName,
+                                prisonerNumber: application.prisoner.prisonerNumber,
+                                cellLocation: statusBasedCellLocation(application.prisoner.cellLocation, application.prisoner.status, application.prisoner.prisonId == user.activeCaseLoadId),
+                                inCaseLoad: application.prisoner.prisonId == user.activeCaseLoadId
+                            })
                         },
-                        type: 'search',
-                        value: query
-                    },
-                    buttonParams: {
-                        text: 'Search'
-                    }
-                }) }}
-            </form>
-        </div>
-        <div class="govuk-grid-column-full">
-            {% set filterOptionsHtml %}
-
-                {% set statusFilters = [] %}
-                {% for name, status in WaitingListStatus %}
-                    {% set statusFilters = (statusFilters.push({
-                        value: status,
-                        text: waitingListStatusDescription(status),
-                        checked: status in filters.status
-                    }), statusFilters) %}
-                {% endfor %}
-
-                {{ govukCheckboxes({
-                    idPrefix: 'status',
-                    name: 'status',
-                    classes: "govuk-checkboxes--small",
-                    fieldset: {
-                        legend: {
-                            text: 'Decision',
-                            classes: 'govuk-fieldset__legend--s'
+                        {
+                            html: showActivityUrl(application.activity, user)
+                        },
+                        {
+                            html: splitLine(application.requestedDate, application.requestedBy)
+                        },
+                        {
+                            html: earliestReleaseDate(application.earliestReleaseDate)
+                        },
+                        {
+                            html: waitlistStatusBadge(application.status)
                         }
-                    },
-                    errorMessage: validationErrors | findError('status'),
-                    items: statusFilters
-                }) }}
-
-                {{ mojDatePicker({
-                    id: 'dateFrom',
-                    name: 'dateFrom',
-                    leadingZeros: 'true',
-                    label: {
-                        text: "Request date from",
-                        classes: "govuk-label--s"
-                    },
-                    errorMessage: validationErrors | findError('dateFrom'),
-                    value: formResponses.dateFrom or (filters.applicationDateFrom | isoDateToDatePickerDate)
-                }) }}
-
-                {{ mojDatePicker({
-                    id: 'dateTo',
-                    name: 'dateTo',
-                    leadingZeros: 'true',
-                    label: {
-                        text: "Request date to",
-                        classes: "govuk-label--s"
-                    },
-                    errorMessage: validationErrors | findError('dateTo'),
-                    value: formResponses.applicationDateTo or (filters.applicationDateTo | isoDateToDatePickerDate)
-                }) }}
-
-                {% set activityOptions = [{ value: "", text: "" }] %}
-                {% for activity in activities %}
-                    {% set activityOptions = (activityOptions.push({
-                        text: activity.activityName,
-                        value: activity.id
-                    }), activityOptions) %}
-                {% endfor %}
-                {{ govukSelect({
-                    id: "activity",
-                    name: "activity",
-                    label: {
-                        text: "Activity",
-                        classes: "govuk-label--s"
-                    },
-                    errorMessage: validationErrors | findError('activity'),
-                    items: activityOptions,
-                    value: filters.activityId
-                }) }}
-
-                <button class="govuk-button govuk-!-margin-top-7 govuk-!-margin-bottom-0" data-module="govuk-button">
-                    Apply filters
-                </button>
-            {% endset %}
-
-            <div class="moj-filter-layout moj-filter-layout__flex govuk-!-margin-bottom-6" data-module="activities-list-filter">
-                <div class="moj-filter-layout__filter moj-filter-layout__flex moj-filter-layout__filter--small govuk-!-display-none-print">
-                    <form method="POST">
-                        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                        <input type="hidden" name="query" value="{{ query }}" />
-                        {{ mojFilter({
-                            heading: {
-                                text: 'Filter'
-                            },
-                            attributes: {
-                                'data-filter-start-shown': 'true'
-                            },
-                            optionsHtml: filterOptionsHtml
-                        }) }}
-                    </form>
-                </div>
-                <div class="moj-filter-layout__content">
-                    <div class="moj-action-bar govuk-!-display-none-print">
-                        <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
-                    </div>
-
-                    <form method="POST">
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                    <h2 class="govuk-heading-s govuk-!-margin-0" aria-live="polite">{{ pageInfo.totalElements }} waitlist application{{ "s" if pageInfo.totalElements | length != 1 }}</h2>
-                    {% set rows = [] %}
-                    {% for application in applications %}
-                        {% set rows = (rows.push({
-                            visuallyHiddenText: 'Select ' + application.prisoner | fullName,
-                            value: application.id,
-                            selectable: true,
-                            forbiddenActionId: 'waitlist-action-1' if application.status != 'APPROVED',
-                            items: [
-                                {
-                                    html: showProfileLink({
-                                        firstName: application.prisoner.firstName,
-                                        middleNames: application.prisoner.middleNames,
-                                        lastName: application.prisoner.lastName,
-                                        prisonerNumber: application.prisoner.prisonerNumber,
-                                        cellLocation: statusBasedCellLocation(application.prisoner.cellLocation, application.prisoner.status, application.prisoner.prisonId == user.activeCaseLoadId),
-                                        inCaseLoad: application.prisoner.prisonId == user.activeCaseLoadId
-                                    })
-                                },
-                                {
-                                    html: showActivityUrl(application.activity, user)
-                                },
-                                {
-                                    html: splitLine(application.requestedDate, application.requestedBy)
-                                },
-                                {
-                                    html: earliestReleaseDate(application.earliestReleaseDate)
-                                },
-                                {
-                                    html: waitlistStatusBadge(application.status)
-                                }
-                            ]
-                        }), rows) %}
-                    {% endfor %}
-                    {% if rows | length > 0 %}
-                        {{ stickySelect({
-                            idPrefix: 'waitlist',
-                            caption: "Waitlist applications",
-                            captionClasses: "govuk-visually-hidden",
-                            type: 'radio',
-                            fixed: true,
-                            name: 'selectedWaitlistApplication',
-                            head: [
-                                {
-                                    text: "Prisoner details"
-                                },
-                                {
-                                    text: "Activity"
-                                },
-                                {
-                                    text: "Request date and who made it"
-                                },
-                                {
-                                    text: "Earliest release date"
-                                },
-                                {
-                                    text: "Decision"
-                                }
-                            ],
-                            rows: rows,
-                            actions: [
-                                {
-                                    text: 'View' + (' or edit' if editable) + ' application',
-                                    formAction: 'waitlist-dashboard/view-application'
-                                },
-                                {
-                                    text: 'Allocate',
-                                    formAction: 'waitlist-dashboard/allocate'
-                                } if editable
-                            ],
-                            itemsDescription: 'application',
-                            itemsDescriptionPlural: 'applications',
-                            pagination: {
-                                previous: {
-                                    title: 'Previous page',
-                                    label: pageInfo.pageNumber + ' of ' + pageInfo.totalPages,
-                                    href: '/page/' + (pageInfo.pageNumber - 1) + '?id=candidates-tab'
-                                } if not pageInfo.first,
-                                next: {
-                                    title: 'Next page',
-                                    label: (pageInfo.pageNumber + 2) + ' of ' + pageInfo.totalPages,
-                                    href: '/page/' + (pageInfo.pageNumber + 1) + '?id=candidates-tab'
-                                } if not pageInfo.last
-                            }
-                        }) }}
-                    {% else %}
-                        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
-                            <li>There are no matching applications.</li>
-                            <li>Try a different search, or change the filters.</li>
-                        </ul>
-                    {% endif %}
-                    <input type="hidden" name="dashboardUrl" value="{{ session.req.originalUrl }}" />
-                    </form>
-                </div>
-            </div>
+                    ]
+                }), rows)
+              %}
+            {% endfor %}
+            {% if rows | length > 0 %}
+              {{
+                stickySelect({
+                    idPrefix: 'waitlist',
+                    caption: "Waitlist applications",
+                    captionClasses: "govuk-visually-hidden",
+                    type: 'radio',
+                    fixed: true,
+                    name: 'selectedWaitlistApplication',
+                    head: [
+                        {
+                            text: "Prisoner details"
+                        },
+                        {
+                            text: "Activity"
+                        },
+                        {
+                            text: "Request date and who made it"
+                        },
+                        {
+                            text: "Earliest release date"
+                        },
+                        {
+                            text: "Decision"
+                        }
+                    ],
+                    rows: rows,
+                    actions: [
+                        {
+                            text: 'View' + (' or edit' if editable) + ' application',
+                            formAction: 'waitlist-dashboard/view-application'
+                        },
+                        {
+                            text: 'Allocate',
+                            formAction: 'waitlist-dashboard/allocate'
+                        } if editable
+                    ],
+                    itemsDescription: 'application',
+                    itemsDescriptionPlural: 'applications',
+                    pagination: {
+                        previous: {
+                            title: 'Previous page',
+                            label: pageInfo.pageNumber + ' of ' + pageInfo.totalPages,
+                            href: '/page/' + (pageInfo.pageNumber - 1) + '?id=candidates-tab'
+                        } if not pageInfo.first,
+                        next: {
+                            title: 'Next page',
+                            label: (pageInfo.pageNumber + 2) + ' of ' + pageInfo.totalPages,
+                            href: '/page/' + (pageInfo.pageNumber + 1) + '?id=candidates-tab'
+                        } if not pageInfo.last
+                    }
+                })
+              }}
+            {% else %}
+              <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+                <li>There are no matching applications.</li>
+                <li>Try a different search, or change the filters.</li>
+              </ul>
+            {% endif %}
+            <input type="hidden" name="dashboardUrl" value="{{ session.req.originalUrl }}" />
+          </form>
         </div>
+      </div>
     </div>
+  </div>
 {% endblock %}
 
 {% block meta %}
-    <meta name="autocompleteElements" content="activity"/>
+  <meta name="autocompleteElements" content="activity" />
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
@@ -17,21 +16,25 @@
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {{ govukRadios({
-          name: "confirm",
-          items: [{
-            value: 'yes',
-            text: 'Yes'
-          },{
-            value: 'no',
-            text: 'No'
-          }]
-        }) }}
+        {{
+          govukRadios({
+            name: "confirm",
+            items: [{
+              value: 'yes',
+              text: 'Yes'
+            },{
+              value: 'no',
+              text: 'No'
+            }]
+          })
+        }}
 
-        {{ govukButton({
-          text: "Confirm",
-          preventDoubleClick: true
-        }) }}
+        {{
+          govukButton({
+            text: "Confirm",
+            preventDoubleClick: true
+          })
+        }}
       </form>
     </div>
   </div>
