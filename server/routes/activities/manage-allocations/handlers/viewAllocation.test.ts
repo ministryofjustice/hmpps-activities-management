@@ -184,9 +184,10 @@ describe('ViewAllocationRoutes', () => {
         expect.objectContaining({
           updatedBy: 'LATEST_USER',
           latestUpdatedDateTime: '2024-05-09T10:30:00',
-          addedPrisonerExclusionHistory: [exclusionHistory[2]],
-          removedPrisonerExclusionHistory: [exclusionHistory[1]],
+          removedFromScheduleHistory: [exclusionHistory[2]],
+          addedToScheduleHistory: [exclusionHistory[1]],
           exclusionHistory,
+          showWeekNumber: true,
         }),
       )
     })
@@ -211,8 +212,8 @@ describe('ViewAllocationRoutes', () => {
         expect.objectContaining({
           updatedBy: 'LATEST_USER',
           latestUpdatedDateTime: '2024-05-09T10:30:00',
-          addedPrisonerExclusionHistory: [exclusionHistory[2]],
-          removedPrisonerExclusionHistory: [exclusionHistory[1]],
+          removedFromScheduleHistory: [exclusionHistory[2]],
+          addedToScheduleHistory: [exclusionHistory[1]],
           exclusionHistory,
         }),
       )
@@ -233,8 +234,8 @@ describe('ViewAllocationRoutes', () => {
         'pages/activities/manage-allocations/view-allocation',
         expect.objectContaining({
           latestUpdatedDateTime: undefined,
-          addedPrisonerExclusionHistory: [],
-          removedPrisonerExclusionHistory: [],
+          removedFromScheduleHistory: [],
+          addedToScheduleHistory: [],
           exclusionHistory,
         }),
       )

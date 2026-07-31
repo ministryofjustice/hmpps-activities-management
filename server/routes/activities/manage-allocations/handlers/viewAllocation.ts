@@ -18,8 +18,8 @@ const getLatestScheduleChanges = (allocatedTime: string | null | undefined, excl
 
   if (!historicalRecords.length) {
     return {
-      added: [],
-      removed: [],
+      addedExclusions: [],
+      removedExclusions: [],
     }
   }
 
@@ -29,13 +29,18 @@ const getLatestScheduleChanges = (allocatedTime: string | null | undefined, excl
 
   const latestChanges = historicalRecords.filter(record => record.updatedDateTime === latestUpdatedDateTime)
 
+  const showWeekNumber =
+    latestChanges.some(schedule => schedule.weekNumber === 1) &&
+    latestChanges.some(schedule => schedule.weekNumber === 2)
+
   const [latestChange] = latestChanges
 
   return {
-    added: latestChanges.filter(history => history.revisionType === 'ADDED'),
-    removed: latestChanges.filter(history => history.revisionType === 'REMOVED'),
+    addedExclusions: latestChanges.filter(history => history.revisionType === 'ADDED'),
+    removedExclusions: latestChanges.filter(history => history.revisionType === 'REMOVED'),
     updatedBy: latestChange.updatedBy,
     latestUpdatedDateTime,
+    showWeekNumber,
   }
 }
 
@@ -77,10 +82,11 @@ export default class ViewAllocationRoutes {
     const isStarted = new Date(allocation.startDate) <= new Date()
 
     const {
-      added: addedPrisonerExclusionHistory,
-      removed: removedPrisonerExclusionHistory,
+      addedExclusions: removedFromScheduleHistory,
+      removedExclusions: addedToScheduleHistory,
       updatedBy,
       latestUpdatedDateTime,
+      showWeekNumber,
     } = getLatestScheduleChanges(allocation.allocatedTime, exclusionHistory)
 
     const userMap = await this.userService.getUserMap([allocation.plannedSuspension?.plannedBy, updatedBy], user)
@@ -115,8 +121,9 @@ export default class ViewAllocationRoutes {
       suspensionCaseNote,
       activityIsPaid: activity?.paid,
       exclusionHistory,
-      addedPrisonerExclusionHistory,
-      removedPrisonerExclusionHistory,
+      removedFromScheduleHistory,
+      addedToScheduleHistory,
+      showWeekNumber,
     })
   }
 }
