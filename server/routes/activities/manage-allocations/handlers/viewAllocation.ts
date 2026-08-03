@@ -23,24 +23,17 @@ const getLatestScheduleChanges = (allocatedTime: string | null | undefined, excl
     }
   }
 
-  const latestUpdatedDateTime = historicalRecords.reduce((latest, current) =>
+  const latestUpdatedRecord = historicalRecords.reduce((latest, current) =>
     current.updatedDateTime > latest.updatedDateTime ? current : latest,
-  ).updatedDateTime
+  )
 
-  const latestChanges = historicalRecords.filter(record => record.updatedDateTime === latestUpdatedDateTime)
-
-  const showWeekNumber =
-    latestChanges.some(schedule => schedule.weekNumber === 1) &&
-    latestChanges.some(schedule => schedule.weekNumber === 2)
-
-  const [latestChange] = latestChanges
+  const latestChanges = historicalRecords.filter(record => record.revision === latestUpdatedRecord.revision)
 
   return {
     addedExclusions: latestChanges.filter(history => history.revisionType === 'ADDED'),
     removedExclusions: latestChanges.filter(history => history.revisionType === 'REMOVED'),
-    updatedBy: latestChange.updatedBy,
-    latestUpdatedDateTime,
-    showWeekNumber,
+    updatedBy: latestUpdatedRecord.updatedBy,
+    latestUpdatedDateTime: latestUpdatedRecord.updatedDateTime,
   }
 }
 
@@ -79,6 +72,8 @@ export default class ViewAllocationRoutes {
 
     const currentWeek = calcCurrentWeek(parseDate(activity.startDate), schedule.scheduleWeeks)
 
+    const showWeekNumber = schedule.scheduleWeeks === 2
+
     const isStarted = new Date(allocation.startDate) <= new Date()
 
     const {
@@ -86,7 +81,6 @@ export default class ViewAllocationRoutes {
       removedExclusions: addedToScheduleHistory,
       updatedBy,
       latestUpdatedDateTime,
-      showWeekNumber,
     } = getLatestScheduleChanges(allocation.allocatedTime, exclusionHistory)
 
     const userMap = await this.userService.getUserMap([allocation.plannedSuspension?.plannedBy], user)
@@ -100,13 +94,15 @@ export default class ViewAllocationRoutes {
       logger.info(`Handled allocatedBy user ${allocation.allocatedBy} not found.`)
     }
 
-    try {
-      const updatedByUser = await this.userService.getUserMap([updatedBy], user)
+    if (updatedBy) {
+      try {
+        const updatedByUser = await this.userService.getUserMap([updatedBy], user)
 
-      updatedByUser.forEach((value, key) => userMap.set(key, value))
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
-      logger.info(`Handled updatedBy user ${updatedBy} not found.`)
+        updatedByUser.forEach((value, key) => userMap.set(key, value))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
+        logger.info(`Handled updatedBy user ${updatedBy} not found.`)
+      }
     }
 
     const suspensionCaseNote = allocation.plannedSuspension?.dpsCaseNoteId

@@ -111,6 +111,37 @@ describe('Views - Change allocation details', () => {
     )
   })
 
+  it('should show the week number when only one week is affected by a schedule change', () => {
+    viewContext.removedFromScheduleHistory = []
+    viewContext.addedToScheduleHistory = [
+      {
+        weekNumber: 2,
+        timeSlots: ['AM', 'PM', 'ED'],
+        dayOfWeek: 'WEDNESDAY',
+        revisionType: 'ADDED',
+        revision: 2,
+        updatedBy: 'Joe Bloggs',
+        updatedDateTime: '2024-05-09T10:30:00',
+      },
+    ]
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
+      'Added to:',
+    )
+
+    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
+      'Week 2',
+    )
+
+    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text()).toContain(
+      'AM, PM and ED',
+    )
+
+    expect($('.govuk-summary-list').text()).not.toContain('Removed from:')
+  })
+
   it('should hide the latest schedule history section when there is no schedule history', () => {
     viewContext.removedFromScheduleHistory = []
     viewContext.addedToScheduleHistory = []

@@ -14,7 +14,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { CaseNote } from '../../../../@types/caseNotesApi/types'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 
-import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
+import activityScheduleBiWeekly from '../../../../services/fixtures/activity_schedule_bi_weekly_1.json'
 import atLeast from '../../../../../jest.setup'
 
 jest.mock('../../../../services/prisonService')
@@ -119,7 +119,7 @@ describe('ViewAllocationRoutes', () => {
             startDate: format(subDays(new Date(), 2), 'yyyy-MM-dd'),
           },
         ],
-        schedules: [activitySchedule],
+        schedules: [activityScheduleBiWeekly],
         startDate: '2022-01-01',
       } as unknown as Activity)
 
