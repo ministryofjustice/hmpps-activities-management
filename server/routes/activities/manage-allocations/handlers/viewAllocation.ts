@@ -89,14 +89,24 @@ export default class ViewAllocationRoutes {
       showWeekNumber,
     } = getLatestScheduleChanges(allocation.allocatedTime, exclusionHistory)
 
-    const userMap = await this.userService.getUserMap([allocation.plannedSuspension?.plannedBy, updatedBy], user)
+    const userMap = await this.userService.getUserMap([allocation.plannedSuspension?.plannedBy], user)
 
     try {
       const allocatedByUser = await this.userService.getUserMap([allocation.allocatedBy], user)
+
       allocatedByUser.forEach((value, key) => userMap.set(key, value))
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       logger.info(`Handled allocatedBy user ${allocation.allocatedBy} not found.`)
+    }
+
+    try {
+      const updatedByUser = await this.userService.getUserMap([updatedBy], user)
+
+      updatedByUser.forEach((value, key) => userMap.set(key, value))
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      logger.info(`Handled updatedBy user ${updatedBy} not found.`)
     }
 
     const suspensionCaseNote = allocation.plannedSuspension?.dpsCaseNoteId
@@ -120,7 +130,6 @@ export default class ViewAllocationRoutes {
       latestUpdatedDateTime,
       suspensionCaseNote,
       activityIsPaid: activity?.paid,
-      exclusionHistory,
       removedFromScheduleHistory,
       addedToScheduleHistory,
       showWeekNumber,

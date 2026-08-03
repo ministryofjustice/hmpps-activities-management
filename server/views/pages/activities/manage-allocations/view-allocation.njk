@@ -242,7 +242,6 @@
     {% elseif schedule.timeSlots.length == 2 %}
     {{ schedule.timeSlots[0] }} and {{ schedule.timeSlots[1] }}
     {% else %}
-    {{ schedule.timeSlots.slice(0, -1) | join(', ') }}
-    and {{ schedule.timeSlots[schedule.timeSlots.length - 1] }}
+    {{ schedule.timeSlots.slice(0, -1) | join(', ') }} and {{ schedule.timeSlots[schedule.timeSlots.length - 1] }}
     {% endif %}
 {% endmacro %}

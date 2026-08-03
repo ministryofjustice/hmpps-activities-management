@@ -186,7 +186,6 @@ describe('ViewAllocationRoutes', () => {
           latestUpdatedDateTime: '2024-05-09T10:30:00',
           removedFromScheduleHistory: [exclusionHistory[2]],
           addedToScheduleHistory: [exclusionHistory[1]],
-          exclusionHistory,
           showWeekNumber: true,
         }),
       )
@@ -214,7 +213,31 @@ describe('ViewAllocationRoutes', () => {
           latestUpdatedDateTime: '2024-05-09T10:30:00',
           removedFromScheduleHistory: [exclusionHistory[2]],
           addedToScheduleHistory: [exclusionHistory[1]],
-          exclusionHistory,
+        }),
+      )
+    })
+
+    it('should handle updatedBy user not found', async () => {
+      mockAllocation({
+        allocatedBy: 'MIGRATION',
+      })
+      when(activitiesService.getAllocationExclusionsHistory).calledWith(1, user).mockResolvedValue(exclusionHistory)
+
+      mockUserMap(['joebloggs'])
+
+      when(userService.getUserMap)
+        .calledWith(atLeast(['LATEST_USER']))
+        .mockRejectedValue(new Error('User not found'))
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/view-allocation',
+        expect.objectContaining({
+          updatedBy: 'LATEST_USER',
+          latestUpdatedDateTime: '2024-05-09T10:30:00',
+          removedFromScheduleHistory: [exclusionHistory[2]],
+          addedToScheduleHistory: [exclusionHistory[1]],
         }),
       )
     })
@@ -236,7 +259,6 @@ describe('ViewAllocationRoutes', () => {
           latestUpdatedDateTime: undefined,
           removedFromScheduleHistory: [],
           addedToScheduleHistory: [],
-          exclusionHistory,
         }),
       )
     })
