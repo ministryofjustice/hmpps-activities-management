@@ -71,6 +71,8 @@ context('Allocate to activity', () => {
       startDate: '2022-10-10',
     })
 
+    cy.stubEndpoint('GET', '/allocations/id/2/exclusions/history', [])
+
     resetActivityAndScheduleStubs({ activityStartDate: subWeeks(new Date(), 2) })
 
     cy.signIn()
