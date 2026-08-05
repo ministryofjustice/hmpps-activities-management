@@ -164,6 +164,42 @@
                         </a>
                     </dd>
                 </div>
+
+            {% if removedFromScheduleHistory.length or addedToScheduleHistory.length %} 
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Schedule last changed
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                            {{ latestUpdatedDateTime
+                                    | parseDate("yyyy-MM-dd'T'HH:mm:ss")
+                                    | formatDate("d MMMM yyyy 'at' HH:mm") }}
+                            by - 
+                            {{ serviceUserName(userMap.get(updatedBy)) }}
+                        {% if removedFromScheduleHistory.length %}      
+                            <div class='govuk-!-margin-top-6'>
+                                Removed from:
+                                {% for schedule in removedFromScheduleHistory %}
+                                    <div class='govuk-summary-list__key--normal-key-weight'> 
+                                        {{ exclusionDetails(schedule) }}
+                                    </div> 
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if addedToScheduleHistory.length %}
+                            <div class='govuk-!-margin-top-6'>
+                                Added to:
+                                {% for schedule in addedToScheduleHistory %}
+                                    <div class='govuk-summary-list__key--normal-key-weight'>
+                                        {{ exclusionDetails(schedule) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </dd>
+                </div>
+            {% endif %}
+        
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Allocated by
@@ -193,5 +229,19 @@
         <div>{{ (pay.prisonPayBand.alias + ' - ' + pay.rate | toMoney) if pay else '£0' }}</div>
     {% else %}
         No pay rate for this activity
+    {% endif %}
+{% endmacro %}
+
+{% macro exclusionDetails(schedule) %}
+    {% if showWeekNumber %} 
+        Week {{ schedule.weekNumber }} -
+    {% endif %}
+    {{ schedule.dayOfWeek | title }} 
+    {% if schedule.timeSlots.length == 1 %}
+    {{ schedule.timeSlots[0] }}
+    {% elseif schedule.timeSlots.length == 2 %}
+    {{ schedule.timeSlots[0] }} and {{ schedule.timeSlots[1] }}
+    {% else %}
+    {{ schedule.timeSlots.slice(0, -1) | join(', ') }} and {{ schedule.timeSlots[schedule.timeSlots.length - 1] }}
     {% endif %}
 {% endmacro %}
