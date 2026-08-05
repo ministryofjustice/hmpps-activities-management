@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatFirstLastName, parseDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import { Activity, ExclusionRevision } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
@@ -10,6 +10,32 @@ import UserService from '../../../../services/userService'
 import CaseNotesService from '../../../../services/caseNotesService'
 import logger from '../../../../../logger'
 import getCurrentPay from '../../../../utils/helpers/getCurrentPay'
+
+const getLatestScheduleChanges = (allocatedTime: string | null | undefined, exclusionHistory: ExclusionRevision[]) => {
+  const historicalRecords = allocatedTime
+    ? exclusionHistory.filter(history => history.updatedDateTime > allocatedTime)
+    : exclusionHistory
+
+  if (!historicalRecords.length) {
+    return {
+      addedExclusions: [],
+      removedExclusions: [],
+    }
+  }
+
+  const latestUpdatedRecord = historicalRecords.reduce((latest, current) =>
+    current.updatedDateTime > latest.updatedDateTime ? current : latest,
+  )
+
+  const latestChanges = historicalRecords.filter(record => record.revision === latestUpdatedRecord.revision)
+
+  return {
+    addedExclusions: latestChanges.filter(history => history.revisionType === 'ADDED'),
+    removedExclusions: latestChanges.filter(history => history.revisionType === 'REMOVED'),
+    updatedBy: latestUpdatedRecord.updatedBy,
+    latestUpdatedDateTime: latestUpdatedRecord.updatedDateTime,
+  }
+}
 
 export default class ViewAllocationRoutes {
   constructor(
@@ -25,9 +51,10 @@ export default class ViewAllocationRoutes {
 
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
 
-    const [activity, prisoner]: [Activity, Prisoner] = await Promise.all([
+    const [activity, prisoner, exclusionHistory]: [Activity, Prisoner, ExclusionRevision[]] = await Promise.all([
       this.activitiesService.getActivity(allocation.activityId, user),
       this.prisonService.getInmateByPrisonerNumber(allocation.prisonerNumber, user),
+      this.activitiesService.getAllocationExclusionsHistory(allocation.id, user),
     ])
 
     const prisonerName = formatFirstLastName(prisoner.firstName, prisoner.lastName)
@@ -45,16 +72,37 @@ export default class ViewAllocationRoutes {
 
     const currentWeek = calcCurrentWeek(parseDate(activity.startDate), schedule.scheduleWeeks)
 
+    const showWeekNumber = schedule.scheduleWeeks === 2
+
     const isStarted = new Date(allocation.startDate) <= new Date()
+
+    const {
+      addedExclusions: removedFromScheduleHistory,
+      removedExclusions: addedToScheduleHistory,
+      updatedBy,
+      latestUpdatedDateTime,
+    } = getLatestScheduleChanges(allocation.allocatedTime, exclusionHistory)
 
     const userMap = await this.userService.getUserMap([allocation.plannedSuspension?.plannedBy], user)
 
     try {
       const allocatedByUser = await this.userService.getUserMap([allocation.allocatedBy], user)
+
       allocatedByUser.forEach((value, key) => userMap.set(key, value))
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       logger.info(`Handled allocatedBy user ${allocation.allocatedBy} not found.`)
+    }
+
+    if (updatedBy) {
+      try {
+        const updatedByUser = await this.userService.getUserMap([updatedBy], user)
+
+        updatedByUser.forEach((value, key) => userMap.set(key, value))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
+        logger.info(`Handled updatedBy user ${updatedBy} not found.`)
+      }
     }
 
     const suspensionCaseNote = allocation.plannedSuspension?.dpsCaseNoteId
@@ -74,8 +122,13 @@ export default class ViewAllocationRoutes {
       dailySlots,
       currentWeek,
       userMap,
+      updatedBy,
+      latestUpdatedDateTime,
       suspensionCaseNote,
       activityIsPaid: activity?.paid,
+      removedFromScheduleHistory,
+      addedToScheduleHistory,
+      showWeekNumber,
     })
   }
 }
