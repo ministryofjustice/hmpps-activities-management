@@ -116,7 +116,8 @@ export default class CheckAnswersRoutes {
 
   private createAppointmentSetRequest(req: Request, res: Response): AppointmentSetCreateRequest {
     const { user } = res.locals
-    const { appointmentJourney, appointmentSetJourney } = req.session
+    const { appointmentJourney } = req.session
+    const { appointmentSetJourney } = req.journeyData
 
     return {
       prisonCode: user.activeCaseLoadId,

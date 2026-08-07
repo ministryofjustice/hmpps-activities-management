@@ -34,13 +34,13 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
         appointmentJourney: {
           prisoners: [],
         },
-        appointmentSetJourney: {
-          appointments: [],
-        },
       },
       journeyData: {
         editAppointmentJourney: {
           addPrisoners: [],
+        },
+        appointmentSetJourney: {
+          appointments: [],
         },
       },
       params: {
@@ -198,7 +198,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
 
     it('should remove appointment and redirect back to GET', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -225,7 +225,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',

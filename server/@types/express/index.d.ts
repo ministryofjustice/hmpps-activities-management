@@ -32,7 +32,6 @@ declare module 'express-session' {
     // as if there was only one journey per session e.g. req.session.appointmentJourney
     suspendJourney: SuspendJourney
     appointmentJourney: AppointmentJourney
-    appointmentSetJourney: AppointmentSetJourney
     bookACourtHearingJourney: BookACourtHearingJourney
     bookAProbationMeetingJourney: BookAProbationMeetingJourney
     journeyMetrics: JourneyMetrics
@@ -45,7 +44,6 @@ declare module 'express-session' {
 export type SessionDatum = {
   instanceUnixEpoch: number
   appointmentJourney: AppointmentJourney
-  appointmentSetJourney: AppointmentSetJourney
   journeyMetrics: JourneyMetrics
 }
 
@@ -91,6 +89,7 @@ export type JourneyData = {
   allocateJourney?: AllocateToActivityJourney
   recordAppointmentAttendanceJourney?: RecordAppointmentAttendanceJourney
   editAppointmentJourney?: EditAppointmentJourney
+  appointmentSetJourney?: AppointmentSetJourney
 }
 
 export type ServiceUser = Express.User &

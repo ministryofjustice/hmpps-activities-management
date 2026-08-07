@@ -37,6 +37,8 @@ describe('Views - Create Appointment Set - Add Extra Information - feature toggl
         appointmentJourney: {
           type: AppointmentType.SET,
         } as AppointmentJourney,
+      },
+      journeyData: {
         appointmentSetJourney: {} as AppointmentSetJourney,
       },
     }
@@ -108,6 +110,8 @@ describe('Views - Create Appointment Set - Add Extra Information - feature toggl
         appointmentJourney: {
           type: AppointmentType.SET,
         } as AppointmentJourney,
+      },
+      journeyData: {
         appointmentSetJourney: {} as AppointmentSetJourney,
       },
     }

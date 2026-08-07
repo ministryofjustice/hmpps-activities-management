@@ -44,7 +44,7 @@ export default class AppointmentSetUploadRoutes {
     const appointments = await this.getAppointmentInstances(req, res)
     if (!appointments) return
 
-    req.session.appointmentSetJourney.appointments = appointments
+    req.journeyData.appointmentSetJourney.appointments = appointments
 
     res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
@@ -65,7 +65,7 @@ export default class AppointmentSetUploadRoutes {
 
     const notFound = prisonerNumbers.filter(num => !prisonerDetails.has(num))
     if (notFound.length) {
-      req.session.appointmentSetJourney.prisonersNotFound = notFound
+      req.journeyData.appointmentSetJourney.prisonersNotFound = notFound
     }
 
     const availableAppointments: AppointmentJourneyInfo[] = appointmentInstances.filter(

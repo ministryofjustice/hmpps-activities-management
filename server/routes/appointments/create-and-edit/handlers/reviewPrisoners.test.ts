@@ -37,13 +37,13 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         appointmentJourney: {
           prisoners: [],
         },
-        appointmentSetJourney: {
-          appointments: [],
-        },
       },
       journeyData: {
         editAppointmentJourney: {
           addPrisoners: [],
+        },
+        appointmentSetJourney: {
+          appointments: [],
         },
       },
       params: {},
@@ -93,7 +93,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should render the review prisoners view with back to upload appointment set', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -180,7 +180,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should render the review prisoners view - create back to back appointments - some prisoners not found', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -200,7 +200,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           },
         },
       ]
-      req.session.appointmentSetJourney.prisonersNotFound = ['C9876GF']
+      req.journeyData.appointmentSetJourney.prisonersNotFound = ['C9876GF']
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'upload-appointment-set',
@@ -443,7 +443,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should remove appointment and redirect back to GET', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -470,7 +470,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',

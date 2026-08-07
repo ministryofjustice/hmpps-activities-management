@@ -47,12 +47,12 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           startDate: formatIsoDate(tomorrow),
           prisoners: [],
         },
-        appointmentSetJourney: {
-          appointments: [],
-        },
       },
       journeyData: {
         editAppointmentJourney: {},
+        appointmentSetJourney: {
+          appointments: [],
+        },
       },
       query: {},
       params: {},
@@ -205,7 +205,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
     it('use appointment set appointments prisoner for type = SET', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           startTime: {
             hour: 9,
@@ -509,7 +509,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
     it('should remove prisoner appointment from appointment set and redirect back to GET', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -544,7 +544,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         ),
       )
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
