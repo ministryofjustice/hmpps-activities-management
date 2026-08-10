@@ -41,6 +41,8 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         appointmentJourney: {
           prisoners: [{ number: 'G6123VU' }, { number: 'AB123IT' }, { number: 'PW987BB' }],
         },
+      },
+      journeyData: {
         appointmentSetJourney: {
           appointments: [
             { prisoner: { number: 'A1234BC' } },
@@ -294,7 +296,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         { prisoner: { number: 'A1234BC' } },
         { prisoner: { number: 'B2345CD' } },
       ])

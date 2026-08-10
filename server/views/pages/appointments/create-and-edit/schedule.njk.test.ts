@@ -115,8 +115,8 @@ describe('Views - Appointments Management - Schedule', () => {
   let viewContext = {
     session: {
       appointmentJourney: {} as AppointmentJourney,
-      appointmentSetJourney: {} as AppointmentSetJourney,
     },
+    appointmentSetJourney: {} as AppointmentSetJourney,
     editAppointmentJourney: {} as EditAppointmentJourney,
     prisonerSchedules: [] as {
       prisoner: { number: string; name: string; firstName?: string; lastName?: string; cellLocation: string }
@@ -147,8 +147,8 @@ describe('Views - Appointments Management - Schedule', () => {
         appointmentJourney: {
           startDate: formatIsoDate(tomorrow),
         } as unknown as AppointmentJourney,
-        appointmentSetJourney: {} as AppointmentSetJourney,
       },
+      appointmentSetJourney: {} as AppointmentSetJourney,
       editAppointmentJourney: {} as EditAppointmentJourney,
       prisonerSchedules: [],
       formResponses: {},
@@ -701,7 +701,7 @@ describe('Views - Appointments Management - Schedule', () => {
   describe('Appointment Set', () => {
     beforeEach(() => {
       viewContext.session.appointmentJourney.type = AppointmentType.SET
-      viewContext.session.appointmentSetJourney.appointments = [
+      viewContext.appointmentSetJourney.appointments = [
         {
           startTime: { hour: 9, minute: 0 },
           endTime: { hour: 9, minute: 15 },
@@ -833,7 +833,7 @@ describe('Views - Appointments Management - Schedule', () => {
           },
         },
       ]
-      viewContext.prisonerSchedules = viewContext.session.appointmentSetJourney.appointments.map(appointment => ({
+      viewContext.prisonerSchedules = viewContext.appointmentSetJourney.appointments.map(appointment => ({
         prisoner: appointment.prisoner,
         startTime: appointment.startTime,
         endTime: appointment.endTime,
@@ -868,7 +868,7 @@ describe('Views - Appointments Management - Schedule', () => {
     })
 
     it('should display "Continue" top call to action for eleven appointments', () => {
-      viewContext.session.appointmentSetJourney.appointments.push({
+      viewContext.appointmentSetJourney.appointments.push({
         startTime: { hour: 11, minute: 30 },
         endTime: { hour: 11, minute: 45 },
         prisoner: {
@@ -882,12 +882,10 @@ describe('Views - Appointments Management - Schedule', () => {
         },
       })
       viewContext.prisonerSchedules.push({
-        prisoner: viewContext.session.appointmentSetJourney.appointments[10].prisoner,
-        startTime: viewContext.session.appointmentSetJourney.appointments[10].startTime,
-        endTime: viewContext.session.appointmentSetJourney.appointments[10].endTime,
-        scheduledEvents: getScheduledEventsForPrisoner(
-          viewContext.session.appointmentSetJourney.appointments[10].prisoner,
-        ),
+        prisoner: viewContext.appointmentSetJourney.appointments[10].prisoner,
+        startTime: viewContext.appointmentSetJourney.appointments[10].startTime,
+        endTime: viewContext.appointmentSetJourney.appointments[10].endTime,
+        scheduledEvents: getScheduledEventsForPrisoner(viewContext.appointmentSetJourney.appointments[10].prisoner),
       })
 
       $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -971,7 +969,7 @@ describe('Views - Appointments Management - Schedule', () => {
     })
 
     it('should only display list is empty and someone must be added when attendee list is empty', () => {
-      viewContext.session.appointmentSetJourney.appointments = []
+      viewContext.appointmentSetJourney.appointments = []
       viewContext.prisonerSchedules = []
 
       $ = cheerio.load(compiledTemplate.render(viewContext))

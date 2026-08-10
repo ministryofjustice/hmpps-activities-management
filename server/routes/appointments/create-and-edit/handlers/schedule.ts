@@ -19,8 +19,8 @@ export default class ScheduleRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentId } = req.params
-    const { appointmentJourney, appointmentSetJourney } = req.session
-    const { editAppointmentJourney } = req.journeyData
+    const { appointmentJourney } = req.session
+    const { editAppointmentJourney, appointmentSetJourney } = req.journeyData
     const { preserveHistory } = req.query
 
     let prisonNumbers
@@ -133,7 +133,7 @@ export default class ScheduleRoutes {
     const { prisonNumber } = req.params
 
     if (req.session.appointmentJourney.type === AppointmentType.SET) {
-      req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.filter(
+      req.journeyData.appointmentSetJourney.appointments = req.journeyData.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )
     } else if (

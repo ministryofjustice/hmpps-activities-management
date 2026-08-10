@@ -44,8 +44,8 @@ export default class ReviewPrisonerRoutes {
   }
 
   private static getPrisoners(req: Request): AppointmentPrisonerDetails[] {
-    const { appointmentJourney, appointmentSetJourney } = req.session
-    const { editAppointmentJourney } = req.journeyData
+    const { appointmentJourney } = req.session
+    const { editAppointmentJourney, appointmentSetJourney } = req.journeyData
 
     if (appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
       return editAppointmentJourney.addPrisoners
@@ -57,7 +57,8 @@ export default class ReviewPrisonerRoutes {
   }
 
   private static getNotFoundPrisoners(req: Request): string[] {
-    const { appointmentJourney, appointmentSetJourney } = req.session
+    const { appointmentJourney } = req.session
+    const { appointmentSetJourney } = req.journeyData
 
     if (appointmentJourney.type === AppointmentType.SET && appointmentSetJourney.prisonersNotFound) {
       const unidentifiedPrisonerNumbers = appointmentSetJourney.prisonersNotFound
@@ -103,7 +104,7 @@ export default class ReviewPrisonerRoutes {
     const { prisonNumber } = req.params
 
     if (req.session.appointmentJourney.type === AppointmentType.SET) {
-      req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.filter(
+      req.journeyData.appointmentSetJourney.appointments = req.journeyData.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )
     } else {

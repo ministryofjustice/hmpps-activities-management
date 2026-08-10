@@ -101,6 +101,7 @@ export default function Create({
   get('/upload-appointment-set', appointmentSetUploadRoutes.GET, true)
   router.post(
     '/upload-appointment-set',
+    setUpJourneyData(tokenStore),
     setUpMultipartFormDataParsing(),
     validationMiddleware(AppointmentsList),
     appointmentSetUploadRoutes.POST,
@@ -170,6 +171,7 @@ export default function Create({
   post('/appointment-set-times', appointmentSetTimesRoutes.POST, AppointmentTimes)
   router.get(
     '/set-confirmation/:appointmentSetId',
+    setUpJourneyData(tokenStore),
     fetchAppointmentSet(activitiesService),
     emptyAppointmentJourneyHandler(true),
     confirmationRoutes.GET_SET,

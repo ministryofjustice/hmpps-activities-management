@@ -33,7 +33,7 @@ export default class ConfirmationRoutes {
     res.render('pages/appointments/create-and-edit/confirmation', { appointmentSet })
 
     req.session.appointmentJourney = null
-    req.session.appointmentSetJourney = null
+    req.journeyData.appointmentSetJourney = null
     req.session.journeyMetrics = null
   }
 }

@@ -40,7 +40,7 @@ export default class StartJourneyRoutes {
       type: AppointmentType.SET,
       createJourneyComplete: false,
     }
-    req.session.appointmentSetJourney = {
+    req.journeyData.appointmentSetJourney = {
       appointments: [],
     }
 

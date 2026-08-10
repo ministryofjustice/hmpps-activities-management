@@ -7,7 +7,6 @@ import { SessionDatum } from '../@types/express'
 
 const journeys = [
   'appointmentJourney',
-  'appointmentSetJourney',
   'bookACourtHearingJourney',
   'bookAProbationMeetingJourney',
   'attendanceSummaryJourney',

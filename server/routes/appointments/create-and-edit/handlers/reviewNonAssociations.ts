@@ -12,7 +12,8 @@ export default class ReviewNonAssociationRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentId } = req.params
-    const { appointmentJourney, appointmentSetJourney } = req.session
+    const { appointmentJourney } = req.session
+    const { appointmentSetJourney } = req.journeyData
     const { preserveHistory, prisonerRemoved } = req.query
     const backLinkHref = 'review-prisoners-alerts'
 
@@ -59,7 +60,7 @@ export default class ReviewNonAssociationRoutes {
     const { prisonNumber } = req.params
 
     if (req.session.appointmentJourney.type === AppointmentType.SET) {
-      req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.filter(
+      req.journeyData.appointmentSetJourney.appointments = req.journeyData.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )
     } else {

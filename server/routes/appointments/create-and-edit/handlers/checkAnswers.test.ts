@@ -75,6 +75,8 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
           organiserCode: 'PRISON_STAFF',
           repeat: YesNo.NO,
         },
+      },
+      journeyData: {
         appointmentSetJourney: {},
       },
     } as unknown as Request
@@ -248,7 +250,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     beforeEach(() => {
       req.session.appointmentJourney.type = AppointmentType.SET
 
-      req.session.appointmentSetJourney = {
+      req.journeyData.appointmentSetJourney = {
         appointments: [
           {
             startTime: {
