@@ -20,7 +20,7 @@ export class AppointmentSetStaffPrisonerExtraInformation {
 
 export default class AppointmentSetAddExtraInformationRoutes {
   GET = async (req: Request, res: Response) => {
-    const { appointments } = req.session.appointmentSetJourney
+    const { appointments } = req.journeyData.appointmentSetJourney
     const { prisonerNumber } = req.params
 
     // Prisoner not found, redirect back
@@ -38,7 +38,7 @@ export default class AppointmentSetAddExtraInformationRoutes {
 
   POST = async (req: Request, res: Response) => {
     const { extraInformation, prisonerExtraInformation } = req.body
-    const { appointments } = req.session.appointmentSetJourney
+    const { appointments } = req.journeyData.appointmentSetJourney
     const { prisonerNumber } = req.params
 
     const appointment = appointments.find(a => a?.prisoner.number === prisonerNumber)

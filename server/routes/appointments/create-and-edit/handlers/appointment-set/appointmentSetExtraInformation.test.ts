@@ -19,7 +19,7 @@ describe('Route Handlers - Create Appointment Set - Extra Information', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         appointmentSetJourney: {},
       },
     } as unknown as Request
@@ -45,7 +45,7 @@ describe('Route Handlers - Create Appointment Set - Extra Information', () => {
           extraInformation: 'Another appointment extra information',
         },
       ] as AppointmentSetJourney['appointments']
-      req.session.appointmentSetJourney.appointments = testPrisonerAppointments
+      req.journeyData.appointmentSetJourney.appointments = testPrisonerAppointments
 
       handler.GET(req, res)
 

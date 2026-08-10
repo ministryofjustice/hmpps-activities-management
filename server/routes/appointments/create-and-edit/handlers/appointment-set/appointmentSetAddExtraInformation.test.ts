@@ -27,7 +27,7 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         appointmentSetJourney: {},
       },
       params: {},
@@ -46,7 +46,7 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
           number: 'A1234BC',
         },
       }
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
       ] as AppointmentSetJourney['appointments']
 
@@ -72,7 +72,7 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
         },
         extraInformation: 'An appointment extra information',
       }
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
       ] as AppointmentSetJourney['appointments']
 
@@ -94,7 +94,7 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
           number: 'A1234BC',
         },
       }
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
       ] as AppointmentSetJourney['appointments']
 
@@ -105,11 +105,11 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
         prisonerNumber: 'A1234BC',
       }
 
-      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toBeUndefined()
+      expect(req.journeyData.appointmentSetJourney.appointments[0].extraInformation).toBeUndefined()
 
       handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('Extra information')
+      expect(req.journeyData.appointmentSetJourney.appointments[0].extraInformation).toEqual('Extra information')
       expect(res.redirect).toHaveBeenCalledWith('../appointment-set-extra-information')
     })
 
@@ -120,7 +120,7 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
         },
         extraInformation: 'Extra information',
       }
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
       ] as AppointmentSetJourney['appointments']
 
@@ -131,11 +131,13 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
         prisonerNumber: 'A1234BC',
       }
 
-      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('Extra information')
+      expect(req.journeyData.appointmentSetJourney.appointments[0].extraInformation).toEqual('Extra information')
 
       handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('Different extra information')
+      expect(req.journeyData.appointmentSetJourney.appointments[0].extraInformation).toEqual(
+        'Different extra information',
+      )
       expect(res.redirect).toHaveBeenCalledWith('../appointment-set-extra-information')
     })
 
@@ -146,7 +148,7 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
         },
         extraInformation: 'Extra information',
       }
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
       ] as AppointmentSetJourney['appointments']
 
@@ -159,8 +161,8 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
 
       handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toHaveLength(1)
-      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('Extra information')
+      expect(req.journeyData.appointmentSetJourney.appointments).toHaveLength(1)
+      expect(req.journeyData.appointmentSetJourney.appointments[0].extraInformation).toEqual('Extra information')
       expect(res.redirect).toHaveBeenCalledWith('../appointment-set-extra-information')
     })
   })

@@ -43,6 +43,8 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
     req = {
       session: {
         appointmentJourney: {},
+      },
+      journeyData: {
         appointmentSetJourney: {},
       },
       query: {},
@@ -132,7 +134,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
         ] as Prisoner[])
 
       await handler.POST(req, res)
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -160,7 +162,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
           endTime: { hour: 9, minute: 30 },
         },
       ])
-      expect(req.session.appointmentSetJourney.prisonersNotFound).toEqual(['C9876DE'])
+      expect(req.journeyData.appointmentSetJourney.prisonersNotFound).toEqual(['C9876DE'])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
     })
 
@@ -195,8 +197,8 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
         .mockResolvedValue([] as Prisoner[])
 
       await handler.POST(req, res)
-      expect(req.session.appointmentSetJourney.appointments).toEqual([])
-      expect(req.session.appointmentSetJourney.prisonersNotFound).toEqual(['A1234BC', 'B2345CD', 'C9876DE'])
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([])
+      expect(req.journeyData.appointmentSetJourney.prisonersNotFound).toEqual(['A1234BC', 'B2345CD', 'C9876DE'])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
     })
 
@@ -244,7 +246,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -320,7 +322,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -352,7 +354,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
     })
 
     it('should replace appointments in session and redirect to review prisoners page', async () => {
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'XYZ1234',
@@ -423,7 +425,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',

@@ -286,7 +286,7 @@
                 text: "Appointments created"
             },
             value: {
-                text: session.appointmentSetJourney.appointments | length
+                text: appointmentSetJourney.appointments | length
             }
         }
     ), schedulingInformationRows) %}
@@ -388,9 +388,9 @@
         }) }}
     </div>
 
-    <h2 class="govuk-heading-m">{{ ("Attendee details" if session.appointmentSetJourney.appointments.length == 1 else "Details of attendees") }}</h2>
+    <h2 class="govuk-heading-m">{{ ("Attendee details" if appointmentSetJourney.appointments.length == 1 else "Details of attendees") }}</h2>
 
-    {% for appointment in session.appointmentSetJourney.appointments %}
+    {% for appointment in appointmentSetJourney.appointments %}
         {{ govukSummaryList({
             card: {
                 title: {

@@ -23,7 +23,7 @@ export class AppointmentTimes {
 
 export default class AppointmentSetTimesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointments } = req.session.appointmentSetJourney
+    const { appointments } = req.journeyData.appointmentSetJourney
 
     res.render('pages/appointments/create-and-edit/appointment-set/times', { appointments })
   }
@@ -46,7 +46,7 @@ export default class AppointmentSetTimesRoutes {
 
     const { startDate } = req.session.appointmentJourney
 
-    const appointments = req.session.appointmentSetJourney.appointments.map(appointment => ({
+    const appointments = req.journeyData.appointmentSetJourney.appointments.map(appointment => ({
       prisoner: appointment.prisoner,
       startTime: {
         hour: startTimeObj[appointment.prisoner.number].hour,
@@ -89,7 +89,7 @@ export default class AppointmentSetTimesRoutes {
       return res.validationFailed()
     }
 
-    req.session.appointmentSetJourney.appointments = appointments
+    req.journeyData.appointmentSetJourney.appointments = appointments
 
     return res.redirect(`schedule${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }

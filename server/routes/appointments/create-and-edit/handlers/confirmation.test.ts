@@ -65,6 +65,8 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
             date: '2023-04-23T13:00:00.000+0100',
           },
         },
+      },
+      journeyData: {
         appointmentSetJourney: {},
       },
       appointment: {
@@ -143,7 +145,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should clear session', async () => {
       await handler.GET_SET(req, res)
       expect(req.session.appointmentJourney).toBeNull()
-      expect(req.session.appointmentSetJourney).toBeNull()
+      expect(req.journeyData.appointmentSetJourney).toBeNull()
       expect(req.session.journeyMetrics).toBeNull()
     })
   })

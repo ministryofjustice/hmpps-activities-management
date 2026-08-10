@@ -3,7 +3,6 @@ import { randomUUID } from 'crypto'
 import populateJourney from './populateJourney'
 import { SessionDatum } from '../@types/express'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentSetJourney } from '../routes/appointments/create-and-edit/appointmentSetJourney'
 
 const middleware = populateJourney()
 
@@ -11,7 +10,6 @@ let req: Request
 let res: Response
 
 let appointmentJourney: AppointmentJourney
-let appointmentSetJourney: AppointmentSetJourney
 let appointmentSessionDatum: SessionDatum
 
 let journeyId: string
@@ -32,16 +30,8 @@ beforeEach(() => {
   appointmentJourney = {
     appointmentName: 'From mapped session data',
   } as AppointmentJourney
-  appointmentSetJourney = {
-    appointments: [
-      {
-        extraInformation: 'From mapped session data',
-      },
-    ],
-  } as AppointmentSetJourney
   appointmentSessionDatum = {
     appointmentJourney,
-    appointmentSetJourney,
   } as SessionDatum
 
   journeyId = randomUUID()
@@ -91,17 +81,9 @@ describe('populateJourney', () => {
     const unMappedJourney = {
       appointmentName: 'Not from mapped session data',
     } as AppointmentJourney
-    const unMappedSetJourney = {
-      appointments: [
-        {
-          extraInformation: 'Not from mapped session data',
-        },
-      ],
-    } as AppointmentSetJourney
 
     beforeEach(() => {
       req.session.appointmentJourney = unMappedJourney
-      req.session.appointmentSetJourney = unMappedSetJourney
       req.session.sessionDataMap = new Map<string, SessionDatum>()
       req.session.sessionDataMap[journeyId] = appointmentSessionDatum
 
@@ -110,12 +92,10 @@ describe('populateJourney', () => {
 
     it('should return session mapped data using journey id parameter', async () => {
       expect(req.session.appointmentJourney).toBe(unMappedJourney)
-      expect(req.session.appointmentSetJourney).toBe(unMappedSetJourney)
 
       middleware(req, res, next)
 
       expect(req.session.appointmentJourney).toBe(appointmentJourney)
-      expect(req.session.appointmentSetJourney).toBe(appointmentSetJourney)
     })
 
     it('should return null session data with unmapped journey id', async () => {
@@ -124,7 +104,6 @@ describe('populateJourney', () => {
       middleware(req, res, next)
 
       expect(req.session.appointmentJourney).toBeNull()
-      expect(req.session.appointmentSetJourney).toBeNull()
     })
 
     it('should return null session data with an undefined journey id', async () => {
@@ -133,7 +112,6 @@ describe('populateJourney', () => {
       middleware(req, res, next)
 
       expect(req.session.appointmentJourney).toBeNull()
-      expect(req.session.appointmentSetJourney).toBeNull()
     })
 
     it('should return null session data with a null journey id', async () => {
@@ -142,7 +120,6 @@ describe('populateJourney', () => {
       middleware(req, res, next)
 
       expect(req.session.appointmentJourney).toBeNull()
-      expect(req.session.appointmentSetJourney).toBeNull()
     })
   })
 
@@ -150,13 +127,6 @@ describe('populateJourney', () => {
     const updatedJourney = {
       appointmentName: 'Updated session data',
     } as AppointmentJourney
-    const updatedSetJourney = {
-      appointments: [
-        {
-          extraInformation: 'Updated session data',
-        },
-      ],
-    } as AppointmentSetJourney
 
     beforeEach(() => {
       req.params.journeyId = journeyId
@@ -168,17 +138,13 @@ describe('populateJourney', () => {
       middleware(req, res, next)
 
       expect(req.session.appointmentJourney).toBe(appointmentJourney)
-      expect(req.session.appointmentSetJourney).toBe(appointmentSetJourney)
       expect(req.session.sessionDataMap[journeyId]).toBe(appointmentSessionDatum)
 
       req.session.appointmentJourney = updatedJourney
-      req.session.appointmentSetJourney = updatedSetJourney
 
       expect(req.session.appointmentJourney).toBe(updatedJourney)
-      expect(req.session.appointmentSetJourney).toBe(updatedSetJourney)
       expect(req.session.sessionDataMap[journeyId]).toStrictEqual({
         appointmentJourney: updatedJourney,
-        appointmentSetJourney: updatedSetJourney,
       } as SessionDatum)
     })
 
@@ -186,17 +152,14 @@ describe('populateJourney', () => {
       middleware(req, res, next)
 
       expect(req.session.appointmentJourney).toBe(appointmentJourney)
-      expect(req.session.appointmentSetJourney).toBe(appointmentSetJourney)
       expect(req.session.sessionDataMap[journeyId]).toBe(appointmentSessionDatum)
 
       req.session.appointmentJourney = null
-      req.session.appointmentSetJourney = null
 
       expect(req.session.appointmentJourney).toBe(null)
-      expect(req.session.appointmentSetJourney).toBe(null)
+
       expect(req.session.sessionDataMap[journeyId]).toStrictEqual({
         appointmentJourney: null,
-        appointmentSetJourney: null,
       } as SessionDatum)
     })
 
