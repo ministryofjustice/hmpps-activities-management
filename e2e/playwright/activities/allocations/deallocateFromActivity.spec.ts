@@ -55,3 +55,29 @@ test('a user can end allocations on a future date', async ({ page }) => {
     `2 prisoners are now scheduled to be removed from English level 1 on ${format(endDate, 'EEEE, d MMMM yyyy')}`,
   )
 })
+
+test('a user sees an error when they do not enter a deallocation date', async ({ page }) => {
+  const activityStartDate = subDays(subWeeks(new Date(), 2), 1)
+
+  await setupDeallocationScenario(activityStartDate)
+
+  await page.goto('/activities/allocation-dashboard')
+
+  await page.getByRole('link', { name: 'English level 1' }).click()
+
+  const currentlyAllocated = page.getByRole('table', {
+    name: 'Currently allocated',
+  })
+
+  await currentlyAllocated.getByRole('row').filter({ hasText: 'G4793VF' }).getByRole('checkbox').check()
+
+  await page.getByRole('button', { name: 'End allocation' }).click()
+
+  await page.getByRole('radio', { name: 'On a different date' }).check()
+
+  await page.getByRole('button', { name: 'Continue' }).click()
+
+  await expect(page.getByRole('alert')).toContainText('Enter a date')
+
+  await expect(page.getByLabel('Other date')).toBeVisible()
+})
