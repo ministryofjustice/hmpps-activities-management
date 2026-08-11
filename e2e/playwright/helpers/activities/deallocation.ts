@@ -22,29 +22,41 @@ const stubActivityAndSchedule = async (activityStartDate: Date): Promise<void> =
 
   activity.schedules[0].startDate = startDate
 
-  activity.schedules[0].allocations.forEach(allocation => {
-    allocation.startDate = startDate
-  })
+  activity.schedules[0].allocations = activity.schedules[0].allocations.map(allocation => ({
+    ...allocation,
+    startDate,
+  }))
 
   let activityInstanceDate = activityStartDate
 
-  activity.schedules[0].instances.forEach(instance => {
-    instance.date = format(activityInstanceDate, 'yyyy-MM-dd')
+  activity.schedules[0].instances = activity.schedules[0].instances.map(instance => {
+    const date = format(activityInstanceDate, 'yyyy-MM-dd')
     activityInstanceDate = addWeeks(activityInstanceDate, 1)
+
+    return {
+      ...instance,
+      date,
+    }
   })
 
   let scheduleInstanceDate = activityStartDate
 
-  schedule.instances.forEach(instance => {
-    instance.date = format(scheduleInstanceDate, 'yyyy-MM-dd')
+  schedule.instances = schedule.instances.map(instance => {
+    const date = format(scheduleInstanceDate, 'yyyy-MM-dd')
     scheduleInstanceDate = addWeeks(scheduleInstanceDate, 1)
+
+    return {
+      ...instance,
+      date,
+    }
   })
 
   const filteredActivity = structuredClone(activity)
 
-  filteredActivity.schedules.forEach(activitySchedule => {
-    activitySchedule.instances = []
-  })
+  filteredActivity.schedules = filteredActivity.schedules.map(activitySchedule => ({
+    ...activitySchedule,
+    instances: [],
+  }))
 
   await Promise.all([
     stubEndpoint('GET', '/activities/2/filtered', activity),
@@ -53,7 +65,7 @@ const stubActivityAndSchedule = async (activityStartDate: Date): Promise<void> =
   ])
 }
 
-export const setupDeallocationScenario = async (activityStartDate: Date): Promise<void> => {
+const setupDeallocationScenario = async (activityStartDate: Date): Promise<void> => {
   await Promise.all([
     stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities),
     stubEndpoint('GET', '/prison/prison-regime/MDI', getMdiPrisonRegime),
@@ -76,3 +88,5 @@ export const setupDeallocationScenario = async (activityStartDate: Date): Promis
 
   await stubActivityAndSchedule(activityStartDate)
 }
+
+export default setupDeallocationScenario
