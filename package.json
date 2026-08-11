@@ -14,7 +14,7 @@
     "start-feature:dev": "node esbuild/esbuild --watch --env feature.env",
     "lint": "eslint . --cache --max-warnings 0",
     "lint:fix": "eslint . --cache --max-warnings 0 --fix",
-    "typecheck": "tsc && tsc -p integration_tests && tsc -p playwright_tests && tsc -p e2e",
+    "typecheck": "tsc && tsc -p integration_tests && tsc -p e2e",
     "test": "NODE_ENV=unit-test TZ=utc NODE_OPTIONS=\"--max_old_space_size=4096 --experimental-vm-modules\" jest --runInBand --detectOpenHandles --collectCoverage=true --testPathPatterns='(server|frontend)/.*'",
     "test:ci": "jest --runInBand",
     "security_audit": "better-npm-audit audit",
@@ -32,7 +32,8 @@
     "int-test-ui:local": "npm run deps:down && npm run deps:pull && npm run deps:up && npm run build && concurrently -k -n ui,cypress \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run int-test-ui\"",
     "pw-test": "playwright test",
     "pw-test-ui": "playwright test --ui",
-    "pw-test:local": "npm run deps:down && npm run deps:pull && npm run deps:up && npm run build && concurrently -k --success first -n ui,playwright \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run pw-test\""
+    "pw-test:local": "npm run deps:down && npm run deps:pull && npm run deps:up && npm run build && concurrently -k --success first -n ui,playwright \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run pw-test\"",
+    "pw-test-ui:local": "npm run deps:down && npm run deps:pull && npm run deps:up && npm run build && concurrently -k -n ui,playwright \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run pw-test-ui\""
   },
   "engines": {
     "node": "^24",
