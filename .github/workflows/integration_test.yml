@@ -91,7 +91,8 @@ jobs:
         run: |
           nohup java -jar wiremock.jar --port 9091 &
           nohup npm run start-feature &
-          sleep 5
+          npm run wait:wiremock
+          npm run wait:ui
 
       - name: Run split Cypress tests 🧪
         uses: cypress-io/github-action@fa4a118725a8f001170d49631ea89e5d66fee626 # v7.4.1
@@ -137,3 +138,74 @@ jobs:
       repository: ministryofjustice/hmpps-activities-management
       initial-timings: ${{ needs.get-timings.outputs.timings }}
       updated-timings: ${{ toJSON(needs.cypress-test.outputs) }}
+
+  playwright-test:
+    name: Run Playwright tests
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:8.10
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    env:
+      APP_VERSION: ${{ inputs.app_version }}
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Use Node.js ${{ inputs.node_version_file }}
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: ${{ inputs.node_version_file }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: npm_build_artifacts
+
+      - name: Restore node modules
+        id: restore-node-modules
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        env:
+          cache-name: node-modules
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json', '!**/node_modules/**') }}
+
+      - name: Install dependencies
+        if: steps.restore-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
+
+      - name: Get WireMock
+        run: |
+          curl --fail --retry 2 -o wiremock.jar https://repo.maven.apache.org/maven2/org/wiremock/wiremock-standalone/3.9.1/wiremock-standalone-3.9.1.jar
+
+      - name: Start WireMock and application
+        run: |
+          nohup java -jar wiremock.jar --port 9091 &
+          nohup npm run start-feature &
+
+      - name: Wait for application
+        run: |
+          npm run wait:wiremock
+          npm run wait:ui
+
+      - name: Run Playwright tests
+        run: npm run pw-test
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            playwright-test-results/
+          if-no-files-found: ignore

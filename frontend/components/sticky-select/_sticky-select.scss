@@ -1,4 +1,9 @@
 .sticky-select {
+  .govuk-checkboxes__input,
+  .govuk-radios__input {
+    position: relative;
+  }
+
   .govuk-table__head {
     @media print {
       position: revert;
@@ -10,11 +15,12 @@
   }
 
   .govuk-table__header {
-    background: govuk-colour("white");
-    border-bottom: 2px govuk-colour("black", $variant: "tint-80") solid;
+    background: govuk-colour('white');
+    border-bottom: 2px govuk-colour('black', $variant: 'tint-80') solid;
   }
 
-  .govuk-checkboxes__item, .govuk-radios__item {
+  .govuk-checkboxes__item,
+  .govuk-radios__item {
     margin-left: 10px;
 
     .govuk-label.govuk-checkboxes__label {
@@ -30,7 +36,7 @@
   .govuk-table__row {
     &:nth-of-type(even) {
       @media not print {
-        background: govuk-colour("black", $variant: "tint-95");
+        background: govuk-colour('black', $variant: 'tint-95');
       }
     }
   }
@@ -70,7 +76,8 @@
       color: white;
       margin-left: 10px;
 
-      &:visited, &:hover {
+      &:visited,
+      &:hover {
         color: white;
       }
 
@@ -90,7 +97,8 @@
       gap: 10px;
     }
 
-    .govuk-button-group, .govuk-button {
+    .govuk-button-group,
+    .govuk-button {
       margin: 0;
     }
   }
@@ -112,7 +120,7 @@
 // which sets the S-P-T to 0 when sticky is used
 @supports (position: sticky) {
   .govuk-template {
-      scroll-padding-top: 80px !important;
+    scroll-padding-top: 80px !important;
   }
 }
 
