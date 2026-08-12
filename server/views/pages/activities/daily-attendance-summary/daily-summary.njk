@@ -1,9 +1,9 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/attendance/activityTypeFilters.njk" import activityTypeFilters %}
 {% from "../../../components/stat.njk" import stat %}
 
 {% set pageTitle = "Daily attendance summary - Activities - DPS" %}
@@ -12,412 +12,480 @@
 {% set hardBackLinkText = "Back" %}
 
 {% block content %}
-    {% set filterOptionsHtml %}
-        {% if user.externalActivitiesRolledOut %}
-            {{ govukCheckboxes({
-                idPrefix: 'activityTypeFilters',
-                name: 'activityTypeFilters',
-                classes: "govuk-radios--small",
-                fieldset: {
-                    legend: {
-                        text: 'Activity type',
-                        classes: 'govuk-fieldset__legend--m'
-                    }
-                },
-                items: [
-                    {value: 'inPrison', text: 'In-prison', checked: 'inPrison' in attendanceSummaryJourney.activityTypeFilters},
-                    {value: 'outsidePrison', text: 'Outside - prison-paid', checked: 'outsidePrison' in attendanceSummaryJourney.activityTypeFilters},
-                    {value: 'outsideEmployer', text: 'Outside - employer-paid', checked: 'outsideEmployer' in attendanceSummaryJourney.activityTypeFilters}
-                ]
-            }) }}
-        {% endif %}
+  {% set filterOptionsHtml %}
+  {{
+    activityTypeFilters(
+        attendanceSummaryJourney.activityTypeFilters,
+        user.externalActivitiesRolledOut
+    )
+  }}
 
-        {% set categoryFilters = [] %}
-        {% for category in uniqueCategories %}
-            {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
-        {% endfor %}
 
-        {{ govukCheckboxes({
-            idPrefix: 'categoryFilters',
-            name: 'categoryFilters',
-            classes: "govuk-radios--small",
-            hint: {
-                text: "Select all that apply."
-            },
-            fieldset: {
-                legend: {
-                    text: 'Categories',
-                    classes: 'govuk-fieldset__legend--m'
-                }
-            },
-            items: categoryFilters
-        }) }}
-        <div class="govuk-!-margin-bottom-4">
-            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
-        </div>
-        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
-            Apply filters
-        </button>
-    {% endset %}
+  {% set categoryFilters = [] %}
+    {% for category in uniqueCategories %}
+      {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
+    {% endfor %}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
-                <div class="moj-filter-layout__filter moj-filter-layout__flex">
-                    <form id="filter-form" method="POST" action="update-filters" novalidate>
-                        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                        {{ mojFilter({
-                            heading: {
-                                text: 'Filter'
-                            },
-                            optionsHtml: filterOptionsHtml
-                        }) }}
-                    </form>
-                </div>
-                <div class="moj-filter-layout__content">
-                    <div class="moj-action-bar">
-                        <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
-                    </div>
-                    {{ govukTabs({
-                        classes: "govuk-tabs--borderless",
-                        items: [
-                            {
-                                label: "Daily summary",
-                                id: "day-tab",
-                                panel: {
-                                    html: summaryHtml("DAY", "Daily", activityDate)
-                                }
-                            },
-                            {
-                                label: "AM session",
-                                id: "am-tab",
-                                panel: {
-                                    html: summaryHtml("AM", "Morning", activityDate)
-                                }
-                            },
-                            {
-                                label: "PM session",
-                                id: "pm-tab",
-                                panel: {
-                                    html: summaryHtml("PM", "Afternoon", activityDate)
-                                }
-                            },
-                            {
-                                label: "ED session",
-                                id: "ed-tab",
-                                panel: {
-                                    html: summaryHtml("ED", "Evening", activityDate)
-                                }
-                            }
-                        ]
-                    }) }}
-                </div>
-
-            </div>
-        </div>
+    {{
+      govukCheckboxes({
+          idPrefix: 'categoryFilters',
+          name: 'categoryFilters',
+          classes: "govuk-radios--small",
+          hint: {
+              text: "Select all that apply."
+          },
+          fieldset: {
+              legend: {
+                  text: 'Categories',
+                  classes: 'govuk-fieldset__legend--m'
+              }
+          },
+          items: categoryFilters
+      })
+    }}
+    <div class="govuk-!-margin-bottom-4">
+      <a
+        href="#"
+        class="govuk-link govuk-link--no-visited-state"
+        data-module="select-all-link"
+        data-checkbox-name="categoryFilters"
+      ></a>
     </div>
+    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">Apply filters</button>
+  {% endset %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+        <div class="moj-filter-layout__filter moj-filter-layout__flex">
+          <form id="filter-form" method="POST" action="update-filters" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            {{
+              mojFilter({
+                  heading: {
+                      text: 'Filter'
+                  },
+                  optionsHtml: filterOptionsHtml
+              })
+            }}
+          </form>
+        </div>
+        <div class="moj-filter-layout__content">
+          <div class="moj-action-bar">
+            <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+          </div>
+          {{
+            govukTabs({
+                classes: "govuk-tabs--borderless",
+                items: [
+                    {
+                        label: "Daily summary",
+                        id: "day-tab",
+                        panel: {
+                            html: summaryHtml("DAY", "Daily", activityDate)
+                        }
+                    },
+                    {
+                        label: "AM session",
+                        id: "am-tab",
+                        panel: {
+                            html: summaryHtml("AM", "Morning", activityDate)
+                        }
+                    },
+                    {
+                        label: "PM session",
+                        id: "pm-tab",
+                        panel: {
+                            html: summaryHtml("PM", "Afternoon", activityDate)
+                        }
+                    },
+                    {
+                        label: "ED session",
+                        id: "ed-tab",
+                        panel: {
+                            html: summaryHtml("ED", "Evening", activityDate)
+                        }
+                    }
+                ]
+            })
+          }}
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
-            <h1 class="govuk-heading-xl">{{ timeSlotDescription }} attendance summary</h1>
-        </div>
-        <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
-            <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
-            {{ govukButton({
-                text: "Refresh",
-                classes: "govuk-button--blue",
-                attributes: {
-                    form: 'filter-form'
-                }
-            }) }}
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
+      <h1 class="govuk-heading-xl">{{ timeSlotDescription }} attendance summary</h1>
+    </div>
+    <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
+      <div class="govuk-hint govuk-!-font-size-16">
+        Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}
+      </div>
+      {{
+        govukButton({
+            text: "Refresh",
+            classes: "govuk-button--blue",
+            attributes: {
+                form: 'filter-form'
+            }
+        })
+      }}
+    </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <div class="govuk-body-l">
+        {{ totalAllocated[timeSlot] }} total allocation{% if totalAllocated[timeSlot] != 1 %}s{% endif %} for
+        <a
+          href="/activities/attendance/activities?date={{ activityDate | formatDate('yyyy-MM-dd') }}&preserveHistory=true"
+          class="govuk-link govuk-link--no-visited-state"
+          data-qa="sessions-link"
+          target="_blank"
+          >{{ totalActivities[timeSlot] }} session{% if totalActivities[timeSlot] != 1 %}s{% endif %}
+        </a>
+      </div>
     </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="govuk-body-l">
-                {{ totalAllocated[timeSlot] }} total allocation{% if totalAllocated[timeSlot] != 1 %}s{% endif %} for
-                <a href="/activities/attendance/activities?date={{ activityDate | formatDate('yyyy-MM-dd') }}&preserveHistory=true" class="govuk-link govuk-link--no-visited-state" data-qa="sessions-link" target='_blank'>{{ totalActivities[timeSlot] }} session{% if totalActivities[timeSlot] != 1 %}s{% endif %}
-                </a>
-            </div>
-        </div>
-
-        {{ stat({
-            heading: 'Not yet attended',
-            number: totalNotAttended[timeSlot],
-            visuallyHiddenText: "prisoner" if totalNotAttended[timeSlot] === 1 else "prisoners",
-            percentage: (totalNotAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
-            link: {
-                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=NotAttended#' + timeSlot | lower + '-tab',
-                text: 'All not yet attended',
-                dataQa: 'not-attended-link'
-            }
-        }) }}
-
-        {{ stat({
-            heading: 'Absences',
-            number: totalAbsences[timeSlot],
-            visuallyHiddenText: "prisoner" if totalAbsences[timeSlot] === 1 else "prisoners",
-            percentage: (totalAbsences[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
-            link: {
-                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Absences#' + timeSlot | lower + '-tab',
-                text: 'All absences',
-                dataQa: 'absences-link'
-            }
-        }) }}
-
-        {{ stat({
-            heading: 'Attended',
-            number: totalAttended[timeSlot],
-            visuallyHiddenText: "prisoner" if totalAttended[timeSlot] === 1 else "prisoners",
-            percentage: (totalAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
-            link: {
-                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended#' + timeSlot | lower + '-tab',
-                text: 'All attended'
-            }
-        }) }}
-    </div>
-
-        <div class="govuk-grid-row govuk-!-margin-top-3 govuk-!-margin-bottom-3 tierActivityAttendanceStatsContainer">
-
-            {{ stat({
-            heading: "Tier 1 attendances",
-            number: totalAttendedTier1Activities[timeSlot],
-            visuallyHiddenText: "prisoner" if totalAttendedTier1Activities[timeSlot] === 1 else "prisoners",
-            dataQa: 'tier1',
-            forceDisplay: true,
-            link: {
-                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended' + '&eventTier=' + EventTier.TIER_1  +'#' + timeSlot | lower + '-tab',
-                text: 'All Tier 1 attendances',
-                dataQa: 'tier1-link'
-            }
-            }) }}
-
-            {{ stat({
-            heading: "Tier 2 attendances",
-            number: totalAttendedTier2Activities[timeSlot],
-            visuallyHiddenText: "prisoner" if totalAttendedTier2Activities[timeSlot] === 1 else "prisoners",
-            dataQa: 'tier2',
-            forceDisplay: true,
-            link: {
-                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended' + '&eventTier=' + EventTier.TIER_2  +'#' + timeSlot | lower + '-tab',
-                text: 'All Tier 2 attendances',
-                dataQa: 'tier2-link'
-            }
-            }) }}
-
-        {{ stat({
-          heading: "Routine (also called 'foundational') attendances",
-          number: totalAttendedRoutineActivities[timeSlot],
-          visuallyHiddenText: "prisoner" if totalAttendedRoutineActivities[timeSlot] === 1 else "prisoners",
-          forceDisplay: true,
-          dataQa: 'routine',
+    {{
+      stat({
+          heading: 'Not yet attended',
+          number: totalNotAttended[timeSlot],
+          visuallyHiddenText: "prisoner" if totalNotAttended[timeSlot] === 1 else "prisoners",
+          percentage: (totalNotAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
           link: {
-            href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended' + '&eventTier=' + EventTier.FOUNDATION  +'#' + timeSlot | lower + '-tab',
-            text: 'All routine attendances',
-            dataQa: 'routine-link'
+              href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=NotAttended#' + timeSlot | lower + '-tab',
+              text: 'All not yet attended',
+              dataQa: 'not-attended-link'
           }
-        }) }}
-        </div>
+      })
+    }}
 
-    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    {{
+      stat({
+          heading: 'Absences',
+          number: totalAbsences[timeSlot],
+          visuallyHiddenText: "prisoner" if totalAbsences[timeSlot] === 1 else "prisoners",
+          percentage: (totalAbsences[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
+          link: {
+              href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Absences#' + timeSlot | lower + '-tab',
+              text: 'All absences',
+              dataQa: 'absences-link'
+          }
+      })
+    }}
 
-    <div class="govuk-grid-row govuk-!-margin-bottom-3">
-        <div class="govuk-grid-column-full">
-            <h2 class="govuk-heading-l">Absences</h2>
-        </div>
-        <div class="govuk-grid-column-full">
-            <h3 class="govuk-heading-m">{{ totalPaidAbsences[timeSlot] }} paid {{ "absence" if totalPaidAbsences[timeSlot] == 1 else "absences" }}</h3>
+    {{
+      stat({
+          heading: 'Attended',
+          number: totalAttended[timeSlot],
+          visuallyHiddenText: "prisoner" if totalAttended[timeSlot] === 1 else "prisoners",
+          percentage: (totalAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
+          link: {
+              href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended#' + timeSlot | lower + '-tab',
+              text: 'All attended'
+          }
+      })
+    }}
+  </div>
 
-        <div class="stat-component">
-            {{ stat({
-                heading: 'Activity cancelled',
-                number: totalCancelled[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
+  <div class="govuk-grid-row govuk-!-margin-top-3 govuk-!-margin-bottom-3 tierActivityAttendanceStatsContainer">
+    {{
+      stat({
+      heading: "Tier 1 attendances",
+      number: totalAttendedTier1Activities[timeSlot],
+      visuallyHiddenText: "prisoner" if totalAttendedTier1Activities[timeSlot] === 1 else "prisoners",
+      dataQa: 'tier1',
+      forceDisplay: true,
+      link: {
+          href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended' + '&eventTier=' + EventTier.TIER_1  +'#' + timeSlot | lower + '-tab',
+          text: 'All Tier 1 attendances',
+          dataQa: 'tier1-link'
+      }
+      })
+    }}
 
-            {{ stat({
-                heading: 'Sick',
-                number: totalPaidSick[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
+    {{
+      stat({
+      heading: "Tier 2 attendances",
+      number: totalAttendedTier2Activities[timeSlot],
+      visuallyHiddenText: "prisoner" if totalAttendedTier2Activities[timeSlot] === 1 else "prisoners",
+      dataQa: 'tier2',
+      forceDisplay: true,
+      link: {
+          href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended' + '&eventTier=' + EventTier.TIER_2  +'#' + timeSlot | lower + '-tab',
+          text: 'All Tier 2 attendances',
+          dataQa: 'tier2-link'
+      }
+      })
+    }}
 
-            {{ stat({
-                heading: 'Not required',
-                number: totalNotRequired[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
+    {{
+      stat({
+        heading: "Routine (also called 'foundational') attendances",
+        number: totalAttendedRoutineActivities[timeSlot],
+        visuallyHiddenText: "prisoner" if totalAttendedRoutineActivities[timeSlot] === 1 else "prisoners",
+        forceDisplay: true,
+        dataQa: 'routine',
+        link: {
+          href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended' + '&eventTier=' + EventTier.FOUNDATION  +'#' + timeSlot | lower + '-tab',
+          text: 'All routine attendances',
+          dataQa: 'routine-link'
+        }
+      })
+    }}
+  </div>
 
-            {{ stat({
-                heading: 'Rest day',
-                number: totalPaidRest[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
 
-            {{ stat({
-                heading: 'Clash',
-                number: totalClash[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
-            
-            {{ stat({
-                heading: 'Prisoner suspended',
-                number: totalPaidSuspended[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
+  <div class="govuk-grid-row govuk-!-margin-bottom-3">
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-l">Absences</h2>
+    </div>
+    <div class="govuk-grid-column-full">
+      <h3 class="govuk-heading-m">
+        {{ totalPaidAbsences[timeSlot] }} paid {{ "absence" if totalPaidAbsences[timeSlot] == 1 else "absences" }}
+      </h3>
 
-            {{ stat({
-                heading: 'Other',
-                number: totalPaidOther[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
-        </div>
-        </div>
+      <div class="stat-component">
+        {{
+          stat({
+              heading: 'Activity cancelled',
+              number: totalCancelled[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
 
-        <div class="govuk-grid-column-full govuk-!-margin-top-3">
-            <h3 class="govuk-heading-m">{{ totalUnPaidAbsences[timeSlot] }} unpaid {{ "absence" if totalUnPaidAbsences[timeSlot] == 1 else "absences" }}</h3>
-        {# </div> #}
+        {{
+          stat({
+              heading: 'Sick',
+              number: totalPaidSick[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
 
-        <div class="stat-component">
-            {{ stat({
-                heading: 'Sick',
-                number: totalUnpaidSick[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
+        {{
+          stat({
+              heading: 'Not required',
+              number: totalNotRequired[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
 
-            {{ stat({
-                heading: 'Refused',
-                number: totalRefused[timeSlot],
-                visuallyHiddenText: 'prisoners',
-                dataQa: 'refused',
-                link: {
-                    href: 'refusals?date=' + activityDate | formatDate('yyyy-MM-dd') + '#' + timeSlot | lower + '-tab',
-                    text: 'All refused',
-                    dataQa: 'refused-link'
-                }
-            }) }}
+        {{
+          stat({
+              heading: 'Rest day',
+              number: totalPaidRest[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
 
-            {{ stat({
-                heading: 'Rest day',
-                number: totalUnpaidRest[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
+        {{
+          stat({
+              heading: 'Clash',
+              number: totalClash[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
 
-            {{ stat({
-                heading: 'Prisoner suspended or temporarily absent',
-                number: totalUnpaidSuspended[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
+        {{
+          stat({
+              heading: 'Prisoner suspended',
+              number: totalPaidSuspended[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
 
-            {{ stat({
-                heading: 'Not required',
-                number: totalUnpaidNotRequired[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
-
-            {{ stat({
-                heading: 'Activity cancelled',
-                number: totalUnpaidCancelled[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
-
-            {{ stat({
-                heading: 'Other',
-                number: totalUnpaidOther[timeSlot],
-                visuallyHiddenText: 'prisoners'
-            }) }}
-        </div>
-        </div>
+        {{
+          stat({
+              heading: 'Other',
+              number: totalPaidOther[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
+      </div>
     </div>
 
-    {% if totalCancelledSessions[timeSlot] > 0 %}
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-        <div class="govuk-grid-row govuk-!-margin-bottom-3">
-            <div class="govuk-grid-column-full">
-                <h2 class="govuk-heading-l">Cancelled sessions</h2>
-            </div>
-            <div class="govuk-grid-column-full">
-                <h3 class="govuk-heading-m">
-                    {{ totalCancelledSessions[timeSlot] }} cancelled sessions
-                    <span>
-                        <a href="cancelled-sessions?date={{ activityDate | formatDate('yyyy-MM-dd') }}" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">(View cancelled sessions)</a>
-                    </span>
-                </h3>
-            </div>
+    <div class="govuk-grid-column-full govuk-!-margin-top-3">
+      <h3 class="govuk-heading-m">
+        {{ totalUnPaidAbsences[timeSlot] }} unpaid {{ "absence" if totalUnPaidAbsences[timeSlot] == 1 else "absences" }}
+      </h3>
+      {# </div> #}
 
-            {{ stat({
-                heading: 'Staff unavailable',
-                number: totalStaffUnavailable[timeSlot],
-                visuallyHiddenText: 'sessions'
-            }) }}
+      <div class="stat-component">
+        {{
+          stat({
+              heading: 'Sick',
+              number: totalUnpaidSick[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
 
-            {{ stat({
-                heading: 'Staff training',
-                number: totalStaffTraining[timeSlot],
-                visuallyHiddenText: 'sessions'
-            }) }}
+        {{
+          stat({
+              heading: 'Refused',
+              number: totalRefused[timeSlot],
+              visuallyHiddenText: 'prisoners',
+              dataQa: 'refused',
+              link: {
+                  href: 'refusals?date=' + activityDate | formatDate('yyyy-MM-dd') + '#' + timeSlot | lower + '-tab',
+                  text: 'All refused',
+                  dataQa: 'refused-link'
+              }
+          })
+        }}
 
-            {{ stat({
-                heading: 'Session not required',
-                number: totalActivityNotRequired[timeSlot],
-                visuallyHiddenText: 'sessions'
-            }) }}
+        {{
+          stat({
+              heading: 'Rest day',
+              number: totalUnpaidRest[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
 
-            {{ stat({
-                heading: 'Location unavailable',
-                number: totalLocationUnavailable[timeSlot],
-                visuallyHiddenText: 'sessions'
-            }) }}
+        {{
+          stat({
+              heading: 'Prisoner suspended or temporarily absent',
+              number: totalUnpaidSuspended[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
 
-            {{ stat({
-                heading: 'Prison operational issue',
-                number: totalOperationalIssue[timeSlot],
-                visuallyHiddenText: 'sessions'
-            }) }}
+        {{
+          stat({
+              heading: 'Not required',
+              number: totalUnpaidNotRequired[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
+
+        {{
+          stat({
+              heading: 'Activity cancelled',
+              number: totalUnpaidCancelled[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
+
+        {{
+          stat({
+              heading: 'Other',
+              number: totalUnpaidOther[timeSlot],
+              visuallyHiddenText: 'prisoners'
+          })
+        }}
+      </div>
+    </div>
+  </div>
+
+  {% if totalCancelledSessions[timeSlot] > 0 %}
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+    <div class="govuk-grid-row govuk-!-margin-bottom-3">
+      <div class="govuk-grid-column-full">
+        <h2 class="govuk-heading-l">Cancelled sessions</h2>
+      </div>
+      <div class="govuk-grid-column-full">
+        <h3 class="govuk-heading-m">
+          {{ totalCancelledSessions[timeSlot] }} cancelled sessions
+          <span>
+            <a
+              href="cancelled-sessions?date={{ activityDate | formatDate('yyyy-MM-dd') }}"
+              class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19"
+              >(View cancelled sessions)</a
+            >
+          </span>
+        </h3>
+      </div>
+
+      {{
+        stat({
+            heading: 'Staff unavailable',
+            number: totalStaffUnavailable[timeSlot],
+            visuallyHiddenText: 'sessions'
+        })
+      }}
+
+      {{
+        stat({
+            heading: 'Staff training',
+            number: totalStaffTraining[timeSlot],
+            visuallyHiddenText: 'sessions'
+        })
+      }}
+
+      {{
+        stat({
+            heading: 'Session not required',
+            number: totalActivityNotRequired[timeSlot],
+            visuallyHiddenText: 'sessions'
+        })
+      }}
+
+      {{
+        stat({
+            heading: 'Location unavailable',
+            number: totalLocationUnavailable[timeSlot],
+            visuallyHiddenText: 'sessions'
+        })
+      }}
+
+      {{
+        stat({
+            heading: 'Prison operational issue',
+            number: totalOperationalIssue[timeSlot],
+            visuallyHiddenText: 'sessions'
+        })
+      }}
+    </div>
+  {% endif %}
+
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+
+  <div class="govuk-grid-row govuk-!-margin-bottom-3">
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-l">Prisoners suspended or temporarily absent</h2>
+    </div>
+
+    {{
+      stat({
+          heading: 'Suspended or temporarily absent',
+          number: suspendedPrisonerCount[timeSlot],
+          visuallyHiddenText: 'prisoners',
+          forceDisplay: true,
+          link: {
+              href: "suspended-prisoners?date=" + activityDate | formatDate('yyyy-MM-dd'),
+              text: 'All suspended or temporarily absent'
+          } if suspendedPrisonerCount[timeSlot] > 0
+      })
+    }}
+  </div>
+
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+
+  <div class="govuk-grid-row govuk-!-margin-bottom-3">
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-l">Activities where attendance is not required</h2>
+    </div>
+
+    <div class="govuk-grid-column-full">
+      <div class="govuk-body-l">
+        {{ totalUnattendedAllocated[timeSlot] }} total
+        allocation{% if totalUnattendedAllocated[timeSlot] != 1 %}s{% endif %} for
+        {{ totalUnattendedActivities[timeSlot] }} session{% if totalUnattendedActivities[timeSlot] != 1 %}s{% endif %}
+      </div>
+    </div>
+
+    {% if totalUnattendedCancelledSessions[timeSlot] > 0 %}
+      <div class="govuk-grid-column-full">
+        <div class="govuk-body-l">
+          {{ totalUnattendedCancelledSessions[timeSlot] }} cancelled
+          session{% if totalUnattendedCancelledSessions[timeSlot] != 1 %}s{% endif %}
         </div>
+      </div>
     {% endif %}
-
-    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-
-    <div class="govuk-grid-row govuk-!-margin-bottom-3">
-        <div class="govuk-grid-column-full">
-            <h2 class="govuk-heading-l">Prisoners suspended or temporarily absent</h2>
-        </div>
-
-        {{ stat({
-            heading: 'Suspended or temporarily absent',
-            number: suspendedPrisonerCount[timeSlot],
-            visuallyHiddenText: 'prisoners',
-            forceDisplay: true,
-            link: {
-                href: "suspended-prisoners?date=" + activityDate | formatDate('yyyy-MM-dd'),
-                text: 'All suspended or temporarily absent'
-            } if suspendedPrisonerCount[timeSlot] > 0
-        }) }}
-    </div>
-
-    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-
-    <div class="govuk-grid-row govuk-!-margin-bottom-3">
-        <div class="govuk-grid-column-full">
-            <h2 class="govuk-heading-l">Activities where attendance is not required</h2>
-        </div>
-
-        <div class="govuk-grid-column-full">
-            <div class="govuk-body-l">
-                {{ totalUnattendedAllocated[timeSlot] }} total allocation{% if totalUnattendedAllocated[timeSlot] != 1 %}s{% endif %} for {{ totalUnattendedActivities[timeSlot] }} session{% if totalUnattendedActivities[timeSlot] != 1 %}s{% endif %}
-            </div>
-        </div>
-
-        {% if totalUnattendedCancelledSessions[timeSlot] > 0 %}
-            <div class="govuk-grid-column-full">
-                <div class="govuk-body-l">
-                    {{ totalUnattendedCancelledSessions[timeSlot] }} cancelled session{% if totalUnattendedCancelledSessions[timeSlot] != 1 %}s{% endif %}
-                </div>
-            </div>
-        {% endif %}
-    </div>
+  </div>
 {% endmacro %}
