@@ -1,0 +1,36 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{% macro activityTypeFilters(selectedActivityTypes, externalActivitiesRolledOut) %}
+  {% if externalActivitiesRolledOut %}
+    {{
+      govukCheckboxes({
+        idPrefix: 'activityTypeFilters',
+        name: 'activityTypeFilters',
+        classes: "govuk-radios--small",
+        fieldset: {
+          legend: {
+            text: 'Activity type',
+            classes: 'govuk-fieldset__legend--m'
+          }
+        },
+        items: [
+          {
+            value: 'inPrison',
+            text: 'In-prison',
+            checked: 'inPrison' in selectedActivityTypes
+          },
+          {
+            value: 'outsidePrison',
+            text: 'Outside - prison-paid',
+            checked: 'outsidePrison' in selectedActivityTypes
+          },
+          {
+            value: 'outsideEmployer',
+            text: 'Outside - employer-paid',
+            checked: 'outsideEmployer' in selectedActivityTypes
+          }
+        ]
+      })
+    }}
+  {% endif %}
+{% endmacro %}
