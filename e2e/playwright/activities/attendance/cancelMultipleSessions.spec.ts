@@ -3,12 +3,11 @@ import { format } from 'date-fns'
 
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
-import {
+import setupCancelMultipleSessionsScenario, {
   stubCancelledSession,
   stubCancelledSessionsSummary,
   stubUncancelledSession,
 } from '../../helpers/activities/cancelMultipleSessions'
-import setupCancelMultipleSessionsScenario from '../../helpers/activities/cancelMultipleSessions'
 import { signIn } from '../../helpers/auth'
 
 test.beforeEach(async ({ page }) => {
