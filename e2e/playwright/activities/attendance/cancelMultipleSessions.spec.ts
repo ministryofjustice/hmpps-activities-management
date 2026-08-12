@@ -138,7 +138,7 @@ test('a user can cancel multiple sessions, update cancellation details and uncan
 
   await expect(attendancePage.locator('.govuk-summary-list__row').filter({ hasText: 'Pay' })).toContainText('Yes')
 
-  await attendancePage.getByRole('link', { name: 'Back' }).click()
+  await attendancePage.getByRole('link', { name: 'Back', exact: true }).click()
 
   await attendancePage
     .getByRole('link', { name: /^uncancel this session$/i })
