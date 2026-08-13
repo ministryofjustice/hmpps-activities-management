@@ -1,12 +1,12 @@
 import { format } from 'date-fns'
 
-import getAttendanceSummary from '../../../../integration_tests/fixtures/activitiesApi/getAttendanceSummary-11-93-94.json'
-import getAttendanceReasons from '../../../../integration_tests/fixtures/activitiesApi/getAttendanceReasons.json'
-import getCategories from '../../../../integration_tests/fixtures/activitiesApi/getCategories.json'
-import getScheduledInstanceEnglishLevel1 from '../../../../integration_tests/fixtures/activitiesApi/getScheduledInstance93.json'
-import getScheduledInstanceEnglishLevel2 from '../../../../integration_tests/fixtures/activitiesApi/getScheduledInstance11.json'
-import getNonResidentialActivityLocations from '../../../../integration_tests/fixtures/locationsinsideprison/non-residential-usage-activities.json'
-import { stubEndpoint } from '../../../../integration_tests/mockApis/wiremock'
+import getAttendanceSummary from '../../../../../integration_tests/fixtures/activitiesApi/getAttendanceSummary-11-93-94.json'
+import getAttendanceReasons from '../../../../../integration_tests/fixtures/activitiesApi/getAttendanceReasons.json'
+import getCategories from '../../../../../integration_tests/fixtures/activitiesApi/getCategories.json'
+import getScheduledInstanceEnglishLevel1 from '../../../../../integration_tests/fixtures/activitiesApi/getScheduledInstance93.json'
+import getScheduledInstanceEnglishLevel2 from '../../../../../integration_tests/fixtures/activitiesApi/getScheduledInstance11.json'
+import getNonResidentialActivityLocations from '../../../../../integration_tests/fixtures/locationsinsideprison/non-residential-usage-activities.json'
+import { stubEndpoint } from '../../../../../integration_tests/mockApis/wiremock'
 
 const getToday = () => format(new Date(), 'yyyy-MM-dd')
 
