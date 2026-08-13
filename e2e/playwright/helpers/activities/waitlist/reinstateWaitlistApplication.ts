@@ -1,6 +1,6 @@
 import { stubEndpoint } from '../../../../../integration_tests/mockApis/wiremock'
-import { buildWaitlistApplication } from '../waitlist/fixtures'
-import { stubWaitlistApplication, stubWaitlistApplicationView, stubWaitlistDashboard } from '../waitlist/stubs'
+import { buildWaitlistApplication } from './fixtures'
+import { stubWaitlistApplication, stubWaitlistApplicationView, stubWaitlistDashboard } from './stubs'
 
 const pendingApplication = buildWaitlistApplication()
 
