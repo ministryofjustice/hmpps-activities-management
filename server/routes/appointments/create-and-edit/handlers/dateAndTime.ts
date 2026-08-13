@@ -45,7 +45,7 @@ export default class DateAndTimeRoutes {
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
     this.setTimeAndDate(req, 'appointmentJourney')
     const retrospective = retrospectiveAppointment(appointmentJourney.startTime)
 
@@ -76,11 +76,11 @@ export default class DateAndTimeRoutes {
 
     this.setTimeAndDate(req, 'editAppointmentJourney')
 
-    if (hasAnyAppointmentPropertyChanged(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)) {
+    if (hasAnyAppointmentPropertyChanged(req.journeyData.appointmentJourney, req.journeyData.editAppointmentJourney)) {
       return res.redirect('schedule')
     }
 
-    req.session.appointmentJourney = null
+    req.journeyData.appointmentJourney = null
     req.journeyData.editAppointmentJourney = null
 
     return res.redirect(`/appointments/${appointmentId}`)

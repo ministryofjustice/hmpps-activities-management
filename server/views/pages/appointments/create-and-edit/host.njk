@@ -5,10 +5,10 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
-{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("Change appointment host - Appointments - DPS", session.appointmentJourney) %}
+{% if appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("Change appointment host - Appointments - DPS", appointmentJourney) %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Appointment host - Appointments - DPS", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Appointment host - Appointments - DPS", appointmentJourney) %}
 {% endif %}
 
 {% set pageId = 'appointment-host-page' %}
@@ -19,7 +19,7 @@
     {% set organiserOptions = (organiserOptions.push({
         value: organiserKey,
         text: organiserText,
-        checked: formResponses.organiser == organiserKey or session.appointmentJourney.organiserCode == organiserKey
+        checked: formResponses.organiser == organiserKey or appointmentJourney.organiserCode == organiserKey
     }), organiserOptions) %}
 {% endfor %}
 
@@ -28,11 +28,11 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ appointmentTypeCaption(session) }}
+                {{ appointmentTypeCaption(appointmentJourney) }}
                 {{ govukRadios({
                     fieldset: {
                         legend: {
-                            text: "Who hosts these appointments?" if session.appointmentJourney.type == AppointmentType.SET else "Who hosts this appointment?",
+                            text: "Who hosts these appointments?" if appointmentJourney.type == AppointmentType.SET else "Who hosts this appointment?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }

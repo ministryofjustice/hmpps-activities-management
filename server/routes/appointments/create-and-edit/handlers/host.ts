@@ -19,14 +19,14 @@ export default class HostRoutes {
     res.render('pages/appointments/create-and-edit/host', {
       organiserDescriptions,
       isCtaAcceptAndSave:
-        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+        req.journeyData.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
     })
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
     const { host }: HostForm = req.body
 
-    req.session.appointmentJourney.organiserCode = Organiser[host]
+    req.journeyData.appointmentJourney.organiserCode = Organiser[host]
 
     return res.redirectOrReturn('location')
   }

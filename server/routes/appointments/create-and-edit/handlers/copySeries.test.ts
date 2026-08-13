@@ -17,7 +17,7 @@ describe('Route Handlers - Duplicate Appointment - Copy Appointment Series', () 
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         appointmentJourney: {},
       },
       query: {},
@@ -29,7 +29,7 @@ describe('Route Handlers - Duplicate Appointment - Copy Appointment Series', () 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/copy-series', {
-        appointmentJourney: req.session.appointmentJourney,
+        appointmentJourney: req.journeyData.appointmentJourney,
         HowToCopySeriesOptions,
       })
     })
@@ -44,7 +44,7 @@ describe('Route Handlers - Duplicate Appointment - Copy Appointment Series', () 
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('schedule')
-      expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
+      expect(req.journeyData.appointmentJourney.repeat).toEqual(YesNo.YES)
     })
 
     it('should redirect to schedule page when user wants to duplicate a dingle appointment', async () => {
@@ -55,7 +55,7 @@ describe('Route Handlers - Duplicate Appointment - Copy Appointment Series', () 
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('schedule')
-      expect(req.session.appointmentJourney.repeat).toEqual(YesNo.NO)
+      expect(req.journeyData.appointmentJourney.repeat).toEqual(YesNo.NO)
     })
   })
 

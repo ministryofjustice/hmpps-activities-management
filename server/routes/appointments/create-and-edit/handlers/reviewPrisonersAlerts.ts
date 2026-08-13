@@ -8,8 +8,7 @@ export default class ReviewPrisonersAlertsRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId } = req.params
-    const { appointmentJourney } = req.session
-    const { editAppointmentJourney, appointmentSetJourney } = req.journeyData
+    const { appointmentJourney, editAppointmentJourney, appointmentSetJourney } = req.journeyData
     const { preserveHistory } = req.query
 
     let backLinkHref =
@@ -43,7 +42,7 @@ export default class ReviewPrisonersAlertsRoutes {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
 
-    if (req.session.appointmentJourney.mode === AppointmentJourneyMode.COPY) {
+    if (req.journeyData.appointmentJourney.mode === AppointmentJourneyMode.COPY) {
       return res.redirectOrReturn('date-and-time')
     }
 
@@ -57,12 +56,12 @@ export default class ReviewPrisonersAlertsRoutes {
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
 
-    if (req.session.appointmentJourney.type === AppointmentType.SET) {
+    if (req.journeyData.appointmentJourney.type === AppointmentType.SET) {
       req.journeyData.appointmentSetJourney.appointments = req.journeyData.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )
     } else {
-      req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.filter(
+      req.journeyData.appointmentJourney.prisoners = req.journeyData.appointmentJourney.prisoners.filter(
         prisoner => prisoner.number !== prisonNumber,
       )
     }

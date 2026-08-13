@@ -18,7 +18,7 @@ export default class NameRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { type } = req.session.appointmentJourney
+    const { type } = req.journeyData.appointmentJourney
 
     const categories = (
       await this.activitiesService.getAppointmentCategories(user).then(cat => {
@@ -45,33 +45,33 @@ export default class NameRoutes {
       return res.validationFailed('categoryCode', `Start typing a name and select from the list`)
     }
 
-    req.session.appointmentJourney.category = {
+    req.journeyData.appointmentJourney.category = {
       code: category.code,
       description: category.description,
     }
 
     if (customName?.trim()) {
-      req.session.appointmentJourney.customName = customName.trim()
-      req.session.appointmentJourney.appointmentName = `${req.session.appointmentJourney.customName} (${req.session.appointmentJourney.category.description})`
+      req.journeyData.appointmentJourney.customName = customName.trim()
+      req.journeyData.appointmentJourney.appointmentName = `${req.journeyData.appointmentJourney.customName} (${req.journeyData.appointmentJourney.category.description})`
     } else {
-      req.session.appointmentJourney.customName = null
-      req.session.appointmentJourney.appointmentName = category.description
+      req.journeyData.appointmentJourney.customName = null
+      req.journeyData.appointmentJourney.appointmentName = category.description
     }
 
     if (category.code === 'VLB') {
       req.session.bookACourtHearingJourney = {
-        prisoners: req.session.appointmentJourney.prisoners,
+        prisoners: req.journeyData.appointmentJourney.prisoners,
       }
-      req.session.appointmentJourney = null
+      req.journeyData.appointmentJourney = null
 
       return res.redirect(`../../video-link-booking/court/create/${journeyId}/select-prisoner`)
     }
 
     if (category.code === 'VLPM') {
       req.session.bookAProbationMeetingJourney = {
-        prisoners: req.session.appointmentJourney.prisoners,
+        prisoners: req.journeyData.appointmentJourney.prisoners,
       }
-      req.session.appointmentJourney = null
+      req.journeyData.appointmentJourney = null
 
       return res.redirect(`../../video-link-booking/probation/create/${journeyId}/select-prisoner`)
     }

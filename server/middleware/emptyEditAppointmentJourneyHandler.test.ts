@@ -32,7 +32,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     const middleware = emptyEditAppointmentJourneyHandler(true)
 
     it('should redirect back to appointment details page when the appointment journey data is not in session', async () => {
-      req.session.appointmentJourney = null
+      req.journeyData.appointmentJourney = null
       req.journeyData.editAppointmentJourney = {
         numberOfAppointments: 1,
         appointments: [
@@ -50,7 +50,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     })
 
     it('should redirect back to appointment details page when the edit appointment journey data is not in session', async () => {
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
         appointmentName: 'appointment name',
@@ -62,7 +62,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     })
 
     it('should continue if both journeys data exists in session', async () => {
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
         appointmentName: 'appointment name',

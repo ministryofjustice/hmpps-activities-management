@@ -20,7 +20,7 @@ export default class ConfirmEditRoutes {
 
     res.render('pages/appointments/create-and-edit/confirm-edit', {
       appointmentId,
-      startDate: parseIsoDate(req.session.appointmentJourney.startDate),
+      startDate: parseIsoDate(req.journeyData.appointmentJourney.startDate),
     })
   }
 

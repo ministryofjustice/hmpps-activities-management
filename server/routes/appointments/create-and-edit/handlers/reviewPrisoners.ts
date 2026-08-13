@@ -15,7 +15,7 @@ export default class ReviewPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentId } = req.params
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
     const { preserveHistory } = req.query
 
     let backLinkHref =
@@ -44,8 +44,7 @@ export default class ReviewPrisonerRoutes {
   }
 
   private static getPrisoners(req: Request): AppointmentPrisonerDetails[] {
-    const { appointmentJourney } = req.session
-    const { editAppointmentJourney, appointmentSetJourney } = req.journeyData
+    const { appointmentJourney, editAppointmentJourney, appointmentSetJourney } = req.journeyData
 
     if (appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
       return editAppointmentJourney.addPrisoners
@@ -57,8 +56,7 @@ export default class ReviewPrisonerRoutes {
   }
 
   private static getNotFoundPrisoners(req: Request): string[] {
-    const { appointmentJourney } = req.session
-    const { appointmentSetJourney } = req.journeyData
+    const { appointmentJourney, appointmentSetJourney } = req.journeyData
 
     if (appointmentJourney.type === AppointmentType.SET && appointmentSetJourney.prisonersNotFound) {
       const unidentifiedPrisonerNumbers = appointmentSetJourney.prisonersNotFound
@@ -85,10 +83,10 @@ export default class ReviewPrisonerRoutes {
     const alertsDetails = await this.alertsService.getAlertDetails(prisoners)
 
     if (alertsDetails.numPrisonersWithAlerts === 0) {
-      if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
+      if (req.journeyData.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
         return '../../schedule'
       }
-      if (req.session.appointmentJourney.mode === AppointmentJourneyMode.COPY) {
+      if (req.journeyData.appointmentJourney.mode === AppointmentJourneyMode.COPY) {
         return 'date-and-time'
       }
       return 'name'
@@ -103,12 +101,12 @@ export default class ReviewPrisonerRoutes {
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
 
-    if (req.session.appointmentJourney.type === AppointmentType.SET) {
+    if (req.journeyData.appointmentJourney.type === AppointmentType.SET) {
       req.journeyData.appointmentSetJourney.appointments = req.journeyData.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )
     } else {
-      req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.filter(
+      req.journeyData.appointmentJourney.prisoners = req.journeyData.appointmentJourney.prisoners.filter(
         prisoner => prisoner.number !== prisonNumber,
       )
     }
