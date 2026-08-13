@@ -42,7 +42,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container: [ 1, 2, 3, 4, 5, 6 ]
+        container: [ 1, 2, 3, 4, 5, 6, 7 ]
     outputs:
       timings-1: ${{ steps.timings.outputs.t1 }}
       timings-2: ${{ steps.timings.outputs.t2 }}
@@ -50,6 +50,7 @@ jobs:
       timings-4: ${{ steps.timings.outputs.t4 }}
       timings-5: ${{ steps.timings.outputs.t5 }}
       timings-6: ${{ steps.timings.outputs.t6 }}
+      timings-7: ${{ steps.timings.outputs.t7 }}
     steps:
       - name: Clone repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
