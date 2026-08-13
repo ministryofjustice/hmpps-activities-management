@@ -23,6 +23,7 @@ const waitlistApplication = {
   },
   isIndeterminateSentence: true,
   activity: mathsActivity,
+  statusUpdatedTime: '2025-06-20T14:22:00',
 }
 
 const waitlistSearchResponse = {
