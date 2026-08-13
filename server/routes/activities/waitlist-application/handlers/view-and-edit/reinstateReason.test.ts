@@ -41,6 +41,30 @@ describe('Route Handlers - Waitlist application - Reinstate Reason', () => {
     })
   })
 
+  it('should reinstate the application as pending with the reason as a comment', async () => {
+    req.body = {
+      reinstateReason: 'The prisoner has completed their required courses',
+    }
+
+    await handler.POST(req, res)
+
+    expect(activitiesService.patchWaitlistApplication).toHaveBeenCalledWith(
+      1,
+      {
+        status: 'PENDING',
+        comments: 'The prisoner has completed their required courses',
+      },
+      {
+        username: 'joebloggs',
+      },
+    )
+
+    expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+      './view',
+      `You have updated the status of ${fakeWaitlistApplicationJourneyData.prisoner.name}'s application`,
+    )
+  })
+
   describe('POST', () => {
     it('should redirect to view when reason is provided', async () => {
       req.body = {
