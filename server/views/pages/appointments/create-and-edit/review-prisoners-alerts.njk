@@ -120,10 +120,6 @@
               }}
             {% endif %}
           {% endif %}
-
-          {% if appointmentJourney.type == AppointmentType.EDIT %}
-            <p class="govuk-body">You're still adding {{ prisoners.length }} people</p>
-          {% endif %}
         {% endif %}
 
         {% if prisoners.length > 10 %}

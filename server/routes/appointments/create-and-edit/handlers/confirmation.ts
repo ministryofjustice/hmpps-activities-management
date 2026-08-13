@@ -17,9 +17,10 @@ export default class ConfirmationRoutes {
       ),
     )
 
+    req.journeyData.appointmentJourney = null
+
     res.render('pages/appointments/create-and-edit/confirmation', { appointment })
 
-    req.journeyData.appointmentJourney = null
     req.session.journeyMetrics = null
   }
 
@@ -30,10 +31,11 @@ export default class ConfirmationRoutes {
       MetricsEvent.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED(appointmentSet, req, res.locals.user),
     )
 
-    res.render('pages/appointments/create-and-edit/confirmation', { appointmentSet })
-
     req.journeyData.appointmentJourney = null
     req.journeyData.appointmentSetJourney = null
+
+    res.render('pages/appointments/create-and-edit/confirmation', { appointmentSet })
+
     req.session.journeyMetrics = null
   }
 }
