@@ -7,7 +7,7 @@ import setupCancelMultipleSessionsScenario, {
   stubCancelledSession,
   stubCancelledSessionsSummary,
   stubUncancelledSession,
-} from '../../helpers/activities/cancelMultipleSessions'
+} from '../../helpers/activities/attendance/cancelMultipleSessions'
 import { signIn } from '../../helpers/auth'
 
 test.beforeEach(async ({ page }) => {

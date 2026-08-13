@@ -3,7 +3,7 @@ import { format, subDays } from 'date-fns'
 
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
-import setupLogWaitlistApplicationScenario from '../../helpers/activities/logWaitlistApplication'
+import setupLogWaitlistApplicationScenario from '../../helpers/activities/waitlist/logWaitlistApplication'
 import { signIn } from '../../helpers/auth'
 
 test.beforeEach(async ({ page }) => {

@@ -4,8 +4,9 @@ import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import setupEditWaitlistStatusScenario, {
   stubApprovedWaitlistApplication,
-} from '../../helpers/activities/editWaitlistStatus'
+} from '../../helpers/activities/waitlist/editWaitlistStatus'
 import { signIn } from '../../helpers/auth'
+import { summaryRow } from '../../helpers/govuk'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -114,5 +115,5 @@ test('a user can view a pending waitlist application and change its status to ap
 
   await expect(successBanner).toContainText("You have updated the status of David Winchurch's application")
 
-  await expect(page.locator('.govuk-summary-list__row').filter({ hasText: 'Status' })).toContainText('Approved')
+  await expect(summaryRow(page, 'Status')).toContainText('Approved')
 })

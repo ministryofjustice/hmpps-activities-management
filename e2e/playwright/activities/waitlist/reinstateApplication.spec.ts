@@ -4,8 +4,9 @@ import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import setupReinstateWaitlistApplicationScenario, {
   stubReinstatedWaitlistApplication,
-} from '../../helpers/activities/reinstateWaitlistApplication'
+} from '../../helpers/activities/waitlist/reinstateWaitlistApplication'
 import { signIn } from '../../helpers/auth'
+import { successBanner, summaryRow } from '../../helpers/govuk'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -92,13 +93,14 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
     })
     .click()
 
-  const successBanner = page.locator('.govuk-notification-banner--success')
+  const banner = successBanner(page)
 
-  await expect(successBanner).toBeVisible()
-
-  await expect(successBanner).toContainText("You have updated the status of David Winchurch's application")
+  await expect(banner).toBeVisible()
+  await expect(banner).toContainText("You have updated the status of David Winchurch's application")
 
   await expect(page.locator('.govuk-summary-list__row').filter({ hasText: 'Status' })).toContainText('Pending')
 
-  await expect(page.locator('.govuk-summary-list__row').filter({ hasText: 'Comments' })).toContainText(reinstateReason)
+  await expect(summaryRow(page, 'Status')).toContainText('Pending')
+
+  await expect(summaryRow(page, 'Comments')).toContainText(reinstateReason)
 })
