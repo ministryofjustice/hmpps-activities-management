@@ -65,6 +65,22 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
         status: 'PENDING',
       })
     })
+
+    it.each([
+      ['GUIDANCE_STAFF', 'IAG or careers information, advice and guidance staff'],
+      ['EDUCATION_STAFF', 'Education staff'],
+    ])('should display the correct requester for %s', async (requester, expectedRequester) => {
+      req.journeyData.waitListApplicationJourney.requester = requester
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        `pages/activities/waitlist-application/check-answers`,
+        expect.objectContaining({
+          requester: expectedRequester,
+        }),
+      )
+    })
   })
 
   describe('POST', () => {

@@ -4,7 +4,7 @@ import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import setupCancelSingleSessionScenario, {
   stubCancelledSingleSession,
-} from '../../helpers/activities/cancelSingleSession'
+} from '../../helpers/activities/attendance/cancelSingleSession'
 import { signIn } from '../../helpers/auth'
 
 test.beforeEach(async ({ page }) => {
