@@ -9,7 +9,7 @@ import getCandidateSuitability from '../../../../../integration_tests/fixtures/a
 import getNonAssociationsInvolving from '../../../../../integration_tests/fixtures/nonAssociationsApi/getNonAssociationsInvolving.json'
 import stubActivityAndSchedule from '../activityAndScheduleStubs'
 
-export const stubAllocateMultipleFromCsv = async () => {
+const stubAllocateMultipleFromCsv = async () => {
   await stubActivityAndSchedule({
     activityStartDate: subWeeks(new Date(), 2),
     subject: 'english',
@@ -29,3 +29,5 @@ export const stubAllocateMultipleFromCsv = async () => {
     stubEndpoint('POST', '/schedules/2/allocations/bulk', {}),
   ])
 }
+
+export default stubAllocateMultipleFromCsv

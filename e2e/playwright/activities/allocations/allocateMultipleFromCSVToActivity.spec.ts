@@ -1,10 +1,10 @@
 import path from 'path'
 import { addMonths, format } from 'date-fns'
 import { expect, test } from '@playwright/test'
-import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import { signIn } from '../../helpers/auth'
-import { stubAllocateMultipleFromCsv } from '../../helpers/activities/allocations/allocateMultipleFromCsv'
+import stubAllocateMultipleFromCsv from '../../helpers/activities/allocations/allocateMultipleFromCsv'
 import stubs from '../../../../integration_tests/mockApis/stubs'
+import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 
 test.describe('Allocate multiple people via CSV', () => {
   test.beforeEach(async ({ page }) => {

@@ -3,12 +3,12 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { isBinaryFileSync } from 'isbinaryfile'
 import AppointmentSetUploadRoutes, { AppointmentsList } from './appointmentSetUpload'
 import PrisonerListCsvParser from '../../../../../utils/prisonerListCsvParser'
 import PrisonService from '../../../../../services/prisonService'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
-import { isBinaryFileSync } from 'isbinaryfile'
 
 jest.mock('fs')
 jest.mock('isbinaryfile', () => ({
