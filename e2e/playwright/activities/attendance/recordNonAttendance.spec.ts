@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
-import setupRecordNonAttendanceScenario from '../../helpers/activities/recordNonAttendance'
+import setupRecordNonAttendanceScenario from '../../helpers/activities/attendance/recordNonAttendance'
 import { signIn } from '../../helpers/auth'
 
 test.beforeEach(async ({ page }) => {

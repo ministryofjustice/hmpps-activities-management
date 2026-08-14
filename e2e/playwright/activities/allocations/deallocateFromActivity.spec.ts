@@ -3,7 +3,7 @@ import { addMonths, format, subDays, subWeeks } from 'date-fns'
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import { signIn } from '../../helpers/auth'
-import setupDeallocationScenario from '../../helpers/activities/deallocation'
+import setupDeallocationScenario from '../../helpers/activities/allocations/deallocation'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()

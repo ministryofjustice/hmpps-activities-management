@@ -1,18 +1,18 @@
 import { addWeeks, format } from 'date-fns'
 
-import getActivities from '../../../../integration_tests/fixtures/activitiesApi/getActivities.json'
-import getActivity from '../../../../integration_tests/fixtures/activitiesApi/getActivity.json'
-import getSchedule from '../../../../integration_tests/fixtures/activitiesApi/getSchedule.json'
-import getAllocations from '../../../../integration_tests/fixtures/activitiesApi/getAllocations.json'
-import prisonerAllocations from '../../../../integration_tests/fixtures/activitiesApi/prisonerAllocations.json'
-import moorlandIncentiveLevels from '../../../../integration_tests/fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
-import getInmateDetails from '../../../../integration_tests/fixtures/prisonerSearchApi/getInmateDetailsForDeallocation.json'
-import getDeallocationReasons from '../../../../integration_tests/fixtures/activitiesApi/getDeallocationReasons.json'
-import getMdiPrisonPayBands from '../../../../integration_tests/fixtures/activitiesApi/getMdiPrisonPayBands.json'
-import getCandidates from '../../../../integration_tests/fixtures/activitiesApi/getCandidates.json'
-import getMdiPrisonRegime from '../../../../integration_tests/fixtures/prisonApi/getMdiPrisonRegime.json'
+import getActivities from '../../../../../integration_tests/fixtures/activitiesApi/getActivities.json'
+import getActivity from '../../../../../integration_tests/fixtures/activitiesApi/getActivity.json'
+import getSchedule from '../../../../../integration_tests/fixtures/activitiesApi/getSchedule.json'
+import getAllocations from '../../../../../integration_tests/fixtures/activitiesApi/getAllocations.json'
+import prisonerAllocations from '../../../../../integration_tests/fixtures/activitiesApi/prisonerAllocations.json'
+import moorlandIncentiveLevels from '../../../../../integration_tests/fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
+import getInmateDetails from '../../../../../integration_tests/fixtures/prisonerSearchApi/getInmateDetailsForDeallocation.json'
+import getDeallocationReasons from '../../../../../integration_tests/fixtures/activitiesApi/getDeallocationReasons.json'
+import getMdiPrisonPayBands from '../../../../../integration_tests/fixtures/activitiesApi/getMdiPrisonPayBands.json'
+import getCandidates from '../../../../../integration_tests/fixtures/activitiesApi/getCandidates.json'
+import getMdiPrisonRegime from '../../../../../integration_tests/fixtures/prisonApi/getMdiPrisonRegime.json'
 
-import { stubEndpoint } from '../../../../integration_tests/mockApis/wiremock'
+import { stubEndpoint } from '../../../../../integration_tests/mockApis/wiremock'
 
 const stubActivityAndSchedule = async (activityStartDate: Date): Promise<void> => {
   const activity = structuredClone(getActivity)
