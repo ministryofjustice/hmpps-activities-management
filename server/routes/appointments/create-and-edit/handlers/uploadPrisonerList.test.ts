@@ -1,4 +1,5 @@
 import fs, { Stats } from 'fs'
+import { isBinaryFileSync } from 'isbinaryfile'
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
@@ -434,6 +435,56 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
     })
+
+    it('should record prisoner numbers that could not be found', async () => {
+      req.file = {
+        path: 'uploads/two-prisoners.csv',
+      } as unknown as Express.Multer.File
+
+      when(prisonerListCsvParser.getPrisonNumbers).calledWith(req.file).mockResolvedValue(['A1234BC', 'B2345CD'])
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'A1234BC',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            prisonId: 'TPR',
+            cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+          },
+        ] as Prisoner[])
+
+      await handler.POST(req, res)
+
+      expect(req.session.appointmentJourney.prisoners).toEqual([
+        expect.objectContaining({
+          number: 'A1234BC',
+          name: 'TEST01 PRISONER01',
+        }),
+      ])
+      expect(req.session.appointmentJourney.prisonersNotFound).toEqual(['B2345CD'])
+      expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
+    })
+
+    it('should continue with an empty prisoner list when no uploaded prisoner numbers can be found', async () => {
+      req.file = {
+        path: 'uploads/two-prisoners.csv',
+      } as unknown as Express.Multer.File
+
+      when(prisonerListCsvParser.getPrisonNumbers).calledWith(req.file).mockResolvedValue(['A1234BC', 'B2345CD'])
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
+        .mockResolvedValue([] as Prisoner[])
+
+      await handler.POST(req, res)
+
+      expect(req.session.appointmentJourney.prisoners).toEqual([])
+      expect(req.session.appointmentJourney.prisonersNotFound).toEqual(['A1234BC', 'B2345CD'])
+      expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
+    })
   })
 
   describe('Validation', () => {
@@ -487,6 +538,29 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
+    })
+
+    it('validation fails when a non CSV file is uploaded', async () => {
+      const body = {
+        file: {
+          path: 'uploads/non-csv.csv',
+        },
+      }
+
+      const requestObject = plainToInstance(PrisonerList, body)
+
+      when(fsMock.existsSync).calledWith('uploads/non-csv.csv').mockReturnValue(true)
+      when(fsMock.lstatSync)
+        .calledWith('uploads/non-csv.csv')
+        .mockReturnValue({
+          size: 1,
+        } as Stats)
+
+      jest.mocked(isBinaryFileSync).mockReturnValue(true)
+
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'You must upload a CSV file' }]))
     })
   })
 })

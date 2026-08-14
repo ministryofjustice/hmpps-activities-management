@@ -8,6 +8,7 @@ import PrisonerListCsvParser from '../../../../../utils/prisonerListCsvParser'
 import PrisonService from '../../../../../services/prisonService'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
+import { isBinaryFileSync } from 'isbinaryfile'
 
 jest.mock('fs')
 jest.mock('isbinaryfile', () => ({
@@ -594,6 +595,29 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
+    })
+
+    it('validation fails when a non CSV file is uploaded', async () => {
+      const body = {
+        file: {
+          path: 'uploads/non-csv.csv',
+        },
+      }
+
+      const requestObject = plainToInstance(AppointmentsList, body)
+
+      when(fsMock.existsSync).calledWith('uploads/non-csv.csv').mockReturnValue(true)
+      when(fsMock.lstatSync)
+        .calledWith('uploads/non-csv.csv')
+        .mockReturnValue({
+          size: 1,
+        } as Stats)
+
+      jest.mocked(isBinaryFileSync).mockReturnValue(true)
+
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'You must upload a CSV file' }]))
     })
   })
 })
