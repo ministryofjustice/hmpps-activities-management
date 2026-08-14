@@ -202,6 +202,22 @@ describe('Route Handlers - Edit allocation - End date', () => {
       expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
     })
+
+    it('should redirect to the multiple pay band page when allocating multiple people to a paid activity', async () => {
+      req.routeContext = { mode: 'create' }
+      req.query = {}
+
+      req.journeyData.allocateJourney.activity.paid = true
+      req.journeyData.allocateJourney.allocateMultipleInmatesMode = true
+
+      const endDate = startOfToday()
+      req.body = { endDate }
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('multiple/pay-band-multiple')
+    })
   })
 
   describe('type validation', () => {
