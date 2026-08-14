@@ -360,6 +360,7 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
         additionalAttendeesCount: 0,
       })
     })
+
     it('should render the view for edit appointment - no non-associations', async () => {
       when(nonAssociationsService.getNonAssociationsBetween)
         .calledWith(['AB123IT', 'PW987BB', 'G6123VU'], res.locals.user)
@@ -370,6 +371,7 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
       await handler.EDIT_GET(req, res)
       expect(res.redirect).toHaveBeenCalledWith('../../schedule')
     })
+
     it('should render the view for edit appointment - no non-associations as user has removed additional prisoner', async () => {
       when(nonAssociationsService.getNonAssociationsBetween)
         .calledWith(['AB123IT', 'PW987BB', 'G6123VU'], res.locals.user)
@@ -390,6 +392,7 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
         existingPrisonerNumbers: ['AB123IT', 'PW987BB'],
       })
     })
+
     it('should render the view for edit appointment - non-associations present', async () => {
       when(nonAssociationsService.getNonAssociationsBetween)
         .calledWith(['AB123IT', 'PW987BB', 'G6123VU'], res.locals.user)
@@ -451,6 +454,75 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
         ],
         existingAttendeesCount: 2,
         additionalAttendeesCount: 1,
+        existingPrisonerNumbers: ['AB123IT', 'PW987BB'],
+      })
+    })
+
+    it('should render non-associations between two newly added prisoners', async () => {
+      req.journeyData.editAppointmentJourney.addPrisoners = [
+        {
+          number: 'G6123VU',
+          name: 'SAMUEL RAMROOP',
+        },
+        {
+          number: 'G0995GW',
+          name: 'AETICAKE POTTA',
+        },
+      ] as AppointmentPrisonerDetails[]
+
+      const expectedResult = [
+        {
+          primaryPrisoner: {
+            name: 'SAMUEL RAMROOP',
+            prisonerNumber: 'G6123VU',
+          },
+          nonAssociations: [
+            {
+              prisonerNumber: 'G0995GW',
+              name: 'AETICAKE POTTA',
+              cellLocation: '1-3',
+              lastUpdated: '2024-10-30T10:00:00',
+            },
+          ],
+        },
+        {
+          primaryPrisoner: {
+            name: 'AETICAKE POTTA',
+            prisonerNumber: 'G0995GW',
+          },
+          nonAssociations: [
+            {
+              prisonerNumber: 'G6123VU',
+              name: 'SAMUEL RAMROOP',
+              cellLocation: '2-2-024',
+              lastUpdated: '2024-10-30T10:00:00',
+            },
+          ],
+        },
+      ]
+
+      when(nonAssociationsService.getNonAssociationsBetween)
+        .calledWith(['AB123IT', 'PW987BB', 'G6123VU', 'G0995GW'], res.locals.user)
+        .mockResolvedValue([
+          {
+            id: 1,
+            firstPrisonerNumber: 'G6123VU',
+            secondPrisonerNumber: 'G0995GW',
+            whenUpdated: '2024-10-30T10:00:00',
+          },
+        ] as NonAssociation[])
+
+      when(nonAssociationsService.enhanceNonAssociations).mockResolvedValue(expectedResult)
+
+      await handler.EDIT_GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-non-associations-edit', {
+        appointmentId: 1,
+        backLinkHref: 'review-prisoners-alerts',
+        preserveHistory: false,
+        nonAssociations: expectedResult,
+        existingAttendeesCount: 2,
+        additionalAttendeesCount: 2,
         existingPrisonerNumbers: ['AB123IT', 'PW987BB'],
       })
     })
