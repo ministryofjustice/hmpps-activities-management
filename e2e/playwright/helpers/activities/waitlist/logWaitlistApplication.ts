@@ -1,15 +1,13 @@
 import { format, subDays } from 'date-fns'
 
-import getActivitiesWithEA from '../../../../integration_tests/fixtures/activitiesApi/getActivities-withExternal.json'
-import getActivity from '../../../../integration_tests/fixtures/activitiesApi/getActivity.json'
-import getPrisonerA1350DZ from '../../../../integration_tests/fixtures/prisonerSearchApi/getPrisoner-MDI-A1350DZ.json'
-import { stubEndpoint } from '../../../../integration_tests/mockApis/wiremock'
+import getActivitiesWithEA from '../../../../../integration_tests/fixtures/activitiesApi/getActivities-withExternal.json'
+import getPrisonerA1350DZ from '../../../../../integration_tests/fixtures/prisonerSearchApi/getPrisoner-MDI-A1350DZ.json'
+import { stubEndpoint } from '../../../../../integration_tests/mockApis/wiremock'
+import { mathsActivity } from './fixtures'
 
 const setupLogWaitlistApplicationScenario = async (): Promise<void> => {
-  const activity = structuredClone(getActivity)
+  const activity = structuredClone(mathsActivity)
 
-  activity.id = 1
-  activity.summary = 'Maths level 1'
   activity.description = 'Maths level 1'
   activity.schedules[0].startDate = format(subDays(new Date(), 1), 'yyyy-MM-dd')
 

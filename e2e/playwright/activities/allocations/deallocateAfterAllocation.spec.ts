@@ -4,7 +4,7 @@ import { format } from 'date-fns'
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import { signIn } from '../../helpers/auth'
-import setupDeallocateAfterAllocationScenario from '../../helpers/activities/deallocateAfterAllocation'
+import setupDeallocateAfterAllocationScenario from '../../helpers/activities/allocations/deallocateAfterAllocation'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()

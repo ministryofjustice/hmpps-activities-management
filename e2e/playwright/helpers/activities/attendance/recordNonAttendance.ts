@@ -1,9 +1,9 @@
-import getAttendanceReasons from '../../../../integration_tests/fixtures/activitiesApi/getAttendanceReasons.json'
-import getScheduledInstance from '../../../../integration_tests/fixtures/activitiesApi/getScheduledInstance93.json'
-import getAttendeesForScheduledInstance from '../../../../integration_tests/fixtures/activitiesApi/getAttendeesScheduledInstance93.json'
-import getScheduledEvents from '../../../../integration_tests/fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
-import getInmateDetails from '../../../../integration_tests/fixtures/prisonerSearchApi/getInmateDetailsForNonAttendance.json'
-import { stubEndpoint } from '../../../../integration_tests/mockApis/wiremock'
+import getAttendanceReasons from '../../../../../integration_tests/fixtures/activitiesApi/getAttendanceReasons.json'
+import getScheduledInstance from '../../../../../integration_tests/fixtures/activitiesApi/getScheduledInstance93.json'
+import getAttendeesForScheduledInstance from '../../../../../integration_tests/fixtures/activitiesApi/getAttendeesScheduledInstance93.json'
+import getScheduledEvents from '../../../../../integration_tests/fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
+import getInmateDetails from '../../../../../integration_tests/fixtures/prisonerSearchApi/getInmateDetailsForNonAttendance.json'
+import { stubEndpoint } from '../../../../../integration_tests/mockApis/wiremock'
 
 const date = '2023-02-02'
 
