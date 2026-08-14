@@ -50,7 +50,7 @@ describe('Views - Prisoner allocation dashboard - allocations', () => {
       )
 
       const allocateButton = $('a.govuk-button').filter(
-        (_, element) => $(element).text().trim() === 'Allocate to an activity',
+        (_index, element) => $(element).text().trim() === 'Allocate to an activity',
       )
 
       expect(allocateButton.attr('href')).toBe('/activities/prisoner-allocations/allocate/A1234BC/waitlist-allocation')
