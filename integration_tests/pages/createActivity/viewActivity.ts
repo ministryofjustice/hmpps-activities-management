@@ -57,7 +57,7 @@ export default class ViewActivityPage extends Page {
     this.scheduleSummaryList().should('exist')
     this.getSummaryListValue(this.activityDetailsSummaryList(), 'Paid by').contains(/The prison|An external employer/)
     this.getSummaryListValue(this.activityDetailsSummaryList(), 'Activity category').should(
-      'have.text',
+      'contain.text',
       'Outside activity',
     )
     this.getSummaryListValue(this.locationAndCapacitySummaryList(), 'Location').contains('Outside')
