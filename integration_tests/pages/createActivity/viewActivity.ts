@@ -18,6 +18,8 @@ export default class ViewActivityPage extends Page {
 
   changeLocationLink = (): Cypress.Chainable => cy.get('[data-qa="change-location-link"]')
 
+  changeCategoryLink = (): Cypress.Chainable => cy.get('[data-qa="change-category-link"]')
+
   changePayLink = () => cy.get('[data-qa="change-pay-link"]')
 
   changeScheduleLink = () => cy.get('[data-qa="change-schedule-link"]')
@@ -54,7 +56,12 @@ export default class ViewActivityPage extends Page {
     this.payRatesSummaryList().should('exist')
     this.scheduleSummaryList().should('exist')
     this.getSummaryListValue(this.activityDetailsSummaryList(), 'Paid by').contains(/The prison|An external employer/)
+    this.getSummaryListValue(this.activityDetailsSummaryList(), 'Activity category').should(
+      'have.text',
+      'Outside activity',
+    )
     this.getSummaryListValue(this.locationAndCapacitySummaryList(), 'Location').contains('Outside')
+    this.changeCategoryLink().should('not.exist')
     this.changeLocationLink().should('not.exist')
     this.changeBankHolidayLink().should('not.exist')
   }
