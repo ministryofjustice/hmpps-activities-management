@@ -52,11 +52,5 @@
     "code": "SAA_OTHER",
     "name": "Other",
     "description": "Select if the activity you’re creating doesn’t fit any other category"
-  },
-  {
-    "id": 10,
-    "code": "SAA_ROTL",
-    "name": "Outside activity",
-    "description": "Activities which take place outside the prison"
   }
 ]
