@@ -38,7 +38,7 @@ export default class EditAppointmentService {
 
   async redirectOrEdit(req: Request, res: Response, property: string) {
     const { appointmentId } = req.params
-    if (hasAnyAppointmentPropertyChanged(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)) {
+    if (hasAnyAppointmentPropertyChanged(req.journeyData.appointmentJourney, req.journeyData.editAppointmentJourney)) {
       if (isApplyToQuestionRequired(req.journeyData.editAppointmentJourney)) {
         return res.redirect(`${property}/apply-to`)
       }
@@ -63,7 +63,7 @@ export default class EditAppointmentService {
 
   async edit(req: Request, res: Response, applyTo: AppointmentApplyTo) {
     const { user } = res.locals
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
     const { editAppointmentJourney } = req.journeyData
     const { appointmentId } = req.params
 
@@ -229,7 +229,7 @@ export default class EditAppointmentService {
 
   private clearSession(req: Request) {
     req.journeyData.editAppointmentJourney = null
-    req.session.appointmentJourney = null
+    req.journeyData.appointmentJourney = null
     req.session.journeyMetrics = null
   }
 }

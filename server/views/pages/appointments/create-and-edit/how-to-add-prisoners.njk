@@ -5,11 +5,11 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("add more attendees - Appointments - DPS", session.appointmentJourney) %}
+{% if appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("add more attendees - Appointments - DPS", appointmentJourney) %}
     {% set pageHeading = "How do you want to select additional attendees?" %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Add attendees - Appointments - DPS", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Add attendees - Appointments - DPS", appointmentJourney) %}
     {% set pageHeading = "How do you want to select attendees?" %}
 {% endif %}
 
@@ -19,7 +19,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
+            {{ appointmentTypeCaption(appointmentJourney) }}
 
             <form method="POST" action="how-to-add-prisoners{{ '?preserveHistory=true' if preserveHistory else '' }}">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

@@ -16,7 +16,7 @@ export class HowToCopySeriesForm {
 
 export default class HowToCopySeriesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
 
     res.render('pages/appointments/create-and-edit/copy-series', {
       appointmentJourney,
@@ -26,7 +26,7 @@ export default class HowToCopySeriesRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { howToCopy } = req.body
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
 
     if (HowToCopySeriesOptions[howToCopy] === HowToCopySeriesOptions.ONE_OFF) {
       appointmentJourney.repeat = YesNo.NO

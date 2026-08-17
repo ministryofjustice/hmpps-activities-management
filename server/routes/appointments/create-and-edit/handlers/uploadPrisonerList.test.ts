@@ -42,7 +42,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         appointmentJourney: {},
       },
       query: {},
@@ -165,7 +165,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -224,7 +224,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -254,7 +254,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         path: 'uploads/two-prisoners.csv',
       } as unknown as Express.Multer.File
 
-      req.session.appointmentJourney.prisoners = [
+      req.journeyData.appointmentJourney.prisoners = [
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -286,7 +286,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -316,7 +316,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         path: 'uploads/two-prisoners.csv',
       } as unknown as Express.Multer.File
 
-      req.session.appointmentJourney.prisoners = [
+      req.journeyData.appointmentJourney.prisoners = [
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -355,7 +355,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -411,7 +411,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',

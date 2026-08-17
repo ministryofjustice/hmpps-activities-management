@@ -8,19 +8,19 @@
 
 {% set serviceTitle = ' - Appointments - DPS' %}
 
-{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("change location" + serviceTitle, session.appointmentJourney) %}
+{% if appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("change location" + serviceTitle, appointmentJourney) %}
     {% set pageHeading = "Enter the new location" %}
 {% else %}
     {% set pageTitle = appointmentJourneyTitle(
         "Appointment set location" + serviceTitle
-        if session.appointmentJourney.type == AppointmentType.SET
+        if appointmentJourney.type == AppointmentType.SET
         else "Appointment location" + serviceTitle,
-        session.appointmentJourney
+        appointmentJourney
     ) %}
     {% set pageHeading = (
         "Where will the appointments take place?"
-        if session.appointmentJourney.type == AppointmentType.SET
+        if appointmentJourney.type == AppointmentType.SET
         else "Where will the appointment take place?"
     ) %}
 {% endif %}
@@ -56,7 +56,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
+            {{ appointmentTypeCaption(appointmentJourney) }}
 
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 

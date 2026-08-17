@@ -6,11 +6,11 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "partials/searchInput.njk" import searchInput %}
 
-{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("add someone - Appointments - DPS", session.appointmentJourney) %}
+{% if appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("add someone - Appointments - DPS", appointmentJourney) %}
     {% set pageHeading = "Who do you want to add?" %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Add person - Appointments - DPS", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Add person - Appointments - DPS", appointmentJourney) %}
     {% set pageHeading = "Who is the appointment for?" %}
 {% endif %}
 
@@ -18,7 +18,7 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-    {{ appointmentTypeCaption(session) }}
+    {{ appointmentTypeCaption(appointmentJourney) }}
     {% set defaultPrisonerNumber = formResponses.query if formResponses.query != undefined else query %}
 
     <div class="govuk-grid-row">

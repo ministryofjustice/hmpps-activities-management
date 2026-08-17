@@ -6,7 +6,7 @@ export default class ConfirmNonAssociationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { nonAssociationsRemainingCount } = req.query
-    const { prisoners } = req.session.appointmentJourney
+    const { prisoners } = req.journeyData.appointmentJourney
     const { user } = res.locals
 
     let enhancedNonAssociations

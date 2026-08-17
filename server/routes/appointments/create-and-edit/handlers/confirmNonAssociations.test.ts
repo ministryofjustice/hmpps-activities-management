@@ -28,7 +28,8 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           prisoners: [{ number: 'G6123VU' }, { number: 'AB123IT' }, { number: 'PW987BB' }],
         },
