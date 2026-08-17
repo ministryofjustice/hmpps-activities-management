@@ -96,7 +96,7 @@ export default function Create({
   get('/start-set', startJourneyRoutes.SET)
   get('/start-prisoner/:prisonNumber', startJourneyRoutes.PRISONER)
   get('/select-prisoner', selectPrisonerRoutes.GET, true)
-  post('/select-prisoner', selectPrisonerRoutes.SELECT_PRISONER, SelectPrisoner)
+  post('/select-prisoner', selectPrisonerRoutes.SELECT_PRISONER, SelectPrisoner, true)
   post('/search-prisoner', selectPrisonerRoutes.SEARCH, PrisonerSearch)
   get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
   router.post(
@@ -141,6 +141,7 @@ export default function Create({
       '/appointment-set-extra-information/:prisonerNumber',
       appointmentSetAddExtraInformationRoutes.POST,
       AppointmentSetStaffPrisonerExtraInformation,
+      true,
     )
     post('/extra-information', extraInformationRoutes.CREATE, StaffPrisonerExtraInformation, true)
   } else {
@@ -148,6 +149,7 @@ export default function Create({
       '/appointment-set-extra-information/:prisonerNumber',
       appointmentSetAddExtraInformationRoutes.POST,
       AppointmentSetAppointmentExtraInformation,
+      true,
     )
     post('/extra-information', extraInformationRoutes.CREATE, ExtraInformation, true)
   }
