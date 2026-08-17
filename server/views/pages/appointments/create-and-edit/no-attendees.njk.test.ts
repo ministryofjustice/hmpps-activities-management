@@ -16,9 +16,6 @@ describe('Views - Appointments Management - No attendees', () => {
   } as AppointmentJourney
 
   const viewContext = {
-    session: {
-      appointmentJourney,
-    },
     appointmentJourney,
     user: {
       activeCaseLoad: {

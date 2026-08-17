@@ -13,10 +13,8 @@ describe('Views - Appointments Management - Review non-associations when editing
   const njkEnv = registerNunjucks()
 
   const baseContext = {
-    session: {
-      appointmentJourney: {
-        type: AppointmentType.GROUP,
-      },
+    appointmentJourney: {
+      type: AppointmentType.GROUP,
     },
     appointmentId: 12,
     nonAssociationsUrl: 'https://non-associations.example.com',

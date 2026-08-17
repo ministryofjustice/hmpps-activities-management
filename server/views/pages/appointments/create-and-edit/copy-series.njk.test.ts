@@ -32,9 +32,6 @@ describe('Views - Appointments Management - Copy appointment series', () => {
   const render = (formResponses = {}) =>
     cheerio.load(
       compiledTemplate.render({
-        session: {
-          appointmentJourney,
-        },
         appointmentJourney,
         HowToCopySeriesOptions,
         formResponses,
