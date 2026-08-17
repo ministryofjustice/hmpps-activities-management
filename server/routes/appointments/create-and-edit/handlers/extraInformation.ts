@@ -29,19 +29,19 @@ export default class ExtraInformationRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/extra-information', {
       isCtaAcceptAndSave:
-        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+        req.journeyData.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
-      prisoners: req.session.appointmentJourney.prisoners,
+      prisoners: req.journeyData.appointmentJourney.prisoners,
     })
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
     const { extraInformation, prisonerExtraInformation } = req.body
 
-    req.session.appointmentJourney.extraInformation = extraInformation
+    req.journeyData.appointmentJourney.extraInformation = extraInformation
 
     if (config.prisonerExtraInformationEnabled) {
-      req.session.appointmentJourney.prisonerExtraInformation = prisonerExtraInformation
+      req.journeyData.appointmentJourney.prisonerExtraInformation = prisonerExtraInformation
     }
 
     res.redirect(`check-answers`)

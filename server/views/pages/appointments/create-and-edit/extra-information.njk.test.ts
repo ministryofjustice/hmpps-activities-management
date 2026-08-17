@@ -22,9 +22,7 @@ describe('Views - Appointments Management - Extra Information, with toggle off',
   const weekTomorrow = addDays(new Date(), 8)
   let compiledTemplate: Template
   let viewContext = {
-    session: {
-      appointmentJourney: {} as unknown as AppointmentJourney,
-    },
+    appointmentJourney: {} as unknown as AppointmentJourney,
     editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     backLinkHref: '',
     isCtaAcceptAndSave: false,
@@ -35,13 +33,12 @@ describe('Views - Appointments Management - Extra Information, with toggle off',
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
-        appointmentJourney: {
-          mode: AppointmentJourneyMode.CREATE,
-          type: AppointmentType.GROUP,
-          startDate: formatIsoDate(weekTomorrow),
-        },
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        startDate: formatIsoDate(weekTomorrow),
       },
+
       editAppointmentJourney: {
         numberOfAppointments: 3,
         appointments: [
@@ -66,7 +63,7 @@ describe('Views - Appointments Management - Extra Information, with toggle off',
   })
 
   it('create content', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.appointmentJourney.mode = AppointmentJourneyMode.CREATE
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -83,7 +80,7 @@ describe('Views - Appointments Management - Extra Information, with toggle off',
   })
 
   it('edit content', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+    viewContext.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -121,8 +118,8 @@ describe('Views - Appointments Management - Extra Information, with toggle off',
     { code: 'VLLA', description: 'Video Link - Legal Appointment' },
     { code: 'VLOO', description: 'Video Link - Official Other' },
   ])('create content - $code - $description', ({ code, description }) => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
-    viewContext.session.appointmentJourney.category = {
+    viewContext.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.appointmentJourney.category = {
       code,
       description,
     }
@@ -144,9 +141,9 @@ describe('Views - Appointments Management - Extra Information, with toggle off',
     { code: 'VLLA', description: 'Video Link - Legal Appointment' },
     { code: 'VLOO', description: 'Video Link - Official Other' },
   ])('edit content - $code - $description', ({ code, description }) => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+    viewContext.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
-    viewContext.session.appointmentJourney.category = {
+    viewContext.appointmentJourney.category = {
       code,
       description,
     }
@@ -170,9 +167,7 @@ describe('Views - Appointments Management - Extra Information, with toggle on', 
   const weekTomorrow = addDays(new Date(), 8)
   let compiledTemplate: Template
   let viewContext = {
-    session: {
-      appointmentJourney: {} as unknown as AppointmentJourney,
-    },
+    appointmentJourney: {} as unknown as AppointmentJourney,
     editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     backLinkHref: '',
     isCtaAcceptAndSave: false,
@@ -184,13 +179,12 @@ describe('Views - Appointments Management - Extra Information, with toggle on', 
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
-        appointmentJourney: {
-          mode: AppointmentJourneyMode.CREATE,
-          type: AppointmentType.GROUP,
-          startDate: formatIsoDate(weekTomorrow),
-        },
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        startDate: formatIsoDate(weekTomorrow),
       },
+
       editAppointmentJourney: {
         numberOfAppointments: 3,
         appointments: [
@@ -224,7 +218,7 @@ describe('Views - Appointments Management - Extra Information, with toggle on', 
   })
 
   it('create content', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.appointmentJourney.mode = AppointmentJourneyMode.CREATE
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -239,7 +233,7 @@ describe('Views - Appointments Management - Extra Information, with toggle on', 
   })
 
   it('edit content', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+    viewContext.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -276,8 +270,8 @@ describe('Views - Appointments Management - Extra Information, with toggle on', 
     { code: 'VLLA', description: 'Video Link - Legal Appointment' },
     { code: 'VLOO', description: 'Video Link - Official Other' },
   ])('create content - $code - $description', ({ code, description }) => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
-    viewContext.session.appointmentJourney.category = {
+    viewContext.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.appointmentJourney.category = {
       code,
       description,
     }
@@ -301,9 +295,9 @@ describe('Views - Appointments Management - Extra Information, with toggle on', 
     { code: 'VLLA', description: 'Video Link - Legal Appointment' },
     { code: 'VLOO', description: 'Video Link - Official Other' },
   ])('edit content - $code - $description', ({ code, description }) => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+    viewContext.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
-    viewContext.session.appointmentJourney.category = {
+    viewContext.appointmentJourney.category = {
       code,
       description,
     }

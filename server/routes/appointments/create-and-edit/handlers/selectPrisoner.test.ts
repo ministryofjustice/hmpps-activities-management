@@ -33,10 +33,8 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
     } as unknown as Response
 
     req = {
-      session: {
-        appointmentJourney: {},
-      },
-      journeyData: {},
+      session: {},
+      journeyData: { appointmentJourney: {} },
       body: {},
       query: {},
       flash: jest.fn(),
@@ -134,7 +132,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       req.body = {
         selectedPrisoner: 'A1234BC',
       }
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
         prisoners: [
@@ -166,7 +164,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
 
       await handler.SELECT_PRISONER(req, res)
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([
         {
           number: 'X9876YZ',
           name: 'James Johnson',
@@ -196,7 +194,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       req.body = {
         selectedPrisoner: 'X9876YZ',
       }
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
         prisoners: [
@@ -232,7 +230,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       req.body = {
         selectedPrisoner: 'A1234BC',
       }
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         mode: AppointmentJourneyMode.EDIT,
         type: AppointmentType.GROUP,
       }

@@ -40,7 +40,7 @@ export default class RepeatFrequencyAndCountRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { frequency, numberOfAppointments } = req.body
-    const prisonersCount = req.session.appointmentJourney.prisoners.length
+    const prisonersCount = req.journeyData.appointmentJourney.prisoners.length
     const { maxAppointmentInstances } = config.appointmentsConfig
 
     if (prisonersCount * numberOfAppointments > maxAppointmentInstances) {
@@ -52,9 +52,9 @@ export default class RepeatFrequencyAndCountRoutes {
       )
     }
 
-    req.session.appointmentJourney.repeat = YesNo.YES
-    req.session.appointmentJourney.frequency = frequency
-    req.session.appointmentJourney.numberOfAppointments = numberOfAppointments
+    req.journeyData.appointmentJourney.repeat = YesNo.YES
+    req.journeyData.appointmentJourney.frequency = frequency
+    req.journeyData.appointmentJourney.numberOfAppointments = numberOfAppointments
 
     return res.redirectOrReturn(`schedule`)
   }
