@@ -32,10 +32,9 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
     } as unknown as Response
 
     req = {
-      session: {
-        appointmentJourney: {},
-      },
+      session: {},
       journeyData: {
+        appointmentJourney: {},
         editAppointmentJourney: {},
       },
       flash: jest.fn(),
@@ -48,13 +47,13 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
 
   describe('GET', () => {
     it('should render the extra information view', async () => {
-      req.session.appointmentJourney.repeat = YesNo.NO
+      req.journeyData.appointmentJourney.repeat = YesNo.NO
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/extra-information', {
         isCtaAcceptAndSave: false,
-        prisoners: req.session.appointmentJourney.prisoners,
+        prisoners: req.journeyData.appointmentJourney.prisoners,
       })
     })
   })
@@ -67,7 +66,7 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.extraInformation).toEqual('Appointment level extra information')
+      expect(req.journeyData.appointmentJourney.extraInformation).toEqual('Appointment level extra information')
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })

@@ -24,7 +24,7 @@ export default class AppointmentSetDateRoutes {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
 
-    req.session.appointmentJourney.startDate = formatIsoDate(req.body.startDate)
+    req.journeyData.appointmentJourney.startDate = formatIsoDate(req.body.startDate)
 
     res.redirectOrReturn(`appointment-set-times`)
   }

@@ -33,12 +33,10 @@ describe('Views - Create Appointment Set - Add Extra Information - feature toggl
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
+      journeyData: {
         appointmentJourney: {
           type: AppointmentType.SET,
         } as AppointmentJourney,
-      },
-      journeyData: {
         appointmentSetJourney: {} as AppointmentSetJourney,
       },
     }
@@ -106,13 +104,11 @@ describe('Views - Create Appointment Set - Add Extra Information - feature toggl
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
+      journeyData: {
+        appointmentSetJourney: {} as AppointmentSetJourney,
         appointmentJourney: {
           type: AppointmentType.SET,
         } as AppointmentJourney,
-      },
-      journeyData: {
-        appointmentSetJourney: {} as AppointmentSetJourney,
       },
     }
   })

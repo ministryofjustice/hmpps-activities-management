@@ -18,7 +18,7 @@ export default class ApplyToRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId, property } = req.params
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
 
     res.render('pages/appointments/create-and-edit/apply-to', {
       appointmentId,

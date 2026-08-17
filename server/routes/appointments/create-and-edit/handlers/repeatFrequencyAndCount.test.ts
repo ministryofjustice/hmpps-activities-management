@@ -20,7 +20,7 @@ describe('Route Handlers - Create Appointment - Repeat Frequency and Count', () 
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         appointmentJourney: {
           prisoners: [
             {
@@ -49,13 +49,13 @@ describe('Route Handlers - Create Appointment - Repeat Frequency and Count', () 
         numberOfAppointments: 6,
       }
 
-      expect(req.session.appointmentJourney.repeat).toBeUndefined()
+      expect(req.journeyData.appointmentJourney.repeat).toBeUndefined()
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
-      expect(req.session.appointmentJourney.frequency).toEqual(AppointmentFrequency.WEEKLY)
-      expect(req.session.appointmentJourney.numberOfAppointments).toEqual(6)
+      expect(req.journeyData.appointmentJourney.repeat).toEqual(YesNo.YES)
+      expect(req.journeyData.appointmentJourney.frequency).toEqual(AppointmentFrequency.WEEKLY)
+      expect(req.journeyData.appointmentJourney.numberOfAppointments).toEqual(6)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule')
     })
 
@@ -71,7 +71,7 @@ describe('Route Handlers - Create Appointment - Repeat Frequency and Count', () 
         numberOfAppointments: maxAllowedAppointmentInstances + 1,
       }
 
-      req.session.appointmentJourney.prisoners = Array(prisonersToAddCount)
+      req.journeyData.appointmentJourney.prisoners = Array(prisonersToAddCount)
         .fill(null)
         .map((_, i) => ({
           number: `A12${i}BC`,

@@ -22,9 +22,7 @@ describe('Views - Create Appointment Set - Add Extra Information - with feature 
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
-        appointmentJourney: {} as AppointmentJourney,
-      },
+      appointmentJourney: {} as AppointmentJourney,
     }
   })
 
@@ -62,9 +60,7 @@ describe('Views - Create Appointment Set - Add Extra Information - with feature 
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
-        appointmentJourney: {} as AppointmentJourney,
-      },
+      appointmentJourney: {} as AppointmentJourney,
     }
   })
 

@@ -41,10 +41,9 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
     } as unknown as Response
 
     req = {
-      session: {
-        appointmentJourney: {},
-      },
+      session: {},
       journeyData: {
+        appointmentJourney: {},
         appointmentSetJourney: {},
       },
       query: {},
