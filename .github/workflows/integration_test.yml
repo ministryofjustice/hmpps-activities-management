@@ -26,6 +26,7 @@ jobs:
       spec-file-patterns: ${{ inputs.spec-file-patterns }}
     permissions:
       contents: read
+      actions: read
 
   cypress-test:
     name: Run Cypress tests
@@ -134,6 +135,9 @@ jobs:
     needs:
       - get-timings
       - cypress-test
+    permissions:
+      contents: read
+      actions: write
     with:
       repository: ministryofjustice/hmpps-activities-management
       initial-timings: ${{ needs.get-timings.outputs.timings }}
