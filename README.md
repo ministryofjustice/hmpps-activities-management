@@ -99,6 +99,35 @@ Or for production:
 
 `$ npm run test` - to run unit tests
 
+## Integration tests (PW/Wiremock)
+
+**Quick start commands**
+
+To run the entire PW suite locally: `npm run pw-test:local`
+To run the interactive PW UI locally: `npm run pw-test-ui:local`
+
+Alternativaly, the follow steps allow manual running:
+
+Pull images and start dependent services (redis and wiremock):
+
+`$ docker compose -f docker-compose-integration.yml pull`
+
+`$ docker compose -f docker-compose-integration.yml up -d`
+
+In a different terminal:
+
+`$ npm run build` - to compile ts and resources
+
+`$ npm run start-feature` - to start the UI service with env settings to reference locally-mocked (wiremock) APIs:
+
+In a third terminal:
+
+`$ npm run pw-test` - to run PW tests in the background
+
+OR
+
+`$ npm run pw-test-ui` - to run tests interactively
+
 ## Integration tests (Cypress/Wiremock)
 
 **Quick start commands**
