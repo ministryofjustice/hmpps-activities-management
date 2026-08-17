@@ -36,9 +36,7 @@ describe('Views - Appointments Management - Apply to', () => {
   ] as AppointmentApplyToOption[]
   let compiledTemplate: Template
   let viewContext = {
-    session: {
-      appointmentJourney: {} as unknown as AppointmentJourney,
-    },
+    appointmentJourney: {} as unknown as AppointmentJourney,
     editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     appointmentId,
     property: '',
@@ -55,18 +53,18 @@ describe('Views - Appointments Management - Apply to', () => {
       user: {
         activeCaseLoadId: 'MDI',
       },
-      session: {
-        appointmentJourney: {
-          mode: AppointmentJourneyMode.EDIT,
-          type: AppointmentType.GROUP,
-          location: {
-            id: '123',
-            description: 'Original location',
-          },
-          startDate: formatIsoDate(weekTomorrow),
-          frequency: AppointmentFrequency.DAILY,
+
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.EDIT,
+        type: AppointmentType.GROUP,
+        location: {
+          id: '123',
+          description: 'Original location',
         },
+        startDate: formatIsoDate(weekTomorrow),
+        frequency: AppointmentFrequency.DAILY,
       },
+
       editAppointmentJourney: {
         location: {
           id: '123',

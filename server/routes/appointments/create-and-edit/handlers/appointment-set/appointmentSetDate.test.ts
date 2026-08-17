@@ -27,7 +27,8 @@ describe('Route Handlers - Create Appointment Set - Date', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {},
       },
       query: {},
@@ -54,7 +55,7 @@ describe('Route Handlers - Create Appointment Set - Date', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
+      expect(req.journeyData.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`appointment-set-times`)
     })
 

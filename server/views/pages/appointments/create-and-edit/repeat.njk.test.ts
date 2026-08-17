@@ -10,9 +10,7 @@ const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/re
 describe('Views - Create Appointment - Repeat', () => {
   let compiledTemplate: Template
   let viewContext = {
-    session: {
-      appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,
-    },
+    appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,
     formResponses: {},
   }
 
@@ -21,9 +19,7 @@ describe('Views - Create Appointment - Repeat', () => {
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
-        appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,
-      },
+      appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,
       formResponses: {},
     }
   })
@@ -51,7 +47,7 @@ describe('Views - Create Appointment - Repeat', () => {
   })
 
   it.each([YesNo.NO, YesNo.YES])('should check correct input based on session value response %s', repeat => {
-    viewContext.session.appointmentJourney.repeat = repeat
+    viewContext.appointmentJourney.repeat = repeat
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -64,7 +60,7 @@ describe('Views - Create Appointment - Repeat', () => {
     viewContext.formResponses = {
       repeat: YesNo.NO,
     }
-    viewContext.session.appointmentJourney.repeat = YesNo.YES
+    viewContext.appointmentJourney.repeat = YesNo.YES
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -75,7 +71,7 @@ describe('Views - Create Appointment - Repeat', () => {
 
   describe('Group Appointment', () => {
     beforeEach(() => {
-      viewContext.session.appointmentJourney.type = AppointmentType.GROUP
+      viewContext.appointmentJourney.type = AppointmentType.GROUP
     })
 
     it('should display journey title', () => {

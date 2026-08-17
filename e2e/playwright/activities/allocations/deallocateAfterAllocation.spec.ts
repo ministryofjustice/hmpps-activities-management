@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test'
 import { format } from 'date-fns'
 
-import stubs from '../../../../integration_tests/mockApis/stubs'
-import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import { signIn } from '../../helpers/auth'
 import setupDeallocateAfterAllocationScenario from '../../helpers/activities/allocations/deallocateAfterAllocation'
+import stubs from '../../../../integration_tests/mockApis/stubs'
+import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()

@@ -18,7 +18,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         appointmentJourney: {
           appointmentName: 'Craftwork',
         },
@@ -32,7 +32,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/how-to-add-prisoners', {
         HowToAddOptions,
-        appointmentJourney: req.session.appointmentJourney,
+        appointmentJourney: req.journeyData.appointmentJourney,
       })
     })
 
@@ -42,7 +42,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/how-to-add-prisoners', {
         preserveHistory: 'true',
         HowToAddOptions,
-        appointmentJourney: req.session.appointmentJourney,
+        appointmentJourney: req.journeyData.appointmentJourney,
       })
     })
   })

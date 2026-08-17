@@ -11,14 +11,14 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Review appointment start and end times - Appointments - DPS", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Review appointment start and end times - Appointments - DPS", appointmentJourney) %}
 {% set pageId = 'appointment-set-times-page' %}
 {% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
+            {{ appointmentTypeCaption(appointmentJourney) }}
             <h1 class="govuk-heading-l">Review appointment start and end times</h1>
             <p class="govuk-body">You can edit the start and end time for each appointment. Appointments can take place at the same time.</p>
         </div>

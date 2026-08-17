@@ -8,7 +8,7 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { AppointmentApplyTo, AppointmentFrequency } from '../../../../@types/appointments'
 import { getAppointmentApplyToOptions, getRepeatFrequencyText } from '../../../../utils/editAppointmentUtils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
-import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType, AppointmentJourney } from '../appointmentJourney'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/editAppointmentService')
@@ -25,15 +25,13 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
           repeatFrequency: AppointmentFrequency.DAILY,
           startDate: formatIsoDate(weekTomorrow),
-        },
-      },
-      journeyData: {
+        } as AppointmentJourney,
         editAppointmentJourney: {
           numberOfAppointments: 4,
           appointments: [
@@ -79,7 +77,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         appointmentId,
         property,
         applyToOptions: getAppointmentApplyToOptions(req),
-        frequencyText: getRepeatFrequencyText(req.session.appointmentJourney),
+        frequencyText: getRepeatFrequencyText(req.journeyData.appointmentJourney),
       })
     })
   })

@@ -24,14 +24,13 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
           startDate: formatIsoDate(weekTomorrow),
         },
-      },
-      journeyData: {
         editAppointmentJourney: {
           numberOfAppointments: 4,
           appointments: [
@@ -77,7 +76,7 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirm-edit', {
         appointmentId,
-        startDate: parseIsoDate(req.session.appointmentJourney.startDate),
+        startDate: parseIsoDate(req.journeyData.appointmentJourney.startDate),
       })
     })
   })
