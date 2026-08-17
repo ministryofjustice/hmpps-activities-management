@@ -53,6 +53,26 @@ describe('Views - Create Appointment - Confirmation', () => {
     )
   })
 
+  it('should not display a back link', () => {
+    viewContext.appointment = {
+      appointmentSeries: { schedule: null },
+      appointmentType: AppointmentType.GROUP,
+      startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
+      attendees: [
+        {
+          prisoner: {
+            firstName: 'TEST',
+            lastName: 'PRISONER',
+          },
+        },
+      ],
+    } as AppointmentDetails
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('.js-backlink')).toHaveLength(0)
+  })
+
   it('should display create message when the appointment is retrospective', () => {
     const fiveDaysAgo = subDays(new Date(), 5)
     viewContext.appointment = {
