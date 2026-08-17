@@ -243,6 +243,38 @@ describe('Views - Create Appointment - Check Answers - with extra information to
     $ = cheerio.load(compiledTemplate.render(viewContext))
   })
 
+  it('should preserve history on all change links', () => {
+    viewContext.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
+    viewContext.appointmentJourney.location = {
+      id: 123,
+      description: 'Wing A',
+    }
+    viewContext.appointmentJourney.retrospective = YesNo.NO
+    viewContext.appointmentJourney.repeat = YesNo.YES
+    viewContext.appointmentJourney.frequency = AppointmentFrequency.WEEKLY
+    viewContext.appointmentJourney.numberOfAppointments = 6
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=change-name]').attr('href')).toBe('name?preserveHistory=true')
+    expect($('[data-qa=change-tier]').attr('href')).toBe('tier?preserveHistory=true')
+    expect($('[data-qa=change-host]').attr('href')).toBe('host?preserveHistory=true')
+    expect($('[data-qa=change-location]').attr('href')).toBe('location?preserveHistory=true')
+
+    expect($('[data-qa=change-start-date]').attr('href')).toBe('date-and-time?preserveHistory=true')
+    expect($('[data-qa=change-start-time]').attr('href')).toBe('date-and-time?preserveHistory=true')
+    expect($('[data-qa=change-end-time]').attr('href')).toBe('date-and-time?preserveHistory=true')
+
+    expect($('[data-qa=change-repeat]').attr('href')).toBe('repeat?preserveHistory=true')
+    expect($('[data-qa=change-frequency]').attr('href')).toBe('repeat-frequency-and-count?preserveHistory=true')
+    expect($('[data-qa=change-number-of-appointments]').attr('href')).toBe(
+      'repeat-frequency-and-count?preserveHistory=true',
+    )
+
+    expect($('[data-qa=change-prisoners]').attr('href')).toBe('review-prisoners?preserveHistory=true')
+    expect($('[data-qa=change-extra-information]').attr('href')).toBe('extra-information?preserveHistory=true')
+  })
+
   it('should display appointment name', () => {
     viewContext.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
 
