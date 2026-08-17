@@ -31,9 +31,11 @@ export default function redirectInterceptor(store: TokenStoreInterface): Router 
           originalRedirect.call(this, url)
         })
 
-        store.setTokenAndEmit(journeyTokenKey, json, config.journeyDataTokenDurationHours * 60 * 60, redisBus)
+        store
+          .setTokenAndEmit(journeyTokenKey, json, config.journeyDataTokenDurationHours * 60 * 60, redisBus)
+          .catch(err => logger.warn(err, `redirectInterceptor - Redis save failed`))
       } catch (err) {
-        logger.warn(`redirectInterceptor - Redis save failed: ${err}`)
+        logger.warn(err, `redirectInterceptor - Redis save failed`)
       }
     }
     next()

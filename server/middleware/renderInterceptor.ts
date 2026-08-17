@@ -31,9 +31,11 @@ export default function renderInterceptor(store: TokenStoreInterface): Router {
           originalRender.call(this, view, options, callback)
         })
 
-        store.setTokenAndEmit(journeyTokenKey, json, config.journeyDataTokenDurationHours * 60 * 60, redisBus)
+        store
+          .setTokenAndEmit(journeyTokenKey, json, config.journeyDataTokenDurationHours * 60 * 60, redisBus)
+          .catch(err => logger.warn(err, `renderInterceptor - Redis save failed`))
       } catch (err) {
-        logger.warn(`renderInterceptor - Redis save failed: ${err}`)
+        logger.warn(err, `renderInterceptor - Redis save failed`)
       }
     }
     next()

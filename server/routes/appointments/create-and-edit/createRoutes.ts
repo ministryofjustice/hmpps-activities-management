@@ -50,11 +50,12 @@ export default function Create({
   tokenStore,
 }: Services): Router {
   const router = Router({ mergeParams: true })
+  const setUpAppointmentJourneyData = setUpJourneyData(tokenStore, { preserveLegacyAppointmentJourney: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, setUpJourneyData(tokenStore), emptyAppointmentJourneyHandler(stepRequiresSession), handler)
+    router.get(path, setUpAppointmentJourneyData, emptyAppointmentJourneyHandler(stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
+    router.post(path, setUpAppointmentJourneyData, validationMiddleware(type), handler)
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
@@ -94,7 +95,7 @@ export default function Create({
   get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
   router.post(
     '/upload-prisoner-list',
-    setUpJourneyData(tokenStore),
+    setUpAppointmentJourneyData,
     setUpMultipartFormDataParsing(),
     validationMiddleware(PrisonerList),
     uploadPrisonerListRoutes.POST,
@@ -102,7 +103,7 @@ export default function Create({
   get('/upload-appointment-set', appointmentSetUploadRoutes.GET, true)
   router.post(
     '/upload-appointment-set',
-    setUpJourneyData(tokenStore),
+    setUpAppointmentJourneyData,
     setUpMultipartFormDataParsing(),
     validationMiddleware(AppointmentsList),
     appointmentSetUploadRoutes.POST,
@@ -149,7 +150,7 @@ export default function Create({
   post('/check-answers', checkAnswersRoutes.POST)
   router.get(
     '/confirmation/:appointmentId',
-    setUpJourneyData(tokenStore),
+    setUpAppointmentJourneyData,
     fetchAppointment(activitiesService),
     emptyAppointmentJourneyHandler(true),
     confirmationRoutes.GET,
@@ -173,7 +174,7 @@ export default function Create({
   post('/appointment-set-times', appointmentSetTimesRoutes.POST, AppointmentTimes)
   router.get(
     '/set-confirmation/:appointmentSetId',
-    setUpJourneyData(tokenStore),
+    setUpAppointmentJourneyData,
     fetchAppointmentSet(activitiesService),
     emptyAppointmentJourneyHandler(true),
     confirmationRoutes.GET_SET,
@@ -181,7 +182,7 @@ export default function Create({
 
   router.get(
     '/start-copy/:appointmentId',
-    setUpJourneyData(tokenStore),
+    setUpAppointmentJourneyData,
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.COPY,

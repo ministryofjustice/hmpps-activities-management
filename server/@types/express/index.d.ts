@@ -29,8 +29,10 @@ declare module 'express-session' {
     // The following session data properties are overridden by the populateJourney middleware.
     // That middleware redirects the getter and setter to use the sessionDataMap below. As a result,
     // these properties are virtual and are not directly set. They exist to allow pre-existing access
-    // as if there was only one journey per session e.g. req.session.journeyMetrics
+    // as if there was only one journey per session e.g. req.session.appointmentJourney
     suspendJourney: SuspendJourney
+    // TODO: Retained as a fallback while appointmentJourney migrates to journeyData - remove once migrated
+    appointmentJourney: AppointmentJourney
     bookACourtHearingJourney: BookACourtHearingJourney
     bookAProbationMeetingJourney: BookAProbationMeetingJourney
     journeyMetrics: JourneyMetrics
@@ -42,6 +44,8 @@ declare module 'express-session' {
 
 export type SessionDatum = {
   instanceUnixEpoch: number
+  // TODO: Retained as a fallback while appointmentJourney migrates to journeyData - remove once migrated
+  appointmentJourney?: AppointmentJourney
   journeyMetrics: JourneyMetrics
 }
 

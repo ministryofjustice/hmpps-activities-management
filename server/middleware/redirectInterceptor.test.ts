@@ -96,6 +96,28 @@ describe('redirectInterceptor', () => {
       expect.any(EventEmitter),
     )
   })
+  // TODO: remove this test as part of appointment journey migration cleanup
+  it('redirects when saving journey data fails', async () => {
+    tokenStore.setTokenAndEmit = jest.fn(
+      async (key: string, _token: string, _durationSeconds: number, bus?: EventEmitter): Promise<void> => {
+        bus.emit(key)
+        throw new Error('Redis unavailable')
+      },
+    )
+
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      req.user = { username } as Express.User
+      req.params = { journeyId }
+      req.journeyData = { createJourney: { activityId: 123 } }
+      next()
+    })
+
+    app.get('/:journeyId/this-location', (req, res) => res.redirect('/next-location'))
+
+    const res = await request(app).get(`/${journeyId}/this-location`).redirects(0).expect(302)
+
+    expect(res.header.location).toBe('/next-location')
+  })
 
   it('does not save journey data but redirects', async () => {
     tokenStore.setToken = jest.fn()

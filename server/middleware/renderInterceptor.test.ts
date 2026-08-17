@@ -100,6 +100,32 @@ describe('renderInterceptor', () => {
     )
   })
 
+  it('renders when saving journey data fails', async () => {
+    tokenStore.setTokenAndEmit = jest.fn(
+      async (key: string, _token: string, _durationSeconds: number, bus?: EventEmitter): Promise<void> => {
+        bus.emit(key)
+        throw new Error('Redis unavailable')
+      },
+    )
+
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      req.user = { username } as Express.User
+      req.params = { journeyId }
+      req.journeyData = { createJourney: { activityId: 123 } }
+      res.render = jest.fn()
+      next()
+    })
+
+    app.use(renderInterceptor(tokenStore))
+    app.use(errorHandler(false))
+    app.get('/:journeyId/this-location', (req, res) => {
+      res.render('view', {})
+      res.sendStatus(200)
+    })
+
+    await request(app).get(`/${journeyId}/this-location`).expect(200)
+  })
+
   it('does not save journey data but does render', async () => {
     tokenStore.setTokenAndEmit = jest.fn()
 
