@@ -24,6 +24,7 @@ jobs:
     with:
       repository: ministryofjustice/hmpps-activities-management
       spec-file-patterns: ${{ inputs.spec-file-patterns }}
+      timings-cache-key: cypress-timings-${{ github.ref_name }}
     permissions:
       contents: read
       actions: read
@@ -131,7 +132,7 @@ jobs:
   save-timings:
     name: Save timings
     uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_save_timings.yml@v1
-    if: github.ref == 'refs/heads/main' && (success() || failure())
+    if: (success() || failure())
     needs:
       - get-timings
       - cypress-test
@@ -140,6 +141,7 @@ jobs:
       actions: write
     with:
       repository: ministryofjustice/hmpps-activities-management
+      timings-cache-key: cypress-timings-${{ github.ref_name }}
       initial-timings: ${{ needs.get-timings.outputs.timings }}
       updated-timings: ${{ toJSON(needs.cypress-test.outputs) }}
 
