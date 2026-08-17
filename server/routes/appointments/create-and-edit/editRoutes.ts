@@ -37,12 +37,11 @@ export default function Edit({
   tokenStore,
 }: Services): Router {
   const router = Router({ mergeParams: true })
-  const setUpAppointmentJourneyData = setUpJourneyData(tokenStore, { preserveLegacyAppointmentJourney: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, setUpAppointmentJourneyData, emptyEditAppointmentJourneyHandler(stepRequiresSession), handler)
+    router.get(path, setUpJourneyData(tokenStore), emptyEditAppointmentJourneyHandler(stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, setUpAppointmentJourneyData, validationMiddleware(type), handler)
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
@@ -62,7 +61,7 @@ export default function Edit({
 
   router.get(
     '/start/cancel',
-    setUpAppointmentJourneyData,
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.CANCEL,
@@ -78,7 +77,7 @@ export default function Edit({
   const uncancelRoutes = new UncancelRoutes(editAppointmentService)
   router.get(
     '/start/uncancel',
-    setUpAppointmentJourneyData,
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.UNCANCEL,
@@ -91,7 +90,7 @@ export default function Edit({
   // Edit property routes
   router.get(
     '/start/:property',
-    setUpAppointmentJourneyData,
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.EDIT,
@@ -122,7 +121,7 @@ export default function Edit({
   // Remove prisoner routes
   router.get(
     '/start/:prisonNumber/remove',
-    setUpAppointmentJourneyData,
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.REMOVE_PRISONER,
@@ -141,7 +140,7 @@ export default function Edit({
 
   router.get(
     '/start/prisoners/add',
-    setUpAppointmentJourneyData,
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.ADD_PRISONERS,
@@ -154,7 +153,7 @@ export default function Edit({
   get('/prisoners/add/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
   router.post(
     '/prisoners/add/upload-prisoner-list',
-    setUpAppointmentJourneyData,
+    setUpJourneyData(tokenStore),
     setUpMultipartFormDataParsing(),
     validationMiddleware(PrisonerList),
     uploadPrisonerListRoutes.EDIT,
