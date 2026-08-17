@@ -14,9 +14,7 @@ const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/re
 describe('Views - Appointments Management - Review Prisoners', () => {
   let compiledTemplate: Template
   let viewContext = {
-    session: {
-      appointmentJourney: {} as unknown as AppointmentJourney,
-    },
+    appointmentJourney: {} as unknown as AppointmentJourney,
     editAppointmentJourney: {} as unknown as EditAppointmentJourney,
   }
 
@@ -25,12 +23,10 @@ describe('Views - Appointments Management - Review Prisoners', () => {
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
-        appointmentJourney: {
-          mode: AppointmentJourneyMode.CREATE,
-          type: AppointmentType.INDIVIDUAL,
-        } as AppointmentJourney,
-      },
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.INDIVIDUAL,
+      } as AppointmentJourney,
       editAppointmentJourney: {} as EditAppointmentJourney,
     }
   })

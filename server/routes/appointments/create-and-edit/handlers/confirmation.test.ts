@@ -34,6 +34,8 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
           journeyStartTime: Date.now() - 60000,
           source: 'startLink',
         },
+      },
+      journeyData: {
         appointmentJourney: {
           prisoner: {
             number: 'A1234BC',
@@ -65,8 +67,6 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
             date: '2023-04-23T13:00:00.000+0100',
           },
         },
-      },
-      journeyData: {
         appointmentSetJourney: {},
       },
       appointment: {
@@ -101,7 +101,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     })
 
     it('should render the confirmation page with appointment details when duplicating an appointment', async () => {
-      req.session.appointmentJourney.originalAppointmentId = 789
+      req.journeyData.appointmentJourney.originalAppointmentId = 789
 
       await handler.GET(req, res)
 
@@ -120,7 +120,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
     it('should clear session', async () => {
       await handler.GET(req, res)
-      expect(req.session.appointmentJourney).toBeNull()
+      expect(req.journeyData.appointmentJourney).toBeNull()
       expect(req.session.journeyMetrics).toBeNull()
     })
   })
@@ -144,7 +144,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
     it('should clear session', async () => {
       await handler.GET_SET(req, res)
-      expect(req.session.appointmentJourney).toBeNull()
+      expect(req.journeyData.appointmentJourney).toBeNull()
       expect(req.journeyData.appointmentSetJourney).toBeNull()
       expect(req.session.journeyMetrics).toBeNull()
     })

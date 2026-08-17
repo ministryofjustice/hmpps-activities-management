@@ -16,9 +16,7 @@ describe('Views - Create Appointment - Confirmation', () => {
   const tomorrow = addDays(new Date(), 1)
   let viewContext = {
     appointment: {} as AppointmentDetails,
-    session: {
-      appointmentJourney: {} as AppointmentJourney,
-    },
+    appointmentJourney: {} as AppointmentJourney,
     appointmentSet: null as AppointmentSetDetails,
   }
 
@@ -28,9 +26,7 @@ describe('Views - Create Appointment - Confirmation', () => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
       appointment: {} as AppointmentDetails,
-      session: {
-        appointmentJourney: {} as AppointmentJourney,
-      },
+      appointmentJourney: {} as AppointmentJourney,
       appointmentSet: null as AppointmentSetDetails,
     }
   })
@@ -93,7 +89,7 @@ describe('Views - Create Appointment - Confirmation', () => {
       ],
     } as AppointmentDetails
 
-    viewContext.session.appointmentJourney.retrospective = YesNo.YES
+    viewContext.appointmentJourney.retrospective = YesNo.YES
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -181,7 +177,7 @@ describe('Views - Create Appointment - Confirmation', () => {
       updatedBy: null,
     } as AppointmentSetDetails
 
-    viewContext.session.appointmentJourney.retrospective = YesNo.YES
+    viewContext.appointmentJourney.retrospective = YesNo.YES
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
@@ -365,7 +361,7 @@ describe('Views - Create Appointment - Confirmation', () => {
         ],
       } as AppointmentDetails
 
-      viewContext.session.appointmentJourney.retrospective = YesNo.YES
+      viewContext.appointmentJourney.retrospective = YesNo.YES
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
       expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
@@ -510,7 +506,7 @@ describe('Views - Create Appointment - Confirmation', () => {
         updatedBy: null,
       } as AppointmentSetDetails
 
-      viewContext.session.appointmentJourney.retrospective = YesNo.YES
+      viewContext.appointmentJourney.retrospective = YesNo.YES
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
       expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(

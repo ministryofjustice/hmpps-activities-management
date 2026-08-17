@@ -10,9 +10,7 @@ const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/re
 describe('Views - Create Appointment - Repeat Frequency and Count', () => {
   let compiledTemplate: Template
   let viewContext = {
-    session: {
-      appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,
-    },
+    appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,
     formResponses: {},
   }
 
@@ -21,9 +19,7 @@ describe('Views - Create Appointment - Repeat Frequency and Count', () => {
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
-        appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,
-      },
+      appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,
       formResponses: {},
     }
   })
@@ -73,7 +69,7 @@ describe('Views - Create Appointment - Repeat Frequency and Count', () => {
     AppointmentFrequency.FORTNIGHTLY,
     AppointmentFrequency.MONTHLY,
   ])('should check correct input based on session value response %s', frequency => {
-    viewContext.session.appointmentJourney.frequency = frequency
+    viewContext.appointmentJourney.frequency = frequency
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -86,7 +82,7 @@ describe('Views - Create Appointment - Repeat Frequency and Count', () => {
     viewContext.formResponses = {
       frequency: AppointmentFrequency.WEEKLY,
     }
-    viewContext.session.appointmentJourney.frequency = AppointmentFrequency.FORTNIGHTLY
+    viewContext.appointmentJourney.frequency = AppointmentFrequency.FORTNIGHTLY
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -97,7 +93,7 @@ describe('Views - Create Appointment - Repeat Frequency and Count', () => {
 
   describe('Group Appointment', () => {
     beforeEach(() => {
-      viewContext.session.appointmentJourney.type = AppointmentType.GROUP
+      viewContext.appointmentJourney.type = AppointmentType.GROUP
     })
 
     it('should display journey title', () => {

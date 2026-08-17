@@ -8,10 +8,10 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/showLocation.njk" import showLocation %}
 
-{% if session.appointmentJourney.type == AppointmentType.SET %}
-    {% set pageTitle = appointmentJourneyTitle("No attendees for set - Appointments - DPS" if prisoners.length == 0 else "Avoid clashes - Appointments - DPS", session.appointmentJourney) %}
+{% if appointmentJourney.type == AppointmentType.SET %}
+    {% set pageTitle = appointmentJourneyTitle("No attendees for set - Appointments - DPS" if prisoners.length == 0 else "Avoid clashes - Appointments - DPS", appointmentJourney) %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("No attendees - Appointments - DPS" if prisoners.length == 0 else "Avoid clashes - Appointments - DPS", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("No attendees - Appointments - DPS" if prisoners.length == 0 else "Avoid clashes - Appointments - DPS", appointmentJourney) %}
 {% endif %}
 {% set pageId = 'appointment-schedule-page' %}
 {% set jsBackLink = true %}
@@ -19,10 +19,10 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
+            {{ appointmentTypeCaption(appointmentJourney) }}
 
             {% if prisonerSchedules.length == 0 %}
-                {% if session.appointmentJourney.type == AppointmentType.SET %}
+                {% if appointmentJourney.type == AppointmentType.SET %}
                     <h1 class="govuk-heading-l">There are no attendees for this set</h1>
                     <p class="govuk-body">You’ve removed the last attendee for this set of appointments.</p>
                     <p class="govuk-body">You need to add a new list of prison numbers to continue scheduling the set of back-to-backs.</p>
@@ -32,12 +32,12 @@
                     <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}" class="govuk-link govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
                 {% endif %}
 
-                {% set addPrisonersHref = ('prisoners/add/how-to-add-prisoners?preserveHistory=true' if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT) or
-                    ('/appointments/create/start-set' if session.appointmentJourney.type == AppointmentType.SET) or
+                {% set addPrisonersHref = ('prisoners/add/how-to-add-prisoners?preserveHistory=true' if appointmentJourney.mode == AppointmentJourneyMode.EDIT) or
+                    ('/appointments/create/start-set' if appointmentJourney.type == AppointmentType.SET) or
                     "how-to-add-prisoners?preserveHistory=true" %}
 
                 {{ govukButton({
-                    text: ("Add a new list" if session.appointmentJourney.type == AppointmentType.SET else "Add someone to the list"),
+                    text: ("Add a new list" if appointmentJourney.type == AppointmentType.SET else "Add someone to the list"),
                     href: addPrisonersHref
                 }) }}
             {% else %}
@@ -47,14 +47,14 @@
                     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                     {% set appointmentSummary = [] %}
-                    {% if session.appointmentJourney.mode != AppointmentJourneyMode.EDIT %}
+                    {% if appointmentJourney.mode != AppointmentJourneyMode.EDIT %}
                         {% set appointmentSummary = (appointmentSummary.push(
                             {
                                 key: {
                                     text: "Appointment name"
                                 },
                                 value: {
-                                    text: session.appointmentJourney.appointmentName
+                                    text: appointmentJourney.appointmentName
                                 }
                             }, {
                                 key: {
@@ -62,11 +62,11 @@
                                 },
                                 value: {
                                     html: showProfileLink({
-                                        firstName: session.appointmentJourney.prisoners[0].firstName,
-                                        middleNames: session.appointmentJourney.prisoners[0].middleNames,
-                                        lastName: session.appointmentJourney.prisoners[0].lastName,
-                                        prisonerNumber: session.appointmentJourney.prisoners[0].number,
-                                        cellLocation: session.appointmentJourney.prisoners[0].cellLocation
+                                        firstName: appointmentJourney.prisoners[0].firstName,
+                                        middleNames: appointmentJourney.prisoners[0].middleNames,
+                                        lastName: appointmentJourney.prisoners[0].lastName,
+                                        prisonerNumber: appointmentJourney.prisoners[0].number,
+                                        cellLocation: appointmentJourney.prisoners[0].cellLocation
                                     })
                                 },
                                 actions: {
@@ -80,12 +80,12 @@
                                         }
                                     ]
                                 }
-                            } if session.appointmentJourney.type == AppointmentType.INDIVIDUAL, {
+                            } if appointmentJourney.type == AppointmentType.INDIVIDUAL, {
                                 key: {
                                     text: "Attendees"
                                 },
                                 value: {
-                                    text: session.appointmentJourney.prisoners | length
+                                    text: appointmentJourney.prisoners | length
                                 },
                                 actions: {
                                     items: [
@@ -98,14 +98,14 @@
                                         }
                                     ]
                                 }
-                            } if session.appointmentJourney.type == AppointmentType.GROUP, {
+                            } if appointmentJourney.type == AppointmentType.GROUP, {
                                 key: {
                                     text: "Appointments"
                                 },
                                 value: {
                                     text: appointmentSetJourney.appointments | length
                                 }
-                            } if session.appointmentJourney.type == AppointmentType.SET
+                            } if appointmentJourney.type == AppointmentType.SET
                         ), appointmentSummary) %}
                     {% endif %}
 
@@ -131,10 +131,10 @@
                         }), appointmentSummary) %}
                     {% endif %}
 
-                    {% set showTime = (session.appointmentJourney.startTime and session.appointmentJourney.endTime) or
+                    {% set showTime = (appointmentJourney.startTime and appointmentJourney.endTime) or
                         (editAppointmentJourney.startTime and editAppointmentJourney.endTime) %}
 
-                    {% set isDateTimeEditable = session.appointmentJourney.mode != AppointmentJourneyMode.EDIT or
+                    {% set isDateTimeEditable = appointmentJourney.mode != AppointmentJourneyMode.EDIT or
                         editAppointmentJourney.startDate or
                         (editAppointmentJourney.startTime and editAppointmentJourney.endTime) %}
                     {% set appointmentSummary = (appointmentSummary.push(
@@ -148,7 +148,7 @@
                             actions: {
                                 items: [
                                     {
-                                        href: 'schedule/change?property=appointment-set-date&preserveHistory=true' if session.appointmentJourney.type == AppointmentType.SET else 'schedule/change?property=date-and-time&preserveHistory=true',
+                                        href: 'schedule/change?property=appointment-set-date&preserveHistory=true' if appointmentJourney.type == AppointmentType.SET else 'schedule/change?property=date-and-time&preserveHistory=true',
                                         text: "Change",
                                         visuallyHiddenText: "change date",
                                         classes: "govuk-link--no-visited-state",
@@ -172,7 +172,7 @@
                                         classes: "govuk-link--no-visited-state",
                                         attributes: { 'data-qa': 'change-time' }
                                     }
-                                ] if session.appointmentJourney.mode != AppointmentJourneyMode.COPY
+                                ] if appointmentJourney.mode != AppointmentJourneyMode.COPY
                             } if isDateTimeEditable
                         } if showTime
                     ), appointmentSummary) %}
@@ -182,26 +182,26 @@
                     }) }}
 
                     {{ govukButton({
-                        text: getAppointmentEditApplyToCta(session.appointmentJourney, editAppointmentJourney) if isCtaAcceptAndSave else "Continue",
+                        text: getAppointmentEditApplyToCta(appointmentJourney, editAppointmentJourney) if isCtaAcceptAndSave else "Continue",
                         preventDoubleClick: true,
                         attributes: { 'data-qa': 'top-cta' }
                     }) if prisonerSchedules.length > 10 }}
 
-                    {% if session.appointmentJourney.type != AppointmentType.INDIVIDUAL %}
+                    {% if appointmentJourney.type != AppointmentType.INDIVIDUAL %}
                         <h2 class="govuk-heading-m" data-qa="schedules-heading">Attendee events on {{ appointmentDate() }}</h2>
                     {% endif %}
 
                     {% for prisonerSchedule in prisonerSchedules %}
                         {% set prisoner = prisonerSchedule.prisoner %}
-                        {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-                            <h2 class="govuk-heading-m" data-qa="schedule-heading">Events for {{ prisoner | formatName(NameFormatStyle.firstLast, false) if prisoner.lastName else "No matching name" }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate | parseIsoDate | formatDate }}</h2>
+                        {% if appointmentJourney.type == AppointmentType.INDIVIDUAL %}
+                            <h2 class="govuk-heading-m" data-qa="schedule-heading">Events for {{ prisoner | formatName(NameFormatStyle.firstLast, false) if prisoner.lastName else "No matching name" }}, {{ prisoner.number }} on {{ appointmentJourney.startDate | parseIsoDate | formatDate }}</h2>
                             {{ prisonerScheduledEvents(prisoner, prisonerSchedule.scheduledEvents) }}
                         {% else %}
                             <div class="govuk-summary-card appointment-schedule">
                                 <div class="govuk-summary-card__title-wrapper">
                                     <h3 class="govuk-summary-card__title" data-qa="schedule-card-title-prison-number-{{ prisoner.number }}">
                                         <ul class='govuk-list'>
-                                            {% if session.appointmentJourney.type == AppointmentType.SET %}
+                                            {% if appointmentJourney.type == AppointmentType.SET %}
                                                 <li><strong>Proposed time: {{ prisonerSchedule.startTime.hour | padNumber + ":" + prisonerSchedule.startTime.minute | padNumber }} to {{ prisonerSchedule.endTime.hour | padNumber + ":" + prisonerSchedule.endTime.minute | padNumber }}</strong></li>
                                                 <li>{{ prisoner | formatName(NameFormatStyle.firstLast, false) if prisoner.lastName else "No matching name" }}, {{ prisoner.number }}</li>
                                             {% else %}
@@ -210,7 +210,7 @@
                                         </ul>
                                     </h3>
                                     <ul class="govuk-summary-card__actions govuk-summary-card__actions--stacked" data-qa="schedule-card-actions-prison-number-{{ prisoner.number }}">
-                                        {% if session.appointmentJourney.type == AppointmentType.SET %}
+                                        {% if appointmentJourney.type == AppointmentType.SET %}
                                             <li class="govuk-summary-card__action">
                                                 <a class="govuk-link govuk-link--no-visited-state" href="appointment-set-times?preserveHistory=true" data-qa="change-appointment-time-prison-number-{{ prisoner.number }}">
                                                     Change time<span class="govuk-visually-hidden"> of appointment for prison number {{ prisoner.number }}</span>
@@ -221,7 +221,7 @@
                                                     Remove appointment<span class="govuk-visually-hidden"> for prison number {{ prisoner.number }}</span>
                                                 </a>
                                             </li>
-                                        {% elseif session.appointmentJourney.mode != AppointmentJourneyMode.EDIT or editAppointmentJourney.addPrisoners %}
+                                        {% elseif appointmentJourney.mode != AppointmentJourneyMode.EDIT or editAppointmentJourney.addPrisoners %}
                                             <li class="govuk-summary-card__action">
                                                 <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" + ("?preserveHistory=true" if preserveHistory else "") }}" data-qa="remove-prison-number-{{ prisoner.number }}">
                                                     Remove attendee<span class="govuk-visually-hidden"> with prison number {{ prisoner.number }}</span>
@@ -290,7 +290,7 @@
                     {{ govukButton({
                         attributes: { 'data-qa': 'bottom-cta' },
                         preventDoubleClick: true,
-                        text: getAppointmentEditApplyToCta(session.appointmentJourney, editAppointmentJourney) if isCtaAcceptAndSave else "Continue"
+                        text: getAppointmentEditApplyToCta(appointmentJourney, editAppointmentJourney) if isCtaAcceptAndSave else "Continue"
                     }) }}
                 </form>
             {% endif %}
@@ -341,7 +341,7 @@
             }
         }) }}
     {% else %}
-        <p class="govuk-body" data-qa="no-events-for-prison-number-{{ prisoner.number }}">No other events scheduled{{ '.' if session.appointmentJourney.type == AppointmentType.INDIVIDUAL }}</p>
+        <p class="govuk-body" data-qa="no-events-for-prison-number-{{ prisoner.number }}">No other events scheduled{{ '.' if appointmentJourney.type == AppointmentType.INDIVIDUAL }}</p>
     {% endif %}
 {% endmacro %}
 
@@ -374,12 +374,12 @@
 {% endmacro %}
 
 {% macro appointmentDate() %}
-    {%- set startDate = editAppointmentJourney.startDate or session.appointmentJourney.startDate -%}
+    {%- set startDate = editAppointmentJourney.startDate or appointmentJourney.startDate -%}
     {{ startDate | parseIsoDate | formatDate }}
 {% endmacro %}
 
 {% macro appointmentTime() %}
-    {% set startTime = editAppointmentJourney.startTime.date or session.appointmentJourney.startTime.date %}
-    {% set endTime = editAppointmentJourney.endTime.date or session.appointmentJourney.endTime.date %}
+    {% set startTime = editAppointmentJourney.startTime.date or appointmentJourney.startTime.date %}
+    {% set endTime = editAppointmentJourney.endTime.date or appointmentJourney.endTime.date %}
     {{ (startTime | parseISODate | formatDate('HH:mm') + ' to ' + endTime | parseISODate | formatDate('HH:mm')) }}
 {% endmacro %}

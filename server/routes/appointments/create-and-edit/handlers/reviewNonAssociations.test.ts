@@ -37,12 +37,11 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           prisoners: [{ number: 'G6123VU' }, { number: 'AB123IT' }, { number: 'PW987BB' }],
         },
-      },
-      journeyData: {
         appointmentSetJourney: {
           appointments: [
             { prisoner: { number: 'A1234BC' } },
@@ -157,13 +156,13 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       })
     })
     it('if there is only one prisoner in the session, redirect to the next page', async () => {
-      req.session.appointmentJourney.prisoners = [{ number: 'G6123VU' } as AppointmentPrisonerDetails]
+      req.journeyData.appointmentJourney.prisoners = [{ number: 'G6123VU' } as AppointmentPrisonerDetails]
 
       await handler.GET(req, res)
       expect(res.redirect).toHaveBeenCalledWith('name')
     })
     it('if there is only one prisoner in the session because a prisoner was just removed, display the alternative message', async () => {
-      req.session.appointmentJourney.prisoners = [{ number: 'G6123VU' } as AppointmentPrisonerDetails]
+      req.journeyData.appointmentJourney.prisoners = [{ number: 'G6123VU' } as AppointmentPrisonerDetails]
       req.query.prisonerRemoved = 'true'
 
       await handler.GET(req, res)
@@ -176,7 +175,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       })
     })
     it('should render the view for create appointment set', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
       const expectedResult = [
         {
           primaryPrisoner: { name: 'SAMUEL RAMROOP', prisonerNumber: 'G6123VU' },
@@ -238,7 +237,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         .mockReturnValue(Promise.resolve([]))
     })
     it('should redirect or return to name page during create journey - if user has resolved any non-associations', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.CREATE
 
       req.body = {
         nonAssociationsRemainingCount: 0,
@@ -248,7 +247,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('name')
     })
     it('should redirect or return to the confirm non-associations page during create journey - if user has not resolved any non-associations', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.CREATE
 
       req.body = {
         nonAssociationsRemainingCount: 2,
@@ -261,7 +260,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
 
   describe('REMOVE', () => {
     it('should remove selected prisoners and redirect', async () => {
-      req.session.appointmentJourney.prisoners = [
+      req.journeyData.appointmentJourney.prisoners = [
         { number: 'G6123VU', name: 'SAMUEL RAMROOP' },
         { number: 'AB123IT', name: 'JOSHUA SMITH' },
       ] as AppointmentPrisonerDetails[]
@@ -272,12 +271,12 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([{ number: 'G6123VU', name: 'SAMUEL RAMROOP' }])
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([{ number: 'G6123VU', name: 'SAMUEL RAMROOP' }])
       expect(res.redirect).toHaveBeenCalledWith('../../review-non-associations?prisonerRemoved=true')
     })
 
     it('should redirect back to GET with preserve history', async () => {
-      req.session.appointmentJourney.prisoners = []
+      req.journeyData.appointmentJourney.prisoners = []
       req.query = { preserveHistory: 'true' }
       req.params = {
         prisonNumber: 'G6123VU',
@@ -288,7 +287,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       )
     })
     it('should remove appointment and redirect back to GET - set', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
 
       req.params = {
         prisonNumber: 'G6123VU',
@@ -327,12 +326,11 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           prisoners: [{ number: 'AB123IT' }, { number: 'PW987BB' }],
         },
-      },
-      journeyData: {
         editAppointmentJourney: {
           addPrisoners: [{ number: 'G6123VU', name: 'SAMUEL RAMROOP' }],
         },

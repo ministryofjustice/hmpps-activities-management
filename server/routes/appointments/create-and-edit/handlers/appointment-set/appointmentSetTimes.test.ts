@@ -30,12 +30,11 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           startDate: formatIsoDate(tomorrow),
         },
-      },
-      journeyData: {
         appointmentSetJourney: {
           appointments: [
             {
@@ -121,11 +120,11 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
 
       req.body = { startTime, endTime }
 
-      req.session.appointmentJourney.startDate = formatIsoDate(tomorrow)
+      req.journeyData.appointmentJourney.startDate = formatIsoDate(tomorrow)
     })
 
     it('should fail validation if start time is in the past', async () => {
-      req.session.appointmentJourney.startDate = formatIsoDate(yesterday)
+      req.journeyData.appointmentJourney.startDate = formatIsoDate(yesterday)
 
       await handler.POST(req, res)
 

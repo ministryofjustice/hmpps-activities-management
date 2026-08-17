@@ -13,7 +13,7 @@ describe('Route Handlers - Duplicate Appointment - No Attendees', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         appointmentJourney: {},
       },
     } as unknown as Request
@@ -24,7 +24,7 @@ describe('Route Handlers - Duplicate Appointment - No Attendees', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/no-attendees', {
-        appointmentJourney: req.session.appointmentJourney,
+        appointmentJourney: req.journeyData.appointmentJourney,
       })
     })
   })
