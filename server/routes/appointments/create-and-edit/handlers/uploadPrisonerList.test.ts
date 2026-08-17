@@ -481,8 +481,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([])
-      expect(req.session.appointmentJourney.prisonersNotFound).toEqual(['A1234BC', 'B2345CD'])
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([])
+      expect(req.journeyData.appointmentJourney.prisonersNotFound).toEqual(['A1234BC', 'B2345CD'])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
     })
   })
