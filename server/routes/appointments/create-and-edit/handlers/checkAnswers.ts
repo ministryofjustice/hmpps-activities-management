@@ -18,7 +18,7 @@ export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
 
     appointmentJourney.createJourneyComplete = true
 
@@ -34,7 +34,7 @@ export default class CheckAnswersRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
 
     if (appointmentJourney.type === AppointmentType.SET) {
       const request = this.createAppointmentSetRequest(req, res)
@@ -84,7 +84,7 @@ export default class CheckAnswersRoutes {
 
   private createAppointmentRequest(req: Request, res: Response): AppointmentSeriesCreateRequest {
     const { user } = res.locals
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
 
     const request = {
       appointmentType: appointmentJourney.type,
@@ -116,7 +116,7 @@ export default class CheckAnswersRoutes {
 
   private createAppointmentSetRequest(req: Request, res: Response): AppointmentSetCreateRequest {
     const { user } = res.locals
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
     const { appointmentSetJourney } = req.journeyData
 
     return {

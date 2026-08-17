@@ -27,10 +27,10 @@ export default class UploadPrisonerListRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const prisonerList = await this.getPrisonerList(req, res, req.session.appointmentJourney.prisoners)
+    const prisonerList = await this.getPrisonerList(req, res, req.journeyData.appointmentJourney.prisoners)
     if (!prisonerList) return
 
-    req.session.appointmentJourney.prisoners = prisonerList
+    req.journeyData.appointmentJourney.prisoners = prisonerList
 
     res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
@@ -84,7 +84,7 @@ export default class UploadPrisonerListRoutes {
       prisonerNumber => !prisonerNumbersFound.includes(prisonerNumber),
     )
 
-    req.session.appointmentJourney.prisonersNotFound = prisonerNumbersNotFound
+    req.journeyData.appointmentJourney.prisonersNotFound = prisonerNumbersNotFound
 
     const existingPrisonersNotInUploadedList = (existingPrisoners ?? []).filter(
       prisoner => !prisonerNumbersFound.includes(prisoner.number),

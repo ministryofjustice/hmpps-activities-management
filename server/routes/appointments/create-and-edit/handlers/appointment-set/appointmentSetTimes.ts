@@ -44,7 +44,7 @@ export default class AppointmentSetTimesRoutes {
     req.body.startTime = startTimeObj
     req.body.endTime = endTimeObj
 
-    const { startDate } = req.session.appointmentJourney
+    const { startDate } = req.journeyData.appointmentJourney
 
     const appointments = req.journeyData.appointmentSetJourney.appointments.map(appointment => ({
       prisoner: appointment.prisoner,

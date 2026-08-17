@@ -6,7 +6,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "partials/characterCountInput.njk" import characterCountInput %}
 
-{% set pageTitle = appointmentJourneyTitle("Appointment name set - Appointments - DPS" if session.appointmentJourney.type == AppointmentType.SET else "Appointment name - Appointments - DPS", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Appointment name set - Appointments - DPS" if appointmentJourney.type == AppointmentType.SET else "Appointment name - Appointments - DPS", appointmentJourney) %}
 {% set pageId = 'appointment-name-page' %}
 {% set jsBackLink = true %}
 
@@ -22,7 +22,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
+            {{ appointmentTypeCaption(appointmentJourney) }}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukSelect({
@@ -30,7 +30,7 @@
                     name: "categoryCode",
                     type: "search",
                     label: {
-                        text: ("What are the appointments?" if session.appointmentJourney.type == AppointmentType.SET else "What’s the appointment?"),
+                        text: ("What are the appointments?" if appointmentJourney.type == AppointmentType.SET else "What’s the appointment?"),
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
@@ -39,7 +39,7 @@
                     },
                     errorMessage: validationErrors | findError('categoryCode'),
                     items: options,
-                    value: formResponses.categoryCode or session.appointmentJourney.category.code
+                    value: formResponses.categoryCode or appointmentJourney.category.code
                 }) }}
 
                 {{ characterCountInput({
@@ -50,10 +50,10 @@
                         classes: "govuk-label--m"
                     },
                     hint: {
-                        text: ("Use the custom name to add detail about what the appointments are for. It will be displayed in this service and on unlock lists and movement slips." if session.appointmentJourney.type == AppointmentType.SET else "Use the custom name to add detail about what the appointment is for. It will be displayed in this service and on unlock lists and movement slips.")
+                        text: ("Use the custom name to add detail about what the appointments are for. It will be displayed in this service and on unlock lists and movement slips." if appointmentJourney.type == AppointmentType.SET else "Use the custom name to add detail about what the appointment is for. It will be displayed in this service and on unlock lists and movement slips.")
                     },
                     classes: "govuk-input--width-20",
-                    value: formResponses.customName or session.appointmentJourney.customName,
+                    value: formResponses.customName or appointmentJourney.customName,
                     errorMessage: validationErrors | findError('customName'),
                     maxlength: "40"
                 }) }}

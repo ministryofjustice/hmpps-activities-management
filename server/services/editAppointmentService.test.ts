@@ -45,6 +45,8 @@ describe('Edit Appointment Service', () => {
         journeyMetrics: {
           journeyStartTime: Date.now() - 60000,
         },
+      },
+      journeyData: {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
@@ -70,8 +72,6 @@ describe('Edit Appointment Service', () => {
           },
           repeat: YesNo.NO,
         } as unknown as AppointmentJourney,
-      },
-      journeyData: {
         editAppointmentJourney: {
           numberOfAppointments: 4,
           location: {
@@ -140,7 +140,7 @@ describe('Edit Appointment Service', () => {
           .addProperty('applyTo', 'NA')
           .addMeasurement('journeyTimeSec', 60),
       )
-      expect(req.session.appointmentJourney).toBeNull()
+      expect(req.journeyData.appointmentJourney).toBeNull()
       expect(req.journeyData.editAppointmentJourney).toBeNull()
       expect(req.session.journeyMetrics).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
@@ -177,7 +177,7 @@ describe('Edit Appointment Service', () => {
           .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
           .addMeasurement('journeyTimeSec', 60),
       )
-      expect(req.session.appointmentJourney).toBeNull()
+      expect(req.journeyData.appointmentJourney).toBeNull()
       expect(req.journeyData.editAppointmentJourney).toBeNull()
       expect(req.session.journeyMetrics).toBeNull()
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -197,7 +197,7 @@ describe('Edit Appointment Service', () => {
 
       expect(activitiesService.editAppointment).not.toHaveBeenCalled()
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
-      expect(req.session.appointmentJourney).not.toBeNull()
+      expect(req.journeyData.appointmentJourney).not.toBeNull()
       expect(req.journeyData.editAppointmentJourney).not.toBeNull()
       expect(req.session.journeyMetrics).not.toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('location/apply-to')
@@ -229,7 +229,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
@@ -257,7 +257,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -289,14 +289,14 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
       it('when deleting appointment from set', async () => {
-        req.session.appointmentJourney.prisoners = [
+        req.journeyData.appointmentJourney.prisoners = [
           {
             number: 'A1111A',
           },
@@ -333,14 +333,14 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
       it('when deleting appointment from series', async () => {
-        req.session.appointmentJourney.repeat = YesNo.YES
+        req.journeyData.appointmentJourney.repeat = YesNo.YES
         req.journeyData.editAppointmentJourney.appointmentSeries = {
           id: 1,
         } as AppointmentSeriesSummary
@@ -366,7 +366,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
@@ -397,7 +397,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -431,7 +431,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -469,7 +469,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -507,7 +507,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -518,7 +518,7 @@ describe('Edit Appointment Service', () => {
 
       it('when changing the end time from null', async () => {
         req.journeyData.editAppointmentJourney.property = 'date-and-time'
-        req.session.appointmentJourney.endTime = null
+        req.journeyData.appointmentJourney.endTime = null
         req.journeyData.editAppointmentJourney.endTime = {
           hour: 14,
           minute: 30,
@@ -546,7 +546,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -590,7 +590,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -630,7 +630,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -670,7 +670,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -716,7 +716,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -750,7 +750,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -785,7 +785,7 @@ describe('Edit Appointment Service', () => {
           .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
           .addMeasurement('journeyTimeSec', 60),
       )
-      expect(req.session.appointmentJourney).toBeNull()
+      expect(req.journeyData.appointmentJourney).toBeNull()
       expect(req.journeyData.editAppointmentJourney).toBeNull()
       expect(req.session.journeyMetrics).toBeNull()
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -796,7 +796,7 @@ describe('Edit Appointment Service', () => {
 
     describe('apply to this and all future appointments', () => {
       beforeEach(() => {
-        req.session.appointmentJourney.repeat = YesNo.YES
+        req.journeyData.appointmentJourney.repeat = YesNo.YES
       })
 
       it('when cancelling', async () => {
@@ -813,7 +813,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
@@ -841,7 +841,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -867,7 +867,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
@@ -892,7 +892,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -937,7 +937,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -949,7 +949,7 @@ describe('Edit Appointment Service', () => {
 
     describe('apply to all future appointments', () => {
       beforeEach(() => {
-        req.session.appointmentJourney.repeat = YesNo.YES
+        req.journeyData.appointmentJourney.repeat = YesNo.YES
       })
 
       it('when cancelling', async () => {
@@ -966,7 +966,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
@@ -994,7 +994,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -1020,7 +1020,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
@@ -1045,7 +1045,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -1086,7 +1086,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -1131,7 +1131,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -1171,7 +1171,7 @@ describe('Edit Appointment Service', () => {
             .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
             .addMeasurement('journeyTimeSec', 60),
         )
-        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -1214,7 +1214,7 @@ describe('Edit Appointment Service', () => {
           `You cannot add more than ${maxAllowedPrisoners} attendees for this number of appointments.`,
         )
         expect(metricsService.trackEvent).not.toHaveBeenCalled()
-        expect(req.session.appointmentJourney).not.toBeNull()
+        expect(req.journeyData.appointmentJourney).not.toBeNull()
         expect(req.journeyData.editAppointmentJourney).not.toBeNull()
         expect(req.session.journeyMetrics).not.toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledTimes(0)

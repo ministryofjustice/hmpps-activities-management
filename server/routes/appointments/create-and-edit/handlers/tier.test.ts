@@ -35,10 +35,9 @@ describe('Route Handlers - Create Appointment - Tier', () => {
     req = {
       params: {},
       query: {},
-      session: {
-        appointmentJourney: {},
-      },
+      session: {},
       journeyData: {
+        appointmentJourney: {},
         editAppointmentJourney: {},
       },
     } as unknown as Request
@@ -59,7 +58,7 @@ describe('Route Handlers - Create Appointment - Tier', () => {
     })
 
     it('should render the expected view with accept and save', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.params = {
         appointmentId: '2',
       }
@@ -81,7 +80,7 @@ describe('Route Handlers - Create Appointment - Tier', () => {
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.tierCode).toEqual(EventTier.TIER_1)
+      expect(req.journeyData.appointmentJourney.tierCode).toEqual(EventTier.TIER_1)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
 
@@ -92,7 +91,7 @@ describe('Route Handlers - Create Appointment - Tier', () => {
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.tierCode).toEqual(EventTier.TIER_2)
+      expect(req.journeyData.appointmentJourney.tierCode).toEqual(EventTier.TIER_2)
       expect(res.redirect).toHaveBeenCalledWith('host')
     })
 
@@ -100,11 +99,11 @@ describe('Route Handlers - Create Appointment - Tier', () => {
       req.body = {
         tier: EventTier.TIER_1,
       }
-      req.session.appointmentJourney.organiserCode = Organiser.PRISON_STAFF
+      req.journeyData.appointmentJourney.organiserCode = Organiser.PRISON_STAFF
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.organiserCode).toBeNull()
+      expect(req.journeyData.appointmentJourney.organiserCode).toBeNull()
     })
   })
 
@@ -114,7 +113,7 @@ describe('Route Handlers - Create Appointment - Tier', () => {
         tier: EventTier.TIER_1,
       }
 
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         tierCode: EventTier.FOUNDATION,
       } as unknown as AppointmentJourney
 
@@ -129,7 +128,7 @@ describe('Route Handlers - Create Appointment - Tier', () => {
         tier: EventTier.TIER_2,
       }
 
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         tierCode: EventTier.FOUNDATION,
       } as unknown as AppointmentJourney
 

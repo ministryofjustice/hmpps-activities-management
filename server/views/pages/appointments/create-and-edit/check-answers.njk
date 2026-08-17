@@ -7,7 +7,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/showLocation.njk" import showLocation %}
 
-{% set pageTitle = appointmentJourneyTitle("Check and confirm set - Appointments - DPS" if session.appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details - Appointments - DPS", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Check and confirm set - Appointments - DPS" if appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details - Appointments - DPS", appointmentJourney) %}
 {% set pageId = 'appointment-check-answers-page' %}
 
 {% set appointmentDetailsRows = [
@@ -16,7 +16,7 @@
             text: "Appointment name"
         },
         value: {
-            text: session.appointmentJourney.appointmentName
+            text: appointmentJourney.appointmentName
         },
         actions: {
             items: [
@@ -65,7 +65,7 @@
                 }
             ]
         }
-    } if session.appointmentJourney.organiserCode
+    } if appointmentJourney.organiserCode
 ] %}
 
 {% set schedulingInformationRows = [] %}
@@ -75,7 +75,7 @@
             text: "Location"
         },
         value: {
-            text: showLocation(user.externalActivitiesRolledOut, session.appointmentJourney, session.appointmentJourney.location.description)
+            text: showLocation(user.externalActivitiesRolledOut, appointmentJourney, appointmentJourney.location.description)
         },
         actions: {
             items: [
@@ -94,12 +94,12 @@
             text: "Date"
         },
         value: {
-            text: session.appointmentJourney.startDate | parseIsoDate | formatDate
+            text: appointmentJourney.startDate | parseIsoDate | formatDate
         },
         actions: {
             items: [
                 {
-                    href: 'appointment-set-date?preserveHistory=true' if session.appointmentJourney.type == AppointmentType.SET else 'date-and-time?preserveHistory=true',
+                    href: 'appointment-set-date?preserveHistory=true' if appointmentJourney.type == AppointmentType.SET else 'date-and-time?preserveHistory=true',
                     text: "Change",
                     visuallyHiddenText: "change date",
                     classes: "govuk-link--no-visited-state",
@@ -113,7 +113,7 @@
             text: "Start time"
         },
         value: {
-            text: session.appointmentJourney.startTime.date | parseISODate | formatDate('HH:mm')
+            text: appointmentJourney.startTime.date | parseISODate | formatDate('HH:mm')
         },
         actions: {
             items: [
@@ -126,13 +126,13 @@
                 }
             ]
         }
-    } if session.appointmentJourney.startTime,
+    } if appointmentJourney.startTime,
     {
         key: {
             text: "End time"
         },
         value: {
-            text: session.appointmentJourney.endTime.date | parseISODate | formatDate('HH:mm')
+            text: appointmentJourney.endTime.date | parseISODate | formatDate('HH:mm')
         },
         actions: {
             items: [
@@ -145,14 +145,14 @@
                 }
             ]
         }
-    } if session.appointmentJourney.endTime,
+    } if appointmentJourney.endTime,
     {
         key: {
             text: "Repeats"
         },
         value: {
-            text: ("Yes" if session.appointmentJourney.repeat == YesNo.YES) +
-                  ("No" if session.appointmentJourney.repeat == YesNo.NO)
+            text: ("Yes" if appointmentJourney.repeat == YesNo.YES) +
+                  ("No" if appointmentJourney.repeat == YesNo.NO)
         },
         actions: {
             items: [
@@ -163,21 +163,21 @@
                     classes: "govuk-link--no-visited-state",
                     attributes: { 'data-qa': 'change-repeat' }
                 }
-            ] if session.appointmentJourney.retrospective == YesNo.NO
+            ] if appointmentJourney.retrospective == YesNo.NO
         }
-    } if session.appointmentJourney.repeat
+    } if appointmentJourney.repeat
 ), schedulingInformationRows) %}
-{% if session.appointmentJourney.repeat == YesNo.YES %}
+{% if appointmentJourney.repeat == YesNo.YES %}
   {% set schedulingInformationRows = (schedulingInformationRows.push({
       key: {
           text: "Frequency"
       },
       value: {
-          text: ("Every weekday (Monday to Friday)" if session.appointmentJourney.frequency == AppointmentFrequency.WEEKDAY) +
-                ("Daily (includes weekends)" if session.appointmentJourney.frequency == AppointmentFrequency.DAILY) +
-                ("Weekly" if session.appointmentJourney.frequency == AppointmentFrequency.WEEKLY) +
-                ("Fortnightly" if session.appointmentJourney.frequency == AppointmentFrequency.FORTNIGHTLY) +
-                ("Monthly" if session.appointmentJourney.frequency == AppointmentFrequency.MONTHLY)
+          text: ("Every weekday (Monday to Friday)" if appointmentJourney.frequency == AppointmentFrequency.WEEKDAY) +
+                ("Daily (includes weekends)" if appointmentJourney.frequency == AppointmentFrequency.DAILY) +
+                ("Weekly" if appointmentJourney.frequency == AppointmentFrequency.WEEKLY) +
+                ("Fortnightly" if appointmentJourney.frequency == AppointmentFrequency.FORTNIGHTLY) +
+                ("Monthly" if appointmentJourney.frequency == AppointmentFrequency.MONTHLY)
       },
       actions: {
           items: [
@@ -196,7 +196,7 @@
           text: "Number of appointments"
       },
       value: {
-          text: session.appointmentJourney.numberOfAppointments
+          text: appointmentJourney.numberOfAppointments
       },
       actions: {
           items: [
@@ -213,7 +213,7 @@
 {% endif %}
 
 {% set extraInfoRows = [] %}
-{% if session.appointmentJourney.type !== AppointmentType.SET %}
+{% if appointmentJourney.type !== AppointmentType.SET %}
   {% if not prisonerExtraInformationEnabled %}
     {% set extraInfoRows = (extraInfoRows.push(
         {
@@ -221,7 +221,7 @@
                 text: "Extra information"
             },
             value: {
-                html: '<span class="preserve-line-breaks" data-qa="extra-information">' + (session.appointmentJourney.extraInformation | escape) + '</span>'
+                html: '<span class="preserve-line-breaks" data-qa="extra-information">' + (appointmentJourney.extraInformation | escape) + '</span>'
             },
             actions: {
                 items: [
@@ -232,7 +232,7 @@
                         classes: "govuk-link--no-visited-state",
                         attributes: { 'data-qa': 'change-extra-information' }
                     }
-                ] if session.appointmentJourney.retrospective == YesNo.NO
+                ] if appointmentJourney.retrospective == YesNo.NO
             }
         }
     ), extraInfoRows) %}
@@ -243,7 +243,7 @@
         text: "Notes for prison staff"
       },
         value: {
-        html: '<span class="preserve-line-breaks" data-qa="staff-notes">' + (session.appointmentJourney.extraInformation | escape) + '</span>'
+        html: '<span class="preserve-line-breaks" data-qa="staff-notes">' + (appointmentJourney.extraInformation | escape) + '</span>'
       },
         actions: {
           items: [
@@ -254,7 +254,7 @@
               classes: "govuk-link--no-visited-state",
               attributes: { 'data-qa': 'change-extra-information' }
             }
-          ] if session.appointmentJourney.retrospective == YesNo.NO
+          ] if appointmentJourney.retrospective == YesNo.NO
         }
       },
       {
@@ -262,7 +262,7 @@
         text: "Notes for prisoner"
       },
         value: {
-        html: '<span class="preserve-line-breaks" data-qa="prisoner-notes">' + (session.appointmentJourney.prisonerExtraInformation | escape) + '</span>'
+        html: '<span class="preserve-line-breaks" data-qa="prisoner-notes">' + (appointmentJourney.prisonerExtraInformation | escape) + '</span>'
       },
         actions: {
           items: [
@@ -273,13 +273,13 @@
               classes: "govuk-link--no-visited-state",
               attributes: { 'data-qa': 'change-prisoner-extra-information' }
             }
-          ] if session.appointmentJourney.retrospective == YesNo.NO
+          ] if appointmentJourney.retrospective == YesNo.NO
         }
       }
     ), extraInfoRows) %}
   {% endif %}
 {% endif %}
-{% if session.appointmentJourney.type == AppointmentType.SET %}
+{% if appointmentJourney.type == AppointmentType.SET %}
     {% set schedulingInformationRows = (schedulingInformationRows.push(
         {
             key: {
@@ -320,9 +320,9 @@
                     }) }}
                 {% endif %}
 
-                {{ prisonersList() if session.appointmentJourney.type == AppointmentType.GROUP }}
+                {{ prisonersList() if appointmentJourney.type == AppointmentType.GROUP }}
 
-                {{ appointmentSet() if session.appointmentJourney.type == AppointmentType.SET }}
+                {{ appointmentSet() if appointmentJourney.type == AppointmentType.SET }}
 
                 <div class="govuk-button-group">
                     {{ govukButton({
@@ -341,7 +341,7 @@
             text: "Number of attendees"
         },
         value: {
-            text: session.appointmentJourney.prisoners | length
+            text: appointmentJourney.prisoners | length
         },
         actions: {
             items: [
@@ -356,7 +356,7 @@
         }
     }] %}
 
-    {% for prisoner in session.appointmentJourney.prisoners %}
+    {% for prisoner in appointmentJourney.prisoners %}
         {% set prisonerListRows = (prisonerListRows.push({
             key: {
                 text: "Name of attendee"

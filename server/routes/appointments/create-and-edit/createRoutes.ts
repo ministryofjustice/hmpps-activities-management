@@ -94,6 +94,7 @@ export default function Create({
   get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
   router.post(
     '/upload-prisoner-list',
+    setUpJourneyData(tokenStore),
     setUpMultipartFormDataParsing(),
     validationMiddleware(PrisonerList),
     uploadPrisonerListRoutes.POST,
@@ -148,6 +149,7 @@ export default function Create({
   post('/check-answers', checkAnswersRoutes.POST)
   router.get(
     '/confirmation/:appointmentId',
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     emptyAppointmentJourneyHandler(true),
     confirmationRoutes.GET,
@@ -179,6 +181,7 @@ export default function Create({
 
   router.get(
     '/start-copy/:appointmentId',
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.COPY,
