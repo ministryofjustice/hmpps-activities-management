@@ -122,7 +122,7 @@ In a different terminal:
 
 In a third terminal:
 
-`$ npm run pw-test` - to run Cypress tests in the background
+`$ npm run pw-test` - to run PW tests in the background
 
 OR
 
