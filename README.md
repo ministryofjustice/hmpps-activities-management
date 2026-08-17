@@ -104,7 +104,7 @@ Or for production:
 **Quick start commands**
 
 To run the entire PW suite locally: `npm run pw-test:local`
-To run the interactive Cypress UI locally: `npm run pw-test-ui:local`
+To run the interactive PW UI locally: `npm run pw-test-ui:local`
 
 Alternativaly, the follow steps allow manual running:
 
