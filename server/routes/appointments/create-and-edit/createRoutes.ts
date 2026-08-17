@@ -53,8 +53,15 @@ export default function Create({
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(path, setUpJourneyData(tokenStore), emptyAppointmentJourneyHandler(stepRequiresSession), handler)
-  const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
+
+  const post = (path: string, handler: RequestHandler, type?: new () => object, stepRequiresJourney = false) =>
+    router.post(
+      path,
+      setUpJourneyData(tokenStore),
+      emptyAppointmentJourneyHandler(stepRequiresJourney),
+      validationMiddleware(type),
+      handler,
+    )
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
@@ -108,22 +115,22 @@ export default function Create({
     appointmentSetUploadRoutes.POST,
   )
   get('/name', nameRoutes.GET, true)
-  post('/name', nameRoutes.POST, Name)
+  post('/name', nameRoutes.POST, Name, true)
   get('/tier', tierRoutes.GET, true)
-  post('/tier', tierRoutes.CREATE, TierForm)
+  post('/tier', tierRoutes.CREATE, TierForm, true)
   get('/host', hostRoutes.GET, true)
-  post('/host', hostRoutes.CREATE, HostForm)
+  post('/host', hostRoutes.CREATE, HostForm, true)
   get('/location', locationRoutes.GET, true)
-  post('/location', locationRoutes.CREATE, Location)
+  post('/location', locationRoutes.CREATE, Location, true)
   get('/date-and-time', dateAndTimeRoutes.GET, true)
-  post('/date-and-time', dateAndTimeRoutes.CREATE, DateAndTime)
+  post('/date-and-time', dateAndTimeRoutes.CREATE, DateAndTime, true)
   get('/repeat', repeatRoutes.GET, true)
-  post('/repeat', repeatRoutes.POST, Repeat)
+  post('/repeat', repeatRoutes.POST, Repeat, true)
   get('/repeat-frequency-and-count', repeatFrequencyAndCountRoutes.GET, true)
-  post('/repeat-frequency-and-count', repeatFrequencyAndCountRoutes.POST, RepeatFrequencyAndCount)
+  post('/repeat-frequency-and-count', repeatFrequencyAndCountRoutes.POST, RepeatFrequencyAndCount, true)
   get('/extra-information', extraInformationRoutes.GET, true)
   get('/schedule', scheduleRoutes.GET, true)
-  post('/schedule', scheduleRoutes.POST)
+  post('/schedule', scheduleRoutes.POST, undefined, true)
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
   get('/schedule/change', scheduleRoutes.CHANGE)
   get('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.GET, true)
@@ -135,18 +142,18 @@ export default function Create({
       appointmentSetAddExtraInformationRoutes.POST,
       AppointmentSetStaffPrisonerExtraInformation,
     )
-    post('/extra-information', extraInformationRoutes.CREATE, StaffPrisonerExtraInformation)
+    post('/extra-information', extraInformationRoutes.CREATE, StaffPrisonerExtraInformation, true)
   } else {
     post(
       '/appointment-set-extra-information/:prisonerNumber',
       appointmentSetAddExtraInformationRoutes.POST,
       AppointmentSetAppointmentExtraInformation,
     )
-    post('/extra-information', extraInformationRoutes.CREATE, ExtraInformation)
+    post('/extra-information', extraInformationRoutes.CREATE, ExtraInformation, true)
   }
 
   get('/check-answers', checkAnswersRoutes.GET, true)
-  post('/check-answers', checkAnswersRoutes.POST)
+  post('/check-answers', checkAnswersRoutes.POST, undefined, true)
   router.get(
     '/confirmation/:appointmentId',
     setUpJourneyData(tokenStore),
@@ -157,9 +164,9 @@ export default function Create({
   get('/how-to-add-prisoners', howToAddPrisonerRoutes.GET, true)
   post('/how-to-add-prisoners', howToAddPrisonerRoutes.POST, HowToAddPrisonersForm)
   get('/review-prisoners', reviewPrisonerRoutes.GET, true)
-  post('/review-prisoners', reviewPrisonerRoutes.POST)
+  post('/review-prisoners', reviewPrisonerRoutes.POST, undefined, true)
   get('/review-prisoners/:prisonNumber/remove', reviewPrisonerRoutes.REMOVE, true)
-  post('/review-prisoners-alerts', reviewPrisonerAlerts.POST)
+  post('/review-prisoners-alerts', reviewPrisonerAlerts.POST, undefined, true)
   get('/review-prisoners-alerts', reviewPrisonerAlerts.GET, true)
   get('/review-prisoners-alerts/:prisonNumber/remove', reviewPrisonerAlerts.REMOVE, true)
   get('/review-non-associations', reviewNonAssociations.GET, true)
@@ -168,9 +175,9 @@ export default function Create({
   get('/confirm-non-associations', confirmNonAssociations.GET, true)
   post('/confirm-non-associations', confirmNonAssociations.POST)
   get('/appointment-set-date', appointmentSetDateRoutes.GET, true)
-  post('/appointment-set-date', appointmentSetDateRoutes.POST, AppointmentSetDate)
+  post('/appointment-set-date', appointmentSetDateRoutes.POST, AppointmentSetDate, true)
   get('/appointment-set-times', appointmentSetTimesRoutes.GET, true)
-  post('/appointment-set-times', appointmentSetTimesRoutes.POST, AppointmentTimes)
+  post('/appointment-set-times', appointmentSetTimesRoutes.POST, AppointmentTimes, true)
   router.get(
     '/set-confirmation/:appointmentSetId',
     setUpJourneyData(tokenStore),
@@ -188,7 +195,7 @@ export default function Create({
   )
 
   get('/copy-series', copySeriesRoutes.GET, true)
-  post('/copy-series', copySeriesRoutes.POST, HowToCopySeriesForm)
+  post('/copy-series', copySeriesRoutes.POST, HowToCopySeriesForm, true)
   get('/no-attendees', noAttendeesRoutes.GET, true)
   post('/no-attendees', noAttendeesRoutes.POST)
 
