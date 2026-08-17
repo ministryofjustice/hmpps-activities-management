@@ -5,10 +5,10 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
-{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("Change appointment tier - Appointments - DPS", session.appointmentJourney) %}
+{% if appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("Change appointment tier - Appointments - DPS", appointmentJourney) %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Appointment tier - Appointments - DPS", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Appointment tier - Appointments - DPS", appointmentJourney) %}
 {% endif %}
 
 {% set pageId = 'appointment-tier-page' %}
@@ -19,7 +19,7 @@
     {% set activityTierOptions = (activityTierOptions.push({
         value: tierKey,
         text: tierText,
-        checked: formResponses.tier == tierKey or session.appointmentJourney.tierCode == tierKey
+        checked: formResponses.tier == tierKey or appointmentJourney.tierCode == tierKey
     }), activityTierOptions) %}
 {% endfor %}
 
@@ -28,11 +28,11 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ appointmentTypeCaption(session) }}
+                {{ appointmentTypeCaption(appointmentJourney) }}
                 {{ govukRadios({
                     fieldset: {
                         legend: {
-                            text: "Which tier are the appointments in?" if session.appointmentJourney.type == AppointmentType.SET else "Which tier is the appointment in?",
+                            text: "Which tier are the appointments in?" if appointmentJourney.type == AppointmentType.SET else "Which tier is the appointment in?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }

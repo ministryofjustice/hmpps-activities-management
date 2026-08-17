@@ -19,9 +19,7 @@ describe('Views - Appointments Management - Confirm Edit', () => {
   let compiledTemplate: Template
   let viewContext = {
     user: {},
-    session: {
-      appointmentJourney: {} as unknown as AppointmentJourney,
-    },
+    appointmentJourney: {} as unknown as AppointmentJourney,
     editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     appointmentId,
     startDate: weekTomorrow,
@@ -35,13 +33,12 @@ describe('Views - Appointments Management - Confirm Edit', () => {
       user: {
         activeCaseLoadId: 'MDI',
       },
-      session: {
-        appointmentJourney: {
-          mode: AppointmentJourneyMode.EDIT,
-          type: AppointmentType.GROUP,
-          startDate: formatIsoDate(weekTomorrow),
-        },
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.EDIT,
+        type: AppointmentType.GROUP,
+        startDate: formatIsoDate(weekTomorrow),
       },
+
       editAppointmentJourney: {
         numberOfAppointments: 3,
         appointments: [

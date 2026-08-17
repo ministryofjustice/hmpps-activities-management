@@ -17,9 +17,7 @@ describe('Views - Appointments Management - Location', () => {
   const weekTomorrow = addDays(new Date(), 8)
   let compiledTemplate: Template
   let viewContext = {
-    session: {
-      appointmentJourney: {} as unknown as AppointmentJourney,
-    },
+    appointmentJourney: {} as unknown as AppointmentJourney,
     editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     backLinkHref: '',
     isCtaAcceptAndSave: false,
@@ -30,13 +28,12 @@ describe('Views - Appointments Management - Location', () => {
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
-        appointmentJourney: {
-          mode: AppointmentJourneyMode.CREATE,
-          type: AppointmentType.GROUP,
-          startDate: formatIsoDate(weekTomorrow),
-        },
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        startDate: formatIsoDate(weekTomorrow),
       },
+
       editAppointmentJourney: {
         numberOfAppointments: 3,
         appointments: [
@@ -61,7 +58,7 @@ describe('Views - Appointments Management - Location', () => {
   })
 
   it('create content', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.appointmentJourney.mode = AppointmentJourneyMode.CREATE
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -69,7 +66,7 @@ describe('Views - Appointments Management - Location', () => {
   })
 
   it('edit content', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+    viewContext.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 

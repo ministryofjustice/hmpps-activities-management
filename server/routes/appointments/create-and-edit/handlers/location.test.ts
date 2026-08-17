@@ -54,10 +54,9 @@ describe('Route Handlers - Create Appointment - Location', () => {
     } as unknown as Response
 
     req = {
-      session: {
-        appointmentJourney: {},
-      },
+      session: {},
       journeyData: {
+        appointmentJourney: {},
         editAppointmentJourney: {},
       },
       flash: jest.fn(),
@@ -84,7 +83,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
     })
 
     it('should render the location view with accept and save', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.params = {
         appointmentId,
       }
@@ -114,16 +113,16 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.location).toEqual({
+      expect(req.journeyData.appointmentJourney.location).toEqual({
         id: '26149',
         description: 'Gym',
       })
-      expect(req.session.appointmentJourney.inCell).toEqual(false)
+      expect(req.journeyData.appointmentJourney.inCell).toEqual(false)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
     })
 
     it('should save selected location in session and redirect to appointment set date page', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
       req.body = {
         locationType: LocationType.OUT_OF_CELL,
         locationId: '26149',
@@ -133,11 +132,11 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.location).toEqual({
+      expect(req.journeyData.appointmentJourney.location).toEqual({
         id: '26149',
         description: 'Gym',
       })
-      expect(req.session.appointmentJourney.inCell).toEqual(false)
+      expect(req.journeyData.appointmentJourney.inCell).toEqual(false)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('appointment-set-date')
     })
 
@@ -171,7 +170,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
         locationId: '26149',
       }
 
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         location: {
           id: '26152',
           description: 'Chapel',
@@ -293,7 +292,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
   })
 
   it('should render the location view with the existing location selected', async () => {
-    req.session.appointmentJourney = {
+    req.journeyData.appointmentJourney = {
       location: {
         id: '26152',
         description: 'Chapel',
@@ -317,7 +316,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
   })
 
   it('should render the location view with in-cell selected', async () => {
-    req.session.appointmentJourney = {
+    req.journeyData.appointmentJourney = {
       inCell: true,
     } as AppointmentJourney
 

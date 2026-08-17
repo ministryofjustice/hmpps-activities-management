@@ -5,7 +5,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Add extra information individual - Appointments - DPS", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Add extra information individual - Appointments - DPS", appointmentJourney) %}
 {% set pageId = 'appointment-set-appointment-extra-information-page' %}
 {% set jsBackLink = true %}
 
@@ -14,7 +14,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ appointmentTypeCaption(session) }}
+                {{ appointmentTypeCaption(appointmentJourney) }}
                 {% if not prisonerExtraInformationEnabled %}
                   <h1 class="govuk-heading-l"><label for="extraInformation">Add extra information to {{ prisoner.name | toTitleCase }}'s movement slip (optional)</label></h1>
                   <p class="govuk-body" data-qa="first-paragraph">

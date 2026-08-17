@@ -14,13 +14,12 @@ export default class UncancelRoutes {
 
     res.render('pages/appointments/create-and-edit/confirm-edit', {
       appointmentId,
-      startDate: parseIsoDate(req.session.appointmentJourney.startDate),
+      startDate: parseIsoDate(req.journeyData.appointmentJourney.startDate),
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney } = req.session
-    const { editAppointmentJourney } = req.journeyData
+    const { appointmentJourney, editAppointmentJourney } = req.journeyData
 
     if (
       isApplyToQuestionRequired(editAppointmentJourney) &&

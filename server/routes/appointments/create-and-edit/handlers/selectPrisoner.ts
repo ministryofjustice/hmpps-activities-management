@@ -52,8 +52,8 @@ export default class SelectPrisonerRoutes {
 
     if (result) {
       if (
-        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT ||
-        req.session.appointmentJourney.type === AppointmentType.GROUP
+        req.journeyData.appointmentJourney.mode === AppointmentJourneyMode.EDIT ||
+        req.journeyData.appointmentJourney.type === AppointmentType.GROUP
       ) {
         return res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
       }
@@ -85,12 +85,12 @@ export default class SelectPrisonerRoutes {
       category: prisoner.category,
     }
 
-    if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
+    if (req.journeyData.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
       if (req.journeyData.editAppointmentJourney.addPrisoners.find(p => p.number === prisonerData.number)) return true
       req.journeyData.editAppointmentJourney.addPrisoners.push(prisonerData)
-    } else if (req.session.appointmentJourney.type === AppointmentType.GROUP) {
-      if (req.session.appointmentJourney.prisoners.find(p => p.number === prisonerData.number)) return true
-      req.session.appointmentJourney.prisoners.push(prisonerData)
+    } else if (req.journeyData.appointmentJourney.type === AppointmentType.GROUP) {
+      if (req.journeyData.appointmentJourney.prisoners.find(p => p.number === prisonerData.number)) return true
+      req.journeyData.appointmentJourney.prisoners.push(prisonerData)
     }
 
     return true

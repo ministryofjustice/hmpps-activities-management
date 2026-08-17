@@ -12,7 +12,7 @@ export class HowToAddPrisonersForm {
 export default class HowToAddPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { preserveHistory } = req.query
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
 
     res.render('pages/appointments/create-and-edit/how-to-add-prisoners', {
       preserveHistory,

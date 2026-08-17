@@ -21,7 +21,7 @@ export default class StartJourneyRoutes {
   ) {}
 
   GROUP = async (req: Request, res: Response): Promise<void> => {
-    req.session.appointmentJourney = {
+    req.journeyData.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.GROUP,
       createJourneyComplete: false,
@@ -35,7 +35,7 @@ export default class StartJourneyRoutes {
   }
 
   SET = async (req: Request, res: Response): Promise<void> => {
-    req.session.appointmentJourney = {
+    req.journeyData.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.SET,
       createJourneyComplete: false,
@@ -55,7 +55,7 @@ export default class StartJourneyRoutes {
 
     this.populateAppointmentJourney(req, AppointmentJourneyMode.COPY)
 
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
 
     appointmentJourney.originalAppointmentId = req.appointment.id
 
@@ -81,7 +81,7 @@ export default class StartJourneyRoutes {
     const { prisonNumber } = req.params as { prisonNumber: string }
     const { user } = res.locals
 
-    req.session.appointmentJourney = {
+    req.journeyData.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.GROUP,
       createJourneyComplete: false,
@@ -94,7 +94,7 @@ export default class StartJourneyRoutes {
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumber, user).catch(_ => null)
     if (!prisoner) return res.redirect(`select-prisoner?query=${prisonNumber}`)
 
-    req.session.appointmentJourney.prisoners = [
+    req.journeyData.appointmentJourney.prisoners = [
       {
         number: prisoner.prisonerNumber,
         name: `${prisoner.firstName} ${prisoner.lastName}`,
@@ -105,7 +105,7 @@ export default class StartJourneyRoutes {
         cellLocation: prisoner.cellLocation,
       },
     ]
-    req.session.appointmentJourney.fromPrisonNumberProfile = prisonNumber
+    req.journeyData.appointmentJourney.fromPrisonNumberProfile = prisonNumber
 
     return res.redirect('../review-prisoners')
   }
@@ -181,7 +181,7 @@ export default class StartJourneyRoutes {
     const startTime = parseDate(`${appointment.startDate}T${appointment.startTime}`, "yyyy-MM-dd'T'HH:mm")
     const endTime = parseDate(`${appointment.startDate}T${appointment.endTime}`, "yyyy-MM-dd'T'HH:mm")
 
-    req.session.appointmentJourney = {
+    req.journeyData.appointmentJourney = {
       mode: journeyType,
       type: AppointmentType[appointment.appointmentType],
       appointmentName: appointment.appointmentName,
@@ -224,7 +224,7 @@ export default class StartJourneyRoutes {
     }
 
     if (isValid(endTime)) {
-      req.session.appointmentJourney.endTime = {
+      req.journeyData.appointmentJourney.endTime = {
         date: endTime,
         hour: +formatDate(endTime, 'HH'),
         minute: +formatDate(endTime, 'mm'),

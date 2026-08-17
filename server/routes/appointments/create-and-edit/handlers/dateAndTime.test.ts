@@ -35,10 +35,9 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     } as unknown as Response
 
     req = {
-      session: {
-        appointmentJourney: {},
-      },
+      session: {},
       journeyData: {
+        appointmentJourney: {},
         editAppointmentJourney: {},
       },
       query: {},
@@ -57,7 +56,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
   describe('CREATE', () => {
     beforeEach(() => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.CREATE
     })
 
     it('should save start date, start time and end time in session and redirect to repeat page', async () => {
@@ -75,18 +74,18 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
-      expect(req.session.appointmentJourney.startTime).toEqual({
+      expect(req.journeyData.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
+      expect(req.journeyData.appointmentJourney.startTime).toEqual({
         hour: 11,
         minute: 30,
         date: req.body.startTime.toDate(tomorrow),
       })
-      expect(req.session.appointmentJourney.endTime).toEqual({
+      expect(req.journeyData.appointmentJourney.endTime).toEqual({
         hour: 13,
         minute: 0,
         date: req.body.endTime.toDate(tomorrow),
       })
-      expect(req.session.appointmentJourney.retrospective).toBe(YesNo.NO)
+      expect(req.journeyData.appointmentJourney.retrospective).toBe(YesNo.NO)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('repeat')
     })
 
@@ -103,19 +102,19 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         }),
       }
       await handler.CREATE(req, res)
-      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(fiveDaysAgo))
-      expect(req.session.appointmentJourney.startTime).toEqual({
+      expect(req.journeyData.appointmentJourney.startDate).toEqual(formatIsoDate(fiveDaysAgo))
+      expect(req.journeyData.appointmentJourney.startTime).toEqual({
         hour: 11,
         minute: 30,
         date: req.body.startTime.toDate(fiveDaysAgo),
       })
-      expect(req.session.appointmentJourney.endTime).toEqual({
+      expect(req.journeyData.appointmentJourney.endTime).toEqual({
         hour: 13,
         minute: 0,
         date: req.body.endTime.toDate(fiveDaysAgo),
       })
-      expect(req.session.appointmentJourney.retrospective).toBe(YesNo.YES)
-      expect(req.session.appointmentJourney.repeat).toEqual(YesNo.NO)
+      expect(req.journeyData.appointmentJourney.retrospective).toBe(YesNo.YES)
+      expect(req.journeyData.appointmentJourney.repeat).toEqual(YesNo.NO)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
   })
@@ -142,7 +141,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       req.body = {
         startDate: tomorrow,
       }
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         type: AppointmentType.INDIVIDUAL,
         mode: AppointmentJourneyMode.COPY,
         startTime: {
@@ -161,13 +160,13 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     it('should populate return to with schedule when copying a single appointment', async () => {
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
-      expect(req.session.appointmentJourney.startTime).toEqual({
+      expect(req.journeyData.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
+      expect(req.journeyData.appointmentJourney.startTime).toEqual({
         hour: 10,
         minute: 5,
         date: plainToInstance(SimpleTime, { hour: 10, minute: 5 }).toDate(tomorrow),
       })
-      expect(req.session.appointmentJourney.endTime).toEqual({
+      expect(req.journeyData.appointmentJourney.endTime).toEqual({
         hour: 11,
         minute: 24,
         date: plainToInstance(SimpleTime, { hour: 11, minute: 24 }).toDate(tomorrow),
@@ -176,17 +175,17 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     })
 
     it('should populate return to with copy-series when copying a future series', async () => {
-      req.session.appointmentJourney.repeat = YesNo.YES
+      req.journeyData.appointmentJourney.repeat = YesNo.YES
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
-      expect(req.session.appointmentJourney.startTime).toEqual({
+      expect(req.journeyData.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
+      expect(req.journeyData.appointmentJourney.startTime).toEqual({
         hour: 10,
         minute: 5,
         date: plainToInstance(SimpleTime, { hour: 10, minute: 5 }).toDate(tomorrow),
       })
-      expect(req.session.appointmentJourney.endTime).toEqual({
+      expect(req.journeyData.appointmentJourney.endTime).toEqual({
         hour: 11,
         minute: 24,
         date: plainToInstance(SimpleTime, { hour: 11, minute: 24 }).toDate(tomorrow),
@@ -195,18 +194,18 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     })
 
     it('should populate return to with check-answers when copying a retrospective series', async () => {
-      req.session.appointmentJourney.repeat = YesNo.YES
+      req.journeyData.appointmentJourney.repeat = YesNo.YES
       req.body.startDate = fiveDaysAgo
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(fiveDaysAgo))
-      expect(req.session.appointmentJourney.startTime).toEqual({
+      expect(req.journeyData.appointmentJourney.startDate).toEqual(formatIsoDate(fiveDaysAgo))
+      expect(req.journeyData.appointmentJourney.startTime).toEqual({
         hour: 10,
         minute: 5,
         date: plainToInstance(SimpleTime, { hour: 10, minute: 5 }).toDate(fiveDaysAgo),
       })
-      expect(req.session.appointmentJourney.endTime).toEqual({
+      expect(req.journeyData.appointmentJourney.endTime).toEqual({
         hour: 11,
         minute: 24,
         date: plainToInstance(SimpleTime, { hour: 11, minute: 24 }).toDate(fiveDaysAgo),
@@ -221,7 +220,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         appointmentId: '12',
       }
 
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         startDate: formatIsoDate(tomorrow),
         startTime: plainToInstance(SimpleTime, {
           hour: 9,
@@ -342,7 +341,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       req.body.startTime = startTime
       req.body.endTime = endTime
 
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         type: AppointmentType.GROUP,
         mode: AppointmentJourneyMode.EDIT,
         startDate: formatIsoDate(nextWeek),
@@ -359,7 +358,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       await handler.EDIT(req, res)
 
       expect(req.journeyData.editAppointmentJourney).toBeNull()
-      expect(req.session.appointmentJourney).toBeNull()
+      expect(req.journeyData.appointmentJourney).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/12`)
     })
   })

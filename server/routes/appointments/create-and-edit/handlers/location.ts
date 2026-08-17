@@ -28,8 +28,7 @@ export default class LocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { appointmentJourney } = req.session
-    const { editAppointmentJourney } = req.journeyData
+    const { appointmentJourney, editAppointmentJourney } = req.journeyData
 
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
@@ -62,7 +61,7 @@ export default class LocationRoutes {
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
     const { locationType } = req.body
 
     if (locationType === LocationType.OUT_OF_CELL) {

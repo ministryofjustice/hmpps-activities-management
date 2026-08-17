@@ -19,7 +19,7 @@ export default class TierRoutes {
     res.render(`pages/appointments/create-and-edit/tier`, {
       eventTierRadioOptionDescriptions,
       isCtaAcceptAndSave:
-        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+        req.journeyData.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
     })
 
@@ -27,12 +27,12 @@ export default class TierRoutes {
     const { tier }: TierForm = req.body
     const { preserveHistory } = req.query
 
-    req.session.appointmentJourney.tierCode = EventTier[tier]
+    req.journeyData.appointmentJourney.tierCode = EventTier[tier]
 
     if (EventTier.TIER_2 === tier) {
       return res.redirect(`host${preserveHistory ? '?preserveHistory=true' : ''}`)
     }
-    req.session.appointmentJourney.organiserCode = null
+    req.journeyData.appointmentJourney.organiserCode = null
 
     return res.redirectOrReturn('location')
   }

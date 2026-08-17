@@ -32,10 +32,9 @@ describe('Route Handlers - Create Appointment - Host', () => {
 
     req = {
       params: {},
-      session: {
-        appointmentJourney: {},
-      },
+      session: {},
       journeyData: {
+        appointmentJourney: {},
         editAppointmentJourney: {},
       },
     } as unknown as Request
@@ -56,7 +55,7 @@ describe('Route Handlers - Create Appointment - Host', () => {
     })
 
     it('should render the expected view with accept and save', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.params = {
         appointmentId: '2',
       }
@@ -78,7 +77,7 @@ describe('Route Handlers - Create Appointment - Host', () => {
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.organiserCode).toEqual(Organiser.PRISONER)
+      expect(req.journeyData.appointmentJourney.organiserCode).toEqual(Organiser.PRISONER)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
   })
@@ -89,7 +88,7 @@ describe('Route Handlers - Create Appointment - Host', () => {
         host: Organiser.PRISONER,
       }
 
-      req.session.appointmentJourney = {
+      req.journeyData.appointmentJourney = {
         organiserCode: Organiser.PRISON_STAFF,
       } as unknown as AppointmentJourney
 
