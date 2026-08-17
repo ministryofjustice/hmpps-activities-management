@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
@@ -10,277 +9,290 @@
 {% set pageTitle = appointmentJourneyTitle("Check and confirm set - Appointments - DPS" if appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details - Appointments - DPS", appointmentJourney) %}
 {% set pageId = 'appointment-check-answers-page' %}
 
-{% set appointmentDetailsRows = [
-    {
-        key: {
-            text: "Appointment name"
-        },
-        value: {
-            text: appointmentJourney.appointmentName
-        },
-        actions: {
-            items: [
-                {
-                    href: "name?preserveHistory=true",
-                    text: "Change",
-                    visuallyHiddenText: "change appointment name",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-name' }
-                }
-            ]
-        }
-    }, {
-        key: {
-            text: "Tier"
-        },
-        value: {
-            text: tier
-        },
-        actions: {
-            items: [
-                {
-                    href: "tier?preserveHistory=true",
-                    text: "Change",
-                    visuallyHiddenText: "change appointment tier",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-tier' }
-                }
-            ]
-        }
-    }, {
-        key: {
-            text: "Host"
-        },
-        value: {
-            text: organiser
-        },
-        actions: {
-            items: [
-                {
-                    href: "host?preserveHistory=true",
-                    text: "Change",
-                    visuallyHiddenText: "change appointment host",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-host' }
-                }
-            ]
-        }
-    } if appointmentJourney.organiserCode
-] %}
+{%
+  set appointmentDetailsRows = [
+      {
+          key: {
+              text: "Appointment name"
+          },
+          value: {
+              text: appointmentJourney.appointmentName
+          },
+          actions: {
+              items: [
+                  {
+                      href: "name?preserveHistory=true",
+                      text: "Change",
+                      visuallyHiddenText: "change appointment name",
+                      classes: "govuk-link--no-visited-state",
+                      attributes: { 'data-qa': 'change-name' }
+                  }
+              ]
+          }
+      }, {
+          key: {
+              text: "Tier"
+          },
+          value: {
+              text: tier
+          },
+          actions: {
+              items: [
+                  {
+                      href: "tier?preserveHistory=true",
+                      text: "Change",
+                      visuallyHiddenText: "change appointment tier",
+                      classes: "govuk-link--no-visited-state",
+                      attributes: { 'data-qa': 'change-tier' }
+                  }
+              ]
+          }
+      }, {
+          key: {
+              text: "Host"
+          },
+          value: {
+              text: organiser
+          },
+          actions: {
+              items: [
+                  {
+                      href: "host?preserveHistory=true",
+                      text: "Change",
+                      visuallyHiddenText: "change appointment host",
+                      classes: "govuk-link--no-visited-state",
+                      attributes: { 'data-qa': 'change-host' }
+                  }
+              ]
+          }
+      } if appointmentJourney.organiserCode
+  ]
+%}
 
 {% set schedulingInformationRows = [] %}
-{% set schedulingInformationRows = (schedulingInformationRows.push(
-    {
-        key: {
-            text: "Location"
-        },
-        value: {
-            text: showLocation(user.externalActivitiesRolledOut, appointmentJourney, appointmentJourney.location.description)
-        },
-        actions: {
-            items: [
-                {
-                    href: "location?preserveHistory=true",
-                    text: "Change",
-                    visuallyHiddenText: "change location",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-location' }
-                }
-            ]
-        }
-    },
-    {
-        key: {
-            text: "Date"
-        },
-        value: {
-            text: appointmentJourney.startDate | parseIsoDate | formatDate
-        },
-        actions: {
-            items: [
-                {
-                    href: 'appointment-set-date?preserveHistory=true' if appointmentJourney.type == AppointmentType.SET else 'date-and-time?preserveHistory=true',
-                    text: "Change",
-                    visuallyHiddenText: "change date",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-start-date' }
-                }
-            ]
-        }
-    },
-    {
-        key: {
-            text: "Start time"
-        },
-        value: {
-            text: appointmentJourney.startTime.date | parseISODate | formatDate('HH:mm')
-        },
-        actions: {
-            items: [
-                {
-                    href: "date-and-time?preserveHistory=true",
-                    text: "Change",
-                    visuallyHiddenText: "change start time",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-start-time' }
-                }
-            ]
-        }
-    } if appointmentJourney.startTime,
-    {
-        key: {
-            text: "End time"
-        },
-        value: {
-            text: appointmentJourney.endTime.date | parseISODate | formatDate('HH:mm')
-        },
-        actions: {
-            items: [
-                {
-                    href: "date-and-time?preserveHistory=true",
-                    text: "Change",
-                    visuallyHiddenText: "change end time",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-end-time' }
-                }
-            ]
-        }
-    } if appointmentJourney.endTime,
-    {
-        key: {
-            text: "Repeats"
-        },
-        value: {
-            text: ("Yes" if appointmentJourney.repeat == YesNo.YES) +
-                  ("No" if appointmentJourney.repeat == YesNo.NO)
-        },
-        actions: {
-            items: [
-                {
-                    href: "repeat?preserveHistory=true",
-                    text: "Change",
-                    visuallyHiddenText: "change repeats",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-repeat' }
-                }
-            ] if appointmentJourney.retrospective == YesNo.NO
-        }
-    } if appointmentJourney.repeat
-), schedulingInformationRows) %}
+{%
+  set schedulingInformationRows = (schedulingInformationRows.push(
+      {
+          key: {
+              text: "Location"
+          },
+          value: {
+              text: showLocation(user.externalActivitiesRolledOut, appointmentJourney, appointmentJourney.location.description)
+          },
+          actions: {
+              items: [
+                  {
+                      href: "location?preserveHistory=true",
+                      text: "Change",
+                      visuallyHiddenText: "change location",
+                      classes: "govuk-link--no-visited-state",
+                      attributes: { 'data-qa': 'change-location' }
+                  }
+              ]
+          }
+      },
+      {
+          key: {
+              text: "Date"
+          },
+          value: {
+              text: appointmentJourney.startDate | parseIsoDate | formatDate
+          },
+          actions: {
+              items: [
+                  {
+                      href: 'appointment-set-date?preserveHistory=true' if appointmentJourney.type == AppointmentType.SET else 'date-and-time?preserveHistory=true',
+                      text: "Change",
+                      visuallyHiddenText: "change date",
+                      classes: "govuk-link--no-visited-state",
+                      attributes: { 'data-qa': 'change-start-date' }
+                  }
+              ]
+          }
+      },
+      {
+          key: {
+              text: "Start time"
+          },
+          value: {
+              text: appointmentJourney.startTime.date | parseISODate | formatDate('HH:mm')
+          },
+          actions: {
+              items: [
+                  {
+                      href: "date-and-time?preserveHistory=true",
+                      text: "Change",
+                      visuallyHiddenText: "change start time",
+                      classes: "govuk-link--no-visited-state",
+                      attributes: { 'data-qa': 'change-start-time' }
+                  }
+              ]
+          }
+      } if appointmentJourney.startTime,
+      {
+          key: {
+              text: "End time"
+          },
+          value: {
+              text: appointmentJourney.endTime.date | parseISODate | formatDate('HH:mm')
+          },
+          actions: {
+              items: [
+                  {
+                      href: "date-and-time?preserveHistory=true",
+                      text: "Change",
+                      visuallyHiddenText: "change end time",
+                      classes: "govuk-link--no-visited-state",
+                      attributes: { 'data-qa': 'change-end-time' }
+                  }
+              ]
+          }
+      } if appointmentJourney.endTime,
+      {
+          key: {
+              text: "Repeats"
+          },
+          value: {
+              text: ("Yes" if appointmentJourney.repeat == YesNo.YES) +
+                    ("No" if appointmentJourney.repeat == YesNo.NO)
+          },
+          actions: {
+              items: [
+                  {
+                      href: "repeat?preserveHistory=true",
+                      text: "Change",
+                      visuallyHiddenText: "change repeats",
+                      classes: "govuk-link--no-visited-state",
+                      attributes: { 'data-qa': 'change-repeat' }
+                  }
+              ] if appointmentJourney.retrospective == YesNo.NO
+          }
+      } if appointmentJourney.repeat
+  ), schedulingInformationRows)
+%}
 {% if appointmentJourney.repeat == YesNo.YES %}
-  {% set schedulingInformationRows = (schedulingInformationRows.push({
-      key: {
-          text: "Frequency"
-      },
-      value: {
-          text: ("Every weekday (Monday to Friday)" if appointmentJourney.frequency == AppointmentFrequency.WEEKDAY) +
-                ("Daily (includes weekends)" if appointmentJourney.frequency == AppointmentFrequency.DAILY) +
-                ("Weekly" if appointmentJourney.frequency == AppointmentFrequency.WEEKLY) +
-                ("Fortnightly" if appointmentJourney.frequency == AppointmentFrequency.FORTNIGHTLY) +
-                ("Monthly" if appointmentJourney.frequency == AppointmentFrequency.MONTHLY)
-      },
-      actions: {
-          items: [
-              {
-                  href: "repeat-frequency-and-count?preserveHistory=true",
-                  text: "Change",
-                  visuallyHiddenText: "change frequency",
-                  classes: "govuk-link--no-visited-state",
-                  attributes: { 'data-qa': 'change-frequency' }
-              }
-          ]
-      }
-  }), schedulingInformationRows) %}
-  {% set schedulingInformationRows = (schedulingInformationRows.push({
-      key: {
-          text: "Number of appointments"
-      },
-      value: {
-          text: appointmentJourney.numberOfAppointments
-      },
-      actions: {
-          items: [
-              {
-                  href: "repeat-frequency-and-count?preserveHistory=true",
-                  text: "Change",
-                  visuallyHiddenText: "change number of appointments",
-                  classes: "govuk-link--no-visited-state",
-                  attributes: { 'data-qa': 'change-number-of-appointments' }
-              }
-          ]
-      }
-  }), schedulingInformationRows) %}
+  {%
+    set schedulingInformationRows = (schedulingInformationRows.push({
+        key: {
+            text: "Frequency"
+        },
+        value: {
+            text: ("Every weekday (Monday to Friday)" if appointmentJourney.frequency == AppointmentFrequency.WEEKDAY) +
+                  ("Daily (includes weekends)" if appointmentJourney.frequency == AppointmentFrequency.DAILY) +
+                  ("Weekly" if appointmentJourney.frequency == AppointmentFrequency.WEEKLY) +
+                  ("Fortnightly" if appointmentJourney.frequency == AppointmentFrequency.FORTNIGHTLY) +
+                  ("Monthly" if appointmentJourney.frequency == AppointmentFrequency.MONTHLY)
+        },
+        actions: {
+            items: [
+                {
+                    href: "repeat-frequency-and-count?preserveHistory=true",
+                    text: "Change",
+                    visuallyHiddenText: "change frequency",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-frequency' }
+                }
+            ]
+        }
+    }), schedulingInformationRows)
+  %}
+  {%
+    set schedulingInformationRows = (schedulingInformationRows.push({
+        key: {
+            text: "Number of appointments"
+        },
+        value: {
+            text: appointmentJourney.numberOfAppointments
+        },
+        actions: {
+            items: [
+                {
+                    href: "repeat-frequency-and-count?preserveHistory=true",
+                    text: "Change",
+                    visuallyHiddenText: "change number of appointments",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-number-of-appointments' }
+                }
+            ]
+        }
+    }), schedulingInformationRows)
+  %}
 {% endif %}
 
 {% set extraInfoRows = [] %}
 {% if appointmentJourney.type !== AppointmentType.SET %}
   {% if not prisonerExtraInformationEnabled %}
-    {% set extraInfoRows = (extraInfoRows.push(
-        {
-            key: {
-                text: "Extra information"
-            },
-            value: {
-                html: '<span class="preserve-line-breaks" data-qa="extra-information">' + (appointmentJourney.extraInformation | escape) + '</span>'
-            },
-            actions: {
-                items: [
-                    {
-                        href: "extra-information?preserveHistory=true",
-                        text: "Change",
-                        visuallyHiddenText: "change extra information",
-                        classes: "govuk-link--no-visited-state",
-                        attributes: { 'data-qa': 'change-extra-information' }
-                    }
-                ] if appointmentJourney.retrospective == YesNo.NO
-            }
-        }
-    ), extraInfoRows) %}
+    {%
+      set extraInfoRows = (extraInfoRows.push(
+          {
+              key: {
+                  text: "Extra information"
+              },
+              value: {
+                  html: '<span class="preserve-line-breaks" data-qa="extra-information">' + (appointmentJourney.extraInformation | escape) + '</span>'
+              },
+              actions: {
+                  items: [
+                      {
+                          href: "extra-information?preserveHistory=true",
+                          text: "Change",
+                          visuallyHiddenText: "change extra information",
+                          classes: "govuk-link--no-visited-state",
+                          attributes: { 'data-qa': 'change-extra-information' }
+                      }
+                  ] if appointmentJourney.retrospective == YesNo.NO
+              }
+          }
+      ), extraInfoRows)
+    %}
   {% else %}
-    {% set extraInfoRows = (extraInfoRows.push(
-      {
-        key: {
-        text: "Notes for prison staff"
-      },
-        value: {
-        html: '<span class="preserve-line-breaks" data-qa="staff-notes">' + (appointmentJourney.extraInformation | escape) + '</span>'
-      },
-        actions: {
-          items: [
-            {
-              href: "extra-information?preserveHistory=true",
-              text: "Change",
-              visuallyHiddenText: "change extra information",
-              classes: "govuk-link--no-visited-state",
-              attributes: { 'data-qa': 'change-extra-information' }
-            }
-          ] if appointmentJourney.retrospective == YesNo.NO
+    {%
+      set extraInfoRows = (extraInfoRows.push(
+        {
+          key: {
+          text: "Notes for prison staff"
+        },
+          value: {
+          html: '<span class="preserve-line-breaks" data-qa="staff-notes">' + (appointmentJourney.extraInformation | escape) + '</span>'
+        },
+          actions: {
+            items: [
+              {
+                href: "extra-information?preserveHistory=true",
+                text: "Change",
+                visuallyHiddenText: "change extra information",
+                classes: "govuk-link--no-visited-state",
+                attributes: { 'data-qa': 'change-extra-information' }
+              }
+            ] if appointmentJourney.retrospective == YesNo.NO
+          }
+        },
+        {
+          key: {
+          text: "Notes for prisoner"
+        },
+          value: {
+          html: '<span class="preserve-line-breaks" data-qa="prisoner-notes">' + (appointmentJourney.prisonerExtraInformation | escape) + '</span>'
+        },
+          actions: {
+            items: [
+              {
+                href: "extra-information?preserveHistory=true",
+                text: "Change",
+                visuallyHiddenText: "change prisoner extra information",
+                classes: "govuk-link--no-visited-state",
+                attributes: { 'data-qa': 'change-prisoner-extra-information' }
+              }
+            ] if appointmentJourney.retrospective == YesNo.NO
+          }
         }
-      },
-      {
-        key: {
-        text: "Notes for prisoner"
-      },
-        value: {
-        html: '<span class="preserve-line-breaks" data-qa="prisoner-notes">' + (appointmentJourney.prisonerExtraInformation | escape) + '</span>'
-      },
-        actions: {
-          items: [
-            {
-              href: "extra-information?preserveHistory=true",
-              text: "Change",
-              visuallyHiddenText: "change prisoner extra information",
-              classes: "govuk-link--no-visited-state",
-              attributes: { 'data-qa': 'change-prisoner-extra-information' }
-            }
-          ] if appointmentJourney.retrospective == YesNo.NO
-        }
-      }
-    ), extraInfoRows) %}
+      ), extraInfoRows)
+    %}
   {% endif %}
 {% endif %}
 {% if appointmentJourney.type == AppointmentType.SET %}
-    {% set schedulingInformationRows = (schedulingInformationRows.push(
+  {%
+    set schedulingInformationRows = (schedulingInformationRows.push(
         {
             key: {
                 text: "Appointments created"
@@ -289,54 +301,64 @@
                 text: appointmentSetJourney.appointments | length
             }
         }
-    ), schedulingInformationRows) %}
+    ), schedulingInformationRows)
+  %}
 {% endif %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l">Check and confirm the appointment details</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">Check and confirm the appointment details</h1>
 
-            <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+      <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                <h2 class="govuk-heading-m">Appointment details</h2>
-                {{ govukSummaryList({
-                    rows: appointmentDetailsRows,
-                    attributes: { 'data-qa': 'appointment-details' }
-                }) }}
+        <h2 class="govuk-heading-m">Appointment details</h2>
+        {{
+          govukSummaryList({
+              rows: appointmentDetailsRows,
+              attributes: { 'data-qa': 'appointment-details' }
+          })
+        }}
 
-                <h2 class="govuk-heading-m">Scheduling information</h2>
-                {{ govukSummaryList({
-                    rows: schedulingInformationRows,
-                    attributes: { 'data-qa': 'scheduling-information' }
-                }) }}
+        <h2 class="govuk-heading-m">Scheduling information</h2>
+        {{
+          govukSummaryList({
+              rows: schedulingInformationRows,
+              attributes: { 'data-qa': 'scheduling-information' }
+          })
+        }}
 
-                {% if extraInfoRows | length %}
-                    <h2 class="govuk-heading-m">Extra information</h2>
-                    {{ govukSummaryList({
-                        rows: extraInfoRows,
-                        attributes: { 'data-qa': 'extra-information' }
-                    }) }}
-                {% endif %}
+        {% if extraInfoRows | length %}
+          <h2 class="govuk-heading-m">Extra information</h2>
+          {{
+            govukSummaryList({
+                rows: extraInfoRows,
+                attributes: { 'data-qa': 'extra-information' }
+            })
+          }}
+        {% endif %}
 
-                {{ prisonersList() if appointmentJourney.type == AppointmentType.GROUP }}
+        {{ prisonersList() if appointmentJourney.type == AppointmentType.GROUP }}
 
-                {{ appointmentSet() if appointmentJourney.type == AppointmentType.SET }}
+        {{ appointmentSet() if appointmentJourney.type == AppointmentType.SET }}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Confirm",
-                        preventDoubleClick: true
-                    }) }}
-                </div>
-            </form>
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+                text: "Confirm",
+                preventDoubleClick: true
+            })
+          }}
         </div>
+      </form>
     </div>
+  </div>
 {% endblock %}
 
 {% macro prisonersList() %}
-    {% set prisonerListRows = [{
+  {%
+    set prisonerListRows = [{
         key: {
             text: "Number of attendees"
         },
@@ -354,156 +376,167 @@
                 }
             ]
         }
-    }] %}
+    }]
+  %}
 
-    {% for prisoner in appointmentJourney.prisoners %}
-        {% set prisonerListRows = (prisonerListRows.push({
-            key: {
-                text: "Name of attendee"
-            },
-            value: {
-                html: showProfileLink({
-                    firstName: prisoner.firstName,
-                    middleNames: prisoner.middleNames,
-                    lastName: prisoner.lastName,
-                    prisonerNumber: prisoner.number,
-                    cellLocation: prisoner.cellLocation
-                })
-            }
-        }), prisonerListRows) %}
-    {% endfor %}
+  {% for prisoner in appointmentJourney.prisoners %}
+    {%
+      set prisonerListRows = (prisonerListRows.push({
+          key: {
+              text: "Name of attendee"
+          },
+          value: {
+              html: showProfileLink({
+                  firstName: prisoner.firstName,
+                  middleNames: prisoner.middleNames,
+                  lastName: prisoner.lastName,
+                  prisonerNumber: prisoner.number,
+                  cellLocation: prisoner.cellLocation
+              })
+          }
+      }), prisonerListRows)
+    %}
+  {% endfor %}
 
-    <h2 class="govuk-heading-m">Attendee details</h2>
-    {{ govukSummaryList({
+  <h2 class="govuk-heading-m">Attendee details</h2>
+  {{
+    govukSummaryList({
         rows: prisonerListRows,
         attributes: { 'data-qa': 'prisoner-details' }
-    }) }}
+    })
+  }}
 {% endmacro %}
 
 {% macro appointmentSet() %}
-    <div class="govuk-button-group">
-        {{ govukButton({
-            text: "Confirm",
-            preventDoubleClick: true
-        }) }}
-    </div>
+  <div class="govuk-button-group">
+    {{
+      govukButton({
+          text: "Confirm",
+          preventDoubleClick: true
+      })
+    }}
+  </div>
 
-    <h2 class="govuk-heading-m">{{ ("Attendee details" if appointmentSetJourney.appointments.length == 1 else "Details of attendees") }}</h2>
+  <h2 class="govuk-heading-m">
+    {{ ("Attendee details" if appointmentSetJourney.appointments.length == 1 else "Details of attendees") }}
+  </h2>
 
-    {% for appointment in appointmentSetJourney.appointments %}
-        {{ govukSummaryList({
-            card: {
-                title: {
-                    text: "Appointment " + loop.index
-                }
-            },
-            rows: [{
-                key: {
-                    text: "Attendee"
-                },
-                value: {
-                    html: showProfileLink({
-                        firstName: appointment.prisoner.firstName,
-                        middleNames: appointment.prisoner.middleNames,
-                        lastName: appointment.prisoner.lastName,
-                        prisonerNumber: appointment.prisoner.number,
-                        cellLocation: appointment.prisoner.cellLocation
-                    })
-                }
-            }, {
-                key: {
-                    text: "Start time"
-                },
-                value: {
-                    text: appointment.startTime.hour | padNumber + ":" + appointment.startTime.minute | padNumber
-                },
-                actions: {
-                    items: [
-                        {
-                            href: "appointment-set-times?preserveHistory=true",
-                            text: "Change",
-                            visuallyHiddenText: "change start time",
-                            classes: "govuk-link--no-visited-state"
-                        }
-                    ]
-                }
-            }, {
-                key: {
-                    text: "End time"
-                },
-                value: {
-                    text: appointment.endTime.hour | padNumber + ":" + appointment.endTime.minute | padNumber
-                },
-                actions: {
-                    items: [
-                        {
-                            href: "appointment-set-times?preserveHistory=true",
-                            text: "Change",
-                            visuallyHiddenText: "change end time",
-                            classes: "govuk-link--no-visited-state"
-                        }
-                    ]
-                }
-            }, {
-                key: {
-                    text: "Extra information"
-                },
-                value: {
-                    html: '<span class="preserve-line-breaks data-qa="extra-info-' + appointment.prisoner.number + '"">' + appointment.extraInformation | escape + '</span>'
-                },
-                actions: {
-                    items: [
-                        {
-                            href: "appointment-set-extra-information/" + appointment.prisoner.number + "?preserveHistory=true",
-                            text: "Change",
-                            visuallyHiddenText: "change extra information",
-                            classes: "govuk-link--no-visited-state"
-                        }
-                    ]
-                }
-            } if not prisonerExtraInformationEnabled, {
-            key: {
-              text: "Extra information"
-            },
-            value: {
-              text: ''
-            },
-            classes: 'govuk-summary-list__row--no-border'
-          } if prisonerExtraInformationEnabled, {
-            key: {
-              text: "Notes for prison staff"
-            },
-            value: {
-              html: '<span class="preserve-line-breaks" data-qa="staff-info-' + appointment.prisoner.number + '">' + appointment.extraInformation | escape + '</span>'
-            },
-            actions: {
-              items: [
-                {
-                  href: "appointment-set-extra-information/" + appointment.prisoner.number + "?preserveHistory=true",
-                  text: "Change",
-                  visuallyHiddenText: "change extra information",
-                  classes: "govuk-link--no-visited-state"
-                }
-              ]
-            }
-          } if prisonerExtraInformationEnabled, {
-            key: {
-              text: "Notes for prisoner"
-            },
-            value: {
-              html: '<span class="preserve-line-breaks" data-qa="prisoner-info-' + appointment.prisoner.number + '">' + appointment.prisonerExtraInformation | escape + '</span>'
-            },
-            actions: {
-              items: [
-                {
-                  href: "appointment-set-extra-information/" + appointment.prisoner.number + "?preserveHistory=true",
-                  text: "Change",
-                  visuallyHiddenText: "change extra information",
-                  classes: "govuk-link--no-visited-state"
-                }
-              ]
-            }
-          } if prisonerExtraInformationEnabled ]
-        }) }}
-    {% endfor %}
+  {% for appointment in appointmentSetJourney.appointments %}
+    {{
+      govukSummaryList({
+          card: {
+              title: {
+                  text: "Appointment " + loop.index
+              }
+          },
+          rows: [{
+              key: {
+                  text: "Attendee"
+              },
+              value: {
+                  html: showProfileLink({
+                      firstName: appointment.prisoner.firstName,
+                      middleNames: appointment.prisoner.middleNames,
+                      lastName: appointment.prisoner.lastName,
+                      prisonerNumber: appointment.prisoner.number,
+                      cellLocation: appointment.prisoner.cellLocation
+                  })
+              }
+          }, {
+              key: {
+                  text: "Start time"
+              },
+              value: {
+                  text: appointment.startTime.hour | padNumber + ":" + appointment.startTime.minute | padNumber
+              },
+              actions: {
+                  items: [
+                      {
+                          href: "appointment-set-times?preserveHistory=true",
+                          text: "Change",
+                          visuallyHiddenText: "change start time",
+                          classes: "govuk-link--no-visited-state"
+                      }
+                  ]
+              }
+          }, {
+              key: {
+                  text: "End time"
+              },
+              value: {
+                  text: appointment.endTime.hour | padNumber + ":" + appointment.endTime.minute | padNumber
+              },
+              actions: {
+                  items: [
+                      {
+                          href: "appointment-set-times?preserveHistory=true",
+                          text: "Change",
+                          visuallyHiddenText: "change end time",
+                          classes: "govuk-link--no-visited-state"
+                      }
+                  ]
+              }
+          }, {
+              key: {
+                  text: "Extra information"
+              },
+              value: {
+                  html: '<span class="preserve-line-breaks data-qa="extra-info-' + appointment.prisoner.number + '"">' + appointment.extraInformation | escape + '</span>'
+              },
+              actions: {
+                  items: [
+                      {
+                          href: "appointment-set-extra-information/" + appointment.prisoner.number + "?preserveHistory=true",
+                          text: "Change",
+                          visuallyHiddenText: "change extra information",
+                          classes: "govuk-link--no-visited-state"
+                      }
+                  ]
+              }
+          } if not prisonerExtraInformationEnabled, {
+          key: {
+            text: "Extra information"
+          },
+          value: {
+            text: ''
+          },
+          classes: 'govuk-summary-list__row--no-border'
+        } if prisonerExtraInformationEnabled, {
+          key: {
+            text: "Notes for prison staff"
+          },
+          value: {
+            html: '<span class="preserve-line-breaks" data-qa="staff-info-' + appointment.prisoner.number + '">' + appointment.extraInformation | escape + '</span>'
+          },
+          actions: {
+            items: [
+              {
+                href: "appointment-set-extra-information/" + appointment.prisoner.number + "?preserveHistory=true",
+                text: "Change",
+                visuallyHiddenText: "change extra information",
+                classes: "govuk-link--no-visited-state"
+              }
+            ]
+          }
+        } if prisonerExtraInformationEnabled, {
+          key: {
+            text: "Notes for prisoner"
+          },
+          value: {
+            html: '<span class="preserve-line-breaks" data-qa="prisoner-info-' + appointment.prisoner.number + '">' + appointment.prisonerExtraInformation | escape + '</span>'
+          },
+          actions: {
+            items: [
+              {
+                href: "appointment-set-extra-information/" + appointment.prisoner.number + "?preserveHistory=true",
+                text: "Change",
+                visuallyHiddenText: "change extra information",
+                classes: "govuk-link--no-visited-state"
+              }
+            ]
+          }
+        } if prisonerExtraInformationEnabled ]
+      })
+    }}
+  {% endfor %}
 {% endmacro %}

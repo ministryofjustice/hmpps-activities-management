@@ -244,15 +244,15 @@ describe('Views - Create Appointment - Check Answers - with extra information to
   })
 
   it('should preserve history on all change links', () => {
-    viewContext.session.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
-    viewContext.session.appointmentJourney.location = {
+    viewContext.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
+    viewContext.appointmentJourney.location = {
       id: 123,
       description: 'Wing A',
     }
-    viewContext.session.appointmentJourney.retrospective = YesNo.NO
-    viewContext.session.appointmentJourney.repeat = YesNo.YES
-    viewContext.session.appointmentJourney.frequency = AppointmentFrequency.WEEKLY
-    viewContext.session.appointmentJourney.numberOfAppointments = 6
+    viewContext.appointmentJourney.retrospective = YesNo.NO
+    viewContext.appointmentJourney.repeat = YesNo.YES
+    viewContext.appointmentJourney.frequency = AppointmentFrequency.WEEKLY
+    viewContext.appointmentJourney.numberOfAppointments = 6
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
