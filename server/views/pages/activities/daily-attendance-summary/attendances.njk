@@ -5,6 +5,7 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "partials/attendance/activityTypeFilters.njk" import activityTypeFilters %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "partials/searchInput.njk" import searchInput %}
@@ -88,27 +89,12 @@
     <input type="hidden" name="isAbsencesFilter" value="true" />
   {% endif %}
 
-  {% if user.externalActivitiesRolledOut %}
-    {# Activity type filter #}
-    {{
-      govukCheckboxes({
-          idPrefix: 'activityTypeFilters',
-          name: 'activityTypeFilters',
-          classes: "govuk-radios--small",
-          fieldset: {
-              legend: {
-                  text: 'Activity type',
-                  classes: 'govuk-fieldset__legend--m'
-              }
-          },
-          items: [
-              {value: 'inPrison', text: 'In-prison', checked: 'inPrison' in attendanceSummaryJourney.activityTypeFilters},
-              {value: 'outsidePrison', text: 'Outside - prison-paid', checked: 'outsidePrison' in attendanceSummaryJourney.activityTypeFilters},
-              {value: 'outsideEmployer', text: 'Outside - employer-paid', checked: 'outsideEmployer' in attendanceSummaryJourney.activityTypeFilters}
-          ]
-      })
-    }}
-  {% endif %}
+  {{
+    activityTypeFilters(
+        attendanceSummaryJourney.activityTypeFilters,
+        user.externalActivitiesRolledOut
+    )
+  }}
 
   {# Categories filter #}
   {% set categoryFilters = [] %}

@@ -113,10 +113,8 @@ const getScheduledEventsForPrisoner = (prisoner: { number: string }) => [
 describe('Views - Appointments Management - Schedule', () => {
   let compiledTemplate: Template
   let viewContext = {
-    session: {
-      appointmentJourney: {} as AppointmentJourney,
-      appointmentSetJourney: {} as AppointmentSetJourney,
-    },
+    appointmentJourney: {} as AppointmentJourney,
+    appointmentSetJourney: {} as AppointmentSetJourney,
     editAppointmentJourney: {} as EditAppointmentJourney,
     prisonerSchedules: [] as {
       prisoner: { number: string; name: string; firstName?: string; lastName?: string; cellLocation: string }
@@ -143,12 +141,10 @@ describe('Views - Appointments Management - Schedule', () => {
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
-        appointmentJourney: {
-          startDate: formatIsoDate(tomorrow),
-        } as unknown as AppointmentJourney,
-        appointmentSetJourney: {} as AppointmentSetJourney,
-      },
+      appointmentJourney: {
+        startDate: formatIsoDate(tomorrow),
+      } as unknown as AppointmentJourney,
+      appointmentSetJourney: {} as AppointmentSetJourney,
       editAppointmentJourney: {} as EditAppointmentJourney,
       prisonerSchedules: [],
       formResponses: {},
@@ -161,8 +157,8 @@ describe('Views - Appointments Management - Schedule', () => {
       getAppointmentDetailsValueElement('Attendee').find(`[data-qa="${qaAttr}"]`)
 
     beforeEach(() => {
-      viewContext.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
-      viewContext.session.appointmentJourney.prisoners = [
+      viewContext.appointmentJourney.type = AppointmentType.INDIVIDUAL
+      viewContext.appointmentJourney.prisoners = [
         {
           number: 'A1234BC',
           name: 'TEST PRISONER',
@@ -173,17 +169,17 @@ describe('Views - Appointments Management - Schedule', () => {
           prisonCode: 'MDI',
         },
       ]
-      viewContext.session.appointmentJourney.startTime = {
+      viewContext.appointmentJourney.startTime = {
         hour: 9,
         minute: 0,
         date: formatDate(tomorrow.setHours(9, 0), "yyyy-MM-dd'T'HH:mm:ss") as unknown as Date,
       }
-      viewContext.session.appointmentJourney.endTime = {
+      viewContext.appointmentJourney.endTime = {
         hour: 10,
         minute: 30,
         date: formatDate(tomorrow.setHours(10, 30), "yyyy-MM-dd'T'HH:mm:ss") as unknown as Date,
       }
-      viewContext.prisonerSchedules = viewContext.session.appointmentJourney.prisoners.map(prisoner => ({
+      viewContext.prisonerSchedules = viewContext.appointmentJourney.prisoners.map(prisoner => ({
         prisoner,
         scheduledEvents: getScheduledEventsForPrisoner(prisoner),
       }))
@@ -358,8 +354,8 @@ describe('Views - Appointments Management - Schedule', () => {
 
   describe('Group Appointment', () => {
     beforeEach(() => {
-      viewContext.session.appointmentJourney.type = AppointmentType.GROUP
-      viewContext.session.appointmentJourney.prisoners = [
+      viewContext.appointmentJourney.type = AppointmentType.GROUP
+      viewContext.appointmentJourney.prisoners = [
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -451,17 +447,17 @@ describe('Views - Appointments Management - Schedule', () => {
           prisonCode: 'MDI',
         },
       ]
-      viewContext.session.appointmentJourney.startTime = {
+      viewContext.appointmentJourney.startTime = {
         hour: 14,
         minute: 30,
         date: formatDate(tomorrow.setHours(14, 30), "yyyy-MM-dd'T'HH:mm:ss") as unknown as Date,
       }
-      viewContext.session.appointmentJourney.endTime = {
+      viewContext.appointmentJourney.endTime = {
         hour: 16,
         minute: 0,
         date: formatDate(tomorrow.setHours(16, 0), "yyyy-MM-dd'T'HH:mm:ss") as unknown as Date,
       }
-      viewContext.prisonerSchedules = viewContext.session.appointmentJourney.prisoners.map(prisoner => ({
+      viewContext.prisonerSchedules = viewContext.appointmentJourney.prisoners.map(prisoner => ({
         prisoner,
         scheduledEvents: getScheduledEventsForPrisoner(prisoner),
       }))
@@ -499,7 +495,7 @@ describe('Views - Appointments Management - Schedule', () => {
     })
 
     it('should display "Continue" top call to action for eleven attendees', () => {
-      viewContext.session.appointmentJourney.prisoners.push({
+      viewContext.appointmentJourney.prisoners.push({
         number: 'K2345LM',
         name: 'TEST11 PRISONER11',
         firstName: 'TEST11',
@@ -509,8 +505,8 @@ describe('Views - Appointments Management - Schedule', () => {
         prisonCode: 'MDI',
       })
       viewContext.prisonerSchedules.push({
-        prisoner: viewContext.session.appointmentJourney.prisoners[10],
-        scheduledEvents: getScheduledEventsForPrisoner(viewContext.session.appointmentJourney.prisoners[10]),
+        prisoner: viewContext.appointmentJourney.prisoners[10],
+        scheduledEvents: getScheduledEventsForPrisoner(viewContext.appointmentJourney.prisoners[10]),
       })
 
       $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -581,7 +577,7 @@ describe('Views - Appointments Management - Schedule', () => {
     })
 
     it('should only display list is empty and someone must be added when attendee list is empty', () => {
-      viewContext.session.appointmentJourney.prisoners = []
+      viewContext.appointmentJourney.prisoners = []
       viewContext.prisonerSchedules = []
 
       $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -700,8 +696,8 @@ describe('Views - Appointments Management - Schedule', () => {
 
   describe('Appointment Set', () => {
     beforeEach(() => {
-      viewContext.session.appointmentJourney.type = AppointmentType.SET
-      viewContext.session.appointmentSetJourney.appointments = [
+      viewContext.appointmentJourney.type = AppointmentType.SET
+      viewContext.appointmentSetJourney.appointments = [
         {
           startTime: { hour: 9, minute: 0 },
           endTime: { hour: 9, minute: 15 },
@@ -833,7 +829,7 @@ describe('Views - Appointments Management - Schedule', () => {
           },
         },
       ]
-      viewContext.prisonerSchedules = viewContext.session.appointmentSetJourney.appointments.map(appointment => ({
+      viewContext.prisonerSchedules = viewContext.appointmentSetJourney.appointments.map(appointment => ({
         prisoner: appointment.prisoner,
         startTime: appointment.startTime,
         endTime: appointment.endTime,
@@ -868,7 +864,7 @@ describe('Views - Appointments Management - Schedule', () => {
     })
 
     it('should display "Continue" top call to action for eleven appointments', () => {
-      viewContext.session.appointmentSetJourney.appointments.push({
+      viewContext.appointmentSetJourney.appointments.push({
         startTime: { hour: 11, minute: 30 },
         endTime: { hour: 11, minute: 45 },
         prisoner: {
@@ -882,12 +878,10 @@ describe('Views - Appointments Management - Schedule', () => {
         },
       })
       viewContext.prisonerSchedules.push({
-        prisoner: viewContext.session.appointmentSetJourney.appointments[10].prisoner,
-        startTime: viewContext.session.appointmentSetJourney.appointments[10].startTime,
-        endTime: viewContext.session.appointmentSetJourney.appointments[10].endTime,
-        scheduledEvents: getScheduledEventsForPrisoner(
-          viewContext.session.appointmentSetJourney.appointments[10].prisoner,
-        ),
+        prisoner: viewContext.appointmentSetJourney.appointments[10].prisoner,
+        startTime: viewContext.appointmentSetJourney.appointments[10].startTime,
+        endTime: viewContext.appointmentSetJourney.appointments[10].endTime,
+        scheduledEvents: getScheduledEventsForPrisoner(viewContext.appointmentSetJourney.appointments[10].prisoner),
       })
 
       $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -971,7 +965,7 @@ describe('Views - Appointments Management - Schedule', () => {
     })
 
     it('should only display list is empty and someone must be added when attendee list is empty', () => {
-      viewContext.session.appointmentSetJourney.appointments = []
+      viewContext.appointmentSetJourney.appointments = []
       viewContext.prisonerSchedules = []
 
       $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -1092,7 +1086,7 @@ describe('Views - Appointments Management - Schedule', () => {
 
   describe('Edit Appointment', () => {
     beforeEach(() => {
-      viewContext.session.appointmentJourney = {
+      viewContext.appointmentJourney = {
         mode: AppointmentJourneyMode.EDIT,
         startDate: formatIsoDate(tomorrow),
         startTime: {
@@ -1106,7 +1100,7 @@ describe('Views - Appointments Management - Schedule', () => {
           date: formatDate(tomorrow.setHours(16, 0), "yyyy-MM-dd'T'HH:mm:ss") as unknown as Date,
         },
       } as AppointmentJourney
-      viewContext.session.appointmentJourney.prisoners = [
+      viewContext.appointmentJourney.prisoners = [
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -1198,7 +1192,7 @@ describe('Views - Appointments Management - Schedule', () => {
           prisonCode: 'MDI',
         },
       ]
-      viewContext.prisonerSchedules = viewContext.session.appointmentJourney.prisoners.map(prisoner => ({
+      viewContext.prisonerSchedules = viewContext.appointmentJourney.prisoners.map(prisoner => ({
         prisoner,
         scheduledEvents: getScheduledEventsForPrisoner(prisoner),
       }))
@@ -1284,7 +1278,7 @@ describe('Views - Appointments Management - Schedule', () => {
         viewContext.editAppointmentJourney = {
           startDate: formatIsoDate(nextWeek),
         } as unknown as EditAppointmentJourney
-        viewContext.session.appointmentJourney.prisoners.push({
+        viewContext.appointmentJourney.prisoners.push({
           number: 'K2345LM',
           name: 'TEST11 PRISONER11',
           cellLocation: '1-1-11',
@@ -1292,8 +1286,8 @@ describe('Views - Appointments Management - Schedule', () => {
           prisonCode: 'MDI',
         })
         viewContext.prisonerSchedules.push({
-          prisoner: viewContext.session.appointmentJourney.prisoners[10],
-          scheduledEvents: getScheduledEventsForPrisoner(viewContext.session.appointmentJourney.prisoners[10]),
+          prisoner: viewContext.appointmentJourney.prisoners[10],
+          scheduledEvents: getScheduledEventsForPrisoner(viewContext.appointmentJourney.prisoners[10]),
         })
         $ = cheerio.load(compiledTemplate.render(viewContext))
       })
@@ -1350,7 +1344,7 @@ describe('Views - Appointments Management - Schedule', () => {
             date: formatDate(tomorrow.setHours(16, 0), "yyyy-MM-dd'T'HH:mm:ss") as unknown as Date,
           },
         } as unknown as EditAppointmentJourney
-        viewContext.session.appointmentJourney.prisoners.push({
+        viewContext.appointmentJourney.prisoners.push({
           number: 'K2345LM',
           name: 'TEST11 PRISONER11',
           cellLocation: '1-1-11',
@@ -1358,8 +1352,8 @@ describe('Views - Appointments Management - Schedule', () => {
           prisonCode: 'MDI',
         })
         viewContext.prisonerSchedules.push({
-          prisoner: viewContext.session.appointmentJourney.prisoners[10],
-          scheduledEvents: getScheduledEventsForPrisoner(viewContext.session.appointmentJourney.prisoners[10]),
+          prisoner: viewContext.appointmentJourney.prisoners[10],
+          scheduledEvents: getScheduledEventsForPrisoner(viewContext.appointmentJourney.prisoners[10]),
         })
         $ = cheerio.load(compiledTemplate.render(viewContext))
       })
@@ -1417,7 +1411,7 @@ describe('Views - Appointments Management - Schedule', () => {
             date: formatDate(tomorrow.setHours(16, 0), "yyyy-MM-dd'T'HH:mm:ss") as unknown as Date,
           },
         } as unknown as EditAppointmentJourney
-        viewContext.session.appointmentJourney.prisoners.push({
+        viewContext.appointmentJourney.prisoners.push({
           number: 'K2345LM',
           name: 'TEST11 PRISONER11',
           cellLocation: '1-1-11',
@@ -1425,8 +1419,8 @@ describe('Views - Appointments Management - Schedule', () => {
           prisonCode: 'MDI',
         })
         viewContext.prisonerSchedules.push({
-          prisoner: viewContext.session.appointmentJourney.prisoners[10],
-          scheduledEvents: getScheduledEventsForPrisoner(viewContext.session.appointmentJourney.prisoners[10]),
+          prisoner: viewContext.appointmentJourney.prisoners[10],
+          scheduledEvents: getScheduledEventsForPrisoner(viewContext.appointmentJourney.prisoners[10]),
         })
         $ = cheerio.load(compiledTemplate.render(viewContext))
       })

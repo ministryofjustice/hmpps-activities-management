@@ -18,7 +18,8 @@ describe('Route Handlers - Uncancel an Appointment', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           mode: 'EDIT',
           type: 'GROUP',
@@ -59,8 +60,6 @@ describe('Route Handlers - Uncancel an Appointment', () => {
           repeat: 'NO',
           extraInformation: null,
         },
-      },
-      journeyData: {
         editAppointmentJourney: {
           numberOfAppointments: 1,
           appointments: [
@@ -102,7 +101,7 @@ describe('Route Handlers - Uncancel an Appointment', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirm-edit', {
         appointmentId,
-        startDate: parseIsoDate(req.session.appointmentJourney.startDate),
+        startDate: parseIsoDate(req.journeyData.appointmentJourney.startDate),
       })
     })
   })
@@ -110,7 +109,8 @@ describe('Route Handlers - Uncancel an Appointment', () => {
   describe('POST', () => {
     it('should redirect to apply-to screen when part of an appointment series', async () => {
       req = {
-        session: {
+        session: {},
+        journeyData: {
           appointmentJourney: {
             mode: 'EDIT',
             type: 'GROUP',
@@ -153,8 +153,6 @@ describe('Route Handlers - Uncancel an Appointment', () => {
             numberOfAppointments: 5,
             extraInformation: null,
           },
-        },
-        journeyData: {
           editAppointmentJourney: {
             numberOfAppointments: 5,
             appointments: [
@@ -210,7 +208,8 @@ describe('Route Handlers - Uncancel an Appointment', () => {
 
     it('should redirect to appointment screen when part of an appointment series and last appointment is being uncancelled', async () => {
       req = {
-        session: {
+        session: {},
+        journeyData: {
           appointmentJourney: {
             mode: 'EDIT',
             type: 'GROUP',
@@ -253,8 +252,6 @@ describe('Route Handlers - Uncancel an Appointment', () => {
             numberOfAppointments: 5,
             extraInformation: null,
           },
-        },
-        journeyData: {
           editAppointmentJourney: {
             numberOfAppointments: 5,
             appointments: [
@@ -310,7 +307,8 @@ describe('Route Handlers - Uncancel an Appointment', () => {
 
     it('should redirect to appointment screen when part of an appointment series and future appointments are not cancelled', async () => {
       req = {
-        session: {
+        session: {},
+        journeyData: {
           appointmentJourney: {
             mode: 'EDIT',
             type: 'GROUP',
@@ -353,8 +351,6 @@ describe('Route Handlers - Uncancel an Appointment', () => {
             numberOfAppointments: 5,
             extraInformation: null,
           },
-        },
-        journeyData: {
           editAppointmentJourney: {
             numberOfAppointments: 5,
             appointments: [
@@ -410,7 +406,8 @@ describe('Route Handlers - Uncancel an Appointment', () => {
 
     it('should redirect to appointment screen when a single appointment', async () => {
       req = {
-        session: {
+        session: {},
+        journeyData: {
           appointmentJourney: {
             mode: 'EDIT',
             type: 'GROUP',
@@ -451,8 +448,6 @@ describe('Route Handlers - Uncancel an Appointment', () => {
             repeat: 'NO',
             extraInformation: null,
           },
-        },
-        journeyData: {
           editAppointmentJourney: {
             numberOfAppointments: 1,
             appointments: [

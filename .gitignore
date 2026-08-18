@@ -127,3 +127,6 @@ integration_tests/screenshots/
 **/Chart.lock
 /.run/
 .DS_Store
+
+playwright-report/
+playwright-test-results/

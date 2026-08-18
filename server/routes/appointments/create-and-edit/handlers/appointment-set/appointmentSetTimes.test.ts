@@ -30,7 +30,8 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           startDate: formatIsoDate(tomorrow),
         },
@@ -78,7 +79,7 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
     it('should render the date and time view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/appointment-set/times', {
-        appointments: req.session.appointmentSetJourney.appointments,
+        appointments: req.journeyData.appointmentSetJourney.appointments,
       })
     })
   })
@@ -119,11 +120,11 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
 
       req.body = { startTime, endTime }
 
-      req.session.appointmentJourney.startDate = formatIsoDate(tomorrow)
+      req.journeyData.appointmentJourney.startDate = formatIsoDate(tomorrow)
     })
 
     it('should fail validation if start time is in the past', async () => {
-      req.session.appointmentJourney.startDate = formatIsoDate(yesterday)
+      req.journeyData.appointmentJourney.startDate = formatIsoDate(yesterday)
 
       await handler.POST(req, res)
 
@@ -165,7 +166,7 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
     it('should update and save start time and end time in session and redirect to extra information page', async () => {
       await handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'ABC1234',
@@ -201,7 +202,7 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'ABC1234',

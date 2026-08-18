@@ -54,7 +54,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         appointmentJourney: {},
       },
       params: { journeyId: 'journeyId' },
@@ -68,7 +68,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
   describe('GET', () => {
     it('should render the name view', async () => {
-      req.session.appointmentJourney.type = AppointmentType.GROUP
+      req.journeyData.appointmentJourney.type = AppointmentType.GROUP
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
 
@@ -80,7 +80,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
     })
 
     it('should remove VLB and VLPM category for appointment sets ', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
       const filteredCategories = categories
@@ -106,12 +106,12 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.appointmentName).toEqual('Medical - Doctor')
-      expect(req.session.appointmentJourney.category).toEqual({
+      expect(req.journeyData.appointmentJourney.appointmentName).toEqual('Medical - Doctor')
+      expect(req.journeyData.appointmentJourney.category).toEqual({
         code: 'MEDO',
         description: 'Medical - Doctor',
       })
-      expect(req.session.appointmentJourney.customName).toBeNull()
+      expect(req.journeyData.appointmentJourney.customName).toBeNull()
       expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
     })
 
@@ -125,12 +125,12 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.appointmentName).toEqual('Bible studies (Chaplaincy)')
-      expect(req.session.appointmentJourney.category).toEqual({
+      expect(req.journeyData.appointmentJourney.appointmentName).toEqual('Bible studies (Chaplaincy)')
+      expect(req.journeyData.appointmentJourney.category).toEqual({
         code: 'CHAP',
         description: 'Chaplaincy',
       })
-      expect(req.session.appointmentJourney.customName).toEqual('Bible studies')
+      expect(req.journeyData.appointmentJourney.customName).toEqual('Bible studies')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
     })
 
@@ -144,8 +144,8 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.appointmentName).toEqual('Bible studies (Chaplaincy)')
-      expect(req.session.appointmentJourney.customName).toEqual('Bible studies')
+      expect(req.journeyData.appointmentJourney.appointmentName).toEqual('Bible studies (Chaplaincy)')
+      expect(req.journeyData.appointmentJourney.customName).toEqual('Bible studies')
     })
 
     it('should set custom name to null when undefined', async () => {
@@ -158,8 +158,8 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.customName).toBeNull()
+      expect(req.journeyData.appointmentJourney.appointmentName).toEqual('Chaplaincy')
+      expect(req.journeyData.appointmentJourney.customName).toBeNull()
     })
 
     it('should set custom name to null when null', async () => {
@@ -172,8 +172,8 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.customName).toBeNull()
+      expect(req.journeyData.appointmentJourney.appointmentName).toEqual('Chaplaincy')
+      expect(req.journeyData.appointmentJourney.customName).toBeNull()
     })
 
     it('should set custom name to null when empty string', async () => {
@@ -186,8 +186,8 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.customName).toBeNull()
+      expect(req.journeyData.appointmentJourney.appointmentName).toEqual('Chaplaincy')
+      expect(req.journeyData.appointmentJourney.customName).toBeNull()
     })
 
     it('should set custom name to null when whitespace', async () => {
@@ -200,8 +200,8 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.customName).toBeNull()
+      expect(req.journeyData.appointmentJourney.appointmentName).toEqual('Chaplaincy')
+      expect(req.journeyData.appointmentJourney.customName).toBeNull()
     })
 
     it('validation fails when selected category is not found', async () => {

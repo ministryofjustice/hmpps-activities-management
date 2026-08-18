@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { isBinaryFileSync } from 'isbinaryfile'
 import AppointmentSetUploadRoutes, { AppointmentsList } from './appointmentSetUpload'
 import PrisonerListCsvParser from '../../../../../utils/prisonerListCsvParser'
 import PrisonService from '../../../../../services/prisonService'
@@ -41,7 +42,8 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {},
         appointmentSetJourney: {},
       },
@@ -132,7 +134,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
         ] as Prisoner[])
 
       await handler.POST(req, res)
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -160,7 +162,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
           endTime: { hour: 9, minute: 30 },
         },
       ])
-      expect(req.session.appointmentSetJourney.prisonersNotFound).toEqual(['C9876DE'])
+      expect(req.journeyData.appointmentSetJourney.prisonersNotFound).toEqual(['C9876DE'])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
     })
 
@@ -195,8 +197,8 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
         .mockResolvedValue([] as Prisoner[])
 
       await handler.POST(req, res)
-      expect(req.session.appointmentSetJourney.appointments).toEqual([])
-      expect(req.session.appointmentSetJourney.prisonersNotFound).toEqual(['A1234BC', 'B2345CD', 'C9876DE'])
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([])
+      expect(req.journeyData.appointmentSetJourney.prisonersNotFound).toEqual(['A1234BC', 'B2345CD', 'C9876DE'])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
     })
 
@@ -244,7 +246,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -320,7 +322,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -352,7 +354,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
     })
 
     it('should replace appointments in session and redirect to review prisoners page', async () => {
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'XYZ1234',
@@ -423,7 +425,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -592,6 +594,29 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
+    })
+
+    it('validation fails when a non CSV file is uploaded', async () => {
+      const body = {
+        file: {
+          path: 'uploads/non-csv.csv',
+        },
+      }
+
+      const requestObject = plainToInstance(AppointmentsList, body)
+
+      when(fsMock.existsSync).calledWith('uploads/non-csv.csv').mockReturnValue(true)
+      when(fsMock.lstatSync)
+        .calledWith('uploads/non-csv.csv')
+        .mockReturnValue({
+          size: 1,
+        } as Stats)
+
+      jest.mocked(isBinaryFileSync).mockReturnValue(true)
+
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'You must upload a CSV file' }]))
     })
   })
 })

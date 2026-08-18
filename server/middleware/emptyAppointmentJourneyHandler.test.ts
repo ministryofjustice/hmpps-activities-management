@@ -9,7 +9,7 @@ describe('emptyAppointmentJourneyHandler', () => {
 
   beforeEach(() => {
     req = {
-      session: {},
+      journeyData: {},
     } as Request
 
     res = {
@@ -25,14 +25,14 @@ describe('emptyAppointmentJourneyHandler', () => {
     const middleware = emptyAppointmentJourneyHandler(true)
 
     it('should redirect back to appointments submenu when the journey data is not in session', async () => {
-      req.session.appointmentJourney = null
+      req.journeyData.appointmentJourney = null
       await middleware(req, res, next)
 
       expect(res.redirect).toHaveBeenCalledWith('/appointments')
     })
 
     it('should continue if journey data exists in session', async () => {
-      req.session.appointmentJourney = { mode: AppointmentJourneyMode.CREATE, type: AppointmentType.GROUP }
+      req.journeyData.appointmentJourney = { mode: AppointmentJourneyMode.CREATE, type: AppointmentType.GROUP }
       await middleware(req, res, next)
 
       expect(res.redirect).not.toHaveBeenCalled()
@@ -44,7 +44,7 @@ describe('emptyAppointmentJourneyHandler', () => {
     const middleware = emptyAppointmentJourneyHandler(false)
 
     it('should continue when the journey data is not in session', async () => {
-      req.session.appointmentJourney = null
+      req.journeyData.appointmentJourney = null
       await middleware(req, res, next)
 
       expect(res.redirect).not.toHaveBeenCalled()

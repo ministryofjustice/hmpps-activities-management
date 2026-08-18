@@ -54,40 +54,39 @@ describe('Views - Create Appointment - Check Answers - with extra information to
     viewContext = {
       tier: eventTierDescriptions[EventTier.TIER_2],
       organiser: organiserDescriptions[EventOrganiser.EXTERNAL_PROVIDER],
-      session: {
-        appointmentJourney: {
-          mode: AppointmentJourneyMode.CREATE,
-          type: AppointmentType.GROUP,
-          prisoners: [
-            {
-              name: 'Lee Jacobson',
-              firstName: 'Lee',
-              lastName: 'Jacobson',
-              number: 'A1351DZ',
-              cellLocation: '1-3-004',
-            },
-          ],
-          startDate: formatIsoDate(tomorrow),
-          startTime: {
-            hour: 9,
-            minute: 30,
+
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        prisoners: [
+          {
+            name: 'Lee Jacobson',
+            firstName: 'Lee',
+            lastName: 'Jacobson',
+            number: 'A1351DZ',
+            cellLocation: '1-3-004',
           },
-          endTime: {
-            hour: 10,
-            minute: 0,
-          },
-          tierCode: EventTier.TIER_2,
-          organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
-          extraInformation: 'Some extra information',
-        } as AppointmentJourney,
-      },
+        ],
+        startDate: formatIsoDate(tomorrow),
+        startTime: {
+          hour: 9,
+          minute: 30,
+        },
+        endTime: {
+          hour: 10,
+          minute: 0,
+        },
+        tierCode: EventTier.TIER_2,
+        organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
+        extraInformation: 'Some extra information',
+      } as AppointmentJourney,
     }
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
   })
 
   it('should display appointment name', () => {
-    viewContext.session.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
+    viewContext.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -95,7 +94,7 @@ describe('Views - Create Appointment - Check Answers - with extra information to
   })
 
   it('should display location as in cell', () => {
-    viewContext.session.appointmentJourney.inCell = true
+    viewContext.appointmentJourney.inCell = true
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -103,7 +102,7 @@ describe('Views - Create Appointment - Check Answers - with extra information to
   })
 
   it('should display location as internal location', () => {
-    viewContext.session.appointmentJourney.location = { id: 123, description: 'Wing A' }
+    viewContext.appointmentJourney.location = { id: 123, description: 'Wing A' }
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -118,7 +117,7 @@ describe('Views - Create Appointment - Check Answers - with extra information to
   })
 
   it('should not display repeat frequency or number of appointments when repeat = NO', () => {
-    viewContext.session.appointmentJourney.repeat = YesNo.NO
+    viewContext.appointmentJourney.repeat = YesNo.NO
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(getFrequencyValueElement().length).toBe(0)
@@ -132,24 +131,24 @@ describe('Views - Create Appointment - Check Answers - with extra information to
     { frequency: AppointmentFrequency.FORTNIGHTLY, expectedText: 'Fortnightly' },
     { frequency: AppointmentFrequency.MONTHLY, expectedText: 'Monthly' },
   ])('should display frequency $frequency as $expectedText when repeat = YES', ({ frequency, expectedText }) => {
-    viewContext.session.appointmentJourney.repeat = YesNo.YES
-    viewContext.session.appointmentJourney.frequency = frequency
+    viewContext.appointmentJourney.repeat = YesNo.YES
+    viewContext.appointmentJourney.frequency = frequency
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(getFrequencyValueElement().text().trim()).toEqual(expectedText)
   })
 
   it('should display repeat number of appointments when repeat = YES', () => {
-    viewContext.session.appointmentJourney.repeat = YesNo.YES
-    viewContext.session.appointmentJourney.numberOfAppointments = 6
+    viewContext.appointmentJourney.repeat = YesNo.YES
+    viewContext.appointmentJourney.numberOfAppointments = 6
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(getNumberOfAppointmentsValueElement().text().trim()).toEqual('6')
   })
 
   it('should display repeats and extra information change links for an appointment in the future', () => {
-    viewContext.session.appointmentJourney.retrospective = YesNo.NO
-    viewContext.session.appointmentJourney.repeat = YesNo.NO
+    viewContext.appointmentJourney.retrospective = YesNo.NO
+    viewContext.appointmentJourney.repeat = YesNo.NO
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -159,8 +158,8 @@ describe('Views - Create Appointment - Check Answers - with extra information to
   })
 
   it('should not display repeats and extra information change links for a retrospective appointment', () => {
-    viewContext.session.appointmentJourney.retrospective = YesNo.YES
-    viewContext.session.appointmentJourney.repeat = YesNo.NO
+    viewContext.appointmentJourney.retrospective = YesNo.YES
+    viewContext.appointmentJourney.repeat = YesNo.NO
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -171,8 +170,8 @@ describe('Views - Create Appointment - Check Answers - with extra information to
 
   describe('Group Appointment', () => {
     beforeEach(() => {
-      viewContext.session.appointmentJourney.type = AppointmentType.GROUP
-      viewContext.session.appointmentJourney.prisoners = [
+      viewContext.appointmentJourney.type = AppointmentType.GROUP
+      viewContext.appointmentJourney.prisoners = [
         {
           name: 'Lee Jacobson',
           firstName: 'Lee',
@@ -213,41 +212,71 @@ describe('Views - Create Appointment - Check Answers - with extra information to
     viewContext = {
       tier: eventTierDescriptions[EventTier.TIER_2],
       organiser: organiserDescriptions[EventOrganiser.EXTERNAL_PROVIDER],
-      session: {
-        appointmentJourney: {
-          mode: AppointmentJourneyMode.CREATE,
-          type: AppointmentType.GROUP,
-          prisoners: [
-            {
-              name: 'Lee Jacobson',
-              firstName: 'Lee',
-              lastName: 'Jacobson',
-              number: 'A1351DZ',
-              cellLocation: '1-3-004',
-            },
-          ],
-          startDate: formatIsoDate(tomorrow),
-          startTime: {
-            hour: 9,
-            minute: 30,
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        prisoners: [
+          {
+            name: 'Lee Jacobson',
+            firstName: 'Lee',
+            lastName: 'Jacobson',
+            number: 'A1351DZ',
+            cellLocation: '1-3-004',
           },
-          endTime: {
-            hour: 10,
-            minute: 0,
-          },
-          tierCode: EventTier.TIER_2,
-          organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
-          extraInformation: 'Some extra information',
-          prisonerExtraInformation: 'Some prisoner extra information',
-        } as AppointmentJourney,
-      },
+        ],
+        startDate: formatIsoDate(tomorrow),
+        startTime: {
+          hour: 9,
+          minute: 30,
+        },
+        endTime: {
+          hour: 10,
+          minute: 0,
+        },
+        tierCode: EventTier.TIER_2,
+        organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
+        extraInformation: 'Some extra information',
+        prisonerExtraInformation: 'Some prisoner extra information',
+      } as AppointmentJourney,
     }
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
   })
 
+  it('should preserve history on all change links', () => {
+    viewContext.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
+    viewContext.appointmentJourney.location = {
+      id: 123,
+      description: 'Wing A',
+    }
+    viewContext.appointmentJourney.retrospective = YesNo.NO
+    viewContext.appointmentJourney.repeat = YesNo.YES
+    viewContext.appointmentJourney.frequency = AppointmentFrequency.WEEKLY
+    viewContext.appointmentJourney.numberOfAppointments = 6
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=change-name]').attr('href')).toBe('name?preserveHistory=true')
+    expect($('[data-qa=change-tier]').attr('href')).toBe('tier?preserveHistory=true')
+    expect($('[data-qa=change-host]').attr('href')).toBe('host?preserveHistory=true')
+    expect($('[data-qa=change-location]').attr('href')).toBe('location?preserveHistory=true')
+
+    expect($('[data-qa=change-start-date]').attr('href')).toBe('date-and-time?preserveHistory=true')
+    expect($('[data-qa=change-start-time]').attr('href')).toBe('date-and-time?preserveHistory=true')
+    expect($('[data-qa=change-end-time]').attr('href')).toBe('date-and-time?preserveHistory=true')
+
+    expect($('[data-qa=change-repeat]').attr('href')).toBe('repeat?preserveHistory=true')
+    expect($('[data-qa=change-frequency]').attr('href')).toBe('repeat-frequency-and-count?preserveHistory=true')
+    expect($('[data-qa=change-number-of-appointments]').attr('href')).toBe(
+      'repeat-frequency-and-count?preserveHistory=true',
+    )
+
+    expect($('[data-qa=change-prisoners]').attr('href')).toBe('review-prisoners?preserveHistory=true')
+    expect($('[data-qa=change-extra-information]').attr('href')).toBe('extra-information?preserveHistory=true')
+  })
+
   it('should display appointment name', () => {
-    viewContext.session.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
+    viewContext.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -255,7 +284,7 @@ describe('Views - Create Appointment - Check Answers - with extra information to
   })
 
   it('should display location as in cell', () => {
-    viewContext.session.appointmentJourney.inCell = true
+    viewContext.appointmentJourney.inCell = true
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -263,7 +292,7 @@ describe('Views - Create Appointment - Check Answers - with extra information to
   })
 
   it('should display location as internal location', () => {
-    viewContext.session.appointmentJourney.location = { id: 123, description: 'Wing A' }
+    viewContext.appointmentJourney.location = { id: 123, description: 'Wing A' }
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -278,7 +307,7 @@ describe('Views - Create Appointment - Check Answers - with extra information to
   })
 
   it('should not display repeat frequency or number of appointments when repeat = NO', () => {
-    viewContext.session.appointmentJourney.repeat = YesNo.NO
+    viewContext.appointmentJourney.repeat = YesNo.NO
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(getFrequencyValueElement().length).toBe(0)
@@ -292,24 +321,24 @@ describe('Views - Create Appointment - Check Answers - with extra information to
     { frequency: AppointmentFrequency.FORTNIGHTLY, expectedText: 'Fortnightly' },
     { frequency: AppointmentFrequency.MONTHLY, expectedText: 'Monthly' },
   ])('should display frequency $frequency as $expectedText when repeat = YES', ({ frequency, expectedText }) => {
-    viewContext.session.appointmentJourney.repeat = YesNo.YES
-    viewContext.session.appointmentJourney.frequency = frequency
+    viewContext.appointmentJourney.repeat = YesNo.YES
+    viewContext.appointmentJourney.frequency = frequency
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(getFrequencyValueElement().text().trim()).toEqual(expectedText)
   })
 
   it('should display repeat number of appointments when repeat = YES', () => {
-    viewContext.session.appointmentJourney.repeat = YesNo.YES
-    viewContext.session.appointmentJourney.numberOfAppointments = 6
+    viewContext.appointmentJourney.repeat = YesNo.YES
+    viewContext.appointmentJourney.numberOfAppointments = 6
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(getNumberOfAppointmentsValueElement().text().trim()).toEqual('6')
   })
 
   it('should display repeats and extra information change links for an appointment in the future', () => {
-    viewContext.session.appointmentJourney.retrospective = YesNo.NO
-    viewContext.session.appointmentJourney.repeat = YesNo.NO
+    viewContext.appointmentJourney.retrospective = YesNo.NO
+    viewContext.appointmentJourney.repeat = YesNo.NO
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -320,8 +349,8 @@ describe('Views - Create Appointment - Check Answers - with extra information to
   })
 
   it('should not display repeats and extra information change links for a retrospective appointment', () => {
-    viewContext.session.appointmentJourney.retrospective = YesNo.YES
-    viewContext.session.appointmentJourney.repeat = YesNo.NO
+    viewContext.appointmentJourney.retrospective = YesNo.YES
+    viewContext.appointmentJourney.repeat = YesNo.NO
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -333,8 +362,8 @@ describe('Views - Create Appointment - Check Answers - with extra information to
 
   describe('Group Appointment', () => {
     beforeEach(() => {
-      viewContext.session.appointmentJourney.type = AppointmentType.GROUP
-      viewContext.session.appointmentJourney.prisoners = [
+      viewContext.appointmentJourney.type = AppointmentType.GROUP
+      viewContext.appointmentJourney.prisoners = [
         {
           name: 'Lee Jacobson',
           firstName: 'Lee',

@@ -33,17 +33,16 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           prisoners: [],
         },
-        appointmentSetJourney: {
-          appointments: [],
-        },
-      },
-      journeyData: {
         editAppointmentJourney: {
           addPrisoners: [],
+        },
+        appointmentSetJourney: {
+          appointments: [],
         },
       },
       params: {},
@@ -70,7 +69,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     ]
 
     it('should render the review prisoners view with back to how to add prisoners during CREATE', async () => {
-      req.session.appointmentJourney.prisoners = prisoners
+      req.journeyData.appointmentJourney.prisoners = prisoners
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'how-to-add-prisoners',
@@ -80,8 +79,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should render the review prisoners view with back to how to add prisoners during COPY', async () => {
-      req.session.appointmentJourney.prisoners = prisoners
-      req.session.appointmentJourney.originalAppointmentId = 1234
+      req.journeyData.appointmentJourney.prisoners = prisoners
+      req.journeyData.appointmentJourney.originalAppointmentId = 1234
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'how-to-add-prisoners',
@@ -92,8 +91,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should render the review prisoners view with back to upload appointment set', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -137,8 +136,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should render the review prisoners view - create new appointment - some prisoners not found', async () => {
-      req.session.appointmentJourney.type = AppointmentType.GROUP
-      req.session.appointmentJourney.prisoners = [
+      req.journeyData.appointmentJourney.type = AppointmentType.GROUP
+      req.journeyData.appointmentJourney.prisoners = [
         {
           number: 'A1234BC',
           name: '',
@@ -154,7 +153,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           prisonCode: '',
         },
       ]
-      req.session.appointmentJourney.prisonersNotFound = ['C9876GF']
+      req.journeyData.appointmentJourney.prisonersNotFound = ['C9876GF']
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'how-to-add-prisoners',
@@ -179,8 +178,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should render the review prisoners view - create back to back appointments - some prisoners not found', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -200,7 +199,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           },
         },
       ]
-      req.session.appointmentSetJourney.prisonersNotFound = ['C9876GF']
+      req.journeyData.appointmentSetJourney.prisonersNotFound = ['C9876GF']
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'upload-appointment-set',
@@ -225,8 +224,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should render the review prisoners view - edit appointment - some prisoners not found', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      req.session.appointmentJourney.type = AppointmentType.GROUP
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.journeyData.appointmentJourney.type = AppointmentType.GROUP
       req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
@@ -243,7 +242,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           prisonCode: '',
         },
       ]
-      req.session.appointmentJourney.prisonersNotFound = ['C9876GF']
+      req.journeyData.appointmentJourney.prisonersNotFound = ['C9876GF']
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'how-to-add-prisoners',
@@ -268,7 +267,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should render the review prisoners view with back to prisoner profile', async () => {
-      req.session.appointmentJourney.fromPrisonNumberProfile = 'A1234BC'
+      req.journeyData.appointmentJourney.fromPrisonNumberProfile = 'A1234BC'
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC',
@@ -281,12 +280,12 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       req.params = {
         appointmentId,
       }
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.journeyData.editAppointmentJourney.addPrisoners = prisoners
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
-          req.session.appointmentJourney.mode,
+          req.journeyData.appointmentJourney.mode,
           'attendees',
           res.locals.user,
         ),
@@ -301,7 +300,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should render the review prisoners view with preserve history', async () => {
       req.query = { preserveHistory: 'true' }
-      req.session.appointmentJourney.prisoners = prisoners
+      req.journeyData.appointmentJourney.prisoners = prisoners
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'how-to-add-prisoners',
@@ -322,10 +321,10 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     it.each([{ mode: AppointmentJourneyMode.CREATE }, { mode: AppointmentJourneyMode.EDIT }])(
       'should redirect or return to review alerts page if there are any alerts when mode is $mode',
       async ({ mode }) => {
-        req.session.appointmentJourney.mode = mode
+        req.journeyData.appointmentJourney.mode = mode
 
         when(alertsService.getAlertDetails)
-          .calledWith(req.session.appointmentJourney.prisoners)
+          .calledWith(req.journeyData.appointmentJourney.prisoners)
           .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 1 } as PrisonerAlertResults))
 
         await handler.POST(req, res)
@@ -335,7 +334,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should redirect or return to review alerts page there are no alerts when mode is CREATE', async () => {
       when(alertsService.getAlertDetails)
-        .calledWith(req.session.appointmentJourney.prisoners)
+        .calledWith(req.journeyData.appointmentJourney.prisoners)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.POST(req, res)
@@ -343,10 +342,10 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should redirect or return to name page when there are no alerts when mode is COPY', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.COPY
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.COPY
 
       when(alertsService.getAlertDetails)
-        .calledWith(req.session.appointmentJourney.prisoners)
+        .calledWith(req.journeyData.appointmentJourney.prisoners)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.POST(req, res)
@@ -379,7 +378,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     ]
 
     beforeEach(() => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.journeyData.editAppointmentJourney.addPrisoners = prisoners
     })
 
@@ -406,7 +405,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
   describe('REMOVE', () => {
     it('should remove prisoner and redirect back to GET', async () => {
-      req.session.appointmentJourney.prisoners = [
+      req.journeyData.appointmentJourney.prisoners = [
         {
           number: 'A1234BC',
           name: '',
@@ -429,7 +428,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([
         {
           number: 'A1234BC',
           name: '',
@@ -442,8 +441,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should remove appointment and redirect back to GET', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -470,7 +469,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -485,7 +484,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should redirect back to GET with preserve history', async () => {
-      req.session.appointmentJourney.prisoners = []
+      req.journeyData.appointmentJourney.prisoners = []
       req.query = { preserveHistory: 'true' }
       req.params = {
         prisonNumber: 'B2345CD',

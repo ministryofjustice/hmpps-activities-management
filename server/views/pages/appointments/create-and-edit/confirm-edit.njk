@@ -6,8 +6,8 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/add-prisoner-list.njk" import addPrisonerList %}
 
-{% set editMessage = getAppointmentEditMessage(session.appointmentJourney, editAppointmentJourney) %}
-{% set pageTitle = appointmentJourneyTitle(editMessage + ' this appointment - Appointments - DPS', session.appointmentJourney) %}
+{% set editMessage = getAppointmentEditMessage(appointmentJourney, editAppointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle(editMessage + ' this appointment - Appointments - DPS', appointmentJourney) %}
 
 {% set pageId = 'appointment-confirm-edit-page' %}
 {% set jsBackLink = true %}
@@ -15,7 +15,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
+            {{ appointmentTypeCaption(appointmentJourney) }}
             <h1 class="govuk-heading-l">Are you sure you want to {{ editMessage }} this appointment – {{ startDate | formatDate }}?</h1>
 
             {{ addPrisonerList(editAppointmentJourney.addPrisoners, user) }}
@@ -38,7 +38,7 @@
                 }) }}
 
                 {{ govukButton({
-                    text: getConfirmAppointmentEditCta(session.appointmentJourney, editAppointmentJourney),
+                    text: getConfirmAppointmentEditCta(appointmentJourney, editAppointmentJourney),
                     preventDoubleClick: true
                 }) }}
             </form>

@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 
 export default class NoAttendeesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
 
     res.render('pages/appointments/create-and-edit/no-attendees', {
       appointmentJourney,

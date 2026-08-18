@@ -7,14 +7,14 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
-{% set pageTitle = appointmentJourneyTitle("Date of set of back-to-backs - Appointments - DPS", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Date of set of back-to-backs - Appointments - DPS", appointmentJourney) %}
 {% set pageId = 'appointment-set-date-page' %}
 {% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
+            {{ appointmentTypeCaption(appointmentJourney) }}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ mojDatePicker({
@@ -31,10 +31,10 @@
                     },
                     errorMessage: validationErrors | findError('startDate'),
                     classes: 'moj-datepicker--fixed-width',
-                    value: formResponses.startDate or ((editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
+                    value: formResponses.startDate or ((editAppointmentJourney.startDate or appointmentJourney.startDate) | isoDateToDatePickerDate)
                 }) }}
                 {{ govukButton({
-                    text: "Confirm and save" if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "Continue",
+                    text: "Confirm and save" if appointmentJourney.mode == AppointmentJourneyMode.EDIT else "Continue",
                     preventDoubleClick: true
                 }) }}
             </form>

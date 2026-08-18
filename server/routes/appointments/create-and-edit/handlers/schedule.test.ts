@@ -42,17 +42,16 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           startDate: formatIsoDate(tomorrow),
           prisoners: [],
         },
+        editAppointmentJourney: {},
         appointmentSetJourney: {
           appointments: [],
         },
-      },
-      journeyData: {
-        editAppointmentJourney: {},
       },
       query: {},
       params: {},
@@ -95,7 +94,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
   describe('GET', () => {
     it('should render the schedule view', async () => {
       req.params.appointmentId = '1'
-      req.session.appointmentJourney.repeat = YesNo.NO
+      req.journeyData.appointmentJourney.repeat = YesNo.NO
 
       await handler.GET(req, res)
 
@@ -108,8 +107,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
     it('should render the schedule view with CTA save', async () => {
       req.params.appointmentId = '1'
-      req.session.appointmentJourney.type = AppointmentType.GROUP
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.journeyData.appointmentJourney.type = AppointmentType.GROUP
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
       await handler.GET(req, res)
 
@@ -121,8 +120,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     })
 
     it('should render the schedule view with prisoner schedule for new prisoners', async () => {
-      req.session.appointmentJourney.type = AppointmentType.GROUP
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.journeyData.appointmentJourney.type = AppointmentType.GROUP
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
@@ -160,8 +159,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     })
 
     it('should render schedule information for appointment journey prisoners', async () => {
-      req.session.appointmentJourney.type = AppointmentType.GROUP
-      req.session.appointmentJourney.prisoners = [
+      req.journeyData.appointmentJourney.type = AppointmentType.GROUP
+      req.journeyData.appointmentJourney.prisoners = [
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -204,8 +203,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     })
 
     it('use appointment set appointments prisoner for type = SET', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           startTime: {
             hour: 9,
@@ -267,8 +266,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
     it('should not display current appointment as a clash', async () => {
       req.params.appointmentId = '1'
-      req.session.appointmentJourney.type = AppointmentType.GROUP
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.journeyData.appointmentJourney.type = AppointmentType.GROUP
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
       const prisoner = {
         number: 'A1234BC',
@@ -277,7 +276,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         status: 'ACTIVE IN',
         prisonCode: 'MDI',
       }
-      req.session.appointmentJourney.prisoners = [prisoner]
+      req.journeyData.appointmentJourney.prisoners = [prisoner]
 
       const appointmentEvent1 = { appointmentId: 1, prisonerNumber: prisoner.number }
       const appointmentEvent2 = { appointmentId: 2, prisonerNumber: prisoner.number }
@@ -309,9 +308,9 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
     it('should query the room schedule for video link appointments', async () => {
       req.params.appointmentId = '1'
-      req.session.appointmentJourney.repeat = YesNo.NO
-      req.session.appointmentJourney.category = { code: 'VLLA', description: 'Video Link - Legal Appointment' }
-      req.session.appointmentJourney.location = { id: '1', description: 'Video Room' }
+      req.journeyData.appointmentJourney.repeat = YesNo.NO
+      req.journeyData.appointmentJourney.category = { code: 'VLLA', description: 'Video Link - Legal Appointment' }
+      req.journeyData.appointmentJourney.location = { id: '1', description: 'Video Room' }
 
       activitiesService.getInternalLocationEventsByDpsLocationId.mockResolvedValue({
         description: 'Video Room',
@@ -396,23 +395,23 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       { createJourneyComplete: undefined, redirectMethod: 'redirect', description: 'When not a create journey' },
     ])('$description', ({ createJourneyComplete, redirectMethod }) => {
       beforeEach(() => {
-        req.session.appointmentJourney.createJourneyComplete = createJourneyComplete
+        req.journeyData.appointmentJourney.createJourneyComplete = createJourneyComplete
       })
 
       it('should redirect to extra information page for type = GROUP', async () => {
-        req.session.appointmentJourney.type = AppointmentType.GROUP
+        req.journeyData.appointmentJourney.type = AppointmentType.GROUP
         await handler.POST(req, res)
         expect(res[redirectMethod]).toHaveBeenCalledWith('extra-information')
       })
 
       it('should redirect to appointment set extra information page for type = SET', async () => {
-        req.session.appointmentJourney.type = AppointmentType.SET
+        req.journeyData.appointmentJourney.type = AppointmentType.SET
         await handler.POST(req, res)
         expect(res[redirectMethod]).toHaveBeenCalledWith('appointment-set-extra-information')
       })
 
       it('should redirect to check answers page for mode = COPY', async () => {
-        req.session.appointmentJourney.mode = AppointmentJourneyMode.COPY
+        req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.COPY
         await handler.POST(req, res)
         expect(res[redirectMethod]).toHaveBeenCalledWith('check-answers')
       })
@@ -421,7 +420,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
   describe('REMOVE', () => {
     it('should remove prisoner and redirect back to GET', async () => {
-      req.session.appointmentJourney.prisoners = [
+      req.journeyData.appointmentJourney.prisoners = [
         {
           number: 'A1234BC',
           name: '',
@@ -446,13 +445,13 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
-          req.session.appointmentJourney.mode,
+          req.journeyData.appointmentJourney.mode,
           'remove-prisoner',
           res.locals.user,
         ),
       )
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([
         {
           number: 'A1234BC',
           name: '',
@@ -465,7 +464,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     })
 
     it('should remove prisoners when editing appointment and redirect back to GET', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
@@ -488,7 +487,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
-          req.session.appointmentJourney.mode,
+          req.journeyData.appointmentJourney.mode,
           'remove-prisoner',
           res.locals.user,
         ),
@@ -508,8 +507,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     })
 
     it('should remove prisoner appointment from appointment set and redirect back to GET', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
-      req.session.appointmentSetJourney.appointments = [
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -538,13 +537,13 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
-          req.session.appointmentJourney.mode,
+          req.journeyData.appointmentJourney.mode,
           'remove-prisoner',
           res.locals.user,
         ),
       )
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -559,7 +558,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     })
 
     it('should redirect back to GET with preserve history', async () => {
-      req.session.appointmentJourney.prisoners = []
+      req.journeyData.appointmentJourney.prisoners = []
       req.query = { preserveHistory: 'true' }
       req.params = {
         prisonNumber: 'B2345CD',
@@ -579,7 +578,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
-          req.session.appointmentJourney.mode,
+          req.journeyData.appointmentJourney.mode,
           'date-and-time',
           res.locals.user,
         ),

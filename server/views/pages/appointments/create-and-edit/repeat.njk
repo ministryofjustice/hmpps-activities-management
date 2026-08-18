@@ -5,17 +5,17 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Will the appointment repeat? - Appointments - DPS", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Will the appointment repeat? - Appointments - DPS", appointmentJourney) %}
 {% set pageId = 'appointment-repeat-page' %}
 {% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session) }}
+            {{ appointmentTypeCaption(appointmentJourney) }}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% set repeat = formResponses.repeat or session.appointmentJourney.repeat %}
+                {% set repeat = formResponses.repeat or appointmentJourney.repeat %}
                 {{ govukRadios({
                     name: "repeat",
                     fieldset: {

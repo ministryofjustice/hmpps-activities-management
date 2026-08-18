@@ -14,9 +14,7 @@ const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/re
 describe('Views - Appointments Management - Review Prisoners', () => {
   let compiledTemplate: Template
   let viewContext = {
-    session: {
-      appointmentJourney: {} as unknown as AppointmentJourney,
-    },
+    appointmentJourney: {} as unknown as AppointmentJourney,
     editAppointmentJourney: {} as unknown as EditAppointmentJourney,
   }
 
@@ -25,12 +23,10 @@ describe('Views - Appointments Management - Review Prisoners', () => {
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
-      session: {
-        appointmentJourney: {
-          mode: AppointmentJourneyMode.CREATE,
-          type: AppointmentType.INDIVIDUAL,
-        } as AppointmentJourney,
-      },
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.INDIVIDUAL,
+      } as AppointmentJourney,
       editAppointmentJourney: {} as EditAppointmentJourney,
     }
   })
@@ -45,5 +41,46 @@ describe('Views - Appointments Management - Review Prisoners', () => {
     expect($('#add-prisoners-csv').attr('href')).toEqual('upload-prisoner-list')
 
     expect($('#continue-button').text().trim()).toEqual('Continue')
+  })
+
+  it('should display prisoner numbers that could not be used', () => {
+    const $ = cheerio.load(
+      compiledTemplate.render({
+        ...viewContext,
+        prisoners: [
+          {
+            number: 'A1234BC',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            cellLocation: '1-1-1',
+            prisonCode: 'TPR',
+            status: 'ACTIVE IN',
+          },
+        ],
+        notFoundPrisoners: ['NOTFOUND1', 'NOTFOUND2'],
+        user: {
+          activeCaseLoadId: 'TPR',
+        },
+      }),
+    )
+
+    expect($('h2').text()).toContain('Some prison numbers in your CSV file could not be used')
+    expect($('.govuk-list--bullet').text()).toContain('NOTFOUND1')
+    expect($('.govuk-list--bullet').text()).toContain('NOTFOUND2')
+  })
+
+  it('should display a message when no prisoner numbers could be used', () => {
+    const $ = cheerio.load(
+      compiledTemplate.render({
+        ...viewContext,
+        prisoners: [],
+        notFoundPrisoners: ['NOTFOUND1', 'NOTFOUND2'],
+        user: {
+          activeCaseLoadId: 'TPR',
+        },
+      }),
+    )
+
+    expect($('h2').text()).toContain('No prison numbers in your CSV file could be used')
   })
 })

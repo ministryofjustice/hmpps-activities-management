@@ -40,7 +40,8 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           type: AppointmentType.GROUP,
           mode: AppointmentJourneyMode.CREATE,
@@ -93,11 +94,11 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         organiser: organiserDescriptions.PRISON_STAFF,
       })
 
-      expect(req.session.appointmentJourney.mode).toEqual(AppointmentJourneyMode.CREATE)
+      expect(req.journeyData.appointmentJourney.mode).toEqual(AppointmentJourneyMode.CREATE)
     })
 
     it('should render the check answers page with data from session when mode is COPY', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.COPY
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.COPY
 
       await handler.GET(req, res)
 
@@ -106,7 +107,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         organiser: organiserDescriptions.PRISON_STAFF,
       })
 
-      expect(req.session.appointmentJourney.mode).toEqual(AppointmentJourneyMode.CREATE)
+      expect(req.journeyData.appointmentJourney.mode).toEqual(AppointmentJourneyMode.CREATE)
     })
   })
 
@@ -173,7 +174,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     })
 
     it('should create the appointment series using the internal location ID from a legacy numeric journey', async () => {
-      req.session.appointmentJourney.location.id = 32 as unknown as string
+      req.journeyData.appointmentJourney.location.id = 32 as unknown as string
 
       when(activitiesService.createAppointmentSeries)
         .calledWith(atLeast(expectedRequest))
@@ -188,7 +189,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     it('should create the appointment series using the DPS location ID from a new journey', async () => {
       const dpsLocationId = 'b7602cc8-e769-4cbb-8194-62d8e655992a'
 
-      req.session.appointmentJourney.location.id = dpsLocationId
+      req.journeyData.appointmentJourney.location.id = dpsLocationId
 
       const { internalLocationId: _, ...requestWithoutLegacyLocation } = expectedRequest
       const expectedDpsRequest = {
@@ -207,7 +208,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     })
 
     it('should create the appointment series and redirect to confirmation page when duplicated from an original appointment', async () => {
-      req.session.appointmentJourney.originalAppointmentId = 789
+      req.journeyData.appointmentJourney.originalAppointmentId = 789
 
       expectedRequest.originalAppointmentId = 789
 
@@ -222,9 +223,9 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     })
 
     it('should create the repeat appointment and redirect to confirmation page', async () => {
-      req.session.appointmentJourney.repeat = YesNo.YES
-      req.session.appointmentJourney.frequency = AppointmentFrequency.WEEKLY
-      req.session.appointmentJourney.numberOfAppointments = 6
+      req.journeyData.appointmentJourney.repeat = YesNo.YES
+      req.journeyData.appointmentJourney.frequency = AppointmentFrequency.WEEKLY
+      req.journeyData.appointmentJourney.numberOfAppointments = 6
 
       expectedRequest.schedule = {
         frequency: AppointmentFrequency.WEEKLY,
@@ -246,9 +247,9 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     let expectedResponse: AppointmentSet
 
     beforeEach(() => {
-      req.session.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
 
-      req.session.appointmentSetJourney = {
+      req.journeyData.appointmentSetJourney = {
         appointments: [
           {
             startTime: {
@@ -375,7 +376,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     })
 
     it('should create the appointment set using the internal location ID from a legacy numeric journey', async () => {
-      req.session.appointmentJourney.location.id = 32 as unknown as string
+      req.journeyData.appointmentJourney.location.id = 32 as unknown as string
 
       when(activitiesService.createAppointmentSet)
         .calledWith(atLeast(expectedRequest))
@@ -390,7 +391,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     it('should create the appointment set using the DPS location ID from a new journey', async () => {
       const dpsLocationId = 'b7602cc8-e769-4cbb-8194-62d8e655992a'
 
-      req.session.appointmentJourney.location.id = dpsLocationId
+      req.journeyData.appointmentJourney.location.id = dpsLocationId
 
       const { internalLocationId: _, ...requestWithoutLegacyLocation } = expectedRequest
       const expectedDpsRequest = {

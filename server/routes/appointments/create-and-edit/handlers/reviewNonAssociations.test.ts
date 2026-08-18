@@ -37,7 +37,8 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           prisoners: [{ number: 'G6123VU' }, { number: 'AB123IT' }, { number: 'PW987BB' }],
         },
@@ -155,13 +156,13 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       })
     })
     it('if there is only one prisoner in the session, redirect to the next page', async () => {
-      req.session.appointmentJourney.prisoners = [{ number: 'G6123VU' } as AppointmentPrisonerDetails]
+      req.journeyData.appointmentJourney.prisoners = [{ number: 'G6123VU' } as AppointmentPrisonerDetails]
 
       await handler.GET(req, res)
       expect(res.redirect).toHaveBeenCalledWith('name')
     })
     it('if there is only one prisoner in the session because a prisoner was just removed, display the alternative message', async () => {
-      req.session.appointmentJourney.prisoners = [{ number: 'G6123VU' } as AppointmentPrisonerDetails]
+      req.journeyData.appointmentJourney.prisoners = [{ number: 'G6123VU' } as AppointmentPrisonerDetails]
       req.query.prisonerRemoved = 'true'
 
       await handler.GET(req, res)
@@ -174,7 +175,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       })
     })
     it('should render the view for create appointment set', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
       const expectedResult = [
         {
           primaryPrisoner: { name: 'SAMUEL RAMROOP', prisonerNumber: 'G6123VU' },
@@ -236,7 +237,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         .mockReturnValue(Promise.resolve([]))
     })
     it('should redirect or return to name page during create journey - if user has resolved any non-associations', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.CREATE
 
       req.body = {
         nonAssociationsRemainingCount: 0,
@@ -246,7 +247,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('name')
     })
     it('should redirect or return to the confirm non-associations page during create journey - if user has not resolved any non-associations', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+      req.journeyData.appointmentJourney.mode = AppointmentJourneyMode.CREATE
 
       req.body = {
         nonAssociationsRemainingCount: 2,
@@ -259,7 +260,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
 
   describe('REMOVE', () => {
     it('should remove selected prisoners and redirect', async () => {
-      req.session.appointmentJourney.prisoners = [
+      req.journeyData.appointmentJourney.prisoners = [
         { number: 'G6123VU', name: 'SAMUEL RAMROOP' },
         { number: 'AB123IT', name: 'JOSHUA SMITH' },
       ] as AppointmentPrisonerDetails[]
@@ -270,12 +271,12 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.appointmentJourney.prisoners).toEqual([{ number: 'G6123VU', name: 'SAMUEL RAMROOP' }])
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([{ number: 'G6123VU', name: 'SAMUEL RAMROOP' }])
       expect(res.redirect).toHaveBeenCalledWith('../../review-non-associations?prisonerRemoved=true')
     })
 
     it('should redirect back to GET with preserve history', async () => {
-      req.session.appointmentJourney.prisoners = []
+      req.journeyData.appointmentJourney.prisoners = []
       req.query = { preserveHistory: 'true' }
       req.params = {
         prisonNumber: 'G6123VU',
@@ -286,7 +287,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       )
     })
     it('should remove appointment and redirect back to GET - set', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
+      req.journeyData.appointmentJourney.type = AppointmentType.SET
 
       req.params = {
         prisonNumber: 'G6123VU',
@@ -294,7 +295,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments).toEqual([
+      expect(req.journeyData.appointmentSetJourney.appointments).toEqual([
         { prisoner: { number: 'A1234BC' } },
         { prisoner: { number: 'B2345CD' } },
       ])
@@ -325,12 +326,11 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         appointmentJourney: {
           prisoners: [{ number: 'AB123IT' }, { number: 'PW987BB' }],
         },
-      },
-      journeyData: {
         editAppointmentJourney: {
           addPrisoners: [{ number: 'G6123VU', name: 'SAMUEL RAMROOP' }],
         },
@@ -358,6 +358,7 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
         additionalAttendeesCount: 0,
       })
     })
+
     it('should render the view for edit appointment - no non-associations', async () => {
       when(nonAssociationsService.getNonAssociationsBetween)
         .calledWith(['AB123IT', 'PW987BB', 'G6123VU'], res.locals.user)
@@ -368,6 +369,7 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
       await handler.EDIT_GET(req, res)
       expect(res.redirect).toHaveBeenCalledWith('../../schedule')
     })
+
     it('should render the view for edit appointment - no non-associations as user has removed additional prisoner', async () => {
       when(nonAssociationsService.getNonAssociationsBetween)
         .calledWith(['AB123IT', 'PW987BB', 'G6123VU'], res.locals.user)
@@ -388,6 +390,7 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
         existingPrisonerNumbers: ['AB123IT', 'PW987BB'],
       })
     })
+
     it('should render the view for edit appointment - non-associations present', async () => {
       when(nonAssociationsService.getNonAssociationsBetween)
         .calledWith(['AB123IT', 'PW987BB', 'G6123VU'], res.locals.user)
@@ -449,6 +452,75 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
         ],
         existingAttendeesCount: 2,
         additionalAttendeesCount: 1,
+        existingPrisonerNumbers: ['AB123IT', 'PW987BB'],
+      })
+    })
+
+    it('should render non-associations between two newly added prisoners', async () => {
+      req.journeyData.editAppointmentJourney.addPrisoners = [
+        {
+          number: 'G6123VU',
+          name: 'SAMUEL RAMROOP',
+        },
+        {
+          number: 'G0995GW',
+          name: 'AETICAKE POTTA',
+        },
+      ] as AppointmentPrisonerDetails[]
+
+      const expectedResult = [
+        {
+          primaryPrisoner: {
+            name: 'SAMUEL RAMROOP',
+            prisonerNumber: 'G6123VU',
+          },
+          nonAssociations: [
+            {
+              prisonerNumber: 'G0995GW',
+              name: 'AETICAKE POTTA',
+              cellLocation: '1-3',
+              lastUpdated: '2024-10-30T10:00:00',
+            },
+          ],
+        },
+        {
+          primaryPrisoner: {
+            name: 'AETICAKE POTTA',
+            prisonerNumber: 'G0995GW',
+          },
+          nonAssociations: [
+            {
+              prisonerNumber: 'G6123VU',
+              name: 'SAMUEL RAMROOP',
+              cellLocation: '2-2-024',
+              lastUpdated: '2024-10-30T10:00:00',
+            },
+          ],
+        },
+      ]
+
+      when(nonAssociationsService.getNonAssociationsBetween)
+        .calledWith(['AB123IT', 'PW987BB', 'G6123VU', 'G0995GW'], res.locals.user)
+        .mockResolvedValue([
+          {
+            id: 1,
+            firstPrisonerNumber: 'G6123VU',
+            secondPrisonerNumber: 'G0995GW',
+            whenUpdated: '2024-10-30T10:00:00',
+          },
+        ] as NonAssociation[])
+
+      when(nonAssociationsService.enhanceNonAssociations).mockResolvedValue(expectedResult)
+
+      await handler.EDIT_GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-non-associations-edit', {
+        appointmentId: 1,
+        backLinkHref: 'review-prisoners-alerts',
+        preserveHistory: false,
+        nonAssociations: expectedResult,
+        existingAttendeesCount: 2,
+        additionalAttendeesCount: 2,
         existingPrisonerNumbers: ['AB123IT', 'PW987BB'],
       })
     })

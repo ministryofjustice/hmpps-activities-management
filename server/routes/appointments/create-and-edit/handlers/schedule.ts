@@ -19,8 +19,7 @@ export default class ScheduleRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentId } = req.params
-    const { appointmentJourney, appointmentSetJourney } = req.session
-    const { editAppointmentJourney } = req.journeyData
+    const { appointmentJourney, editAppointmentJourney, appointmentSetJourney } = req.journeyData
     const { preserveHistory } = req.query
 
     let prisonNumbers
@@ -93,7 +92,7 @@ export default class ScheduleRoutes {
       locationSchedule,
       appointmentId,
       isCtaAcceptAndSave:
-        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+        req.journeyData.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
     })
   }
@@ -101,13 +100,13 @@ export default class ScheduleRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const nextRoute = this.determineNextRoute(req)
 
-    if (req.session.appointmentJourney.createJourneyComplete) return res.redirectOrReturn(nextRoute)
+    if (req.journeyData.appointmentJourney.createJourneyComplete) return res.redirectOrReturn(nextRoute)
 
     return res.redirect(nextRoute)
   }
 
   private determineNextRoute(req: Request): string {
-    const { mode, type } = req.session.appointmentJourney
+    const { mode, type } = req.journeyData.appointmentJourney
 
     if (mode === AppointmentJourneyMode.COPY) {
       return 'check-answers'
@@ -129,22 +128,22 @@ export default class ScheduleRoutes {
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
     const { prisonNumber } = req.params
 
-    if (req.session.appointmentJourney.type === AppointmentType.SET) {
-      req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.filter(
+    if (req.journeyData.appointmentJourney.type === AppointmentType.SET) {
+      req.journeyData.appointmentSetJourney.appointments = req.journeyData.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )
     } else if (
-      req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+      req.journeyData.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
       req.journeyData.editAppointmentJourney?.addPrisoners
     ) {
       req.journeyData.editAppointmentJourney.addPrisoners = req.journeyData.editAppointmentJourney.addPrisoners.filter(
         p => p.number !== prisonNumber,
       )
     } else {
-      req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.filter(
+      req.journeyData.appointmentJourney.prisoners = req.journeyData.appointmentJourney.prisoners.filter(
         prisoner => prisoner.number !== prisonNumber,
       )
     }
@@ -161,7 +160,7 @@ export default class ScheduleRoutes {
 
   CHANGE = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { appointmentJourney } = req.session
+    const { appointmentJourney } = req.journeyData
     const { property, preserveHistory } = req.query
 
     const changeFromSchedule = MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
