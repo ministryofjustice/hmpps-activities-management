@@ -75,8 +75,18 @@ context('Create external activity', () => {
     manageActivitiesPage.createAnActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
-    activityTypePage.selectInsideType()
+    activityTypePage
+      .heading()
+      .should('contain.text', 'Does the activity take place inside or outside the prison grounds?')
+    activityTypePage.insideOption().should('contain.text', 'Inside')
+    activityTypePage.outsideOption().should('contain.text', 'Outside')
+    activityTypePage.outsideHint().should('contain.text', 'The activity category will be set as ‘Outside activity’.')
     activityTypePage.continue()
+
+    const activityTypePageWithErrors = Page.verifyOnPage(ActivityTypePage)
+    activityTypePageWithErrors.assertValidationError('type', 'Select if the activity takes place inside or outside')
+    activityTypePageWithErrors.selectInside()
+    activityTypePageWithErrors.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.caption().should('contain.text', 'Create an activity')
@@ -207,7 +217,7 @@ context('Create external activity', () => {
     manageActivitiesPage.createAnActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
-    activityTypePage.selectOutsideType()
+    activityTypePage.selectOutside()
     activityTypePage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
@@ -273,7 +283,7 @@ context('Create external activity', () => {
     manageActivitiesPage.createAnActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
-    activityTypePage.selectOutsideType()
+    activityTypePage.selectOutside()
     activityTypePage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
