@@ -48,6 +48,7 @@ export default class SuspendedPrisonersRoutes {
         const category = categories.find(c => c.name === categoryFilter || c.code === categoryFilter)
         return category ? [ActivityCategoryEnum[category.code]] : []
       })
+
     const suspendedPrisonerAttendance = await this.activitiesService.getSuspendedPrisonersActivityAttendance(
       activityDate,
       user,
