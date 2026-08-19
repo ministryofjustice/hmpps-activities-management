@@ -4,1746 +4,2315 @@
  */
 
 export interface paths {
-  '/queue-admin/retry-dlq/{dlqName}': {
-    put: operations['retryDlq']
-  }
-  '/queue-admin/retry-all-dlqs': {
-    put: operations['retryAllDlqs']
-  }
-  '/queue-admin/purge-queue/{queueName}': {
-    put: operations['purgeQueue']
-  }
-  '/incentive/prison-levels/{prisonId}/reset': {
-    /**
-     * Reset all incentive levels for a prison
-     * @description Activates the required set of levels, ensuring that Standard is the default level for admission. This can be used when a new prison is opened. Any levels that are already active will remain active and associated information remains unchanged. Returns all incentive levels in this prison including those that were already active.
-     *
-     * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
-     *
-     * Raises HMPPS domain events: "incentives.prison-level.changed"
-     */
-    put: operations['resetPrisonIncentiveLevels']
-  }
-  '/incentive/prison-levels/{prisonId}/level/{levelCode}': {
-    /**
-     * Returns an incentive level in this prison along with associated information
-     * @description Note that it may be inactive in the prison. For the majority of use cases, inactive levels in a prison should be ignored.
-     */
-    get: operations['getPrisonIncentiveLevel']
-    /**
-     * Updates prison incentive level information
-     * @description Payload must include all required fields. Deactivating a level is only possible if there are no prisoners currently on it.
-     *
-     * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
-     *
-     * Raises HMPPS domain event: "incentives.prison-level.changed"
-     */
-    put: operations['updatePrisonIncentiveLevel']
-    /**
-     * Deactivate an incentive level for a prison
-     * @description Deactivating a level is only possible if there are no prisoners currently on it.
-     *
-     * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
-     *
-     * Raises HMPPS domain event: "incentives.prison-level.changed"
-     */
-    delete: operations['deactivatePrisonIncentiveLevel']
-    /**
-     * Updates prison incentive level information
-     * @description Partial updates are allowed. Deactivating a level is only possible if there are no prisoners currently on it.
-     *
-     * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
-     *
-     * Raises HMPPS domain event: "incentives.prison-level.changed"
-     */
-    patch: operations['partiallyUpdatePrisonIncentiveLevel']
-  }
-  '/incentive/levels/{code}': {
-    /**
-     * Returns an incentive level by code
-     * @description Note that it may be inactive. For the majority of use cases, inactive levels in a prison should be ignored.
-     */
-    get: operations['getIncentiveLevel']
-    /**
-     * Updates an incentive level
-     * @description Payload must include all required fields. A level marked as required must also be active. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
-     *
-     * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
-     *
-     * Raises HMPPS domain event: "incentives.level.changed"
-     */
-    put: operations['updateIncentiveLevel']
-    /**
-     * Deactivates an incentive level
-     * @description A required level cannot be deactivated, needs to be updated first to be not required. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
-     *
-     * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
-     *
-     * Raises HMPPS domain event: "incentives.level.changed"
-     */
-    delete: operations['deactivateIncentiveLevel']
-    /**
-     * Updates an incentive level
-     * @description Partial updates are allowed. A level marked as required must also be active. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
-     *
-     * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
-     *
-     * Raises HMPPS domain event: "incentives.level.changed"
-     */
-    patch: operations['partiallyUpdateIncentiveLevel']
-  }
-  '/incentive/levels': {
-    /**
-     * Lists all incentive levels, optionally including inactive ones
-     * @description For the majority of use cases, inactive levels in a prison should be ignored.
-     */
-    get: operations['getIncentiveLevels']
-    /**
-     * Creates a new incentive level
-     * @description New incentive levels are added to the end of the list.
-     *
-     * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
-     *
-     * Raises HMPPS domain event: "incentives.level.changed"
-     */
-    post: operations['createIncentiveLevel']
-  }
-  '/incentive-reviews/prisoner/{prisonerNumber}': {
-    /**
-     * Returns a history of IEP reviews for a prisoner
-     * @description Prisoner Number is an unique reference for a prisoner in NOMIS
-     */
-    get: operations['getPrisonerIepLevelHistory']
-    /**
-     * Adds a new IEP Review for this specific prisoner by prisoner number
-     * @description Prisoner Number is an unique reference for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
-     */
-    post: operations['addIepReview']
-  }
-  '/incentive-reviews/bookings': {
-    /** Returns a history of IEP reviews for a list of prisoners */
-    post: operations['getCurrentIEPLevelForPrisoner']
-  }
-  '/incentive-reviews/booking/{bookingId}': {
-    /**
-     * Returns a history of IEP reviews for a prisoner
-     * @description Booking ID is an internal ID for a prisoner in NOMIS
-     */
-    get: operations['getPrisonerIepLevelHistory_1']
-    /**
-     * Adds a new IEP Review for this specific prisoner by booking Id
-     * @description Booking ID is an internal ID for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
-     */
-    post: operations['addIepReview_1']
-  }
-  '/incentive/level-order': {
-    /**
-     * Sets the order of incentive levels
-     * @description All existing incentive level codes must be provided.
-     *
-     * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
-     *
-     * Raises HMPPS domain event: "incentives.levels.reordered"
-     */
-    patch: operations['setOrderOfIncentiveLevels']
-  }
-  '/queue-admin/get-dlq-messages/{dlqName}': {
-    get: operations['getDlqMessages']
-  }
-  '/incentives-reviews/prison/{prisonId}/location/{cellLocationPrefix}/level/{levelCode}': {
-    /**
-     * List of incentive review information for a given location within a prison and on a given level
-     * @description Location should be a cell ID prefix like `MDI-1`
-     */
-    get: operations['getReviews']
-  }
-  '/incentive/prison-levels/{prisonId}': {
-    /**
-     * Lists incentive levels in this prison along with associated information, optionally including inactive ones
-     * @description Inactive incentive levels in the prison were previously active at some point. Not all global inactive incentive levels are necessarily included. For the majority of use cases, inactive levels in a prison should be ignored.
-     */
-    get: operations['getPrisonIncentiveLevels']
-    /**
-     * Deactivate all incentive levels for a prison
-     * @description This can be used when a prison closes. Returns all incentive levels in this prison including those that were already inactive. Deactivating a level is only possible if there are no prisoners currently on it.
-     *
-     * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
-     *
-     * Raises HMPPS domain events: "incentives.prison-level.changed"
-     */
-    delete: operations['deactivateAllPrisonIncentiveLevels']
-  }
-  '/incentive-reviews/id/{id}': {
-    /** Returns a specified IEP Review */
-    get: operations['getReviewById']
-  }
+    "/queue-admin/retry-dlq/{dlqName}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["retryDlq"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/queue-admin/retry-all-dlqs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["retryAllDlqs"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/queue-admin/purge-queue/{queueName}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["purgeQueue"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/incentive/prison-levels/{prisonId}/reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Reset all incentive levels for a prison
+         * @description Activates the required set of levels, ensuring that Standard is the default level for admission. This can be used when a new prison is opened. Any levels that are already active will remain active and associated information remains unchanged. Returns all incentive levels in this prison including those that were already active.
+         *
+         *     Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+         *
+         *     Raises HMPPS domain events: "incentives.prison-level.changed"
+         */
+        put: operations["resetPrisonIncentiveLevels"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/incentive/prison-levels/{prisonId}/level/{levelCode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Returns an incentive level in this prison along with associated information
+         * @description Note that it may be inactive in the prison. For the majority of use cases, inactive levels in a prison should be ignored.
+         */
+        get: operations["getPrisonIncentiveLevel"];
+        /**
+         * Updates prison incentive level information
+         * @description Payload must include all required fields. Deactivating a level is only possible if there are no prisoners currently on it.
+         *
+         *     Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+         *
+         *     Raises HMPPS domain event: "incentives.prison-level.changed"
+         */
+        put: operations["updatePrisonIncentiveLevel"];
+        post?: never;
+        /**
+         * Deactivate an incentive level for a prison
+         * @description Deactivating a level is only possible if there are no prisoners currently on it.
+         *
+         *     Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+         *
+         *     Raises HMPPS domain event: "incentives.prison-level.changed"
+         */
+        delete: operations["deactivatePrisonIncentiveLevel"];
+        options?: never;
+        head?: never;
+        /**
+         * Updates prison incentive level information
+         * @description Partial updates are allowed. Deactivating a level is only possible if there are no prisoners currently on it.
+         *
+         *     Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+         *
+         *     Raises HMPPS domain event: "incentives.prison-level.changed"
+         */
+        patch: operations["partiallyUpdatePrisonIncentiveLevel"];
+        trace?: never;
+    };
+    "/incentive/levels/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Returns an incentive level by code
+         * @description Note that it may be inactive. For the majority of use cases, inactive levels in a prison should be ignored.
+         */
+        get: operations["getIncentiveLevel"];
+        /**
+         * Updates an incentive level
+         * @description Payload must include all required fields. A level marked as required must also be active. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
+         *
+         *     Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+         *
+         *     Raises HMPPS domain event: "incentives.level.changed"
+         */
+        put: operations["updateIncentiveLevel"];
+        post?: never;
+        /**
+         * Deactivates an incentive level
+         * @description A required level cannot be deactivated, needs to be updated first to be not required. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
+         *
+         *     Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+         *
+         *     Raises HMPPS domain event: "incentives.level.changed"
+         */
+        delete: operations["deactivateIncentiveLevel"];
+        options?: never;
+        head?: never;
+        /**
+         * Updates an incentive level
+         * @description Partial updates are allowed. A level marked as required must also be active. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
+         *
+         *     Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+         *
+         *     Raises HMPPS domain event: "incentives.level.changed"
+         */
+        patch: operations["partiallyUpdateIncentiveLevel"];
+        trace?: never;
+    };
+    "/incentive/levels": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lists all incentive levels, optionally including inactive ones
+         * @description For the majority of use cases, inactive levels in a prison should be ignored.
+         */
+        get: operations["getIncentiveLevels"];
+        put?: never;
+        /**
+         * Creates a new incentive level
+         * @description New incentive levels are added to the end of the list.
+         *
+         *     Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+         *
+         *     Raises HMPPS domain event: "incentives.level.changed"
+         */
+        post: operations["createIncentiveLevel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/incentive-reviews/prisoner/{prisonerNumber}/repair-booking-switch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Repairs a prisoner left on the wrong incentive level after NOMIS switched their booking
+         * @description When a recall is mistakenly admitted onto a new booking and NOMIS staff correct it by re-admitting the prisoner onto their earlier booking, the default-level review written against the mistaken booking stays current and masks the level held on the reinstated booking. This does what the `READMISSION_SWITCH_BOOKING` event now does, for prisoners affected before it was handled or for whom the event was missed, and publishes `incentives.iep-review.updated` so downstream services resync. Safe to re-run: a prisoner who needs no repair is left untouched. Requires INCENTIVE_REVIEWS role and write scope.
+         */
+        post: operations["repairAfterBookingSwitch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/incentive-reviews/prisoner/{prisonerNumber}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Returns a history of incentive reviews for a prisoner, Requires INCENTIVE_REVIEWS role and read scope
+         * @description Prisoner Number is an unique reference for a prisoner in NOMIS
+         */
+        get: operations["getPrisonerIncentiveReviewHistory"];
+        put?: never;
+        /**
+         * Adds a new Incentive Review for this specific prisoner by prisoner number
+         * @description Prisoner Number is an unique reference for a prisoner in NOMIS, requires INCENTIVE_REVIEWS role and write scope
+         */
+        post: operations["addIncentiveReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/incentive/level-order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Sets the order of incentive levels
+         * @description All existing incentive level codes must be provided.
+         *
+         *     Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+         *
+         *     Raises HMPPS domain event: "incentives.levels.reordered"
+         */
+        patch: operations["setOrderOfIncentiveLevels"];
+        trace?: never;
+    };
+    "/subject-access-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Provides content for a prisoner to satisfy the needs of a subject access request on their behalf
+         * @description Requires role SAR_DATA_ACCESS or additional role as specified by hmpps.sar.additionalAccessRole configuration.
+         */
+        get: operations["getSarContentByReference"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/queue-admin/get-dlq-messages/{dlqName}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getDlqMessages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/incentives-reviews/prison/{prisonId}/location/{cellLocationPrefix}/level/{levelCode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List of incentive review information for a given location within a prison and on a given level
+         * @description Location should be a cell ID prefix like `MDI-1`
+         */
+        get: operations["getReviews"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/incentive/prison-levels/{prisonId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lists incentive levels in this prison along with associated information, optionally including inactive ones
+         * @description Inactive incentive levels in the prison were previously active at some point. Not all global inactive incentive levels are necessarily included. For the majority of use cases, inactive levels in a prison should be ignored.
+         */
+        get: operations["getPrisonIncentiveLevels"];
+        put?: never;
+        post?: never;
+        /**
+         * Deactivate all incentive levels for a prison
+         * @description This can be used when a prison closes. Returns all incentive levels in this prison including those that were already inactive. Deactivating a level is only possible if there are no prisoners currently on it.
+         *
+         *     Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+         *
+         *     Raises HMPPS domain events: "incentives.prison-level.changed"
+         */
+        delete: operations["deactivateAllPrisonIncentiveLevels"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/incentive-reviews/id/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Returns a specified Incentive Review, Requires INCENTIVE_REVIEWS role and read scope */
+        get: operations["getIncentiveReviewById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/incentive-reviews/booking/{bookingId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Deprecated: Please use `/incentive-reviews/prisoner/{prisonerNumber}` instead.
+         * @deprecated
+         * @description Returns a history of incentive reviews for a prisoner, Requires INCENTIVE_REVIEWS role and read scope.
+         */
+        get: operations["getPrisonerIncentiveLevelHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
-
-export type webhooks = Record<string, never>
-
+export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    DlqMessage: {
-      body: {
-        [key: string]: Record<string, never> | undefined
-      }
-      messageId: string
-    }
-    RetryDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      messages: components['schemas']['DlqMessage'][]
-    }
-    PurgeQueueResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-    }
-    /** @description Error response */
-    ErrorResponse: {
-      /**
-       * Format: int32
-       * @description HTTP status code
-       * @example 500
-       */
-      status: number
-      /**
-       * Format: int32
-       * @description When present, uniquely identifies the type of error making it easier for clients to discriminate without relying on error description; see `uk.gov.justice.digital.hmpps.incentivesapi.config.ErrorResponse` enumeration in hmpps-incentives-api
-       * @example 123
-       */
-      errorCode?: number
-      /**
-       * @description User message for the error
-       * @example No incentive level found for code `ABC`
-       */
-      userMessage?: string
-      /**
-       * @description More detailed error message
-       * @example [Details, sometimes a stack trace]
-       */
-      developerMessage?: string
-      /**
-       * @description More information about the error
-       * @example [Rarely used, error-specific]
-       */
-      moreInfo?: string
-    }
-    Unit: Record<string, never>
-    PrisonIncentiveLevel: {
-      /**
-       * @description The incentive level code this refers to
-       * @example STD
-       */
-      levelCode: string
-      levelName: string
-      /**
-       * @description The prison this refers to
-       * @example MDI
-       */
-      prisonId: string
-      /**
-       * @description Indicates that this incentive level is enabled in this prison
-       * @default true
-       * @example true
-       */
-      active: boolean
-      /**
-       * @description Indicates that this incentive level is the default for new admissions
-       * @default false
-       * @example true
-       */
-      defaultOnAdmission: boolean
-      /**
-       * Format: int32
-       * @description The amount transferred weekly from the private cash account to the spends account for a remand prisoner to use
-       * @example 5500
-       */
-      remandTransferLimitInPence: number
-      /**
-       * Format: int32
-       * @description The maximum amount allowed in the spends account for a remand prisoner
-       * @example 55000
-       */
-      remandSpendLimitInPence: number
-      /**
-       * Format: int32
-       * @description The amount transferred weekly from the private cash account to the spends account for a convicted prisoner to use
-       * @example 1800
-       */
-      convictedTransferLimitInPence: number
-      /**
-       * Format: int32
-       * @description The maximum amount allowed in the spends account for a convicted prisoner
-       * @example 18000
-       */
-      convictedSpendLimitInPence: number
-      /**
-       * Format: int32
-       * @description The number of weekday visits for a convicted prisoner per fortnight
-       * @example 2
-       */
-      visitOrders: number
-      /**
-       * Format: int32
-       * @description The number of privileged/weekend visits for a convicted prisoner per 4 weeks
-       * @example 1
-       */
-      privilegedVisitOrders: number
-    }
-    IncentiveLevel: {
-      /**
-       * @description Unique id for the incentive level
-       * @example STD
-       */
-      levelCode: string
-      /**
-       * @description Name of the incentive level
-       * @example Standard
-       */
-      levelName: string
-      /**
-       * @description Indicates that the incentive level is active; inactive levels are historic levels no longer in use
-       * @default true
-       * @example true
-       */
-      active: boolean
-      /**
-       * @description Indicates that all prisons must have this level active
-       * @default false
-       * @example true
-       */
-      required: boolean
-    }
-    /** @description IEP Review */
-    IepReview: {
-      /**
-       * @description IEP Level
-       * @example STD
-       * @enum {string}
-       */
-      iepLevel: 'BAS' | 'STD' | 'ENH' | 'EN2' | 'EN3'
-      /**
-       * @description Comment about review
-       * @example A review took place
-       */
-      comment: string
-      /**
-       * @description Review Type
-       * @default REVIEW
-       * @example REVIEW
-       * @enum {string}
-       */
-      reviewType?: 'INITIAL' | 'REVIEW' | 'TRANSFER' | 'MIGRATED' | 'READMISSION'
-    }
-    /** @description Detail IEP review details */
-    IepDetail: {
-      /**
-       * Format: int64
-       * @description Unique ID for this review (new Incentives data model only)
-       * @example 12345
-       */
-      id: number
-      /**
-       * @description IEP Level
-       * @example Standard
-       */
-      iepLevel: string
-      /**
-       * @description IEP Code
-       * @example STD
-       */
-      iepCode: string
-      /**
-       * @description Review comments
-       * @example A review took place
-       */
-      comments?: string
-      /**
-       * @description Prisoner number (NOMS)
-       * @example A1234BC
-       */
-      prisonerNumber: string
-      /**
-       * Format: int64
-       * @description Booking ID
-       * @example 1234567
-       */
-      bookingId: number
-      /**
-       * Format: date
-       * @description Date when last review took place
-       * @example 2021-12-31
-       */
-      iepDate: string
-      /**
-       * @description Date and time when last review took place
-       * @example 2021-07-05T10:35:17
-       */
-      iepTime: string
-      /**
-       * @description Prison ID
-       * @example MDI
-       */
-      agencyId: string
-      /**
-       * @description Location  of prisoner when review took place within prison (i.e. their cell)
-       * @example 1-2-003
-       */
-      locationId?: string
-      /**
-       * @description Username of the reviewer
-       * @example USER_1_GEN
-       */
-      userId: string
-      /**
-       * @description Type of IEP Level change
-       * @example REVIEW
-       * @enum {string}
-       */
-      reviewType: 'INITIAL' | 'REVIEW' | 'TRANSFER' | 'MIGRATED' | 'READMISSION'
-      /**
-       * @description Internal audit field holding which system/screen recorded the review
-       * @example INCENTIVES_API
-       */
-      auditModuleName: string
-      isRealReview: boolean
-    }
-    /** @description Current IEP Level */
-    CurrentIepLevel: {
-      /**
-       * Format: int64
-       * @description Booking ID
-       * @example 1234567
-       */
-      bookingId: number
-      /**
-       * @description IEP Level
-       * @example Standard
-       */
-      iepLevel: string
-    }
-    PrisonIncentiveLevelUpdate: {
-      /**
-       * @description Indicates that this incentive level is enabled in this prison
-       * @example true
-       */
-      active?: boolean
-      /**
-       * @description Indicates that this incentive level is the default for new admissions
-       * @example true
-       */
-      defaultOnAdmission?: boolean
-      /**
-       * Format: int32
-       * @description The amount transferred weekly from the private cash account to the spends account for a remand prisoner to use
-       * @example 5500
-       */
-      remandTransferLimitInPence?: number
-      /**
-       * Format: int32
-       * @description The maximum amount allowed in the spends account for a remand prisoner
-       * @example 55000
-       */
-      remandSpendLimitInPence?: number
-      /**
-       * Format: int32
-       * @description The amount transferred weekly from the private cash account to the spends account for a convicted prisoner to use
-       * @example 1800
-       */
-      convictedTransferLimitInPence?: number
-      /**
-       * Format: int32
-       * @description The maximum amount allowed in the spends account for a convicted prisoner
-       * @example 18000
-       */
-      convictedSpendLimitInPence?: number
-      /**
-       * Format: int32
-       * @description The number of weekday visits for a convicted prisoner per fortnight
-       * @example 2
-       */
-      visitOrders?: number
-      /**
-       * Format: int32
-       * @description The number of privileged/weekend visits for a convicted prisoner per 4 weeks
-       * @example 1
-       */
-      privilegedVisitOrders?: number
-    }
-    IncentiveLevelUpdate: {
-      /**
-       * @description Name of the incentive level
-       * @example Standard
-       */
-      name?: string
-      /**
-       * @description Indicates that the incentive level is active; inactive levels are historic levels no longer in use
-       * @example true
-       */
-      active?: boolean
-      /**
-       * @description Indicates that all prisons must have this level active
-       * @example true
-       */
-      required?: boolean
-    }
-    GetDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      /** Format: int32 */
-      messagesReturnedCount: number
-      messages: components['schemas']['DlqMessage'][]
-    }
-    /** @description Incentive review information for a prisoner */
-    IncentiveReview: {
-      /**
-       * @description Prisoner number
-       * @example A1234BC
-       */
-      prisonerNumber: string
-      /**
-       * Format: int64
-       * @description Internal reference for a period in prison
-       * @example 1234567
-       */
-      bookingId: number
-      /**
-       * @description Prisoner’s first name
-       * @example John
-       */
-      firstName: string
-      /**
-       * @description Prisoner’s last name
-       * @example Smith
-       */
-      lastName: string
-      /**
-       * @description Prisoner’s incentive level code
-       * @example STD
-       */
-      levelCode: string
-      /**
-       * Format: int32
-       * @description Count of all the positive case note behaviour entries recorded in the last 3 months
-       * @example 7
-       */
-      positiveBehaviours: number
-      /**
-       * Format: int32
-       * @description Count of all the negative case note behaviour entries recorded in the last 3 months
-       * @example 7
-       */
-      negativeBehaviours: number
-      /**
-       * @description Whether the prisoner has an ACCT open alert
-       * @example true
-       */
-      hasAcctOpen: boolean
-      /**
-       * @description Whether the prisoner is new to prison, i.e. has never had an incentive review in person
-       * @example false
-       */
-      isNewToPrison: boolean
-      /**
-       * Format: int32
-       * @description Days since last review, null when no real review has taken place
-       * @example 45
-       */
-      daysSinceLastReview?: number
-      /**
-       * Format: date
-       * @description Date of next review
-       * @example 2022-12-31
-       */
-      nextReviewDate: string
-    }
-    /** @description An Incentive level available at the given location, with the total and overdue number of prisoners at this level */
-    IncentiveReviewLevel: {
-      /**
-       * @description Level code
-       * @example STD
-       */
-      levelCode: string
-      /**
-       * @description Level name
-       * @example Standard
-       */
-      levelName: string
-      /**
-       * Format: int32
-       * @description Number of prisoners at this level
-       * @example 72
-       */
-      reviewCount: number
-      /**
-       * Format: int32
-       * @description Number of overdue prisoners at this level
-       * @example 10
-       */
-      overdueCount: number
-    }
-    /** @description Incentive reviews list for prisoners at a given location */
-    IncentiveReviewResponse: {
-      /** @description List of levels available at the given location, with the total and overdue number of prisoners at each level */
-      levels: components['schemas']['IncentiveReviewLevel'][]
-      /** @description Prisoner incentive reviews */
-      reviews: components['schemas']['IncentiveReview'][]
-      /**
-       * @description Description of given location
-       * @example Houseblock 1
-       */
-      locationDescription: string
-    }
-    /** @description IEP Review Summary for Prisoner */
-    IepSummary: {
-      /**
-       * Format: int64
-       * @description Unique ID for this review (new Incentives data model only)
-       * @example 12345
-       */
-      id: number
-      /**
-       * @description IEP Code
-       * @example STD
-       */
-      iepCode: string
-      /**
-       * @description IEP Level
-       * @example Standard
-       */
-      iepLevel: string
-      /**
-       * @description Prisoner number (NOMS)
-       * @example A1234BC
-       */
-      prisonerNumber: string
-      /**
-       * Format: int64
-       * @description Booking ID
-       * @example 1234567
-       */
-      bookingId: number
-      /**
-       * Format: date
-       * @description Date when last review took place
-       * @example 2021-12-31
-       */
-      iepDate: string
-      /**
-       * @description Date and time when last review took place
-       * @example 2021-07-05T10:35:17
-       */
-      iepTime: string
-      /**
-       * @description Location  of prisoner when review took place within prison (i.e. their cell)
-       * @example 1-2-003
-       */
-      locationId?: string
-      /** @description IEP Review History (descending in time) */
-      iepDetails: components['schemas']['IepDetail'][]
-      /**
-       * Format: date
-       * @description Date of next review
-       * @example 2022-12-31
-       */
-      nextReviewDate: string
-      /**
-       * Format: int32
-       * @description Days since last review
-       * @example 23
-       */
-      daysSinceReview: number
-    }
-  }
-  responses: never
-  parameters: never
-  requestBodies: never
-  headers: never
-  pathItems: never
+    schemas: {
+        RetryDlqResult: {
+            /** Format: int32 */
+            messagesFoundCount: number;
+        };
+        PurgeQueueResult: {
+            /** Format: int32 */
+            messagesFoundCount: number;
+        };
+        /** @description Error response */
+        ErrorResponse: {
+            /**
+             * Format: int32
+             * @description HTTP status code
+             * @example 500
+             */
+            status: number;
+            /**
+             * Format: int32
+             * @description When present, uniquely identifies the type of error making it easier for clients to discriminate without relying on error description; see `uk.gov.justice.digital.hmpps.incentivesapi.config.ErrorResponse` enumeration in hmpps-incentives-api
+             * @example 123
+             */
+            errorCode?: number | null;
+            /**
+             * @description User message for the error
+             * @example No incentive level found for code `ABC`
+             */
+            userMessage?: string | null;
+            /**
+             * @description More detailed error message
+             * @example [Details, sometimes a stack trace]
+             */
+            developerMessage?: string | null;
+            /**
+             * @description More information about the error
+             * @example [Rarely used, error-specific]
+             */
+            moreInfo?: string | null;
+        };
+        PrisonIncentiveLevel: {
+            /**
+             * @description The incentive level code this refers to
+             * @example STD
+             */
+            levelCode: string;
+            levelName: string;
+            /**
+             * @description The prison this refers to
+             * @example MDI
+             */
+            prisonId: string;
+            /**
+             * @description Indicates that this incentive level is enabled in this prison (true if not supplied)
+             * @example true
+             */
+            active: boolean;
+            /**
+             * @description Indicates that this incentive level is the default for new admissions (false if not supplied)
+             * @example false
+             */
+            defaultOnAdmission: boolean;
+            /**
+             * Format: int32
+             * @description The amount transferred weekly from the private cash account to the spends account for a remand prisoner to use
+             * @example 5500
+             */
+            remandTransferLimitInPence: number;
+            /**
+             * Format: int32
+             * @description The maximum amount allowed in the spends account for a remand prisoner
+             * @example 55000
+             */
+            remandSpendLimitInPence: number;
+            /**
+             * Format: int32
+             * @description The amount transferred weekly from the private cash account to the spends account for a convicted prisoner to use
+             * @example 1800
+             */
+            convictedTransferLimitInPence: number;
+            /**
+             * Format: int32
+             * @description The maximum amount allowed in the spends account for a convicted prisoner
+             * @example 18000
+             */
+            convictedSpendLimitInPence: number;
+            /**
+             * Format: int32
+             * @description The number of weekday visits for a convicted prisoner per fortnight
+             * @example 2
+             */
+            visitOrders: number;
+            /**
+             * Format: int32
+             * @description The number of privileged/weekend visits for a convicted prisoner per 4 weeks
+             * @example 1
+             */
+            privilegedVisitOrders: number;
+        };
+        IncentiveLevel: {
+            /**
+             * @description Unique id for the incentive level
+             * @example STD
+             */
+            code: string;
+            /**
+             * @description Name of the incentive level
+             * @example Standard
+             */
+            name: string;
+            /**
+             * @description Indicates that the incentive level is active (true if not supplied); inactive levels are historic levels no longer in use
+             * @example true
+             */
+            active: boolean;
+            /**
+             * @description Indicates that all prisons must have this level active (false if not supplied)
+             * @example false
+             */
+            required: boolean;
+        };
+        /** @description Outcome of repairing a prisoner whose incentive level was left on a booking that NOMIS has since switched away from */
+        BookingSwitchRepairResult: {
+            /**
+             * @description Prisoner number
+             * @example A1234BC
+             */
+            prisonerNumber: string;
+            /**
+             * Format: int64
+             * @description The booking prisoner-search reports the prisoner is on — the one their level is reinstated to
+             * @example 1234567
+             */
+            bookingId: number;
+            /**
+             * @description What was done
+             * @enum {string}
+             */
+            outcome: "REPAIRED" | "NOTHING_TO_DO";
+            /**
+             * @description Whether this was a dry run, in which case nothing was written
+             * @example false
+             */
+            dryRun: boolean;
+            /**
+             * @description The prisoner's current incentive level before the repair
+             * @example STD
+             */
+            levelCodeBefore?: string | null;
+            /**
+             * @description The prisoner's current incentive level after the repair; for a dry run, what it would become
+             * @example ENH
+             */
+            levelCodeAfter?: string | null;
+            /**
+             * @description Ids of the reviews on the mistaken booking that are no longer current
+             * @example [
+             *       2345
+             *     ]
+             */
+            reviewIdsStoodDown: number[];
+            /**
+             * Format: int64
+             * @description Id of the review on the reinstated booking that was made current again, if any
+             * @example 1234
+             */
+            reviewIdReinstated?: number | null;
+            /** @description Human-readable summary, useful when nothing was changed */
+            message: string;
+        };
+        /** @description Request to add a new incentive review */
+        CreateIncentiveReviewRequest: {
+            /**
+             * @description Incentive Level
+             * @example STD
+             * @enum {string}
+             */
+            iepLevel: "BAS" | "STD" | "ENH" | "EN2" | "EN3";
+            /**
+             * @description Comment about review
+             * @example A review took place
+             */
+            comment: string;
+            /**
+             * @description Review Type
+             * @default REVIEW
+             * @example REVIEW
+             * @enum {string|null}
+             */
+            reviewType: "INITIAL" | "REVIEW" | "TRANSFER" | "MIGRATED" | "READMISSION" | null;
+            /**
+             * Format: date-time
+             * @description Date and time of the review, if not provided will default to now
+             * @example 2023-06-07T13:05:46
+             */
+            reviewTime?: string | null;
+            /**
+             * @description The username of the member of staff undertaking the review, if not provided will use the user in the JWT access token
+             * @example ASMITH
+             */
+            reviewedBy?: string | null;
+        };
+        /** @description Detailed incentive review details */
+        IncentiveReviewDetail: {
+            /**
+             * Format: int64
+             * @description Unique ID for this review (new Incentives data model only)
+             * @example 12345
+             */
+            id: number;
+            /**
+             * @description Incentive Level
+             * @example Standard
+             */
+            iepLevel: string;
+            /**
+             * @description Incentive Level Code
+             * @example STD
+             */
+            iepCode: string;
+            /**
+             * @description Review comments
+             * @example A review took place
+             */
+            comments?: string | null;
+            /**
+             * @description Prisoner number (NOMS)
+             * @example A1234BC
+             */
+            prisonerNumber: string;
+            /**
+             * Format: int64
+             * @description Booking ID
+             * @example 1234567
+             */
+            bookingId: number;
+            /**
+             * Format: date
+             * @description Date when last review took place
+             * @example 2021-12-31
+             */
+            iepDate: string;
+            /**
+             * Format: date-time
+             * @description Date and time when last review took place
+             * @example 2021-12-31T12:34:56.789012
+             */
+            iepTime: string;
+            /**
+             * @description Prison ID
+             * @example MDI
+             */
+            agencyId: string;
+            /**
+             * @description Username of the reviewer
+             * @example USER_1_GEN
+             */
+            userId: string | null;
+            /**
+             * @description Type of Incentive Level change
+             * @example REVIEW
+             * @enum {string}
+             */
+            reviewType: "INITIAL" | "REVIEW" | "TRANSFER" | "MIGRATED" | "READMISSION";
+            /**
+             * @description Internal audit field holding which system/screen recorded the review
+             * @example INCENTIVES_API
+             */
+            auditModuleName: string;
+            isRealReview: boolean;
+        };
+        PrisonIncentiveLevelUpdate: {
+            /**
+             * @description Indicates that this incentive level is enabled in this prison
+             * @example true
+             */
+            active?: boolean | null;
+            /**
+             * @description Indicates that this incentive level is the default for new admissions
+             * @example true
+             */
+            defaultOnAdmission?: boolean | null;
+            /**
+             * Format: int32
+             * @description The amount transferred weekly from the private cash account to the spends account for a remand prisoner to use
+             * @example 5500
+             */
+            remandTransferLimitInPence?: number | null;
+            /**
+             * Format: int32
+             * @description The maximum amount allowed in the spends account for a remand prisoner
+             * @example 55000
+             */
+            remandSpendLimitInPence?: number | null;
+            /**
+             * Format: int32
+             * @description The amount transferred weekly from the private cash account to the spends account for a convicted prisoner to use
+             * @example 1800
+             */
+            convictedTransferLimitInPence?: number | null;
+            /**
+             * Format: int32
+             * @description The maximum amount allowed in the spends account for a convicted prisoner
+             * @example 18000
+             */
+            convictedSpendLimitInPence?: number | null;
+            /**
+             * Format: int32
+             * @description The number of weekday visits for a convicted prisoner per fortnight
+             * @example 2
+             */
+            visitOrders?: number | null;
+            /**
+             * Format: int32
+             * @description The number of privileged/weekend visits for a convicted prisoner per 4 weeks
+             * @example 1
+             */
+            privilegedVisitOrders?: number | null;
+        };
+        IncentiveLevelUpdate: {
+            /**
+             * @description Name of the incentive level
+             * @example Standard
+             */
+            name?: string | null;
+            /**
+             * @description Indicates that the incentive level is active; inactive levels are historic levels no longer in use
+             * @example true
+             */
+            active?: boolean | null;
+            /**
+             * @description Indicates that all prisons must have this level active
+             * @example true
+             */
+            required?: boolean | null;
+        };
+        Attachment: {
+            /**
+             * Format: int32
+             * @description The number of the attachment which will match any corresponding reference in the content section
+             */
+            attachmentNumber: number;
+            /** @description The name or description of the attachment which will be included in the report */
+            name: string;
+            /** @description The content type of the attachment */
+            contentType: string;
+            /** @description The url to be used to download the attachment file */
+            url: string;
+            /**
+             * Format: int32
+             * @description The size of the attachment file in bytes
+             */
+            filesize?: number | null;
+            /** @description The filename of attachment file */
+            filename: string;
+            /** @description The additional headers to use when calling the url for fetching this attachment */
+            headers?: components["schemas"]["AttachmentHeader"][] | null;
+        };
+        AttachmentHeader: {
+            /** @description The name of the header */
+            name: string;
+            /** @description The value of the header */
+            value: string;
+        };
+        HmppsSubjectAccessRequestContent: {
+            /** @description The content of the subject access request response */
+            content: unknown;
+            /** @description The details of any attachments for the subject access request response */
+            attachments?: components["schemas"]["Attachment"][] | null;
+        };
+        DlqMessage: {
+            body: {
+                [key: string]: unknown;
+            };
+            messageId: string;
+        };
+        GetDlqResult: {
+            /** Format: int32 */
+            messagesFoundCount: number;
+            /** Format: int32 */
+            messagesReturnedCount: number;
+            messages: components["schemas"]["DlqMessage"][];
+        };
+        /** @description Incentive review information for a prisoner */
+        IncentiveReview: {
+            /**
+             * @description Prisoner number
+             * @example A1234BC
+             */
+            prisonerNumber: string;
+            /**
+             * Format: int64
+             * @description Internal reference for a period in prison
+             * @example 1234567
+             */
+            bookingId: number;
+            /**
+             * @description Prisoner’s first name
+             * @example John
+             */
+            firstName: string;
+            /**
+             * @description Prisoner’s last name
+             * @example Smith
+             */
+            lastName: string;
+            /**
+             * @description Prisoner’s incentive level code
+             * @example STD
+             */
+            levelCode: string;
+            /**
+             * Format: int32
+             * @description Count of all the positive case note behaviour entries recorded in the last 3 months
+             * @example 7
+             */
+            positiveBehaviours: number;
+            /**
+             * Format: int32
+             * @description Count of all the negative case note behaviour entries recorded in the last 3 months
+             * @example 7
+             */
+            negativeBehaviours: number;
+            /**
+             * @description Whether the prisoner has an ACCT open alert
+             * @example true
+             */
+            hasAcctOpen: boolean;
+            /**
+             * @description Whether the prisoner is new to prison, i.e. has never had an incentive review in person
+             * @example false
+             */
+            isNewToPrison: boolean;
+            /**
+             * Format: int32
+             * @description Days since last review, null when no real review has taken place
+             * @example 45
+             */
+            daysSinceLastReview?: number | null;
+            /**
+             * Format: date
+             * @description Date of next review
+             * @example 2022-12-31
+             */
+            nextReviewDate: string;
+        };
+        /** @description An Incentive level available at the given location, with the total and overdue number of prisoners at this level */
+        IncentiveReviewLevel: {
+            /**
+             * @description Level code
+             * @example STD
+             */
+            levelCode: string;
+            /**
+             * @description Level name
+             * @example Standard
+             */
+            levelName: string;
+            /**
+             * Format: int32
+             * @description Number of prisoners at this level
+             * @example 72
+             */
+            reviewCount: number;
+            /**
+             * Format: int32
+             * @description Number of overdue prisoners at this level
+             * @example 10
+             */
+            overdueCount: number;
+        };
+        /** @description Incentive reviews list for prisoners at a given location */
+        IncentiveReviewResponse: {
+            /** @description List of levels available at the given location, with the total and overdue number of prisoners at each level */
+            levels: components["schemas"]["IncentiveReviewLevel"][];
+            /** @description Prisoner incentive reviews */
+            reviews: components["schemas"]["IncentiveReview"][];
+            /**
+             * @description Description of given location
+             * @example Houseblock 1
+             */
+            locationDescription: string;
+        };
+        /** @description Incentive Review Summary for Prisoner */
+        IncentiveReviewSummary: {
+            /**
+             * Format: int64
+             * @description Unique ID for this review (new Incentives data model only)
+             * @example 12345
+             */
+            id: number;
+            /**
+             * @description Incentive Level Code
+             * @example STD
+             */
+            iepCode: string;
+            /**
+             * @description Incentive Level
+             * @example Standard
+             */
+            iepLevel: string;
+            /**
+             * @description Prisoner number (NOMS)
+             * @example A1234BC
+             */
+            prisonerNumber: string;
+            /**
+             * Format: int64
+             * @description Booking ID
+             * @example 1234567
+             */
+            bookingId: number;
+            /**
+             * Format: date
+             * @description Date when last review took place
+             * @example 2021-12-31
+             */
+            iepDate: string;
+            /**
+             * Format: date-time
+             * @description Date and time when last review took place
+             * @example 2021-12-31T12:34:56.789012
+             */
+            iepTime: string;
+            /** @description Incentive Review History (descending in time) */
+            iepDetails: components["schemas"]["IncentiveReviewDetail"][];
+            /**
+             * Format: date
+             * @description Date of next review
+             * @example 2022-12-31
+             */
+            nextReviewDate: string;
+            /**
+             * Format: int32
+             * @description Days since last review
+             * @example 23
+             */
+            daysSinceReview: number;
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
-
-export type external = Record<string, never>
-
+export type $defs = Record<string, never>;
 export interface operations {
-  retryDlq: {
-    parameters: {
-      path: {
-        dlqName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['RetryDlqResult']
-        }
-      }
-    }
-  }
-  retryAllDlqs: {
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['RetryDlqResult'][]
-        }
-      }
-    }
-  }
-  purgeQueue: {
-    parameters: {
-      path: {
-        queueName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['PurgeQueueResult']
-        }
-      }
-    }
-  }
-  /**
-   * Reset all incentive levels for a prison
-   * @description Activates the required set of levels, ensuring that Standard is the default level for admission. This can be used when a new prison is opened. Any levels that are already active will remain active and associated information remains unchanged. Returns all incentive levels in this prison including those that were already active.
-   *
-   * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
-   *
-   * Raises HMPPS domain events: "incentives.prison-level.changed"
-   */
-  resetPrisonIncentiveLevels: {
-    parameters: {
-      path: {
-        /**
-         * @description Prison id
-         * @example MDI
-         */
-        prisonId: string
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['Unit']
-      }
-    }
-    responses: {
-      /** @description Prison incentive levels reset */
-      200: {
-        content: {
-          'application/json': components['schemas']['PrisonIncentiveLevel'][]
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Returns an incentive level in this prison along with associated information
-   * @description Note that it may be inactive in the prison. For the majority of use cases, inactive levels in a prison should be ignored.
-   */
-  getPrisonIncentiveLevel: {
-    parameters: {
-      path: {
-        /**
-         * @description Prison id
-         * @example MDI
-         */
-        prisonId: string
-        /**
-         * @description Incentive level code
-         * @example STD
-         */
-        levelCode: string
-      }
-    }
-    responses: {
-      /** @description Prison incentive level returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['PrisonIncentiveLevel']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Prison incentive level not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Updates prison incentive level information
-   * @description Payload must include all required fields. Deactivating a level is only possible if there are no prisoners currently on it.
-   *
-   * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
-   *
-   * Raises HMPPS domain event: "incentives.prison-level.changed"
-   */
-  updatePrisonIncentiveLevel: {
-    parameters: {
-      path: {
-        /**
-         * @description Prison id
-         * @example MDI
-         */
-        prisonId: string
-        /**
-         * @description Incentive level code
-         * @example STD
-         */
-        levelCode: string
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['PrisonIncentiveLevel']
-      }
-    }
-    responses: {
-      /** @description Prison incentive level updated */
-      200: {
-        content: {
-          'application/json': components['schemas']['PrisonIncentiveLevel']
-        }
-      }
-      /** @description Invalid payload or level is being deactivated despite having prisoners on it */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incentive level not found globally */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Deactivate an incentive level for a prison
-   * @description Deactivating a level is only possible if there are no prisoners currently on it.
-   *
-   * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
-   *
-   * Raises HMPPS domain event: "incentives.prison-level.changed"
-   */
-  deactivatePrisonIncentiveLevel: {
-    parameters: {
-      path: {
-        /**
-         * @description Prison id
-         * @example MDI
-         */
-        prisonId: string
-        /**
-         * @description Incentive level code
-         * @example STD
-         */
-        levelCode: string
-      }
-    }
-    responses: {
-      /** @description Prison incentive level deactivated */
-      200: {
-        content: {
-          'application/json': components['schemas']['PrisonIncentiveLevel']
-        }
-      }
-      /** @description Incentive level is globally required or there are prisoners on this incentive level at this prison */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incentive level not found globally */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Updates prison incentive level information
-   * @description Partial updates are allowed. Deactivating a level is only possible if there are no prisoners currently on it.
-   *
-   * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
-   *
-   * Raises HMPPS domain event: "incentives.prison-level.changed"
-   */
-  partiallyUpdatePrisonIncentiveLevel: {
-    parameters: {
-      path: {
-        /**
-         * @description Prison id
-         * @example MDI
-         */
-        prisonId: string
-        /**
-         * @description Incentive level code
-         * @example STD
-         */
-        levelCode: string
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['PrisonIncentiveLevelUpdate']
-      }
-    }
-    responses: {
-      /** @description Prison incentive level updated */
-      200: {
-        content: {
-          'application/json': components['schemas']['PrisonIncentiveLevel']
-        }
-      }
-      /** @description Invalid payload or level is being deactivated despite having prisoners on it */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incentive level not found globally */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Returns an incentive level by code
-   * @description Note that it may be inactive. For the majority of use cases, inactive levels in a prison should be ignored.
-   */
-  getIncentiveLevel: {
-    parameters: {
-      path: {
-        /**
-         * @description Incentive level code
-         * @example STD
-         */
-        code: string
-      }
-    }
-    responses: {
-      /** @description Incentive level returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['IncentiveLevel']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incentive level with this code not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Updates an incentive level
-   * @description Payload must include all required fields. A level marked as required must also be active. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
-   *
-   * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
-   *
-   * Raises HMPPS domain event: "incentives.level.changed"
-   */
-  updateIncentiveLevel: {
-    parameters: {
-      path: {
-        /**
-         * @description Incentive level code
-         * @example STD
-         */
-        code: string
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['IncentiveLevel']
-      }
-    }
-    responses: {
-      /** @description Incentive level updated */
-      200: {
-        content: {
-          'application/json': components['schemas']['IncentiveLevel']
-        }
-      }
-      /** @description Invalid payload or level is being deactivated despite being active in some prison */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incentive level not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Deactivates an incentive level
-   * @description A required level cannot be deactivated, needs to be updated first to be not required. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
-   *
-   * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
-   *
-   * Raises HMPPS domain event: "incentives.level.changed"
-   */
-  deactivateIncentiveLevel: {
-    parameters: {
-      path: {
-        /**
-         * @description Incentive level code
-         * @example STD
-         */
-        code: string
-      }
-    }
-    responses: {
-      /** @description Incentive level deactivated */
-      200: {
-        content: {
-          'application/json': components['schemas']['IncentiveLevel']
-        }
-      }
-      /** @description Incentive level is marked as required or is active in some prison */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incentive level not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Updates an incentive level
-   * @description Partial updates are allowed. A level marked as required must also be active. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
-   *
-   * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
-   *
-   * Raises HMPPS domain event: "incentives.level.changed"
-   */
-  partiallyUpdateIncentiveLevel: {
-    parameters: {
-      path: {
-        /**
-         * @description Incentive level code
-         * @example STD
-         */
-        code: string
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['IncentiveLevelUpdate']
-      }
-    }
-    responses: {
-      /** @description Incentive level updated */
-      200: {
-        content: {
-          'application/json': components['schemas']['IncentiveLevel']
-        }
-      }
-      /** @description Invalid payload or level is being deactivated despite being active in some prison */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incentive level not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Lists all incentive levels, optionally including inactive ones
-   * @description For the majority of use cases, inactive levels in a prison should be ignored.
-   */
-  getIncentiveLevels: {
-    parameters: {
-      query?: {
-        /**
-         * @description Include inactive incentive levels
-         * @example true
-         */
-        'with-inactive'?: boolean
-      }
-    }
-    responses: {
-      /** @description Incentive levels returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['IncentiveLevel'][]
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Creates a new incentive level
-   * @description New incentive levels are added to the end of the list.
-   *
-   * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
-   *
-   * Raises HMPPS domain event: "incentives.level.changed"
-   */
-  createIncentiveLevel: {
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['IncentiveLevel']
-      }
-    }
-    responses: {
-      /** @description Incentive level created */
-      201: {
-        content: {
-          'application/json': components['schemas']['IncentiveLevel']
-        }
-      }
-      /** @description Invalid payload */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Returns a history of IEP reviews for a prisoner
-   * @description Prisoner Number is an unique reference for a prisoner in NOMIS
-   */
-  getPrisonerIepLevelHistory: {
-    parameters: {
-      path: {
-        /**
-         * @description Prisoner Number
-         * @example A1234AB
-         */
-        prisonerNumber: string
-      }
-    }
-    responses: {
-      /** @description IEP Level History Information returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['IepSummary']
-        }
-      }
-      /** @description Incorrect data specified to return IEP Level History */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Adds a new IEP Review for this specific prisoner by prisoner number
-   * @description Prisoner Number is an unique reference for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
-   */
-  addIepReview: {
-    parameters: {
-      path: {
-        /**
-         * @description Prisoner Number
-         * @example A1234AB
-         */
-        prisonerNumber: string
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['IepReview']
-      }
-    }
-    responses: {
-      /** @description IEP Review Added */
-      201: {
-        content: {
-          'application/json': components['schemas']['IepDetail']
-        }
-      }
-      /** @description Incorrect data specified to add new IEP review */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Returns a history of IEP reviews for a list of prisoners */
-  getCurrentIEPLevelForPrisoner: {
-    requestBody: {
-      content: {
-        'application/json': number[]
-      }
-    }
-    responses: {
-      /** @description IEP Level Information returned per prisoner */
-      200: {
-        content: {
-          'application/json': components['schemas']['CurrentIepLevel'][]
-        }
-      }
-      /** @description Incorrect data specified to return IEP Level History */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Returns a history of IEP reviews for a prisoner
-   * @description Booking ID is an internal ID for a prisoner in NOMIS
-   */
-  getPrisonerIepLevelHistory_1: {
-    parameters: {
-      query?: {
-        /**
-         * @description Toggle to return IEP detail entries in response (or not)
-         * @example true
-         */
-        'with-details'?: boolean
-      }
-      path: {
-        /**
-         * @description Booking Id
-         * @example 3000002
-         */
-        bookingId: number
-      }
-    }
-    responses: {
-      /** @description IEP Level History Information returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['IepSummary']
-        }
-      }
-      /** @description Incorrect data specified to return IEP Level History */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Adds a new IEP Review for this specific prisoner by booking Id
-   * @description Booking ID is an internal ID for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
-   */
-  addIepReview_1: {
-    parameters: {
-      path: {
-        /**
-         * @description Booking Id
-         * @example 3000002
-         */
-        bookingId: number
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['IepReview']
-      }
-    }
-    responses: {
-      /** @description IEP Review Added */
-      201: {
-        content: {
-          'application/json': components['schemas']['IepDetail']
-        }
-      }
-      /** @description Incorrect data specified to add new IEP review */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Sets the order of incentive levels
-   * @description All existing incentive level codes must be provided.
-   *
-   * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
-   *
-   * Raises HMPPS domain event: "incentives.levels.reordered"
-   */
-  setOrderOfIncentiveLevels: {
-    requestBody: {
-      content: {
-        'application/json': string[]
-      }
-    }
-    responses: {
-      /** @description Incentive levels reordered */
-      200: {
-        content: {
-          'application/json': components['schemas']['IncentiveLevel'][]
-        }
-      }
-      /** @description Not enough level codes provided */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incentive level with this code not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getDlqMessages: {
-    parameters: {
-      query?: {
-        maxMessages?: number
-      }
-      path: {
-        dlqName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['GetDlqResult']
-        }
-      }
-    }
-  }
-  /**
-   * List of incentive review information for a given location within a prison and on a given level
-   * @description Location should be a cell ID prefix like `MDI-1`
-   */
-  getReviews: {
-    parameters: {
-      query?: {
-        /**
-         * @description Sort reviews by
-         * @example PRISONER_NUMBER
-         */
-        sort?:
-          | 'NEXT_REVIEW_DATE'
-          | 'DAYS_SINCE_LAST_REVIEW'
-          | 'FIRST_NAME'
-          | 'LAST_NAME'
-          | 'PRISONER_NUMBER'
-          | 'POSITIVE_BEHAVIOURS'
-          | 'NEGATIVE_BEHAVIOURS'
-          | 'HAS_ACCT_OPEN'
-          | 'IS_NEW_TO_PRISON'
-        /**
-         * @description Sort direction
-         * @example ASC
-         */
-        order?: 'ASC' | 'DESC'
-        /**
-         * @description Page (starts at 0)
-         * @example 2
-         */
-        page?: number
-        /**
-         * @description Page size
-         * @example 20
-         */
-        pageSize?: number
-      }
-      path: {
-        /**
-         * @description Prison ID
-         * @example MDI
-         */
-        prisonId: string
-        /**
-         * @description Cell location ID prefix
-         * @example MDI-1
-         */
-        cellLocationPrefix: string
-        /**
-         * @description Incentive level code
-         * @example STD
-         */
-        levelCode: string
-      }
-    }
-    responses: {
-      /** @description Reviews information returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['IncentiveReviewResponse']
-        }
-      }
-      /** @description Invalid request parameters */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorised request */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Request does not have necessary permissions */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Lists incentive levels in this prison along with associated information, optionally including inactive ones
-   * @description Inactive incentive levels in the prison were previously active at some point. Not all global inactive incentive levels are necessarily included. For the majority of use cases, inactive levels in a prison should be ignored.
-   */
-  getPrisonIncentiveLevels: {
-    parameters: {
-      query?: {
-        /**
-         * @description Include inactive prison incentive levels
-         * @example true
-         */
-        'with-inactive'?: boolean
-      }
-      path: {
-        /**
-         * @description Prison id
-         * @example MDI
-         */
-        prisonId: string
-      }
-    }
-    responses: {
-      /** @description Prison incentive levels returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['PrisonIncentiveLevel'][]
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Prison incentive level not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Deactivate all incentive levels for a prison
-   * @description This can be used when a prison closes. Returns all incentive levels in this prison including those that were already inactive. Deactivating a level is only possible if there are no prisoners currently on it.
-   *
-   * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
-   *
-   * Raises HMPPS domain events: "incentives.prison-level.changed"
-   */
-  deactivateAllPrisonIncentiveLevels: {
-    parameters: {
-      path: {
-        /**
-         * @description Prison id
-         * @example MDI
-         */
-        prisonId: string
-      }
-    }
-    responses: {
-      /** @description Prison incentive levels deactivated */
-      200: {
-        content: {
-          'application/json': components['schemas']['PrisonIncentiveLevel'][]
-        }
-      }
-      /** @description There are prisoners on some incentive level at this prison */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Returns a specified IEP Review */
-  getReviewById: {
-    parameters: {
-      path: {
-        /**
-         * @description Review ID (internal)
-         * @example 1000
-         */
-        id: number
-      }
-    }
-    responses: {
-      /** @description IEP Level Information returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['IepDetail']
-        }
-      }
-      /** @description Incorrect data specified to return IEP Level History */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
+    retryDlq: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dlqName: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RetryDlqResult"];
+                };
+            };
+        };
+    };
+    retryAllDlqs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RetryDlqResult"][];
+                };
+            };
+        };
+    };
+    purgeQueue: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                queueName: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PurgeQueueResult"];
+                };
+            };
+        };
+    };
+    resetPrisonIncentiveLevels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Prison id
+                 * @example MDI
+                 */
+                prisonId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": unknown;
+            };
+        };
+        responses: {
+            /** @description Prison incentive levels reset */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrisonIncentiveLevel"][];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getPrisonIncentiveLevel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Prison id
+                 * @example MDI
+                 */
+                prisonId: string;
+                /**
+                 * @description Incentive level code
+                 * @example STD
+                 */
+                levelCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Prison incentive level returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrisonIncentiveLevel"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Prison incentive level not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updatePrisonIncentiveLevel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Prison id
+                 * @example MDI
+                 */
+                prisonId: string;
+                /**
+                 * @description Incentive level code
+                 * @example STD
+                 */
+                levelCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PrisonIncentiveLevel"];
+            };
+        };
+        responses: {
+            /** @description Prison incentive level updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrisonIncentiveLevel"];
+                };
+            };
+            /** @description Invalid payload or level is being deactivated despite having prisoners on it */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incentive level not found globally */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deactivatePrisonIncentiveLevel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Prison id
+                 * @example MDI
+                 */
+                prisonId: string;
+                /**
+                 * @description Incentive level code
+                 * @example STD
+                 */
+                levelCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Prison incentive level deactivated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrisonIncentiveLevel"];
+                };
+            };
+            /** @description Incentive level is globally required or there are prisoners on this incentive level at this prison */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incentive level not found globally */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    partiallyUpdatePrisonIncentiveLevel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Prison id
+                 * @example MDI
+                 */
+                prisonId: string;
+                /**
+                 * @description Incentive level code
+                 * @example STD
+                 */
+                levelCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PrisonIncentiveLevelUpdate"];
+            };
+        };
+        responses: {
+            /** @description Prison incentive level updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrisonIncentiveLevel"];
+                };
+            };
+            /** @description Invalid payload or level is being deactivated despite having prisoners on it */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incentive level not found globally */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getIncentiveLevel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Incentive level code
+                 * @example STD
+                 */
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Incentive level returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveLevel"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incentive level with this code not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateIncentiveLevel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Incentive level code
+                 * @example STD
+                 */
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IncentiveLevel"];
+            };
+        };
+        responses: {
+            /** @description Incentive level updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveLevel"];
+                };
+            };
+            /** @description Invalid payload or level is being deactivated despite being active in some prison */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incentive level not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deactivateIncentiveLevel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Incentive level code
+                 * @example STD
+                 */
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Incentive level deactivated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveLevel"];
+                };
+            };
+            /** @description Incentive level is marked as required or is active in some prison */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incentive level not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    partiallyUpdateIncentiveLevel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Incentive level code
+                 * @example STD
+                 */
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IncentiveLevelUpdate"];
+            };
+        };
+        responses: {
+            /** @description Incentive level updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveLevel"];
+                };
+            };
+            /** @description Invalid payload or level is being deactivated despite being active in some prison */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incentive level not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getIncentiveLevels: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Include inactive incentive levels
+                 * @example true
+                 */
+                "with-inactive"?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Incentive levels returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveLevel"][];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createIncentiveLevel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IncentiveLevel"];
+            };
+        };
+        responses: {
+            /** @description Incentive level created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveLevel"];
+                };
+            };
+            /** @description Invalid payload */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    repairAfterBookingSwitch: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Report what would change without writing anything or publishing any events
+                 * @example false
+                 */
+                "dry-run"?: boolean;
+            };
+            header?: never;
+            path: {
+                /**
+                 * @description Prisoner Number
+                 * @example A1234AB
+                 */
+                prisonerNumber: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Repair attempted; the response body reports what was changed, if anything */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingSwitchRepairResult"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Prisoner not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getPrisonerIncentiveReviewHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Prisoner Number
+                 * @example A1234AB
+                 */
+                prisonerNumber: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Incentive review history information returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveReviewSummary"];
+                };
+            };
+            /** @description Incorrect data specified to return incentive history */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No incentive reviews found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    addIncentiveReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Prisoner Number
+                 * @example A1234AB
+                 */
+                prisonerNumber: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateIncentiveReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Incentive Review Added */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveReviewDetail"];
+                };
+            };
+            /** @description Incorrect data specified to add new incentive review */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    setOrderOfIncentiveLevels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": string[];
+            };
+        };
+        responses: {
+            /** @description Incentive levels reordered */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveLevel"][];
+                };
+            };
+            /** @description Not enough level codes provided */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incentive level with this code not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getSarContentByReference: {
+        parameters: {
+            query?: {
+                /** @description NOMIS Prison Reference Number */
+                prn?: string;
+                /** @description nDelius Case Reference Number */
+                crn?: string;
+                /** @description Optional parameter denoting minimum date of event occurrence which should be returned in the response */
+                fromDate?: string;
+                /** @description Optional parameter denoting maximum date of event occurrence which should be returned in the response */
+                toDate?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Request successfully processed - content found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HmppsSubjectAccessRequestContent"];
+                };
+            };
+            /** @description Request successfully processed - no content found */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            /** @description Subject Identifier is not recognised by this service */
+            209: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            /** @description The client does not have authorisation to make this request */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden, requires an appropriate role */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected error occurred */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getDlqMessages: {
+        parameters: {
+            query?: {
+                maxMessages?: number;
+            };
+            header?: never;
+            path: {
+                dlqName: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["GetDlqResult"];
+                };
+            };
+        };
+    };
+    getReviews: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Sort reviews by
+                 * @example PRISONER_NUMBER
+                 */
+                sort?: "NEXT_REVIEW_DATE" | "DAYS_SINCE_LAST_REVIEW" | "FIRST_NAME" | "LAST_NAME" | "PRISONER_NUMBER" | "POSITIVE_BEHAVIOURS" | "NEGATIVE_BEHAVIOURS" | "HAS_ACCT_OPEN" | "IS_NEW_TO_PRISON";
+                /**
+                 * @description Sort direction
+                 * @example ASC
+                 */
+                order?: "ASC" | "DESC";
+                /**
+                 * @description Page (starts at 0)
+                 * @example 2
+                 */
+                page?: number;
+                /**
+                 * @description Page size
+                 * @example 20
+                 */
+                pageSize?: number;
+            };
+            header?: never;
+            path: {
+                /**
+                 * @description Prison ID
+                 * @example MDI
+                 */
+                prisonId: string;
+                /**
+                 * @description Cell location ID prefix
+                 * @example MDI-1
+                 */
+                cellLocationPrefix: string;
+                /**
+                 * @description Incentive level code
+                 * @example STD
+                 */
+                levelCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reviews information returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveReviewResponse"];
+                };
+            };
+            /** @description Invalid request parameters */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorised request */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request does not have necessary permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getPrisonIncentiveLevels: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Include inactive prison incentive levels
+                 * @example true
+                 */
+                "with-inactive"?: boolean;
+            };
+            header?: never;
+            path: {
+                /**
+                 * @description Prison id
+                 * @example MDI
+                 */
+                prisonId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Prison incentive levels returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrisonIncentiveLevel"][];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Prison incentive level not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deactivateAllPrisonIncentiveLevels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Prison id
+                 * @example MDI
+                 */
+                prisonId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Prison incentive levels deactivated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrisonIncentiveLevel"][];
+                };
+            };
+            /** @description There are prisoners on some incentive level at this prison */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getIncentiveReviewById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Review ID (internal)
+                 * @example 1000
+                 */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Incentive Review Level Information returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveReviewDetail"];
+                };
+            };
+            /** @description Incorrect data specified to return incentive review level history */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incentive review not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getPrisonerIncentiveLevelHistory: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Toggle to return incentive reviews detail entries in response (or not)
+                 * @example true
+                 */
+                "with-details"?: boolean;
+            };
+            header?: never;
+            path: {
+                /**
+                 * @description Booking Id
+                 * @example 3000002
+                 */
+                bookingId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Incentive review Level history information returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncentiveReviewSummary"];
+                };
+            };
+            /** @description Incorrect data specified to return incentive review level history */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to use this endpoint */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No incentive reviews found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
 }

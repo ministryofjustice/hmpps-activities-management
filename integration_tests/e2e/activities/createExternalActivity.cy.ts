@@ -46,6 +46,7 @@ context('Create external activity', () => {
     cy.task('stubSignIn')
     cy.signInEAEnabled()
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
+    cy.stubEndpoint('GET', '/activity-categories\\?includeRotl=true', getCategories)
     cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=false', getActivities)

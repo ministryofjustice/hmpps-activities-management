@@ -4,1988 +4,3935 @@
  */
 
 export interface paths {
-  '/users/{username}/unlock-user': {
-    /** Unlocks the user account. Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-    put: operations['unlockUser']
-  }
-  '/users/{username}/lock-user': {
-    /** Locks the user account. Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-    put: operations['lockUser']
-  }
-  '/users/{username}/default-caseload/{defaultCaseloadId}': {
-    /** Sets the default caseload. Caseload must already be present. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-    put: operations['setDefaultCaseload']
-  }
-  '/users/{username}/change-password': {
-    /** Change password of user account. Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-    put: operations['changePassword']
-  }
-  '/users/{username}/change-name': {
-    /** Change staff name of user account. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN */
-    put: operations['changeName']
-  }
-  '/users/{username}/change-email': {
-    /** Change email of user account. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN */
-    put: operations['changeEmail']
-  }
-  '/roles/{code}': {
-    /** Information on a specific role. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLES_ADMIN */
-    get: operations['getRoleDetails']
-    /** Updates a role. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLES_ADMIN */
-    put: operations['updateRole']
-  }
-  '/users/{username}/roles': {
-    /** Roles for a specific user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-    get: operations['getUserRoles']
-    /** Adds a role to a user, user must have caseload (if specified). Default caseload is DPS caseload (NWEB).  Cannot add an existing role to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-    post: operations['addRoles']
-  }
-  '/users/{username}/roles/{roleCode}': {
-    /** Adds a role to a user, user must have caseload (if specified). Default caseload is DPS caseload (NWEB).  Cannot add an existing role to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-    post: operations['addRole']
-    /** The user must already have the role to be removed. Default role caseload is a DPS role unless specified. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-    delete: operations['removeRole']
-  }
-  '/users/{username}/caseloads': {
-    /** Caseloads for a specific user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-    get: operations['getUserCaseloads']
-    /** Adds caseloads to a user, caseloads must exist. Cannot add an existing caseload to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN */
-    post: operations['addCaseloads']
-  }
-  '/users/{username}/caseloads/{caseloadId}': {
-    /** Adds a caseload to a user, caseload must exist. Cannot add an existing caseload to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN */
-    post: operations['addCaseload']
-    /** The user must already have the caseload to be removed. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN */
-    delete: operations['removeCaseload']
-  }
-  '/users/{username}/authenticate': {
-    post: operations['authenticate']
-  }
-  '/users/user': {
-    /** Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-    get: operations['findUsersByEmailAddress']
-    /** Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-    post: operations['findUsersByEmailAddressAndUsernames']
-  }
-  '/users/remove-roles/{roleCode}': {
-    /** If the user does not have the role already it is ignored. Any users not found will also be ignored but will not be returned in the response. Only DPS roles are removed on the DPS caseload (NWEB). Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-    post: operations['bulkRemoveRoles']
-  }
-  '/users/local-admin-account': {
-    /** Creates local admin user account, oracle schema and staff user information. Requires role ROLE_CREATE_USER */
-    post: operations['createLocalAdminUser']
-  }
-  '/users/link-local-admin-account/{linkedUsername}': {
-    /** Can only be linked to an general account. Can only be linked to an account that doesn't already have one admin account. Requires role ROLE_CREATE_USER */
-    post: operations['linkLocalAdminAccount']
-  }
-  '/users/link-general-account/{linkedUsername}': {
-    /** Can only be linked to an admin account. Can only be linked to an account that doesn't already have one general account. Requires role ROLE_CREATE_USER */
-    post: operations['linkGeneralAccount']
-  }
-  '/users/link-admin-account/{linkedUsername}': {
-    /** Can only be linked to an general account. Can only be linked to an account that doesn't already have one Admin account. Requires role ROLE_CREATE_USER */
-    post: operations['linkAdminAccount']
-  }
-  '/users/general-account': {
-    /** Creates general user account, oracle schema and staff user information. Requires role ROLE_CREATE_USER */
-    post: operations['createGeneralUser']
-  }
-  '/users/admin-account': {
-    /** Creates admin user account, oracle schema and staff user information. Requires role ROLE_CREATE_USER */
-    post: operations['createAdminUser']
-  }
-  '/users/add-roles/{roleCode}': {
-    /** If the user has this role already it is ignored. Any users not found will also be ignored but will not be returned in the response. Only DPS roles are added to the DPS caseload (NWEB). Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-    post: operations['bulkAddRoles']
-  }
-  '/roles': {
-    /** Information on a list of roles. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN, ROLE_MAINTAIN_ACCESS_ROLES or ROLES_ADMIN */
-    get: operations['getAllRoles']
-    /** Creates a role. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLES_ADMIN */
-    post: operations['createRole']
-  }
-  '/users': {
-    /** Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES. <br/>Get all users with filter.<br/> For local administrators this will implicitly filter users in the prisons they administer, therefore username is expected in the authorisation token. <br/>For users with role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN this allows access to all staff. */
-    get: operations['getUsers']
-  }
-  '/users/{username}': {
-    /** Information on a specific user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES or ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-    get: operations['getUserDetails']
-  }
-  '/users/staff': {
-    /** Requires role ROLE_USE_OF_FORCE or ROLE_STAFF_SEARCH */
-    get: operations['findUsersByFirstAndLastNames']
-  }
-  '/users/staff/{staffId}': {
-    /** Will display general and admin user account if setup.  Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-    get: operations['getUserDetailsByStaffId']
-  }
-  '/users/emails': {
-    /** Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-    get: operations['findUsersAndEmails']
-  }
-  '/users/download': {
-    get: operations['downloadUsersByFilters']
-  }
-  '/reference-data/caseloads': {
-    /** Retrieves all the current active general caseloads, these are effectively prisons that staff can be associated with */
-    get: operations['getCaseload']
-  }
-  '/me': {
-    /** Information on a specific user. */
-    get: operations['getMyUserDetails']
-  }
-  '/me/roles': {
-    /** Roles for a specific user in context */
-    get: operations['getMyRoles']
-  }
-  '/me/caseloads': {
-    /** Caseloads for the current user */
-    get: operations['getMyCaseloads']
-  }
+    "/users/{username}/unlock-user": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Unlock user account
+         * @description Unlocks the user account. Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT
+         */
+        put: operations["unlockUser"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/lock-user": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Lock user account
+         * @description Locks the user account. Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT
+         */
+        put: operations["lockUser"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/default-caseload/{defaultCaseloadId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set the default caseload for this user
+         * @description Sets the default caseload. Caseload must already be present. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES
+         */
+        put: operations["setDefaultCaseload"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/change-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Change password of user account
+         * @description Change password of user account. Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT
+         */
+        put: operations["changePassword"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/change-name": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Change staff name of user account
+         * @description Change staff name of user account. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN
+         */
+        put: operations["changeName"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/change-email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Change email of user account
+         * @description Change email of user account. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN
+         */
+        put: operations["changeEmail"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/roles/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get specified role details
+         * @description Information on a specific role. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLES_ADMIN
+         */
+        get: operations["getRoleDetails"];
+        /**
+         * Updates a role in NOMIS
+         * @description Updates a role. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLES_ADMIN
+         */
+        put: operations["updateRole"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/agency/{agencyId}/staff-members/{staffId}/staff-role/{staffRole}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Create or update a job classification for a staff member
+         * @description Creates a staff location role if one doesn't exist and expires duplicates if multiples exist. Requires role ROLE_NOMIS_MANAGE_USERS__STAFF_MEMBERS__RW
+         */
+        put: operations["setJobClassification"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get list of roles associated with the users account
+         * @description Roles for a specific user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES or ROLE_VIEW_NOMIS_STAFF_DETAILS
+         */
+        get: operations["getUserRoles"];
+        put?: never;
+        /**
+         * Add a role to the specified user account, all roles will be added to DPS caseload unless specified
+         * @description Adds a role to a user, user must have caseload (if specified). Default caseload is DPS caseload (NWEB).  Cannot add an existing role to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES
+         */
+        post: operations["addRoles"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/roles/{roleCode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add a role to the specified user account, all roles will be added to DPS caseload unless specified
+         * @description Adds a role to a user, user must have caseload (if specified). Default caseload is DPS caseload (NWEB).  Cannot add an existing role to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES
+         */
+        post: operations["addRole"];
+        /**
+         * Remove a role from a user
+         * @description The user must already have the role to be removed. Default role caseload is a DPS role unless specified. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES
+         */
+        delete: operations["removeRole"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/record-sign-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record a user as having successfully signed in.
+         * @description Record a user as having successfully signed in, with current date and time written to the LAST_LOGON_DATE. Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT
+         */
+        post: operations["recordSignIn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/caseloads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get list of caseloads associated with the users account
+         * @description Caseloads for a specific user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES or ROLE_VIEW_NOMIS_STAFF_DETAILS
+         */
+        get: operations["getUserCaseloads"];
+        put?: never;
+        /**
+         * Add multiple caseloads to the specified user account
+         * @description Adds caseloads to a user, caseloads must exist. Cannot add an existing caseload to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN
+         */
+        post: operations["addCaseloads"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/caseloads/{caseloadId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add a caseload to the specified user account
+         * @description Adds a caseload to a user, caseload must exist. Cannot add an existing caseload to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN
+         */
+        post: operations["addCaseload"];
+        /**
+         * Remove a caseload from a user
+         * @description The user must already have the caseload to be removed. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN
+         */
+        delete: operations["removeCaseload"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}/authenticate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Authenticate a username and password against NOMIS database */
+        post: operations["authenticate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/user": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Find users by their email address
+         * @description Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT
+         */
+        get: operations["findUsersByEmailAddress"];
+        put?: never;
+        /**
+         * Find users by their email address and / or list of usernames
+         * @description Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT
+         */
+        post: operations["findUsersByEmailAddressAndUsernames"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/remove-roles/{roleCode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Bulk removes a role from a group of users
+         * @description If the user does not have the role already it is ignored. Any users not found will also be ignored but will not be returned in the response. Only DPS roles are removed on the DPS caseload (NWEB). Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES
+         */
+        post: operations["bulkRemoveRoles"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/reassign-roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reassign roles from a NOMIS role to a DPS role and removes the NOMIS role if no longer required
+         * @description Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN
+         */
+        post: operations["reassignRoles"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/local-admin-account": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create local admin user account
+         * @description Creates local admin user account, oracle schema and staff user information. Requires role ROLE_CREATE_USER
+         */
+        post: operations["createLocalAdminUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/link-local-admin-account/{linkedUsername}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Link a local admin user account to an existing general account.
+         * @description Can only be linked to an general account. Can only be linked to an account that doesn't already have one admin account. Requires role ROLE_CREATE_USER
+         */
+        post: operations["linkLocalAdminAccount"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/link-general-account/{linkedUsername}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Link a general user account to an existing admin account.
+         * @description Can only be linked to an admin account. Can only be linked to an account that doesn't already have one general account. Requires role ROLE_CREATE_USER
+         */
+        post: operations["linkGeneralAccount"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/link-admin-account/{linkedUsername}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Link an admin account to an existing general account.
+         * @description Can only be linked to an general account. Can only be linked to an account that doesn't already have one Admin account. Requires role ROLE_CREATE_USER
+         */
+        post: operations["linkAdminAccount"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/general-account": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create general user account
+         * @description Creates general user account, oracle schema and staff user information. Requires role ROLE_CREATE_USER
+         */
+        post: operations["createGeneralUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/basic/find-by-usernames": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Get user basic details
+         * @description Information on specific users. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES or ROLE_MANAGE_NOMIS_USER_ACCOUNT or ROLE_VIEW_NOMIS_STAFF_DETAILS
+         */
+        post: operations["getUserBasicDetailsByUsernames"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/admin-account": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create admin user account
+         * @description Creates admin user account, oracle schema and staff user information. Requires role ROLE_CREATE_USER
+         */
+        post: operations["createAdminUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/add-roles/{roleCode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Bulk add a role to a group of users
+         * @description If the user has this role already it is ignored. Any users not found will also be ignored but will not be returned in the response. Only DPS roles are added to the DPS caseload (NWEB). Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES
+         */
+        post: operations["bulkAddRoles"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all roles
+         * @description Information on a list of roles. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN, ROLE_MAINTAIN_ACCESS_ROLES or ROLE_VIEW_NOMIS_STAFF_DETAILS or ROLES_ADMIN
+         */
+        get: operations["getAllRoles"];
+        put?: never;
+        /**
+         * Create a role in NOMIS
+         * @description Creates a role. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLES_ADMIN
+         */
+        post: operations["createRole"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all users filtered as specified
+         * @description Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES or ROLE_VIEW_NOMIS_STAFF_DETAILS or ROLE_NOMIS_MANAGE_USERS__USER_ACCOUNTS__RO. <br/>Get all users with filter.<br/> For local administrators this will implicitly filter users in the prisons they administer, therefore username is expected in the authorisation token. <br/>For users with role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN this allows access to all staff.
+         */
+        get: operations["getUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get specified user details
+         * @description Information on a specific user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES or ROLE_MANAGE_NOMIS_USER_ACCOUNT or ROLE_VIEW_NOMIS_STAFF_DETAILS
+         */
+        get: operations["getUserDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/staff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Find users by first and last names
+         * @description Requires role ROLE_USE_OF_FORCE or ROLE_STAFF_SEARCH
+         */
+        get: operations["findUsersByFirstAndLastNames"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/staff/{staffId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get specified staff details
+         * @description Will display general and admin user account if setup.  Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES or ROLE_VIEW_NOMIS_STAFF_DETAILS
+         */
+        get: operations["getUserDetailsByStaffId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/lastnames": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get list of all users, username and lastname
+         * @description Requires role ROLE_VIEW_NOMIS_STAFF_DETAILS
+         */
+        get: operations["getLastNameAllUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/emails": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all users
+         * @description Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT
+         */
+        get: operations["findUsersAndEmails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["downloadUsersByFilters"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/download/admins": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["downloadGroupAdminsByFilters"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/basic/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get user basic details
+         * @description Information on a specific user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES or ROLE_MANAGE_NOMIS_USER_ACCOUNT or ROLE_VIEW_NOMIS_STAFF_DETAILS
+         */
+        get: operations["getUserBasicDetailsInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/reference-data/caseloads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves all caseloads
+         * @description Retrieves all the current active general caseloads, these are effectively prisons that staff can be associated with
+         */
+        get: operations["getCaseload"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get user details in context
+         * @description Information on a specific user.
+         */
+        get: operations["getMyUserDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get list of roles associated with the users account
+         * @description Roles for a specific user in context
+         */
+        get: operations["getMyRoles"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/caseloads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get list of caseloads associated with the current user
+         * @description Caseloads for the current user
+         */
+        get: operations["getMyCaseloads"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
-
+export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    ErrorResponse: {
-      /** Format: int32 */
-      status: number
-      /** Format: int32 */
-      errorCode?: number
-      userMessage?: string
-      developerMessage?: string
-    }
-    /** @description Caseloads available for this user */
-    PrisonCaseload: {
-      /**
-       * @description identify for caseload
-       * @example WWI
-       */
-      id: string
-      /**
-       * @description name of caseload, typically prison name
-       * @example WANDSWORTH (HMP)
-       */
-      name: string
-    }
-    /** @description User & Caseload Information */
-    UserCaseloadDetail: {
-      /**
-       * @description Username
-       * @example TESTUSER1
-       */
-      username: string
-      /**
-       * @description Indicates that the user is active
-       * @example true
-       */
-      active: boolean
-      /**
-       * @description Type of user account
-       * @example GENERAL
-       * @enum {string}
-       */
-      accountType: 'GENERAL' | 'ADMIN'
-      activeCaseload?: components['schemas']['PrisonCaseload']
-      /** @description Caseloads available for this user */
-      caseloads: components['schemas']['PrisonCaseload'][]
-    }
-    /** @description Staff Information */
-    StaffDetail: {
-      /**
-       * Format: int64
-       * @description Staff ID
-       * @example 324323
-       */
-      staffId: number
-      /**
-       * @description First name of the user
-       * @example John
-       */
-      firstName: string
-      /**
-       * @description Last name of the user
-       * @example Smith
-       */
-      lastName: string
-      /**
-       * @description Status of staff account
-       * @example Smith
-       */
-      status: string
-      /**
-       * @description Email addresses of staff
-       * @example test@test.com
-       */
-      primaryEmail?: string
-      generalAccount?: components['schemas']['UserCaseloadDetail']
-      adminAccount?: components['schemas']['UserCaseloadDetail']
-    }
-    /** @description Role update */
-    UpdateRoleRequest: {
-      /**
-       * @description Role Name
-       * @example Global Search Role
-       */
-      name?: string
-      /**
-       * Format: int32
-       * @description Display Sequence
-       * @example 99
-       */
-      sequence?: number
-      /**
-       * @description Parent Role Code
-       * @example LICENCE_ADMIN
-       */
-      parentRoleCode?: string
-      /**
-       * @description Role Type
-       * @example APP
-       * @enum {string}
-       */
-      type?: 'APP' | 'INST' | 'COMM'
-      /**
-       * @description adminRoleOnly
-       * @example true
-       */
-      adminRoleOnly?: boolean
-    }
-    /** @description Role Information */
-    RoleDetail: {
-      /**
-       * @description Role Code
-       * @example GLOBAL_SEARCH
-       */
-      code: string
-      /**
-       * @description Role Name
-       * @example Global Search Role
-       */
-      name: string
-      /**
-       * Format: int32
-       * @description The listing order
-       * @default 1
-       * @example 1
-       */
-      sequence: number
-      /**
-       * @description Role Type
-       * @default APP
-       * @example APP
-       * @enum {string}
-       */
-      type?: 'APP' | 'INST' | 'COMM'
-      /**
-       * @description If the role is for admin users only
-       * @default false
-       * @example true
-       */
-      adminRoleOnly: boolean
-      parentRole?: components['schemas']['RoleDetail']
-    }
-    /** @description Roles in caseload information */
-    CaseloadRoleDetail: {
-      caseload: components['schemas']['PrisonCaseload']
-      /** @description NOMIS Roles assigned to this user */
-      roles: components['schemas']['RoleDetail'][]
-    }
-    /** @description User & Role Information */
-    UserRoleDetail: {
-      /**
-       * @description Username
-       * @example TESTUSER1
-       */
-      username: string
-      /**
-       * @description Indicates that the user is active
-       * @example true
-       */
-      active: boolean
-      /**
-       * @description Type of user account
-       * @example GENERAL
-       * @enum {string}
-       */
-      accountType: 'GENERAL' | 'ADMIN'
-      activeCaseload?: components['schemas']['PrisonCaseload']
-      /** @description DPS Roles assigned to this user */
-      dpsRoles: components['schemas']['RoleDetail'][]
-      /** @description NOMIS Roles assigned to this user per caseload */
-      nomisRoles?: components['schemas']['CaseloadRoleDetail'][]
-    }
-    /** @description Authentication Details */
-    Authentication: {
-      /**
-       * @description Password
-       * @example password123456
-       */
-      password: string
-    }
-    /** @description User Information */
-    UserDetail: {
-      /**
-       * @description Username
-       * @example testuser1
-       */
-      username: string
-      /**
-       * Format: int64
-       * @description Staff ID
-       * @example 324323
-       */
-      staffId: number
-      /**
-       * @description First name of the user
-       * @example John
-       */
-      firstName: string
-      /**
-       * @description Last name of the user
-       * @example Smith
-       */
-      lastName: string
-      /**
-       * @description Active Caseload of the user
-       * @example BXI
-       */
-      activeCaseloadId?: string
-      /**
-       * @description Status of the user
-       * @example OPEN
-       * @enum {string}
-       */
-      accountStatus?:
-        | 'OPEN'
-        | 'EXPIRED'
-        | 'EXPIRED_GRACE'
-        | 'LOCKED_TIMED'
-        | 'LOCKED'
-        | 'EXPIRED_LOCKED_TIMED'
-        | 'EXPIRED_GRACE_LOCKED_TIMED'
-        | 'EXPIRED_LOCKED'
-        | 'EXPIRED_GRACE_LOCKED'
-      /**
-       * @description Type of user account
-       * @example GENERAL
-       * @enum {string}
-       */
-      accountType: 'GENERAL' | 'ADMIN'
-      /**
-       * @description Email addresses of user
-       * @example test@test.com
-       */
-      primaryEmail?: string
-      /** @description List of associated DPS Role Codes */
-      dpsRoleCodes: string[]
-      /** @description Account is not locked */
-      accountNonLocked?: boolean
-      /** @description Credentials are not expired flag */
-      credentialsNonExpired?: boolean
-      /** @description User is enabled flag */
-      enabled: boolean
-      /** @description User is admin flag */
-      admin?: boolean
-      /** @description User is active flag */
-      active: boolean
-      /**
-       * @description Staff Status
-       * @example ACTIVE
-       */
-      staffStatus?: string
-    }
-    /** @description Local Admin User Information creation */
-    CreateLocalAdminUserRequest: {
-      /**
-       * @description Username
-       * @example TESTUSER1
-       */
-      username: string
-      /**
-       * @description First name of the user, required if linkedUsername is not set
-       * @example John
-       */
-      firstName: string
-      /**
-       * @description Last name of the user, required if linkedUsername is not set
-       * @example Smith
-       */
-      lastName: string
-      /**
-       * @description Email Address, required if linkedUsername is not set
-       * @example test@justice.gov.uk
-       */
-      email: string
-      /**
-       * @description Default local admin group (prison) to manage users
-       * @example MDI
-       */
-      localAdminGroup: string
-    }
-    /** @description Linking local admin account user creation */
-    CreateLinkedLocalAdminUserRequest: {
-      /**
-       * @description Username
-       * @example TESTUSER1
-       */
-      username: string
-      /**
-       * @description Default local admin group (prison) to manage users
-       * @example MDI
-       */
-      localAdminGroup: string
-    }
-    /** @description Linking general account user creation */
-    CreateLinkedGeneralUserRequest: {
-      /**
-       * @description Username
-       * @example TESTUSER1
-       */
-      username: string
-      /**
-       * @description Default caseload (a.k.a Prison ID), not required for admin accounts
-       * @example BXI
-       */
-      defaultCaseloadId: string
-    }
-    /** @description Linking admin account user creation */
-    CreateLinkedAdminUserRequest: {
-      /**
-       * @description Username
-       * @example TESTUSER1
-       */
-      username: string
-    }
-    /** @description General User Information creation */
-    CreateGeneralUserRequest: {
-      /**
-       * @description Username
-       * @example TESTUSER1
-       */
-      username: string
-      /**
-       * @description First name of the user, required if linkedUsername is not set
-       * @example John
-       */
-      firstName: string
-      /**
-       * @description Last name of the user, required if linkedUsername is not set
-       * @example Smith
-       */
-      lastName: string
-      /**
-       * @description Default caseload (a.k.a Prison ID)
-       * @example BXI
-       */
-      defaultCaseloadId: string
-      /**
-       * @description Email Address, required if linkedUsername is not set
-       * @example test@justice.gov.uk
-       */
-      email: string
-    }
-    /** @description Admin User Information creation */
-    CreateAdminUserRequest: {
-      /**
-       * @description Username
-       * @example TESTUSER1
-       */
-      username: string
-      /**
-       * @description First name of the user, required if linkedUsername is not set
-       * @example John
-       */
-      firstName: string
-      /**
-       * @description Last name of the user, required if linkedUsername is not set
-       * @example Smith
-       */
-      lastName: string
-      /**
-       * @description Email Address, required if linkedUsername is not set
-       * @example test@justice.gov.uk
-       */
-      email: string
-    }
-    /** @description Role Information creation */
-    CreateRoleRequest: {
-      /**
-       * @description Role Code
-       * @example GLOBAL_SEARCH
-       */
-      code: string
-      /**
-       * @description Role Name
-       * @example Global Search Role
-       */
-      name: string
-      /**
-       * Format: int32
-       * @description Display Sequence
-       * @default 1
-       * @example 99
-       */
-      sequence: number
-      /**
-       * @description Parent Role Code
-       * @example LICENCE_ADMIN
-       */
-      parentRoleCode?: string
-      /**
-       * @description Role Type
-       * @default APP
-       * @example APP
-       * @enum {string}
-       */
-      type: 'APP' | 'INST' | 'COMM'
-      /**
-       * @description Role Code
-       * @default false
-       * @example true
-       */
-      adminRoleOnly: boolean
-    }
-    Pageable: {
-      /** Format: int32 */
-      page?: number
-      /** Format: int32 */
-      size?: number
-      sort?: string[]
-    }
-    PageUserSummaryWithEmail: {
-      /** Format: int64 */
-      totalElements?: number
-      /** Format: int32 */
-      totalPages?: number
-      /** Format: int32 */
-      size?: number
-      content?: components['schemas']['UserSummaryWithEmail'][]
-      /** Format: int32 */
-      number?: number
-      sort?: components['schemas']['SortObject']
-      first?: boolean
-      last?: boolean
-      /** Format: int32 */
-      numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
-      empty?: boolean
-    }
-    PageableObject: {
-      /** Format: int64 */
-      offset?: number
-      sort?: components['schemas']['SortObject']
-      /** Format: int32 */
-      pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
-      /** Format: int32 */
-      pageNumber?: number
-    }
-    SortObject: {
-      empty?: boolean
-      sorted?: boolean
-      unsorted?: boolean
-    }
-    /** @description Summary User Information with Email Address */
-    UserSummaryWithEmail: {
-      /**
-       * @description Username
-       * @example testuser1
-       */
-      username: string
-      /**
-       * Format: int64
-       * @description Staff ID
-       * @example 324323
-       */
-      staffId: number
-      /**
-       * @description First name of the user
-       * @example Mustafa
-       */
-      firstName: string
-      /**
-       * @description Last name of the user
-       * @example Usmani
-       */
-      lastName: string
-      /**
-       * @description Account status indicator
-       * @example true
-       */
-      active: boolean
-      /**
-       * @description Account status
-       * @example OPEN
-       * @enum {string}
-       */
-      status?:
-        | 'OPEN'
-        | 'EXPIRED'
-        | 'EXPIRED_GRACE'
-        | 'LOCKED_TIMED'
-        | 'LOCKED'
-        | 'EXPIRED_LOCKED_TIMED'
-        | 'EXPIRED_GRACE_LOCKED_TIMED'
-        | 'EXPIRED_LOCKED'
-        | 'EXPIRED_GRACE_LOCKED'
-      /**
-       * @description Indicates that an account is locked.
-       * @example false
-       */
-      locked: boolean
-      /**
-       * @description Indicates that an account is expired
-       * @example false
-       */
-      expired: boolean
-      activeCaseload?: components['schemas']['PrisonCaseload']
-      /**
-       * Format: int32
-       * @description The count of DPS roles allocated to this staff member
-       * @example 12
-       */
-      dpsRoleCount: number
-      /**
-       * @description Primary email address of user - normally justice.gov.uk one if available otherwise first one in list
-       * @example joe.bloggs@justice.gov.uk
-       */
-      email?: string
-      /**
-       * @description Staff status
-       * @example ACTIVE
-       */
-      staffStatus?: string
-    }
-    UserAndEmail: {
-      username: string
-      email?: string
-    }
-  }
+    schemas: {
+        ErrorResponse: {
+            /** Format: int32 */
+            status: number;
+            /** Format: int32 */
+            errorCode?: number | null;
+            userMessage?: string | null;
+            developerMessage?: string | null;
+        };
+        PrisonCaseload: {
+            /**
+             * @description identify for caseload
+             * @example WWI
+             */
+            id: string;
+            /**
+             * @description name of caseload, typically prison name
+             * @example WANDSWORTH (HMP)
+             */
+            name: string;
+            /**
+             * @description function of caseload
+             * @example GENERAL
+             */
+            function: string;
+        };
+        /** @description User & Caseload Information */
+        UserCaseloadDetail: {
+            /**
+             * @description Username
+             * @example TESTUSER1
+             */
+            username: string;
+            /**
+             * @description Indicates that the user is active
+             * @example true
+             */
+            active: boolean;
+            /**
+             * @description Type of user account
+             * @example GENERAL
+             * @enum {string}
+             */
+            accountType: "GENERAL" | "ADMIN";
+            activeCaseload?: components["schemas"]["PrisonCaseload"] | null;
+            /** @description Caseloads available for this user */
+            caseloads: components["schemas"]["PrisonCaseload"][];
+        };
+        /** @description Staff name details */
+        NameDetail: {
+            /**
+             * @description First name of the user
+             * @example John
+             */
+            firstName: string;
+            /**
+             * @description Last name of the user
+             * @example Smith
+             */
+            lastName: string;
+        };
+        /** @description Staff Information */
+        StaffDetail: {
+            /**
+             * Format: int64
+             * @description Staff ID
+             * @example 324323
+             */
+            staffId: number;
+            /**
+             * @description First name of the user
+             * @example John
+             */
+            firstName: string;
+            /**
+             * @description Last name of the user
+             * @example Smith
+             */
+            lastName: string;
+            /**
+             * @description Status of staff account
+             * @example Smith
+             */
+            status: string;
+            /**
+             * @description Email addresses of staff
+             * @example test@test.com
+             */
+            primaryEmail?: string | null;
+            generalAccount?: components["schemas"]["UserCaseloadDetail"] | null;
+            adminAccount?: components["schemas"]["UserCaseloadDetail"] | null;
+        };
+        /** @description Role update */
+        UpdateRoleRequest: {
+            /**
+             * @description Role Name
+             * @example Global Search Role
+             */
+            name?: string | null;
+            /**
+             * Format: int32
+             * @description Display Sequence
+             * @example 99
+             */
+            sequence?: number | null;
+            /**
+             * @description Parent Role Code
+             * @example LICENCE_ADMIN
+             */
+            parentRoleCode?: string | null;
+            /**
+             * @description Role Type
+             * @example APP
+             * @enum {string|null}
+             */
+            type?: "APP" | "INST" | "COMM" | "SHG" | null;
+            /**
+             * @description adminRoleOnly
+             * @example true
+             */
+            adminRoleOnly?: boolean | null;
+        };
+        /** @description Role Information */
+        RoleDetail: {
+            /**
+             * @description Role Code
+             * @example GLOBAL_SEARCH
+             */
+            code: string;
+            /**
+             * @description Role Name
+             * @example Global Search Role
+             */
+            name: string;
+            /**
+             * Format: int32
+             * @description The listing order
+             * @default 1
+             * @example 1
+             */
+            sequence: number;
+            /**
+             * @description Role Type
+             * @default APP
+             * @example APP
+             * @enum {string|null}
+             */
+            type: "APP" | "INST" | "COMM" | "SHG" | null;
+            /**
+             * @description If the role is for admin users only
+             * @default false
+             * @example true
+             */
+            adminRoleOnly: boolean;
+            parentRole?: components["schemas"]["RoleDetail"] | null;
+        };
+        JobClassificationRequest: {
+            /**
+             * @description The code of the position (based on nomis reference data)
+             * @example PO
+             */
+            position: string;
+            /**
+             * @description The code of the schedule type (based on nomis reference data)
+             * @example FT
+             */
+            scheduleType: string;
+            /**
+             * @description The number of hours per week the staff member works
+             * @example 37.5
+             */
+            hoursPerWeek: number;
+            /**
+             * Format: date
+             * @description The date the classification started (must be today or in the past)
+             */
+            fromDate: string;
+            /**
+             * Format: date
+             * @description The date the classification ended
+             */
+            toDate?: string | null;
+        };
+        StaffJobClassification: {
+            agencyId: string;
+            /** Format: int64 */
+            staffId: number;
+            role: string;
+            position: string;
+            scheduleType: string;
+            hoursPerWeek: number;
+            /** Format: date */
+            fromDate: string;
+            /** Format: date */
+            toDate?: string | null;
+        };
+        /** @description Roles in caseload information */
+        CaseloadRoleDetail: {
+            /** @description Caseload for the listed roles */
+            caseload: components["schemas"]["PrisonCaseload"];
+            /** @description NOMIS Roles assigned to this user */
+            roles: components["schemas"]["RoleDetail"][];
+        };
+        /** @description User & Role Information */
+        UserRoleDetail: {
+            /**
+             * @description Username
+             * @example TESTUSER1
+             */
+            username: string;
+            /**
+             * @description Indicates that the user is active
+             * @example true
+             */
+            active: boolean;
+            /**
+             * @description Type of user account
+             * @example GENERAL
+             * @enum {string}
+             */
+            accountType: "GENERAL" | "ADMIN";
+            activeCaseload?: components["schemas"]["PrisonCaseload"] | null;
+            /** @description DPS Roles assigned to this user */
+            dpsRoles: components["schemas"]["RoleDetail"][];
+            /** @description NOMIS Roles assigned to this user per caseload */
+            nomisRoles?: components["schemas"]["CaseloadRoleDetail"][] | null;
+        };
+        /** @description Authentication Details */
+        Authentication: {
+            /**
+             * @description Password
+             * @example password123456
+             */
+            password: string;
+        };
+        /** @description User Information */
+        UserDetail: {
+            /**
+             * @description Username
+             * @example testuser1
+             */
+            username: string;
+            /**
+             * Format: int64
+             * @description Staff ID
+             * @example 324323
+             */
+            staffId: number;
+            /**
+             * @description First name of the user
+             * @example John
+             */
+            firstName: string;
+            /**
+             * @description Last name of the user
+             * @example Smith
+             */
+            lastName: string;
+            /**
+             * @description Active Caseload of the user
+             * @example BXI
+             */
+            activeCaseloadId?: string | null;
+            /**
+             * @description Status of the user
+             * @example OPEN
+             * @enum {string|null}
+             */
+            accountStatus?: "OPEN" | "EXPIRED" | "EXPIRED_GRACE" | "LOCKED_TIMED" | "LOCKED" | "EXPIRED_LOCKED_TIMED" | "EXPIRED_GRACE_LOCKED_TIMED" | "EXPIRED_LOCKED" | "EXPIRED_GRACE_LOCKED" | null;
+            /**
+             * @description Type of user account
+             * @example GENERAL
+             * @enum {string}
+             */
+            accountType: "GENERAL" | "ADMIN";
+            /**
+             * @description Email addresses of user
+             * @example test@test.com
+             */
+            primaryEmail?: string | null;
+            /** @description List of associated DPS Role Codes */
+            dpsRoleCodes: string[];
+            /** @description List of user groups administered */
+            administratorOfUserGroups: components["schemas"]["UserGroupDetail"][];
+            /** @description Account is not locked */
+            accountNonLocked?: boolean | null;
+            /** @description Credentials are not expired flag */
+            credentialsNonExpired?: boolean | null;
+            /** @description User is enabled flag */
+            enabled: boolean;
+            /** @description User is admin flag */
+            admin?: boolean | null;
+            /** @description User is active flag */
+            active: boolean;
+            /**
+             * @description Staff Status
+             * @example ACTIVE
+             */
+            staffStatus?: string | null;
+            /**
+             * Format: date-time
+             * @description Last logon date
+             * @example 2023-01-01T12:13:14.123
+             */
+            lastLogonDate?: string | null;
+        };
+        /** @description User Group Information */
+        UserGroupDetail: {
+            /**
+             * @description Group id
+             * @example BXI
+             */
+            id: string;
+            /**
+             * @description Group name
+             * @example Brixton (HMP)
+             */
+            name: string;
+        };
+        /** @description Role Reassignment Specification */
+        RoleAssignmentsSpecification: {
+            /** @description The caseloads to search for users having roles matching 'nomisRolesToMatch'. */
+            caseloads: string[];
+            /** @description users within the caseloads will be selected if they have at least one role matching the codes in rolesToMatch. */
+            nomisRolesToMatch: string[];
+            /** @description Users with the named caseloads, having roles matching nomisRolesToMatch will be assigned these DPS roles */
+            dpsRolesToAssign: string[];
+            /** @description For each caseload in caseloads; find the users having at least one role matching 'nomisRolesToMatch'. For each matched user at the current caseload remove each of the roles in 'nomisRolesToRemove' at that caseload. */
+            nomisRolesToRemove: string[];
+        };
+        /** @description Role reassignment statistics */
+        RoleAssignmentStats: {
+            /** @description Caseload */
+            caseload: string;
+            /**
+             * Format: int32
+             * @description Number of matched users
+             */
+            numMatchedUsers: number;
+            /**
+             * Format: int64
+             * @description Number of role assignments succeeded
+             */
+            numAssignRoleSucceeded: number;
+            /**
+             * Format: int64
+             * @description Number of role assignments failed
+             */
+            numAssignRoleFailed: number;
+            /**
+             * Format: int64
+             * @description Number of role un-assignments succeeded
+             */
+            numUnassignRoleSucceeded: number;
+            /**
+             * Format: int64
+             * @description Number of role un-assignments failed
+             */
+            numUnassignRoleFailed: number;
+        };
+        /** @description Local Admin User Information creation */
+        CreateLocalAdminUserRequest: {
+            /**
+             * @description Username
+             * @example TESTUSER1
+             */
+            username: string;
+            /**
+             * @description First name of the user, required if linkedUsername is not set
+             * @example John
+             */
+            firstName: string;
+            /**
+             * @description Last name of the user, required if linkedUsername is not set
+             * @example Smith
+             */
+            lastName: string;
+            /**
+             * Format: email
+             * @description Email Address, required if linkedUsername is not set
+             * @example test@justice.gov.uk
+             */
+            email: string;
+            /**
+             * @description Default local admin group (prison) to manage users
+             * @example MDI
+             */
+            localAdminGroup: string;
+        };
+        /** @description Linking local admin account user creation */
+        CreateLinkedLocalAdminUserRequest: {
+            /**
+             * @description Username
+             * @example TESTUSER1
+             */
+            username: string;
+            /**
+             * @description Default local admin group (prison) to manage users
+             * @example MDI
+             */
+            localAdminGroup: string;
+        };
+        /** @description Linking general account user creation */
+        CreateLinkedGeneralUserRequest: {
+            /**
+             * @description Username
+             * @example TESTUSER1
+             */
+            username: string;
+            /**
+             * @description Default caseload (a.k.a Prison ID), not required for admin accounts
+             * @example BXI
+             */
+            defaultCaseloadId: string;
+        };
+        /** @description Linking admin account user creation */
+        CreateLinkedAdminUserRequest: {
+            /**
+             * @description Username
+             * @example TESTUSER1
+             */
+            username: string;
+        };
+        /** @description General User Information creation */
+        CreateGeneralUserRequest: {
+            /**
+             * @description Username
+             * @example TESTUSER1
+             */
+            username: string;
+            /**
+             * @description First name of the user, required if linkedUsername is not set
+             * @example John
+             */
+            firstName: string;
+            /**
+             * @description Last name of the user, required if linkedUsername is not set
+             * @example Smith
+             */
+            lastName: string;
+            /**
+             * @description Default caseload (a.k.a Prison ID)
+             * @example BXI
+             */
+            defaultCaseloadId: string;
+            /**
+             * Format: email
+             * @description Email Address, required if linkedUsername is not set
+             * @example test@justice.gov.uk
+             */
+            email: string;
+        };
+        /** @description Basic User Information */
+        UserBasicDetails: {
+            /**
+             * @description Username
+             * @example testuser1
+             */
+            username: string;
+            /**
+             * Format: int64
+             * @description Staff ID
+             * @example 324323
+             */
+            staffId: number;
+            /**
+             * @description First name of the user
+             * @example John
+             */
+            firstName: string;
+            /**
+             * @description Last name of the user
+             * @example Smith
+             */
+            lastName: string;
+            /**
+             * @description Active Caseload of the user
+             * @example BXI
+             */
+            activeCaseloadId?: string | null;
+            /** @description User is enabled flag */
+            enabled: boolean;
+            /**
+             * @description Status of the user
+             * @example OPEN
+             */
+            accountStatus?: string | null;
+        };
+        /** @description Admin User Information creation */
+        CreateAdminUserRequest: {
+            /**
+             * @description Username
+             * @example TESTUSER1
+             */
+            username: string;
+            /**
+             * @description First name of the user, required if linkedUsername is not set
+             * @example John
+             */
+            firstName: string;
+            /**
+             * @description Last name of the user, required if linkedUsername is not set
+             * @example Smith
+             */
+            lastName: string;
+            /**
+             * Format: email
+             * @description Email Address, required if linkedUsername is not set
+             * @example test@justice.gov.uk
+             */
+            email: string;
+        };
+        /** @description Role Information creation */
+        CreateRoleRequest: {
+            /**
+             * @description Role Code
+             * @example GLOBAL_SEARCH
+             */
+            code: string;
+            /**
+             * @description Role Name
+             * @example Global Search Role
+             */
+            name: string;
+            /**
+             * Format: int32
+             * @description Display Sequence
+             * @default 1
+             * @example 99
+             */
+            sequence: number;
+            /**
+             * @description Parent Role Code
+             * @example LICENCE_ADMIN
+             */
+            parentRoleCode?: string | null;
+            /**
+             * @description Role Type
+             * @default APP
+             * @example APP
+             * @enum {string}
+             */
+            type: "APP" | "INST" | "COMM" | "SHG";
+            /**
+             * @description Role Code
+             * @default false
+             * @example true
+             */
+            adminRoleOnly: boolean;
+        };
+        Pageable: {
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            sort?: string[];
+        };
+        PageUserSummaryWithEmail: {
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+            /** Format: int32 */
+            size?: number;
+            content?: components["schemas"]["UserSummaryWithEmail"][];
+            /** Format: int32 */
+            number?: number;
+            first?: boolean;
+            last?: boolean;
+            sort?: components["schemas"]["SortObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
+            empty?: boolean;
+        };
+        PageableObject: {
+            /** Format: int64 */
+            offset?: number;
+            sort?: components["schemas"]["SortObject"];
+            /** Format: int32 */
+            pageSize?: number;
+            paged?: boolean;
+            /** Format: int32 */
+            pageNumber?: number;
+            unpaged?: boolean;
+        };
+        SortObject: {
+            empty?: boolean;
+            sorted?: boolean;
+            unsorted?: boolean;
+        };
+        /** @description Summary User Information with Email Address */
+        UserSummaryWithEmail: {
+            /**
+             * @description Username
+             * @example testuser1
+             */
+            username: string;
+            /**
+             * Format: int64
+             * @description Staff ID
+             * @example 324323
+             */
+            staffId: number;
+            /**
+             * @description First name of the user
+             * @example Mustafa
+             */
+            firstName: string;
+            /**
+             * @description Last name of the user
+             * @example Usmani
+             */
+            lastName: string;
+            /**
+             * @description Account status indicator
+             * @example true
+             */
+            active: boolean;
+            /**
+             * @description Account status
+             * @example OPEN
+             * @enum {string|null}
+             */
+            status?: "OPEN" | "EXPIRED" | "EXPIRED_GRACE" | "LOCKED_TIMED" | "LOCKED" | "EXPIRED_LOCKED_TIMED" | "EXPIRED_GRACE_LOCKED_TIMED" | "EXPIRED_LOCKED" | "EXPIRED_GRACE_LOCKED" | null;
+            /**
+             * @description Indicates that an account is locked.
+             * @example false
+             */
+            locked: boolean;
+            /**
+             * @description Indicates that an account is expired
+             * @example false
+             */
+            expired: boolean;
+            activeCaseload?: components["schemas"]["PrisonCaseload"] | null;
+            /**
+             * Format: int32
+             * @description The count of DPS roles allocated to this staff member
+             * @example 12
+             */
+            dpsRoleCount: number;
+            /**
+             * @description Primary email address of user - normally justice.gov.uk one if available otherwise first one in list
+             * @example joe.bloggs@justice.gov.uk
+             */
+            email?: string | null;
+            /**
+             * @description Staff status
+             * @example ACTIVE
+             */
+            staffStatus?: string | null;
+        };
+        /** @description User last name */
+        UserLastName: {
+            /**
+             * @description Username
+             * @example testuser1
+             */
+            username: string;
+            /**
+             * @description Last name of the user
+             * @example Usmani
+             */
+            lastName: string;
+        };
+        UserAndEmail: {
+            username: string;
+            email?: string | null;
+        };
+        /** @description Summary User Information with Email Address */
+        GroupAdminSummaryWithEmail: {
+            /**
+             * @description Username
+             * @example testuser1
+             */
+            username: string;
+            /**
+             * Format: int64
+             * @description Staff ID
+             * @example 324323
+             */
+            staffId: number;
+            /**
+             * @description First name of the user
+             * @example Mustafa
+             */
+            firstName: string;
+            /**
+             * @description Last name of the user
+             * @example Usmani
+             */
+            lastName: string;
+            /**
+             * @description Account status indicator
+             * @example true
+             */
+            active: boolean;
+            /**
+             * @description Account status
+             * @example OPEN
+             * @enum {string|null}
+             */
+            status?: "OPEN" | "EXPIRED" | "EXPIRED_GRACE" | "LOCKED_TIMED" | "LOCKED" | "EXPIRED_LOCKED_TIMED" | "EXPIRED_GRACE_LOCKED_TIMED" | "EXPIRED_LOCKED" | "EXPIRED_GRACE_LOCKED" | null;
+            /**
+             * @description Indicates that an account is locked.
+             * @example false
+             */
+            locked: boolean;
+            /**
+             * @description Indicates that an account is expired
+             * @example false
+             */
+            expired: boolean;
+            activeCaseload?: components["schemas"]["PrisonCaseload"] | null;
+            /**
+             * Format: int32
+             * @description The count of DPS roles allocated to this staff member
+             * @example 12
+             */
+            dpsRoleCount: number;
+            /**
+             * @description Primary email address of user - normally justice.gov.uk one if available otherwise first one in list
+             * @example joe.bloggs@justice.gov.uk
+             */
+            email?: string | null;
+            /**
+             * @description Groups that the user is administrator of
+             * @example [{id: BXI, description: }]
+             */
+            groups: components["schemas"]["UserGroupDetail"][];
+            /**
+             * @description Staff status
+             * @example ACTIVE
+             */
+            staffStatus?: string | null;
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
-
+export type $defs = Record<string, never>;
 export interface operations {
-  /** Unlocks the user account. Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-  unlockUser: {
-    parameters: {
-      path: {
-        /** Username */
-        username: string
-      }
-    }
-    responses: {
-      /** User account unlocked */
-      200: unknown
-      /** Incorrect request to unlock user */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to unlock a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Locks the user account. Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-  lockUser: {
-    parameters: {
-      path: {
-        /** Username */
-        username: string
-      }
-    }
-    responses: {
-      /** User account locked */
-      200: unknown
-      /** Incorrect request to lock user */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to lock a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Sets the default caseload. Caseload must already be present. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-  setDefaultCaseload: {
-    parameters: {
-      path: {
-        /** Username to default caseload */
-        username: string
-        /** Default caseload Id */
-        defaultCaseloadId: string
-      }
-    }
-    responses: {
-      /** User information with active caseload details */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserCaseloadDetail']
-        }
-      }
-      /** Incorrect request to set a default caseload on a user account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to set a default caseload on a user account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Change password of user account. Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-  changePassword: {
-    parameters: {
-      path: {
-        /** Username */
-        username: string
-      }
-    }
-    responses: {
-      /** User account password changed */
-      200: unknown
-      /** Incorrect request to change password of user. Some specific responses returns a different errorCode that can be checked by the client */
-      400: {
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to change the password a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': string
-      }
-    }
-  }
-  /** Change staff name of user account. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN */
-  changeName: {
-    parameters: {
-      path: {
-        /** Username */
-        username: string
-      }
-    }
-    responses: {
-      /** User account name changed */
-      200: {
-        content: {
-          'application/json': components['schemas']['StaffDetail']
-        }
-      }
-      /** Incorrect request to change name of user */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to change the name a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': string
-      }
-    }
-  }
-  /** Change email of user account. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN */
-  changeEmail: {
-    parameters: {
-      path: {
-        /** Username */
-        username: string
-      }
-    }
-    responses: {
-      /** User account email changed */
-      200: {
-        content: {
-          'application/json': components['schemas']['StaffDetail']
-        }
-      }
-      /** Incorrect request to change email of user */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to change the email a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': string
-      }
-    }
-  }
-  /** Information on a specific role. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLES_ADMIN */
-  getRoleDetails: {
-    parameters: {
-      path: {
-        /** Role Code */
-        code: string
-      }
-    }
-    responses: {
-      /** Role Information Returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['RoleDetail']
-        }
-      }
-      /** Incorrect request to get role information */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to get a role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Updates a role. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLES_ADMIN */
-  updateRole: {
-    parameters: {
-      path: {
-        /** Role Code */
-        code: string
-      }
-    }
-    responses: {
-      /** Role Information Returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['RoleDetail']
-        }
-      }
-      /** Incorrect request to update role information */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to update a role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateRoleRequest']
-      }
-    }
-  }
-  /** Roles for a specific user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-  getUserRoles: {
-    parameters: {
-      path: {
-        /** Username */
-        username: string
-      }
-      query: {
-        /** Include NOMIS roles */
-        'include-nomis-roles'?: string
-      }
-    }
-    responses: {
-      /** User role list */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserRoleDetail']
-        }
-      }
-      /** Incorrect request to get caseloads for a user */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to get roles for this user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Adds a role to a user, user must have caseload (if specified). Default caseload is DPS caseload (NWEB).  Cannot add an existing role to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-  addRoles: {
-    parameters: {
-      path: {
-        /** Username of the account to add roles */
-        username: string
-      }
-      query: {
-        /** Caseload Id */
-        caseloadId?: string
-      }
-    }
-    responses: {
-      /** User information with role details */
-      201: {
-        content: {
-          'application/json': components['schemas']['UserRoleDetail']
-        }
-      }
-      /** Incorrect request to add a role to a user account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to add a role to this account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': string
-      }
-    }
-  }
-  /** Adds a role to a user, user must have caseload (if specified). Default caseload is DPS caseload (NWEB).  Cannot add an existing role to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-  addRole: {
-    parameters: {
-      path: {
-        /** Username of the account to add role */
-        username: string
-        /** Role Code */
-        roleCode: string
-      }
-      query: {
-        /** Caseload Id */
-        caseloadId?: string
-      }
-    }
-    responses: {
-      /** User information with role details */
-      201: {
-        content: {
-          'application/json': components['schemas']['UserRoleDetail']
-        }
-      }
-      /** Incorrect request to add a role to a user account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to add a role to this account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** The user must already have the role to be removed. Default role caseload is a DPS role unless specified. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-  removeRole: {
-    parameters: {
-      path: {
-        /** Username of the account to remove role */
-        username: string
-        /** Role Code */
-        roleCode: string
-      }
-      query: {
-        /** Caseload Id */
-        caseloadId?: string
-      }
-    }
-    responses: {
-      /** User information with role details */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserRoleDetail']
-        }
-      }
-      /** Incorrect request to remove a role from a user account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to remove a role this user account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Caseloads for a specific user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-  getUserCaseloads: {
-    parameters: {
-      path: {
-        /** Username */
-        username: string
-      }
-    }
-    responses: {
-      /** User caseload list */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserCaseloadDetail']
-        }
-      }
-      /** Incorrect request to get caseloads for a user */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to get a caseload for a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Adds caseloads to a user, caseloads must exist. Cannot add an existing caseload to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN */
-  addCaseloads: {
-    parameters: {
-      path: {
-        /** Username of the account to add caseloads */
-        username: string
-      }
-    }
-    responses: {
-      /** User information with caseload details */
-      201: {
-        content: {
-          'application/json': components['schemas']['UserCaseloadDetail']
-        }
-      }
-      /** Incorrect request to add caseloads to a user account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to add caseloads to account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': string[]
-      }
-    }
-  }
-  /** Adds a caseload to a user, caseload must exist. Cannot add an existing caseload to the same user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN */
-  addCaseload: {
-    parameters: {
-      path: {
-        /** Username of the account to add caseload */
-        username: string
-        /** Caseload Id */
-        caseloadId: string
-      }
-    }
-    responses: {
-      /** User information with caseload details */
-      201: {
-        content: {
-          'application/json': components['schemas']['UserCaseloadDetail']
-        }
-      }
-      /** Incorrect request to add a caseload to a user account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to add a caseload to account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** The user must already have the caseload to be removed. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN */
-  removeCaseload: {
-    parameters: {
-      path: {
-        /** Username to remove caseload from */
-        username: string
-        /** Caseload ID to remove from this user */
-        caseloadId: string
-      }
-    }
-    responses: {
-      /** User information with caseload details */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserCaseloadDetail']
-        }
-      }
-      /** Incorrect request to remove a caseload from a user account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to remove a caseload this user account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  authenticate: {
-    parameters: {
-      path: {
-        username: string
-      }
-    }
-    responses: {
-      /** Invalid request */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Authentication failed. Either no access token was provided or the username / password combination is incorrect */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['Authentication']
-      }
-    }
-  }
-  /** Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-  findUsersByEmailAddress: {
-    parameters: {
-      query: {
-        /** The email to match. Case insensitive */
-        email: string
-      }
-    }
-    responses: {
-      /** List of matching users */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserDetail'][]
-        }
-      }
-    }
-  }
-  /** Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-  findUsersByEmailAddressAndUsernames: {
-    parameters: {
-      query: {
-        /** The email to match. Case insensitive */
-        email: string
-      }
-    }
-    responses: {
-      /** List of matching users */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserDetail'][]
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': string[]
-      }
-    }
-  }
-  /** If the user does not have the role already it is ignored. Any users not found will also be ignored but will not be returned in the response. Only DPS roles are removed on the DPS caseload (NWEB). Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-  bulkRemoveRoles: {
-    parameters: {
-      path: {
-        /** Role Code */
-        roleCode: string
-      }
-    }
-    responses: {
-      /** User information with role details */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserRoleDetail'][]
-        }
-      }
-      /** Incorrect request to remove a role from a user account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to remove a role this user account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': string
-      }
-    }
-  }
-  /** Creates local admin user account, oracle schema and staff user information. Requires role ROLE_CREATE_USER */
-  createLocalAdminUser: {
-    responses: {
-      /** Local Admin user information returned */
-      201: {
-        content: {
-          'application/json': components['schemas']['UserDetail']
-        }
-      }
-      /** Incorrect request to create user information */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to create a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateLocalAdminUserRequest']
-      }
-    }
-  }
-  /** Can only be linked to an general account. Can only be linked to an account that doesn't already have one admin account. Requires role ROLE_CREATE_USER */
-  linkLocalAdminAccount: {
-    parameters: {
-      path: {
-        /** Attach account to an existing general user account */
-        linkedUsername: string
-      }
-    }
-    responses: {
-      /** Staff local admin account information returned */
-      201: {
-        content: {
-          'application/json': components['schemas']['StaffDetail']
-        }
-      }
-      /** Incorrect request to link local admin account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to link a local admin account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateLinkedLocalAdminUserRequest']
-      }
-    }
-  }
-  /** Can only be linked to an admin account. Can only be linked to an account that doesn't already have one general account. Requires role ROLE_CREATE_USER */
-  linkGeneralAccount: {
-    parameters: {
-      path: {
-        /** Attach account to an existing admin user account */
-        linkedUsername: string
-      }
-    }
-    responses: {
-      /** Staff account information returned */
-      201: {
-        content: {
-          'application/json': components['schemas']['StaffDetail']
-        }
-      }
-      /** Incorrect request to link general account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to link a general account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateLinkedGeneralUserRequest']
-      }
-    }
-  }
-  /** Can only be linked to an general account. Can only be linked to an account that doesn't already have one Admin account. Requires role ROLE_CREATE_USER */
-  linkAdminAccount: {
-    parameters: {
-      path: {
-        /** Attach account to an existing general account */
-        linkedUsername: string
-      }
-    }
-    responses: {
-      /** Staff account information returned */
-      201: {
-        content: {
-          'application/json': components['schemas']['StaffDetail']
-        }
-      }
-      /** Incorrect request to link admin account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to link an admin account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateLinkedAdminUserRequest']
-      }
-    }
-  }
-  /** Creates general user account, oracle schema and staff user information. Requires role ROLE_CREATE_USER */
-  createGeneralUser: {
-    responses: {
-      /** General user information returned */
-      201: {
-        content: {
-          'application/json': components['schemas']['UserDetail']
-        }
-      }
-      /** Incorrect request to create user information */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to create a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateGeneralUserRequest']
-      }
-    }
-  }
-  /** Creates admin user account, oracle schema and staff user information. Requires role ROLE_CREATE_USER */
-  createAdminUser: {
-    responses: {
-      /** Admin user account information returned */
-      201: {
-        content: {
-          'application/json': components['schemas']['UserDetail']
-        }
-      }
-      /** Incorrect request to create user information */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to create a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateAdminUserRequest']
-      }
-    }
-  }
-  /** If the user has this role already it is ignored. Any users not found will also be ignored but will not be returned in the response. Only DPS roles are added to the DPS caseload (NWEB). Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-  bulkAddRoles: {
-    parameters: {
-      path: {
-        /** Role Code */
-        roleCode: string
-      }
-    }
-    responses: {
-      /** User information with role details */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserRoleDetail'][]
-        }
-      }
-      /** Incorrect request to add a role from a user account */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to add a role this user account */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': string
-      }
-    }
-  }
-  /** Information on a list of roles. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN, ROLE_MAINTAIN_ACCESS_ROLES or ROLES_ADMIN */
-  getAllRoles: {
-    parameters: {
-      query: {
-        /** Get all roles, which includes both DPS and NOMIS roles */
-        'all-roles'?: boolean
-        /** Include DPS roles that can only be allocated by Central Admin */
-        'admin-roles'?: boolean
-      }
-    }
-    responses: {
-      /** Role Information Returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['RoleDetail'][]
-        }
-      }
-      /** Incorrect request to get role information */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to get a list of roles */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Creates a role. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLES_ADMIN */
-  createRole: {
-    responses: {
-      /** Role Information Returned */
-      201: {
-        content: {
-          'application/json': components['schemas']['RoleDetail']
-        }
-      }
-      /** Incorrect request to create role information */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to create a role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateRoleRequest']
-      }
-    }
-  }
-  /** Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES. <br/>Get all users with filter.<br/> For local administrators this will implicitly filter users in the prisons they administer, therefore username is expected in the authorisation token. <br/>For users with role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN this allows access to all staff. */
-  getUsers: {
-    parameters: {
-      query: {
-        pageRequest: components['schemas']['Pageable']
-        /** Filter results by name (first name and/or last name in any order), username or email address. */
-        nameFilter?: string
-        /** Filter will match users that have all DPS role specified */
-        accessRoles?: string[]
-        /** Filter will match users that have the NOMIS role specified, should be used with a caseloadId or will get duplicates */
-        nomisRole?: string
-        /** Limit to active / inactive / show all users */
-        status?: 'ALL' | 'ACTIVE' | 'INACTIVE'
-        /** Filter results by user's currently active caseload i.e. the one they have currently selected */
-        activeCaseload?: string
-        /** Filter results to include only those users that have access to the specified caseload (irrespective of whether it is currently active or not */
-        caseload?: string
-        /** Returns result inclusive of selected roles */
-        inclusiveRoles?: boolean
-        /** Returns all active LSAs */
-        showOnlyLSAs?: boolean
-      }
-    }
-    responses: {
-      /** Pageable list of user summaries */
-      200: {
-        content: {
-          'application/json': components['schemas']['PageUserSummaryWithEmail']
-        }
-      }
-      /** Incorrect filter supplied */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Information on a specific user. Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES or ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-  getUserDetails: {
-    parameters: {
-      path: {
-        /** Username */
-        username: string
-      }
-    }
-    responses: {
-      /** User Information Returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserDetail']
-        }
-      }
-      /** Incorrect request to get user information */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to get a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Requires role ROLE_USE_OF_FORCE or ROLE_STAFF_SEARCH */
-  findUsersByFirstAndLastNames: {
-    parameters: {
-      query: {
-        /** The first name to match. Case insensitive. */
-        firstName: string
-        /** The last name to match. Case insensitive */
-        lastName: string
-      }
-    }
-    responses: {
-      /** List of matching users */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserSummaryWithEmail'][]
-        }
-      }
-    }
-  }
-  /** Will display general and admin user account if setup.  Requires role ROLE_MAINTAIN_ACCESS_ROLES_ADMIN or ROLE_MAINTAIN_ACCESS_ROLES */
-  getUserDetailsByStaffId: {
-    parameters: {
-      path: {
-        /** Staff ID */
-        staffId: string
-      }
-    }
-    responses: {
-      /** Staff Information Returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['StaffDetail']
-        }
-      }
-      /** Incorrect request to get staff information */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to get a staff user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
-  findUsersAndEmails: {
-    responses: {
-      /** List of usernames and their email addresses */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserAndEmail'][]
-        }
-      }
-    }
-  }
-  downloadUsersByFilters: {
-    parameters: {
-      query: {
-        pageRequest: components['schemas']['Pageable']
-        /** Filter results by name (first name and/or last name in any order), username or email address. */
-        nameFilter?: string
-        /** Filter will match users that have all DPS role specified */
-        accessRoles?: string[]
-        /** Filter will match users that have the NOMIS role specified, should be used with a caseloadId or will get duplicates */
-        nomisRole?: string
-        /** Limit to active / inactive / show all users */
-        status?: 'ALL' | 'ACTIVE' | 'INACTIVE'
-        /** Filter results by user's currently active caseload i.e. the one they have currently selected */
-        activeCaseload?: string
-        /** Filter results to include only those users that have access to the specified caseload (irrespective of whether it is currently active or not */
-        caseload?: string
-        /** Returns result inclusive of selected roles */
-        inclusiveRoles?: boolean
-        /** Returns all active LSAs */
-        showOnlyLSAs?: boolean
-      }
-    }
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserSummaryWithEmail'][]
-        }
-      }
-    }
-  }
-  /** Retrieves all the current active general caseloads, these are effectively prisons that staff can be associated with */
-  getCaseload: {
-    responses: {
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Information on a specific user. */
-  getMyUserDetails: {
-    responses: {
-      /** User Information Returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserDetail']
-        }
-      }
-      /** Incorrect request to get user information */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to get a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Roles for a specific user in context */
-  getMyRoles: {
-    parameters: {
-      query: {
-        /** Include NOMIS roles */
-        'include-nomis-roles'?: string
-      }
-    }
-    responses: {
-      /** User role list */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserRoleDetail']
-        }
-      }
-      /** Incorrect request to get caseloads for a user */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to get roles for this user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Caseloads for the current user */
-  getMyCaseloads: {
-    responses: {
-      /** User caseload list */
-      200: {
-        content: {
-          'application/json': components['schemas']['UserCaseloadDetail']
-        }
-      }
-      /** Incorrect request to get caseloads for a user */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** Incorrect permissions to get a caseload for a user */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
+    unlockUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username
+                 * @example testuser1
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User account unlocked */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Incorrect request to unlock user */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to unlock a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    lockUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username
+                 * @example testuser1
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User account locked */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Incorrect request to lock user */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to lock a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    setDefaultCaseload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username to default caseload
+                 * @example TEST_USER2
+                 */
+                username: string;
+                /**
+                 * @description Default caseload Id
+                 * @example LEI
+                 */
+                defaultCaseloadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User information with active caseload details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserCaseloadDetail"];
+                };
+            };
+            /** @description Incorrect request to set a default caseload on a user account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to set a default caseload on a user account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    changePassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username
+                 * @example testuser1
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": string;
+            };
+        };
+        responses: {
+            /** @description User account password changed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Incorrect request to change password of user. Some specific responses returns a different errorCode that can be checked by the client */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to change the password a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    changeName: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username
+                 * @example TEST_USER1
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NameDetail"];
+            };
+        };
+        responses: {
+            /** @description User account name changed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffDetail"];
+                };
+            };
+            /** @description Incorrect request to change name of user */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to change the name a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    changeEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username
+                 * @example TEST_USER1
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": string;
+            };
+        };
+        responses: {
+            /** @description User account email changed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffDetail"];
+                };
+            };
+            /** @description Incorrect request to change email of user */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to change the email a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getRoleDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Role Code
+                 * @example GLOBAL_SEARCH
+                 */
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Role Information Returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoleDetail"];
+                };
+            };
+            /** @description Incorrect request to get role information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get a role */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Role Code
+                 * @example GLOBAL_SEARCH
+                 */
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateRoleRequest"];
+            };
+        };
+        responses: {
+            /** @description Role Information Returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoleDetail"];
+                };
+            };
+            /** @description Incorrect request to update role information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to update a role */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    setJobClassification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agencyId: string;
+                staffId: number;
+                staffRole: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JobClassificationRequest"];
+            };
+        };
+        responses: {
+            /** @description The job classification was created or updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StaffJobClassification"];
+                };
+            };
+            /** @description Incorrect request to modify the staff job classification */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions modify staff job classifications */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getUserRoles: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Include NOMIS roles
+                 * @example false
+                 */
+                "include-nomis-roles"?: boolean;
+            };
+            header?: never;
+            path: {
+                /**
+                 * @description Username
+                 * @example TEST_USER1
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User role list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRoleDetail"];
+                };
+            };
+            /** @description Incorrect request to get caseloads for a user */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get roles for this user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    addRoles: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Caseload Id
+                 * @example NWEB
+                 */
+                caseloadId?: string;
+            };
+            header?: never;
+            path: {
+                /**
+                 * @description Username of the account to add roles
+                 * @example TEST_USER2
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": string[];
+            };
+        };
+        responses: {
+            /** @description User information with role details */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRoleDetail"];
+                };
+            };
+            /** @description Incorrect request to add a role to a user account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to add a role to this account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    addRole: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Caseload Id
+                 * @example NWEB
+                 */
+                caseloadId?: string;
+            };
+            header?: never;
+            path: {
+                /**
+                 * @description Username of the account to add role
+                 * @example TEST_USER2
+                 */
+                username: string;
+                /**
+                 * @description Role Code
+                 * @example GLOBAL_SEARCH
+                 */
+                roleCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User information with role details */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRoleDetail"];
+                };
+            };
+            /** @description Incorrect request to add a role to a user account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to add a role to this account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    removeRole: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Caseload Id
+                 * @example NWEB
+                 */
+                caseloadId?: string;
+            };
+            header?: never;
+            path: {
+                /**
+                 * @description Username of the account to remove role
+                 * @example TEST_USER2
+                 */
+                username: string;
+                /**
+                 * @description Role Code
+                 * @example GLOBAL_SEARCH
+                 */
+                roleCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User information with role details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRoleDetail"];
+                };
+            };
+            /** @description Incorrect request to remove a role from a user account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to remove a role this user account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    recordSignIn: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username
+                 * @example testuser1
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User sign in recorded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Incorrect request to record user sign-in */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to record the user sign-in */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getUserCaseloads: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username
+                 * @example TEST_USER1
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User caseload list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserCaseloadDetail"];
+                };
+            };
+            /** @description Incorrect request to get caseloads for a user */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get a caseload for a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    addCaseloads: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username of the account to add caseloads
+                 * @example TEST_USER2
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": string[];
+            };
+        };
+        responses: {
+            /** @description User information with caseload details */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserCaseloadDetail"];
+                };
+            };
+            /** @description Incorrect request to add caseloads to a user account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to add caseloads to account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    addCaseload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username of the account to add caseload
+                 * @example TEST_USER2
+                 */
+                username: string;
+                /**
+                 * @description Caseload Id
+                 * @example LEI
+                 */
+                caseloadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User information with caseload details */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserCaseloadDetail"];
+                };
+            };
+            /** @description Incorrect request to add a caseload to a user account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to add a caseload to account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    removeCaseload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username to remove caseload from
+                 * @example TEST_USER2
+                 */
+                username: string;
+                /**
+                 * @description Caseload ID to remove from this user
+                 * @example LEI
+                 */
+                caseloadId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User information with caseload details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserCaseloadDetail"];
+                };
+            };
+            /** @description Incorrect request to remove a caseload from a user account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to remove a caseload this user account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    authenticate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Authentication"];
+            };
+        };
+        responses: {
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication failed. Either no access token was provided or the username / password combination is incorrect */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Requires role ROLE_MANAGE_NOMIS_USER_ACCOUNT */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    findUsersByEmailAddress: {
+        parameters: {
+            query: {
+                /**
+                 * @description The email to match. Case insensitive
+                 * @example jim@smith.com
+                 */
+                email: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of matching users */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserDetail"][];
+                };
+            };
+        };
+    };
+    findUsersByEmailAddressAndUsernames: {
+        parameters: {
+            query: {
+                /**
+                 * @description The email to match. Case insensitive
+                 * @example jim@smith.com
+                 */
+                email: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": string[];
+            };
+        };
+        responses: {
+            /** @description List of matching users */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserDetail"][];
+                };
+            };
+        };
+    };
+    bulkRemoveRoles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Role Code
+                 * @example GLOBAL_SEARCH
+                 */
+                roleCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": string;
+            };
+        };
+        responses: {
+            /** @description User information with role details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRoleDetail"][];
+                };
+            };
+            /** @description Incorrect request to remove a role from a user account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to remove a role this user account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    reassignRoles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RoleAssignmentsSpecification"];
+            };
+        };
+        responses: {
+            /** @description Role update details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoleAssignmentStats"][];
+                };
+            };
+            /** @description Incorrect request to re-assign a set of roles */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to re-assign a set of roles */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createLocalAdminUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateLocalAdminUserRequest"];
+            };
+        };
+        responses: {
+            /** @description Local Admin user information returned */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserDetail"];
+                };
+            };
+            /** @description Incorrect request to create user information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to create a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    linkLocalAdminAccount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Attach account to an existing general user account
+                 * @example testuser2
+                 */
+                linkedUsername: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateLinkedLocalAdminUserRequest"];
+            };
+        };
+        responses: {
+            /** @description Staff local admin account information returned */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffDetail"];
+                };
+            };
+            /** @description Incorrect request to link local admin account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to link a local admin account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    linkGeneralAccount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Attach account to an existing admin user account
+                 * @example testuser2
+                 */
+                linkedUsername: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateLinkedGeneralUserRequest"];
+            };
+        };
+        responses: {
+            /** @description Staff account information returned */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffDetail"];
+                };
+            };
+            /** @description Incorrect request to link general account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to link a general account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    linkAdminAccount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Attach account to an existing general account
+                 * @example testuser2
+                 */
+                linkedUsername: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateLinkedAdminUserRequest"];
+            };
+        };
+        responses: {
+            /** @description Staff account information returned */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffDetail"];
+                };
+            };
+            /** @description Incorrect request to link admin account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to link an admin account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createGeneralUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateGeneralUserRequest"];
+            };
+        };
+        responses: {
+            /** @description General user information returned */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserDetail"];
+                };
+            };
+            /** @description Incorrect request to create user information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to create a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getUserBasicDetailsByUsernames: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": string[];
+            };
+        };
+        responses: {
+            /** @description User Information Returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: components["schemas"]["UserBasicDetails"];
+                    };
+                };
+            };
+            /** @description Incorrect request to get user information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createAdminUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAdminUserRequest"];
+            };
+        };
+        responses: {
+            /** @description Admin user account information returned */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserDetail"];
+                };
+            };
+            /** @description Incorrect request to create user information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to create a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    bulkAddRoles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Role Code
+                 * @example GLOBAL_SEARCH
+                 */
+                roleCode: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": string;
+            };
+        };
+        responses: {
+            /** @description User information with role details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRoleDetail"][];
+                };
+            };
+            /** @description Incorrect request to add a role from a user account */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to add a role this user account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getAllRoles: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Get all roles, which includes both DPS and NOMIS roles
+                 * @example true
+                 */
+                "all-roles"?: boolean;
+                /**
+                 * @description Include DPS roles that can only be allocated by Central Admin
+                 * @example true
+                 */
+                "admin-roles"?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Role Information Returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoleDetail"][];
+                };
+            };
+            /** @description Incorrect request to get role information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get a list of roles */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRoleRequest"];
+            };
+        };
+        responses: {
+            /** @description Role Information Returned */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoleDetail"];
+                };
+            };
+            /** @description Incorrect request to create role information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to create a role */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getUsers: {
+        parameters: {
+            query: {
+                pageRequest: components["schemas"]["Pageable"];
+                /**
+                 * @description Filter results by name (first name and/or last name in any order), username or email address.
+                 * @example Raj
+                 */
+                nameFilter?: string;
+                /**
+                 * @description Filter will match users that have all DPS role specified
+                 * @example ADD_SENSITIVE_CASE_NOTES
+                 */
+                accessRoles?: string[];
+                /**
+                 * @description Filter will match users that have the NOMIS role specified, should be used with a caseloadId or will get duplicates
+                 * @example 201
+                 */
+                nomisRole?: string;
+                /**
+                 * @description Limit to active / inactive / show all users
+                 * @example INACTIVE
+                 */
+                status?: "ALL" | "ACTIVE" | "INACTIVE";
+                /**
+                 * @description Filter results by user's currently active caseload i.e. the one they have currently selected
+                 * @example MDI
+                 */
+                activeCaseload?: string;
+                /**
+                 * @description Filter results to include only those users that have access to the specified caseload (irrespective of whether it is currently active or not
+                 * @example MDI
+                 */
+                caseload?: string;
+                /**
+                 * @description Returns result inclusive of selected roles
+                 * @example true
+                 */
+                inclusiveRoles?: boolean;
+                /**
+                 * @description Returns all active LSAs
+                 * @example true
+                 */
+                showOnlyLSAs?: boolean;
+                /**
+                 * @description allows filtering on user type (admin | general)
+                 * @example GENERAL
+                 */
+                userType?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Pageable list of user summaries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageUserSummaryWithEmail"];
+                };
+            };
+            /** @description Incorrect filter supplied */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getUserDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username
+                 * @example testuser1
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User Information Returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserDetail"];
+                };
+            };
+            /** @description Incorrect request to get user information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    findUsersByFirstAndLastNames: {
+        parameters: {
+            query: {
+                /**
+                 * @description The first name to match. Case insensitive.
+                 * @example Fred
+                 */
+                firstName: string;
+                /**
+                 * @description The last name to match. Case insensitive
+                 * @example Bloggs
+                 */
+                lastName: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of matching users */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserSummaryWithEmail"][];
+                };
+            };
+        };
+    };
+    getUserDetailsByStaffId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Staff ID
+                 * @example 234232
+                 */
+                staffId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Staff Information Returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffDetail"];
+                };
+            };
+            /** @description Incorrect request to get staff information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get a staff user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getLastNameAllUsers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of all users */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserLastName"][];
+                };
+            };
+        };
+    };
+    findUsersAndEmails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of usernames and their email addresses */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserAndEmail"][];
+                };
+            };
+        };
+    };
+    downloadUsersByFilters: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Filter results by name (first name and/or last name in any order), username or email address.
+                 * @example Raj
+                 */
+                nameFilter?: string;
+                /**
+                 * @description Filter will match users that have all DPS role specified
+                 * @example ADD_SENSITIVE_CASE_NOTES
+                 */
+                accessRoles?: string[];
+                /**
+                 * @description Filter will match users that have the NOMIS role specified, should be used with a caseloadId or will get duplicates
+                 * @example 201
+                 */
+                nomisRole?: string;
+                /**
+                 * @description Limit to active / inactive / show all users
+                 * @example INACTIVE
+                 */
+                status?: "ALL" | "ACTIVE" | "INACTIVE";
+                /**
+                 * @description Filter results by user's currently active caseload i.e. the one they have currently selected
+                 * @example MDI
+                 */
+                activeCaseload?: string;
+                /**
+                 * @description Filter results to include only those users that have access to the specified caseload (irrespective of whether it is currently active or not
+                 * @example MDI
+                 */
+                caseload?: string;
+                /**
+                 * @description Returns result inclusive of selected roles
+                 * @example true
+                 */
+                inclusiveRoles?: boolean;
+                /**
+                 * @description Returns all active LSAs
+                 * @example true
+                 */
+                showOnlyLSAs?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserSummaryWithEmail"][];
+                };
+            };
+        };
+    };
+    downloadGroupAdminsByFilters: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Filter results by name (first name and/or last name in any order), username or email address.
+                 * @example Raj
+                 */
+                nameFilter?: string;
+                /**
+                 * @description Filter will match users that have all DPS role specified
+                 * @example ADD_SENSITIVE_CASE_NOTES
+                 */
+                accessRoles?: string[];
+                /**
+                 * @description Filter will match users that have the NOMIS role specified, should be used with a caseloadId or will get duplicates
+                 * @example 201
+                 */
+                nomisRole?: string;
+                /**
+                 * @description Limit to active / inactive / show all users
+                 * @example INACTIVE
+                 */
+                status?: "ALL" | "ACTIVE" | "INACTIVE";
+                /**
+                 * @description Filter results by user's currently active caseload i.e. the one they have currently selected
+                 * @example MDI
+                 */
+                activeCaseload?: string;
+                /**
+                 * @description Filter results to include only those users that have access to the specified caseload (irrespective of whether it is currently active or not
+                 * @example MDI
+                 */
+                caseload?: string;
+                /**
+                 * @description Returns result inclusive of selected roles
+                 * @example true
+                 */
+                inclusiveRoles?: boolean;
+                /**
+                 * @description Returns all active LSAs
+                 * @example true
+                 */
+                showOnlyLSAs?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupAdminSummaryWithEmail"][];
+                };
+            };
+        };
+    };
+    getUserBasicDetailsInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Username
+                 * @example testuser1
+                 */
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User Information Returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserBasicDetails"];
+                };
+            };
+            /** @description Incorrect request to get user information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description user not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getCaseload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getMyUserDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User Information Returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserDetail"];
+                };
+            };
+            /** @description Incorrect request to get user information */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getMyRoles: {
+        parameters: {
+            query?: {
+                /**
+                 * @description Include NOMIS roles
+                 * @example false
+                 */
+                "include-nomis-roles"?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User role list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRoleDetail"];
+                };
+            };
+            /** @description Incorrect request to get caseloads for a user */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get roles for this user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getMyCaseloads: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User caseload list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserCaseloadDetail"];
+                };
+            };
+            /** @description Incorrect request to get caseloads for a user */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized to access this endpoint */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Incorrect permissions to get a caseload for a user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
 }

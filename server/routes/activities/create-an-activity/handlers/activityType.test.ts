@@ -91,6 +91,7 @@ describe('ActivityType Handler', () => {
         code: ActivityCategoryEnum.SAA_ROTL,
         name: 'Outside activity',
       })
+      expect(activitiesService.getActivityCategories).toHaveBeenCalledWith(res.locals.user, true)
       expect(res.redirect).toHaveBeenCalledWith('name')
     })
 

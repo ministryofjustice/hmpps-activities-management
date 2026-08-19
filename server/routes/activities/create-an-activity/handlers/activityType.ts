@@ -31,7 +31,7 @@ export default class ActivityTypeRoutes {
       return
     }
 
-    const categories = await this.activitiesService.getActivityCategories(user)
+    const categories = await this.activitiesService.getActivityCategories(user, true)
     const category = categories.find(({ code }) => code === ActivityCategoryEnum.SAA_ROTL)
 
     if (!category) {

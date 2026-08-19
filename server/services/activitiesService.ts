@@ -83,8 +83,8 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getActivity(activityId, includeScheduledInstances, user)
   }
 
-  async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
-    return this.activitiesApiClient.getActivityCategories(user)
+  async getActivityCategories(user: ServiceUser, includeRotl = false): Promise<ActivityCategory[]> {
+    return this.activitiesApiClient.getActivityCategories(user, includeRotl)
   }
 
   async getAttendanceReasons(user: ServiceUser): Promise<AttendanceReason[]> {
