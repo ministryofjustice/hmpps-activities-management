@@ -26,7 +26,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
       name: 'Manage applications and waitlists',
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   const applicationRow = page.getByRole('row').filter({ hasText: 'Winchurch, David Bob' })
 
@@ -43,7 +43,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
       name: 'Request for David Winchurch, A1350DZ',
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   const summaryRows = page.locator('.govuk-summary-list__row')
 
@@ -60,7 +60,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
       name: "Are you sure you want to reinstate David Winchurch's application?",
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   await expect(page.getByText(/It will be reinstated as Pending/)).toBeVisible()
 
@@ -82,7 +82,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
       name: 'Enter the reason this application is being reinstated',
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   await page
     .getByRole('textbox', {
@@ -101,7 +101,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
   const banner = successBanner(page)
 
   await expect(banner).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
   await expect(banner).toContainText("You have updated the status of David Winchurch's application")
 
   await expect(page.locator('.govuk-summary-list__row').filter({ hasText: 'Status' })).toContainText('Pending')

@@ -19,7 +19,7 @@ export const signIn = async (page: Page): Promise<void> => {
   await page.goto(signInUrl)
 
   await expect(page.locator('#index-page')).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, false)
 }
 
 export const signInEAEnabled = async (page: Page): Promise<void> => {
@@ -34,5 +34,5 @@ export const signInEAEnabled = async (page: Page): Promise<void> => {
   await page.goto(signInUrl)
 
   await expect(page.locator('#index-page')).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, false)
 }

@@ -24,20 +24,20 @@ test('a user can log a pending waitlist application', async ({ page }) => {
       name: 'Enter the date shown on the application',
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   await page.getByLabel('Enter the date shown on the application').fill(format(yesterday, 'dd/MM/yyyy'))
   await page.getByRole('button', { name: 'Continue' }).click()
 
   await expect(page.getByRole('heading', { name: 'Search for the activity' })).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   await page.locator('#activityId').fill('Maths level 1')
   await page.getByRole('option', { name: 'Maths level 1', exact: true }).click()
   await page.getByRole('button', { name: 'Continue' }).click()
 
   await expect(page.getByRole('heading', { name: 'Who made the application?' })).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'David Winchurch', exact: true }).check()
   await page.getByRole('button', { name: 'Continue' }).click()
@@ -47,7 +47,7 @@ test('a user can log a pending waitlist application', async ({ page }) => {
       name: 'Record a status for this application',
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   await page.getByRole('radio', { name: /^Pending/ }).check()
   await page.getByRole('button', { name: 'Continue' }).click()
@@ -57,7 +57,7 @@ test('a user can log a pending waitlist application', async ({ page }) => {
       name: 'Check and confirm application details',
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   const summaryRows = page.locator('.govuk-summary-list__row')
 
@@ -76,7 +76,7 @@ test('a user can log a pending waitlist application', async ({ page }) => {
       name: /You've successfully logged David Winchurch's application for Maths level 1/i,
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   await expect(page.locator('.govuk-panel__body')).toContainText('The application status is Pending')
 })

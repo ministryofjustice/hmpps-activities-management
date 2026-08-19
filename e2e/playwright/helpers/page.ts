@@ -3,8 +3,9 @@ import * as axe from 'axe-core'
 
 const accessibilityOptions: axe.RunOptions = {
   rules: {
-    // These exceptions match the existing Cypress accessibility checks. aria-expanded on
-    // radio buttons is used by GOV.UK Frontend and is being discussed by the ARIA working group.
+    // Exceptions set to legacy Cypress standards.
+    // aria-allowed-attr is disabled because radio buttons can have aria-expanded which isn't
+    // currently allowed by the spec, but that might change: https://github.com/w3c/aria/issues/1404
     'aria-allowed-attr': { enabled: false },
     // Colour contrast is covered separately because Axe cannot reliably determine it in CI.
     'color-contrast': { enabled: false },
@@ -20,15 +21,18 @@ const formatViolations = (violations: axe.Result[]): string =>
     .join('\n')
 
 /**
- * Confirms that the current page has rendered its standard layout, then runs the same Axe
- * accessibility checks as the Cypress page objects.
+ * Confirms that the current page has rendered. If checkAccessibility = true, Axe accessibility checks run.
  */
-const verifyPage = async (page: Page): Promise<void> => {
-  await test.step(`verify ${new URL(page.url()).pathname} renders and is accessible`, async () => {
+const verifyPage = async (page: Page, checkAccessibility: boolean): Promise<void> => {
+  const accessibilityStep = checkAccessibility ? ' and is accessible' : ''
+
+  await test.step(`verify ${new URL(page.url()).pathname} renders${accessibilityStep}`, async () => {
     await expect(page).toHaveTitle(/\S/)
     await expect(page.locator('main#main-content')).toBeVisible()
     await expect(page.locator('h1').first()).toBeVisible()
     await expect(page.locator('pre.stacktrace')).toHaveCount(0)
+
+    if (!checkAccessibility) return
 
     await page.evaluate(axe.source)
 

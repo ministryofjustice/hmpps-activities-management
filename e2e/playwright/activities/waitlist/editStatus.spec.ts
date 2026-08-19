@@ -24,7 +24,7 @@ test('a user can view a pending waitlist application and change its status to ap
       name: 'Manage applications and waitlists',
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   const applicationRow = page.getByRole('row').filter({ hasText: 'Winchurch, David Bob' })
 
@@ -47,7 +47,7 @@ test('a user can view a pending waitlist application and change its status to ap
       name: 'Request for David Winchurch, A1350DZ',
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   const summaryRows = page.locator('.govuk-summary-list__row')
 
@@ -71,7 +71,7 @@ test('a user can view a pending waitlist application and change its status to ap
       name: 'Application history',
     })
     .click()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   await expect(
     page.locator('.moj-timeline__title').filter({
@@ -96,7 +96,7 @@ test('a user can view a pending waitlist application and change its status to ap
       name: "Change the status of David Winchurch's application",
     }),
   ).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   await expect(page.locator('.govuk-inset-text')).toContainText('Pending')
 
@@ -117,7 +117,7 @@ test('a user can view a pending waitlist application and change its status to ap
   const successBanner = page.locator('.govuk-notification-banner--success')
 
   await expect(successBanner).toBeVisible()
-  await verifyPage(page)
+  await verifyPage(page, true)
 
   await expect(successBanner).toContainText("You have updated the status of David Winchurch's application")
 
