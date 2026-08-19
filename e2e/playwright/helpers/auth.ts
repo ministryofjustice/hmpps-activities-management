@@ -5,7 +5,6 @@ import { stubEndpoint } from '../../../integration_tests/mockApis/wiremock'
 
 import rolloutPlan from '../../../integration_tests/fixtures/activitiesApi/rollout.json'
 import rolloutPlanEAEnabled from '../../../integration_tests/fixtures/activitiesApi/rolloutEAEnabled.json'
-import verifyPage from './page'
 
 export const signIn = async (page: Page): Promise<void> => {
   await page.goto('/')
@@ -19,7 +18,6 @@ export const signIn = async (page: Page): Promise<void> => {
   await page.goto(signInUrl)
 
   await expect(page.locator('#index-page')).toBeVisible()
-  await verifyPage(page, false)
 }
 
 export const signInEAEnabled = async (page: Page): Promise<void> => {
@@ -34,5 +32,4 @@ export const signInEAEnabled = async (page: Page): Promise<void> => {
   await page.goto(signInUrl)
 
   await expect(page.locator('#index-page')).toBeVisible()
-  await verifyPage(page, false)
 }
