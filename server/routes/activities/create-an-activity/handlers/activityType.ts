@@ -20,28 +20,30 @@ export default class ActivityTypeRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const outsideWork = res.locals.user.externalActivitiesRolledOut && req.body.type === 'external'
+    const { user } = res.locals
+    const outsideWork = user.externalActivitiesRolledOut && req.body.type === 'external'
+
     req.journeyData.createJourney.outsideWork = outsideWork
 
-    if (outsideWork) {
-      const category = await this.activitiesService
-        .getActivityCategories(res.locals.user)
-        .then(categories => categories.find(({ code }) => code === ActivityCategoryEnum.SAA_ROTL))
-
-      if (!category) {
-        throw new Error(`Activity category ${ActivityCategoryEnum.SAA_ROTL} not found`)
-      }
-
-      req.journeyData.createJourney.category = {
-        id: category.id,
-        code: category.code,
-        name: category.name,
-      }
-      res.redirect('name')
+    if (!outsideWork) {
+      req.journeyData.createJourney.category = undefined
+      res.redirect('category')
       return
     }
 
-    req.journeyData.createJourney.category = undefined
-    res.redirect('category')
+    const categories = await this.activitiesService.getActivityCategories(user)
+    const category = categories.find(({ code }) => code === ActivityCategoryEnum.SAA_ROTL)
+
+    if (!category) {
+      throw new Error(`Activity category ${ActivityCategoryEnum.SAA_ROTL} not found`)
+    }
+
+    req.journeyData.createJourney.category = {
+      id: category.id,
+      code: category.code,
+      name: category.name,
+    }
+
+    res.redirect('name')
   }
 }
