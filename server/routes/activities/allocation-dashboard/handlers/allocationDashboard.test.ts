@@ -96,6 +96,33 @@ describe('Route Handlers - Allocation dashboard', () => {
   afterEach(() => jest.resetAllMocks())
 
   describe('GET', () => {
+    const waitlistApplicationsWithDifferentStatuses = [
+      {
+        id: 1,
+        scheduleId: 1,
+        prisonerNumber: 'A0013DZ',
+        status: 'PENDING',
+        requestedDate: '2023-08-07',
+        requestedBy: 'PRISONER',
+      },
+      {
+        id: 2,
+        scheduleId: 1,
+        prisonerNumber: 'B2222CD',
+        status: 'DECLINED',
+        requestedDate: '2023-08-07',
+        requestedBy: 'PRISONER',
+      },
+      {
+        id: 3,
+        scheduleId: 1,
+        prisonerNumber: 'F4444FF',
+        status: 'WITHDRAWN',
+        requestedDate: '2023-08-07',
+        requestedBy: 'PRISONER',
+      },
+    ] as WaitingListApplication[]
+
     beforeEach(() => {
       activitiesService.getActivity = jest.fn()
 
@@ -855,6 +882,38 @@ describe('Route Handlers - Allocation dashboard', () => {
           },
         }),
       )
+    })
+
+    it('should exclude withdrawn applications when no waitlist status filter is selected', async () => {
+      req.params = { activityId: '1' }
+
+      activitiesService.fetchActivityWaitlist.mockReset()
+      activitiesService.fetchActivityWaitlist.mockResolvedValue(waitlistApplicationsWithDifferentStatuses)
+
+      await handler.GET(req, res)
+
+      const [, viewModel] = (res.render as jest.Mock).mock.calls[0]
+      const statuses = viewModel.waitlistedPrisoners.map((prisoner: { status: string }) => prisoner.status)
+
+      expect(statuses).toHaveLength(2)
+      expect(statuses).toContain('PENDING')
+      expect(statuses).toContain('DECLINED')
+      expect(statuses).not.toContain('WITHDRAWN')
+    })
+
+    it('should only return withdrawn applications when waitlist status filter is withdrawn', async () => {
+      req.params = { activityId: '1' }
+      req.query.waitlistStatusFilter = 'WITHDRAWN'
+
+      activitiesService.fetchActivityWaitlist.mockReset()
+      activitiesService.fetchActivityWaitlist.mockResolvedValue(waitlistApplicationsWithDifferentStatuses)
+
+      await handler.GET(req, res)
+
+      const [, viewModel] = (res.render as jest.Mock).mock.calls[0]
+      const statuses = viewModel.waitlistedPrisoners.map((prisoner: { status: string }) => prisoner.status)
+
+      expect(statuses).toEqual(['WITHDRAWN'])
     })
   })
 
