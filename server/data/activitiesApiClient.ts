@@ -105,11 +105,12 @@ export default class ActivitiesApiClient extends RestClient {
     )
   }
 
-  async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
+  async getActivityCategories(user: ServiceUser, includeRotl = false): Promise<ActivityCategory[]> {
     return this.get(
       {
         path: `/activity-categories`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
+        ...(includeRotl && { query: { includeRotl } }),
       },
       asUser(user.token),
     )

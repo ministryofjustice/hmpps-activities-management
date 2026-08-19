@@ -9,4 +9,5 @@ export enum ActivityCategoryEnum {
   SAA_FAITH_SPIRITUALITY = 'SAA_FAITH_SPIRITUALITY',
   SAA_NOT_IN_WORK = 'SAA_NOT_IN_WORK',
   SAA_OTHER = 'SAA_OTHER',
+  SAA_ROTL = 'SAA_ROTL',
 }
