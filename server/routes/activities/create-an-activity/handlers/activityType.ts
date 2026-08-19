@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer'
-import { IsNotEmpty } from 'class-validator'
+import { IsIn } from 'class-validator'
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityCategoryEnum } from '../../../../data/activityCategoryEnum'
@@ -7,7 +7,7 @@ import { ActivityCategoryEnum } from '../../../../data/activityCategoryEnum'
 export class ActivityType {
   @Expose()
   @Type(() => String)
-  @IsNotEmpty({ message: 'Select the type of activity' })
+  @IsIn(['internal', 'external'], { message: 'Select if the activity takes place inside or outside' })
   type: string
 }
 

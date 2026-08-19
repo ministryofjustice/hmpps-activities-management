@@ -42,13 +42,13 @@ describe('ActivityType Handler', () => {
   })
 
   describe('ActivityType Validation', () => {
-    it('should accept internal type', async () => {
+    it('should accept the inside option', async () => {
       const activityType = plainToInstance(ActivityType, { type: 'internal' })
       const errors = await validate(activityType)
       expect(errors).toHaveLength(0)
     })
 
-    it('should accept external type', async () => {
+    it('should accept the outside option', async () => {
       const activityType = plainToInstance(ActivityType, { type: 'external' })
       const errors = await validate(activityType)
       expect(errors).toHaveLength(0)
@@ -59,6 +59,9 @@ describe('ActivityType Handler', () => {
       const errors = await validate(activityType)
       expect(errors).toHaveLength(1)
       expect(errors[0].property).toBe('type')
+      expect(errors[0].constraints).toEqual({
+        isIn: 'Select if the activity takes place inside or outside',
+      })
     })
 
     it('should fail validation when type is empty string', async () => {
@@ -66,6 +69,20 @@ describe('ActivityType Handler', () => {
       const errors = await validate(activityType)
       expect(errors).toHaveLength(1)
       expect(errors[0].property).toBe('type')
+      expect(errors[0].constraints).toEqual({
+        isIn: 'Select if the activity takes place inside or outside',
+      })
+    })
+
+    it('should fail validation when an invalid option is provided', async () => {
+      const activityType = plainToInstance(ActivityType, { type: 'invalid' })
+      const errors = await validate(activityType)
+
+      expect(errors).toHaveLength(1)
+      expect(errors[0].property).toBe('type')
+      expect(errors[0].constraints).toEqual({
+        isIn: 'Select if the activity takes place inside or outside',
+      })
     })
   })
 
@@ -79,7 +96,7 @@ describe('ActivityType Handler', () => {
   })
 
   describe('POST', () => {
-    it('should set the ROTL category and redirect to the name page when type is external', async () => {
+    it('should set the ROTL category and redirect to the name page when outside is selected', async () => {
       req.body = { type: 'external' }
       const { POST } = handler
 
@@ -104,7 +121,7 @@ describe('ActivityType Handler', () => {
       expect(res.redirect).not.toHaveBeenCalled()
     })
 
-    it('should set outsideWork to false when type is not external', async () => {
+    it('should set outsideWork to false when inside is selected', async () => {
       req.body = { type: 'internal' }
 
       await handler.POST(req, res)
