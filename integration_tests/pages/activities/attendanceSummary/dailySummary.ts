@@ -5,8 +5,6 @@ export default class DailySummaryPage extends Page {
     super('daily-attendance-summary-page')
   }
 
-  activityTypeCheckbox = (value: string) => cy.get(`input[name="activityTypeFilters"][value="${value}"]`)
-
   showFiltersButton = () => cy.get('button').contains('Show filter')
 
   selectSessionsLink = () => cy.get('[data-qa=sessions-link]').first().invoke('attr', 'target', '_self').click()

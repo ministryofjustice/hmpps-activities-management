@@ -164,7 +164,10 @@ describe('Route Handlers - Daily Attendance List', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
         activityDate: date,
         status: 'NotAttended',
-        uniqueCategories: ['Education', 'Prison Jobs'],
+        uniqueCategories: [
+          { value: 'Education', text: 'Education' },
+          { value: 'Prison Jobs', text: 'Prison Jobs' },
+        ],
         absenceReasons,
         showRefusalsLink: false,
         attendees: [
@@ -247,7 +250,10 @@ describe('Route Handlers - Daily Attendance List', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
         activityDate: date,
         status: 'NotAttended',
-        uniqueCategories: ['Education', 'Prison Jobs'],
+        uniqueCategories: [
+          { value: 'Education', text: 'Education' },
+          { value: 'Prison Jobs', text: 'Prison Jobs' },
+        ],
         absenceReasons,
         showRefusalsLink: false,
         attendees: [
@@ -306,7 +312,7 @@ describe('Route Handlers - Daily Attendance List', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
         activityDate: date,
         status: 'NotAttended',
-        uniqueCategories: ['Education'],
+        uniqueCategories: [{ value: 'Education', text: 'Education' }],
         absenceReasons,
         showRefusalsLink: false,
         attendees: [
@@ -398,7 +404,7 @@ describe('Route Handlers - Daily Attendance List', () => {
             },
           },
         ],
-        uniqueCategories: ['Prison Jobs'],
+        uniqueCategories: [{ value: 'Prison Jobs', text: 'Prison Jobs' }],
       })
     })
 
@@ -458,8 +464,99 @@ describe('Route Handlers - Daily Attendance List', () => {
             },
           },
         ],
-        uniqueCategories: ['Education', 'Prison Jobs'],
+        uniqueCategories: [
+          { value: 'Education', text: 'Education' },
+          { value: 'Prison Jobs', text: 'Prison Jobs' },
+        ],
       })
+    })
+
+    it('should include outside activities when selected by category', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      res.locals.user.externalActivitiesRolledOut = true
+
+      mockApiResponse[0].categoryName = 'Industries'
+      mockApiResponse[0].outsideWork = true
+      mockApiResponse[0].paid = false
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user, undefined)
+        .mockResolvedValue(mockApiResponse)
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC123'], res.locals.user)
+        .mockResolvedValue(mockPrisonApiResponse)
+
+      req = {
+        query: {
+          date: dateString,
+          status: 'NotAttended',
+        },
+        journeyData: {
+          attendanceSummaryJourney: {
+            categoryFilters: ['SAA_ROTL'],
+            activityTypeFilters: ['inPrison'],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/daily-attendance-summary/attendances',
+        expect.objectContaining({
+          uniqueCategories: [
+            { value: 'SAA_ROTL', text: 'Outside activity' },
+            { value: 'Prison Jobs', text: 'Prison Jobs' },
+          ],
+          attendees: [expect.objectContaining({ prisonerNumber: 'ABC123' })],
+        }),
+      )
+    })
+
+    it('should not expose the outside activity category when the feature is not enabled', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      res.locals.user.externalActivitiesRolledOut = false
+      mockApiResponse[0].categoryName = 'Industries'
+      mockApiResponse[0].outsideWork = true
+      mockApiResponse[0].paid = false
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user, undefined)
+        .mockResolvedValue(mockApiResponse)
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC123'], res.locals.user)
+        .mockResolvedValue(mockPrisonApiResponse)
+
+      req = {
+        query: {
+          date: dateString,
+          status: 'NotAttended',
+        },
+        journeyData: {
+          attendanceSummaryJourney: {
+            categoryFilters: ['Industries'],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/daily-attendance-summary/attendances',
+        expect.objectContaining({
+          uniqueCategories: [
+            { value: 'Industries', text: 'Industries' },
+            { value: 'Prison Jobs', text: 'Prison Jobs' },
+          ],
+          attendees: [expect.objectContaining({ prisonerNumber: 'ABC123' })],
+        }),
+      )
     })
 
     it('should filter the activities based on the absence reason', async () => {
@@ -612,7 +709,7 @@ describe('Route Handlers - Daily Attendance List', () => {
             },
           },
         ],
-        uniqueCategories: ['Prison Jobs'],
+        uniqueCategories: [{ value: 'Prison Jobs', text: 'Prison Jobs' }],
       })
     })
     it('should filter the activities based on the pay arrangement', async () => {
@@ -708,7 +805,7 @@ describe('Route Handlers - Daily Attendance List', () => {
             },
           },
         ],
-        uniqueCategories: ['Prison Jobs'],
+        uniqueCategories: [{ value: 'Prison Jobs', text: 'Prison Jobs' }],
       })
     })
   })

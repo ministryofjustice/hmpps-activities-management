@@ -1,11 +1,7 @@
 import * as cheerio from 'cheerio'
-import { compile, Template } from 'nunjucks'
-import fs from 'fs'
+import { Template } from 'nunjucks'
 
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
-import { ActivityCategoryEnum } from '../../../../data/activityCategoryEnum'
-
-const view = fs.readFileSync('server/views/pages/activities/daily-attendance-summary/suspended-prisoners.njk')
 
 describe('Views - Daily attendance summary - Suspended prisoners', () => {
   let compiledTemplate: Template
@@ -13,26 +9,26 @@ describe('Views - Daily attendance summary - Suspended prisoners', () => {
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
-    compiledTemplate = compile(view.toString(), njkEnv)
+    compiledTemplate = njkEnv.getTemplate('pages/activities/daily-attendance-summary/suspended-prisoners.njk')
   })
 
-  it('should submit SAA_ROTL for the Outside activity category', () => {
+  it('should submit SAA_ROTL for the outside activity category', () => {
     const $ = cheerio.load(
       compiledTemplate.render({
-        activityDate: new Date('2026-08-20'),
-        now: new Date('2026-08-20T12:00:00'),
-        uniqueCategories: [{ value: ActivityCategoryEnum.SAA_ROTL, text: 'Outside activity' }],
+        activityDate: new Date('2026-08-17'),
+        now: new Date('2026-08-17T12:00:00'),
+        uniqueCategories: [{ value: 'SAA_ROTL', text: 'Outside activity' }],
         suspendedAttendancesByPrisoner: [],
         csrfToken: 'csrf',
         attendanceSummaryJourney: {
-          categoryFilters: [ActivityCategoryEnum.SAA_ROTL],
+          categoryFilters: ['SAA_ROTL'],
           reasonFilter: 'BOTH',
           searchTerm: '',
         },
       }),
     )
 
-    const outsideActivityFilter = $(`input[name="categoryFilters"][value="${ActivityCategoryEnum.SAA_ROTL}"]`)
+    const outsideActivityFilter = $('input[name="categoryFilters"][value="SAA_ROTL"]')
 
     expect(outsideActivityFilter).toHaveLength(1)
     expect(outsideActivityFilter.is(':checked')).toBe(true)

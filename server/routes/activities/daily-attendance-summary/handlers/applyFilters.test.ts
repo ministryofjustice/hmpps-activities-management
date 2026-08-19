@@ -20,7 +20,6 @@ describe('Route Handlers - applyFilters', () => {
       get: jest.fn(),
       journeyData: {
         attendanceSummaryJourney: {
-          activityTypeFilters: ['inPrison'],
           categoryFilters: ['Original category'],
           reasonFilter: 'Original reason',
           searchTerm: 'Original search',
@@ -32,7 +31,6 @@ describe('Route Handlers - applyFilters', () => {
   describe('APPLY', () => {
     beforeEach(() => {
       req.journeyData.attendanceSummaryJourney = {
-        activityTypeFilters: ['inPrison'],
         categoryFilters: ['Education'],
         reasonFilter: 'BOTH',
         searchTerm: undefined,
@@ -44,7 +42,6 @@ describe('Route Handlers - applyFilters', () => {
     describe('when view is not absences', () => {
       it('should apply populated list of filter', async () => {
         req.body = {
-          activityTypeFilters: ['inPrison'],
           categoryFilters: ['Prison Jobs'],
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
@@ -59,7 +56,6 @@ describe('Route Handlers - applyFilters', () => {
           categoryFilters: ['Prison Jobs'],
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
-          activityTypeFilters: ['inPrison'],
           absenceReasonFilters: undefined,
           payFilters: undefined,
         })
@@ -67,7 +63,6 @@ describe('Route Handlers - applyFilters', () => {
 
       it('should apply empty filters', async () => {
         req.body = {
-          activityTypeFilters: [],
           categoryFilters: [],
           reasonFilter: '',
           searchTerm: '',
@@ -78,7 +73,6 @@ describe('Route Handlers - applyFilters', () => {
         await handler.APPLY(req, res)
 
         expect(req.journeyData.attendanceSummaryJourney).toStrictEqual({
-          activityTypeFilters: [],
           categoryFilters: [],
           reasonFilter: '',
           searchTerm: '',
@@ -91,7 +85,6 @@ describe('Route Handlers - applyFilters', () => {
     describe('when view is absences', () => {
       it('should apply populated list of filter', async () => {
         req.body = {
-          activityTypeFilters: ['inPrison'],
           categoryFilters: ['Prison Jobs'],
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
@@ -108,7 +101,6 @@ describe('Route Handlers - applyFilters', () => {
           searchTerm: 'search',
           absenceReasonFilters: [AttendanceReason.SICK],
           payFilters: AbsencePayFilter.ANY_PAY,
-          activityTypeFilters: ['inPrison'],
         })
       })
 
@@ -119,7 +111,6 @@ describe('Route Handlers - applyFilters', () => {
           searchTerm: '',
           absenceReasonFilters: [],
           payFilters: [],
-          activityTypeFilters: [],
           isAbsencesFilter: true,
         }
         await handler.APPLY(req, res)
@@ -130,7 +121,6 @@ describe('Route Handlers - applyFilters', () => {
           searchTerm: '',
           absenceReasonFilters: [],
           payFilters: [],
-          activityTypeFilters: [],
         })
       })
     })

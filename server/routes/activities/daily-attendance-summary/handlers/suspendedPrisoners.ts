@@ -17,7 +17,11 @@ export default class SuspendedPrisonersRoutes {
     const { user } = res.locals
     const { date } = req.query
 
-    const categories = await this.activitiesService.getActivityCategories(user, user.externalActivitiesRolledOut)
+    const categories = await this.activitiesService
+      .getActivityCategories(user, user.externalActivitiesRolledOut)
+      .then(result =>
+        result.filter(category => user.externalActivitiesRolledOut || category.code !== ActivityCategoryEnum.SAA_ROTL),
+      )
     const categoryOptions = categories.map(category => ({
       value: category.code === ActivityCategoryEnum.SAA_ROTL ? category.code : category.name,
       text: category.name,
