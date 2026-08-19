@@ -109,6 +109,30 @@ describe('Route Handlers - Suspended prisoners list', () => {
       )
     })
 
+    it('should ignore a stale SAA_ROTL filter when the feature is not enabled', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      res.locals.user.externalActivitiesRolledOut = false
+      req.query = { date: dateString }
+      req.journeyData.attendanceSummaryJourney.categoryFilters = [ActivityCategoryEnum.SAA_ROTL]
+
+      when(activitiesService.getSuspendedPrisonersActivityAttendance)
+        .calledWith(date, res.locals.user, [], null)
+        .mockResolvedValue([])
+      when(prisonService.searchInmatesByPrisonerNumbers).calledWith([], res.locals.user).mockResolvedValue([])
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getSuspendedPrisonersActivityAttendance).toHaveBeenCalledWith(
+        date,
+        res.locals.user,
+        [],
+        null,
+      )
+      expect(req.journeyData.attendanceSummaryJourney.categoryFilters).toEqual(['Not in work'])
+    })
+
     it('should pass SAA_ROTL to the API when the outside activity category is selected', async () => {
       const dateString = '2022-10-10'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())

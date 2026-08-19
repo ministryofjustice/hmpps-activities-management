@@ -716,17 +716,36 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         attendanceRequired: true,
         outsideWork: true,
       } as AllAttendance
+      const outsideCancelledActivity = {
+        id: 2,
+        startTime: '10:00',
+        endTime: '11:00',
+        timeSlot: TimeSlot.AM,
+        activitySchedule: {
+          activity: {
+            id: 2,
+            summary: 'Outside workshop',
+            category: { name: 'Industries' },
+            outsideWork: true,
+          },
+        },
+        cancelled: true,
+      } as ScheduledActivity
 
       res.locals.user.externalActivitiesRolledOut = true
 
       when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue([outsideAttendance])
       when(activitiesService.getCancelledScheduledActivitiesAtPrison)
         .calledWith(date, res.locals.user)
-        .mockResolvedValue([])
+        .mockResolvedValue([outsideCancelledActivity])
 
       req = {
         query: { date: dateString },
-        journeyData: {},
+        journeyData: {
+          attendanceSummaryJourney: {
+            categoryFilters: ['SAA_ROTL'],
+          },
+        },
       } as unknown as Request
 
       await handler.GET(req, res)
@@ -736,6 +755,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         expect.objectContaining({
           uniqueCategories: [{ value: 'SAA_ROTL', text: 'Outside activity' }],
           totalAllocated: {
+            AM: 1,
+            DAY: 1,
+            ED: 0,
+            PM: 0,
+          },
+          totalCancelledSessions: {
             AM: 1,
             DAY: 1,
             ED: 0,

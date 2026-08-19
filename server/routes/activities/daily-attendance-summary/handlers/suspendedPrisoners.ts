@@ -42,14 +42,17 @@ export default class SuspendedPrisonersRoutes {
 
     let reason = null
     if (reasonFilter !== 'BOTH') reason = reasonFilter
+    const selectedCategoryCodes =
+      categoryFilters &&
+      categoryFilters.flatMap(categoryFilter => {
+        const category = categories.find(c => c.name === categoryFilter || c.code === categoryFilter)
+        return category ? [ActivityCategoryEnum[category.code]] : []
+      })
+
     const suspendedPrisonerAttendance = await this.activitiesService.getSuspendedPrisonersActivityAttendance(
       activityDate,
       user,
-      categoryFilters &&
-        categoryFilters.map(cf => {
-          const category = categories.find(c => c.name === cf || c.code === cf)
-          return ActivityCategoryEnum[category.code]
-        }),
+      selectedCategoryCodes,
       reason,
     )
 
