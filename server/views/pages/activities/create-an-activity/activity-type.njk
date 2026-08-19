@@ -4,7 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
-{% set pageTitle = "Activity type - Activities - DPS" %}
+{% set pageTitle = "Does the activity take place inside or outside the prison grounds? - Activities - DPS" %}
 {% set pageId = 'activity-type-page' %}
 {% set jsBackLink = true %}
 
@@ -17,7 +17,7 @@
                 {{ govukRadios({
                     fieldset: {
                         legend: {
-                            text: "Select the type of activity",
+                            text: "Does the activity take place inside or outside the prison grounds?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
@@ -27,14 +27,14 @@
                     items: [
                         {
                             value: "internal",
-                            text: "In-prison activity",
+                            text: "Inside",
                             checked: formResponses.type == 'internal' or createJourney.type == 'internal'
                         },
                         {
                             value: "external",
-                            text: "Outside activity",
+                            text: "Outside",
                             hint: {
-                                text: "For activities that people leave the prison grounds to go to."
+                                text: "The activity category will be set as ‘Outside activity’."
                             },
                             checked: formResponses.type == 'external' or createJourney.type == 'external'
                         }
