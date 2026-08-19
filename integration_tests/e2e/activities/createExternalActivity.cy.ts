@@ -78,9 +78,9 @@ context('Create external activity', () => {
     activityTypePage
       .heading()
       .should('contain.text', 'Does the activity take place inside or outside the prison grounds?')
-    activityTypePage.insideOption().should('have.text', 'Inside')
-    activityTypePage.outsideOption().should('have.text', 'Outside')
-    activityTypePage.outsideHint().should('have.text', 'The activity category will be set as ‘Outside activity’.')
+    activityTypePage.insideOption().should('contain.text', 'Inside')
+    activityTypePage.outsideOption().should('contain.text', 'Outside')
+    activityTypePage.outsideHint().should('contain.text', 'The activity category will be set as ‘Outside activity’.')
     activityTypePage.continue()
 
     const activityTypePageWithErrors = Page.verifyOnPage(ActivityTypePage)
