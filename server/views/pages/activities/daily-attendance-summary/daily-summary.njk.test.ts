@@ -1,54 +1,26 @@
 import * as cheerio from 'cheerio'
-import { compile, Template } from 'nunjucks'
-import fs from 'fs'
+import { Template } from 'nunjucks'
 
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 
-const view = fs.readFileSync('server/views/pages/activities/daily-attendance-summary/attendances.njk')
-
-describe('Views - Daily attendance summary - Attendances', () => {
+describe('Views - Daily attendance summary', () => {
   let compiledTemplate: Template
 
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
-    compiledTemplate = compile(view.toString(), njkEnv)
+    compiledTemplate = njkEnv.getTemplate('pages/activities/daily-attendance-summary/daily-summary.njk')
   })
 
   it('should render the outside activity category without the activity type filters', () => {
     const $ = cheerio.load(
       compiledTemplate.render({
-        status: 'Absences',
         activityDate: new Date('2026-08-17'),
         now: new Date('2026-08-17T12:00:00'),
-        absenceReasons: [],
         uniqueCategories: [{ value: 'SAA_ROTL', text: 'Outside activity' }],
-        attendees: [],
-        showRefusalsLink: false,
         csrfToken: 'csrf',
-        tier: null,
-
         attendanceSummaryJourney: {
-          absenceReasonFilters: [],
-          payFilters: [],
           categoryFilters: ['SAA_ROTL'],
-          searchTerm: '',
-        },
-
-        user: {
-          activeCaseLoadId: 'MDI',
-          externalActivitiesRolledOut: true,
-        },
-
-        AbsencePayFilter: {
-          ANY_PAY: 'ANY_PAY',
-          NO_PAY: 'NO_PAY',
-        },
-
-        EventTier: {
-          TIER_1: 'TIER_1',
-          TIER_2: 'TIER_2',
-          FOUNDATION: 'FOUNDATION',
         },
       }),
     )

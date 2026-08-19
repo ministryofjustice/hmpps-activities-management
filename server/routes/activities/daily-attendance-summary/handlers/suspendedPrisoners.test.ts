@@ -6,6 +6,7 @@ import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import SuspendedPrisonersRoutes from './suspendedPrisoners'
+import { ActivityCategoryEnum } from '../../../../data/activityCategoryEnum'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -24,6 +25,7 @@ describe('Route Handlers - Suspended prisoners list', () => {
       locals: {
         user: {
           username: 'joebloggs',
+          externalActivitiesRolledOut: true,
         },
       },
       render: jest.fn(),
@@ -39,6 +41,7 @@ describe('Route Handlers - Suspended prisoners list', () => {
 
     when(activitiesService.getActivityCategories).mockResolvedValue([
       { id: 1, code: 'SAA_NOT_IN_WORK', name: 'Not in work' },
+      { id: 2, code: 'SAA_ROTL', name: 'Outside activity' },
     ] as ActivityCategory[])
   })
 
@@ -82,6 +85,52 @@ describe('Route Handlers - Suspended prisoners list', () => {
       expect(res.redirect).toHaveBeenCalledWith('select-period')
     })
 
+    it('should exclude the outside activity category when the feature is not enabled', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      res.locals.user.externalActivitiesRolledOut = false
+      req.query = { date: dateString }
+
+      when(activitiesService.getSuspendedPrisonersActivityAttendance)
+        .calledWith(date, res.locals.user, null, null)
+        .mockResolvedValue([])
+      when(prisonService.searchInmatesByPrisonerNumbers).calledWith([], res.locals.user).mockResolvedValue([])
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getActivityCategories).toHaveBeenCalledWith(res.locals.user, false)
+      expect(req.journeyData.attendanceSummaryJourney.categoryFilters).toEqual(['Not in work'])
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/daily-attendance-summary/suspended-prisoners',
+        expect.objectContaining({
+          uniqueCategories: [{ value: 'Not in work', text: 'Not in work' }],
+        }),
+      )
+    })
+
+    it('should pass SAA_ROTL to the API when the outside activity category is selected', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      req.query = { date: dateString }
+      req.journeyData.attendanceSummaryJourney.categoryFilters = [ActivityCategoryEnum.SAA_ROTL]
+
+      when(activitiesService.getSuspendedPrisonersActivityAttendance)
+        .calledWith(date, res.locals.user, [ActivityCategoryEnum.SAA_ROTL], null)
+        .mockResolvedValue([])
+      when(prisonService.searchInmatesByPrisonerNumbers).calledWith([], res.locals.user).mockResolvedValue([])
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getSuspendedPrisonersActivityAttendance).toHaveBeenCalledWith(
+        date,
+        res.locals.user,
+        [ActivityCategoryEnum.SAA_ROTL],
+        null,
+      )
+    })
+
     it('should render with the expected suspended prisoners view', async () => {
       const dateString = '2022-10-10'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
@@ -100,9 +149,14 @@ describe('Route Handlers - Suspended prisoners list', () => {
 
       await handler.GET(req, res)
 
+      expect(activitiesService.getActivityCategories).toHaveBeenCalledWith(res.locals.user, true)
+      expect(req.journeyData.attendanceSummaryJourney.categoryFilters).toEqual(['Not in work', 'SAA_ROTL'])
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/suspended-prisoners', {
         activityDate: date,
-        uniqueCategories: [{ id: 1, code: 'SAA_NOT_IN_WORK', name: 'Not in work' }],
+        uniqueCategories: [
+          { value: 'Not in work', text: 'Not in work' },
+          { value: 'SAA_ROTL', text: 'Outside activity' },
+        ],
         suspendedAttendancesByPrisoner: [
           {
             cellLocation: 'MDI-1-001',

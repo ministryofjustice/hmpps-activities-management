@@ -250,7 +250,11 @@ describe('Route Handlers - Daily Attendance Summary', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/daily-summary', {
         activityDate: date,
-        uniqueCategories: ['Education', 'Prison Jobs', 'Exercise'],
+        uniqueCategories: [
+          { value: 'Education', text: 'Education' },
+          { value: 'Prison Jobs', text: 'Prison Jobs' },
+          { value: 'Exercise', text: 'Exercise' },
+        ],
         totalAbsences: {
           AM: 2,
           DAY: 2,
@@ -483,7 +487,11 @@ describe('Route Handlers - Daily Attendance Summary', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/daily-summary', {
         activityDate: date,
-        uniqueCategories: ['Education', 'Prison Jobs', 'Exercise'],
+        uniqueCategories: [
+          { value: 'Education', text: 'Education' },
+          { value: 'Prison Jobs', text: 'Prison Jobs' },
+          { value: 'Exercise', text: 'Exercise' },
+        ],
         totalAbsences: {
           AM: 0,
           DAY: 0,
@@ -691,7 +699,103 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       })
     })
 
-    it('should filter the activities based on location when externalActivitiesRolledOut is true and only inPrison is selected', async () => {
+    it('should classify outside work under the outside activity category when the feature is enabled', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      const outsideAttendance = {
+        attendanceId: 1,
+        scheduledInstanceId: 1,
+        prisonCode: 'MDI',
+        sessionDate: dateString,
+        timeSlot: TimeSlot.AM,
+        status: 'WAITING',
+        prisonerNumber: 'ABC123',
+        activityId: 1,
+        activitySummary: 'Outside work',
+        categoryName: 'Industries',
+        attendanceRequired: true,
+        outsideWork: true,
+      } as AllAttendance
+
+      res.locals.user.externalActivitiesRolledOut = true
+
+      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue([outsideAttendance])
+      when(activitiesService.getCancelledScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue([])
+
+      req = {
+        query: { date: dateString },
+        journeyData: {},
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/daily-attendance-summary/daily-summary',
+        expect.objectContaining({
+          uniqueCategories: [{ value: 'SAA_ROTL', text: 'Outside activity' }],
+          totalAllocated: {
+            AM: 1,
+            DAY: 1,
+            ED: 0,
+            PM: 0,
+          },
+        }),
+      )
+    })
+
+    it('should not expose the outside activity category when the feature is not enabled', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      const outsideAttendance = {
+        attendanceId: 1,
+        scheduledInstanceId: 1,
+        prisonCode: 'MDI',
+        sessionDate: dateString,
+        timeSlot: TimeSlot.AM,
+        status: 'WAITING',
+        prisonerNumber: 'ABC123',
+        activityId: 1,
+        activitySummary: 'Outside work',
+        categoryName: 'Industries',
+        attendanceRequired: true,
+        outsideWork: true,
+      } as AllAttendance
+
+      res.locals.user.externalActivitiesRolledOut = false
+
+      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue([outsideAttendance])
+      when(activitiesService.getCancelledScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue([])
+
+      req = {
+        query: { date: dateString },
+        journeyData: {
+          attendanceSummaryJourney: {
+            categoryFilters: ['Industries'],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/daily-attendance-summary/daily-summary',
+        expect.objectContaining({
+          uniqueCategories: [{ value: 'Industries', text: 'Industries' }],
+          totalAllocated: {
+            AM: 1,
+            DAY: 1,
+            ED: 0,
+            PM: 0,
+          },
+        }),
+      )
+    })
+
+    it('should ignore a previous in-prison activity type filter', async () => {
       const dateString = '2022-10-10'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
 
@@ -765,7 +869,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         query: { date: dateString },
         journeyData: {
           attendanceSummaryJourney: {
-            categoryFilters: ['Education'],
+            categoryFilters: ['Education', 'SAA_ROTL'],
             activityTypeFilters: ['inPrison'],
           },
         },
@@ -777,8 +881,8 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         'pages/activities/daily-attendance-summary/daily-summary',
         expect.objectContaining({
           totalAllocated: {
-            AM: 1,
-            DAY: 1,
+            AM: 3,
+            DAY: 3,
             ED: 0,
             PM: 0,
           },
@@ -786,7 +890,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       )
     })
 
-    it('should filter the activities based on location when only outsidePrison is selected', async () => {
+    it('should ignore a previous outside-prison activity type filter', async () => {
       const dateString = '2022-10-10'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
 
@@ -860,7 +964,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         query: { date: dateString },
         journeyData: {
           attendanceSummaryJourney: {
-            categoryFilters: ['Education'],
+            categoryFilters: ['Education', 'SAA_ROTL'],
             activityTypeFilters: ['outsidePrison'],
           },
         },
@@ -872,8 +976,8 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         'pages/activities/daily-attendance-summary/daily-summary',
         expect.objectContaining({
           totalAllocated: {
-            AM: 1,
-            DAY: 1,
+            AM: 3,
+            DAY: 3,
             ED: 0,
             PM: 0,
           },
@@ -881,7 +985,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       )
     })
 
-    it('should filter the activities based on location when only outsideEmployer is selected', async () => {
+    it('should ignore a previous outside-employer activity type filter', async () => {
       const dateString = '2022-10-10'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
 
@@ -955,7 +1059,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         query: { date: dateString },
         journeyData: {
           attendanceSummaryJourney: {
-            categoryFilters: ['Education'],
+            categoryFilters: ['Education', 'SAA_ROTL'],
             activityTypeFilters: ['outsideEmployer'],
           },
         },
@@ -967,8 +1071,8 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         'pages/activities/daily-attendance-summary/daily-summary',
         expect.objectContaining({
           totalAllocated: {
-            AM: 1,
-            DAY: 1,
+            AM: 3,
+            DAY: 3,
             ED: 0,
             PM: 0,
           },

@@ -3,7 +3,6 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "partials/attendance/activityTypeFilters.njk" import activityTypeFilters %}
 {% from "../../../components/stat.njk" import stat %}
 
 {% set pageTitle = "Daily attendance summary - Activities - DPS" %}
@@ -13,17 +12,9 @@
 
 {% block content %}
   {% set filterOptionsHtml %}
-  {{
-    activityTypeFilters(
-        attendanceSummaryJourney.activityTypeFilters,
-        user.externalActivitiesRolledOut
-    )
-  }}
-
-
   {% set categoryFilters = [] %}
     {% for category in uniqueCategories %}
-      {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
+      {% set categoryFilters = (categoryFilters.push({value: category.value, text: category.text, checked: category.value in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
     {% endfor %}
 
     {{

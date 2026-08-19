@@ -8,7 +8,8 @@ import AttendanceReason from '../../../../enum/attendanceReason'
 import EventTier from '../../../../enum/eventTiers'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import { AbsencePayFilter } from '../../../../@types/activities'
-import { filterAttendancesByActivityType } from '../utils/utils'
+import { ActivityCategoryEnum } from '../../../../data/activityCategoryEnum'
+import getAttendanceCategoryFilter from '../utils/attendanceCategoryFilter'
 
 export default class DailyAttendanceRoutes {
   constructor(
@@ -36,23 +37,29 @@ export default class DailyAttendanceRoutes {
       return false
     })
 
-    const uniqueCategories = _.uniq(attendancesForStatus.map(c => c.categoryName))
+    const uniqueCategories = _.uniqBy(
+      attendancesForStatus.map(attendance =>
+        getAttendanceCategoryFilter(attendance.categoryName, attendance.outsideWork, user.externalActivitiesRolledOut),
+      ),
+      'value',
+    ).filter(category => user.externalActivitiesRolledOut || category.value !== ActivityCategoryEnum.SAA_ROTL)
     const absenceReasons = Object.keys(AttendanceReason).filter(reason => reason !== AttendanceReason.ATTENDED)
 
     // Set the default filter values if they are not set
     req.journeyData.attendanceSummaryJourney ??= {}
-    req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
-    req.journeyData.attendanceSummaryJourney.activityTypeFilters ??= ['inPrison', 'outsidePrison', 'outsideEmployer']
+    req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories.map(category => category.value)
     req.journeyData.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
     req.journeyData.attendanceSummaryJourney.payFilters ??= AbsencePayFilter.ANY_PAY
 
-    const { categoryFilters, searchTerm, absenceReasonFilters, payFilters, activityTypeFilters } =
-      req.journeyData.attendanceSummaryJourney
+    const { searchTerm, absenceReasonFilters, payFilters } = req.journeyData.attendanceSummaryJourney
+    const categoryFilters = req.journeyData.attendanceSummaryJourney.categoryFilters.filter(
+      category => user.externalActivitiesRolledOut || category !== ActivityCategoryEnum.SAA_ROTL,
+    )
 
     const attendancesMatchingFilter = this.filterAttendances(
       attendancesForStatus,
       categoryFilters,
-      user.externalActivitiesRolledOut ? activityTypeFilters : ['inPrison', 'outsidePrison', 'outsideEmployer'],
+      user.externalActivitiesRolledOut,
       status === 'Absences',
       payFilters,
       absenceReasonFilters,
@@ -104,22 +111,22 @@ export default class DailyAttendanceRoutes {
   private filterAttendances = (
     attendancesForStatus: AllAttendance[],
     categoryFilters: string[],
-    activityTypeFilters: string[],
+    externalActivitiesRolledOut: boolean,
     absencesPage: boolean,
     payFilters: AbsencePayFilter,
     absenceReasonFilters: string | string[],
   ) => {
     let attendancesMatchingAllFilters
-    const attendancesFilteredByCategory = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
-    const attendancesFilteredByActivityType = filterAttendancesByActivityType(
-      attendancesFilteredByCategory,
-      activityTypeFilters,
+    const attendancesFilteredByCategory = attendancesForStatus.filter(a =>
+      categoryFilters.includes(
+        getAttendanceCategoryFilter(a.categoryName, a.outsideWork, externalActivitiesRolledOut).value,
+      ),
     )
     if (absencesPage) {
       const attendancesMatchingPayFilter =
         payFilters === AbsencePayFilter.ANY_PAY
-          ? attendancesFilteredByActivityType
-          : attendancesFilteredByActivityType.filter(
+          ? attendancesFilteredByCategory
+          : attendancesFilteredByCategory.filter(
               a => payFilters === AbsencePayFilter.NO_PAY && a.issuePayment === false,
             )
       attendancesMatchingAllFilters = attendancesMatchingPayFilter.filter(a => {
@@ -129,6 +136,6 @@ export default class DailyAttendanceRoutes {
         return a.attendanceReasonCode === absenceReasonFilters
       })
     }
-    return attendancesMatchingAllFilters || attendancesFilteredByActivityType
+    return attendancesMatchingAllFilters || attendancesFilteredByCategory
   }
 }
