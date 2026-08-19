@@ -7,6 +7,7 @@ import setupReinstateWaitlistApplicationScenario, {
 } from '../../helpers/activities/waitlist/reinstateWaitlistApplication'
 import { signIn } from '../../helpers/auth'
 import { successBanner, summaryRow } from '../../helpers/govuk'
+import verifyPage from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -25,6 +26,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
       name: 'Manage applications and waitlists',
     }),
   ).toBeVisible()
+  await verifyPage(page)
 
   const applicationRow = page.getByRole('row').filter({ hasText: 'Winchurch, David Bob' })
 
@@ -41,6 +43,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
       name: 'Request for David Winchurch, A1350DZ',
     }),
   ).toBeVisible()
+  await verifyPage(page)
 
   const summaryRows = page.locator('.govuk-summary-list__row')
 
@@ -57,6 +60,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
       name: "Are you sure you want to reinstate David Winchurch's application?",
     }),
   ).toBeVisible()
+  await verifyPage(page)
 
   await expect(page.getByText(/It will be reinstated as Pending/)).toBeVisible()
 
@@ -78,6 +82,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
       name: 'Enter the reason this application is being reinstated',
     }),
   ).toBeVisible()
+  await verifyPage(page)
 
   await page
     .getByRole('textbox', {
@@ -96,6 +101,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
   const banner = successBanner(page)
 
   await expect(banner).toBeVisible()
+  await verifyPage(page)
   await expect(banner).toContainText("You have updated the status of David Winchurch's application")
 
   await expect(page.locator('.govuk-summary-list__row').filter({ hasText: 'Status' })).toContainText('Pending')
