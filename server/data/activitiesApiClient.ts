@@ -110,7 +110,7 @@ export default class ActivitiesApiClient extends RestClient {
       {
         path: `/activity-categories`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
-        ...(includeRotl && { query: { includeRotl } }),
+        query: includeRotl ? { includeRotl: true } : undefined,
       },
       asUser(user.token),
     )
