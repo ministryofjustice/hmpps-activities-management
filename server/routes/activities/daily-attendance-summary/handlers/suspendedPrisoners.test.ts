@@ -39,10 +39,12 @@ describe('Route Handlers - Suspended prisoners list', () => {
       },
     } as unknown as Request
 
-    when(activitiesService.getActivityCategories).mockResolvedValue([
-      { id: 1, code: 'SAA_NOT_IN_WORK', name: 'Not in work' },
-      { id: 2, code: ActivityCategoryEnum.SAA_ROTL, name: 'Outside activity' },
-    ] as ActivityCategory[])
+    when(activitiesService.getActivityCategories)
+      .calledWith(res.locals.user, true)
+      .mockResolvedValue([
+        { id: 1, code: 'SAA_NOT_IN_WORK', name: 'Not in work' },
+        { id: 10, code: ActivityCategoryEnum.SAA_ROTL, name: 'Outside activity' },
+      ] as ActivityCategory[])
   })
 
   describe('GET', () => {
@@ -92,6 +94,12 @@ describe('Route Handlers - Suspended prisoners list', () => {
       res.locals.user.externalActivitiesRolledOut = false
       req.query = { date: dateString }
 
+      when(activitiesService.getActivityCategories)
+        .calledWith(res.locals.user, false)
+        .mockResolvedValue([
+          { id: 1, code: 'SAA_NOT_IN_WORK', name: 'Not in work' },
+          { id: 10, code: ActivityCategoryEnum.SAA_ROTL, name: 'Outside activity' },
+        ] as ActivityCategory[])
       when(activitiesService.getSuspendedPrisonersActivityAttendance)
         .calledWith(date, res.locals.user, null, null)
         .mockResolvedValue([])
@@ -208,6 +216,48 @@ describe('Route Handlers - Suspended prisoners list', () => {
           },
         ],
       })
+    })
+
+    it('should submit the ROTL category code when Outside activity is selected', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      req.query = { date: dateString }
+      req.journeyData.attendanceSummaryJourney.categoryFilters = [ActivityCategoryEnum.SAA_ROTL]
+
+      when(activitiesService.getSuspendedPrisonersActivityAttendance).mockResolvedValue([])
+      when(prisonService.searchInmatesByPrisonerNumbers).mockResolvedValue([])
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getSuspendedPrisonersActivityAttendance).toHaveBeenCalledWith(
+        date,
+        res.locals.user,
+        [ActivityCategoryEnum.SAA_ROTL],
+        null,
+      )
+    })
+
+    it('should ignore a stale ROTL category when external activities are not rolled out', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      res.locals.user.externalActivitiesRolledOut = false
+      req.query = { date: dateString }
+      req.journeyData.attendanceSummaryJourney.categoryFilters = [ActivityCategoryEnum.SAA_ROTL]
+
+      when(activitiesService.getActivityCategories)
+        .calledWith(res.locals.user, false)
+        .mockResolvedValue([{ id: 1, code: 'SAA_NOT_IN_WORK', name: 'Not in work' }] as ActivityCategory[])
+      when(activitiesService.getSuspendedPrisonersActivityAttendance).mockResolvedValue([])
+      when(prisonService.searchInmatesByPrisonerNumbers).mockResolvedValue([])
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getSuspendedPrisonersActivityAttendance).toHaveBeenCalledWith(
+        date,
+        res.locals.user,
+        [],
+        null,
+      )
     })
   })
 })
