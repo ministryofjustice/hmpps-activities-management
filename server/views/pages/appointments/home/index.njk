@@ -74,6 +74,19 @@
                         "data-qa": "video-daily-schedule-card"
                     }) }}
                 </div>
+
+                {% if videoConferenceRoomAvailabilityPrisons and user.activeCaseLoadId in videoConferenceRoomAvailabilityPrisons %}
+                  <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                      "id": "videoConferenceRoomAvailability",
+                      "href": videoConferenceScheduleUrl + "/room-availability",
+                      "clickable": "true",
+                      "heading": "Check video room availability",
+                      "description": "Check availability across multiple rooms and sessions, for official video link appointments.",
+                      "data-qa": "video-conference-room-availability-card"
+                    }) }}
+                  </div>
+                {% endif %}
             </div>
         </div>
     </div>
