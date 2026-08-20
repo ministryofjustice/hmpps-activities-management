@@ -20,10 +20,9 @@ export default class ActivitiesRoutes {
     if (startOfDay(activityDate) > startOfDay(addDays(new Date(), 60))) return res.redirect('select-period')
 
     const [categories, activityAttendanceSummary] = await Promise.all([
-      this.activitiesService.getActivityCategories(user),
+      this.activitiesService.getActivityCategories(user, user.externalActivitiesRolledOut),
       this.activitiesService.getScheduledInstanceAttendanceSummary(user.activeCaseLoadId, activityDate, user),
     ])
-
     const filterValues = {
       sessionFilters: sessionFilters !== undefined ? asString(sessionFilters).split(',') : null,
       categoryFilters: categoryFilters !== undefined ? asString(categoryFilters).split(',') : null,

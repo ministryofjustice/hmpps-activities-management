@@ -22,7 +22,7 @@ export default class ListActivitiesRoutes {
     const selectedLocation = locationId ? await this.locationsService.getLocationById(asString(locationId), user) : null
 
     const [categories, activityAttendanceSummary] = await Promise.all([
-      this.activitiesService.getActivityCategories(user),
+      this.activitiesService.getActivityCategories(user, user.externalActivitiesRolledOut),
       this.activitiesService.getScheduledInstanceAttendanceSummary(user.activeCaseLoadId, activityDate, user),
     ])
 
