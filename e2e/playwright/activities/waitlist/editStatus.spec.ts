@@ -6,7 +6,7 @@ import setupEditWaitlistStatusScenario, {
   stubApprovedWaitlistApplication,
 } from '../../helpers/activities/waitlist/editWaitlistStatus'
 import { signIn } from '../../helpers/auth'
-import { summaryRow } from '../../helpers/govuk'
+import { clickButton, clickLink, expectHeading, expectSummaryRow } from '../../helpers/govuk'
 import verifyPage from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
@@ -19,11 +19,7 @@ test.beforeEach(async ({ page }) => {
 test('a user can view a pending waitlist application and change its status to approved', async ({ page }) => {
   await page.goto('/activities/waitlist-dashboard')
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Manage applications and waitlists',
-    }),
-  ).toBeVisible()
+  await expectHeading(page, 'Manage applications and waitlists')
   await verifyPage(page, true)
 
   const applicationRow = page.getByRole('row').filter({ hasText: 'Winchurch, David Bob' })
@@ -36,35 +32,17 @@ test('a user can view a pending waitlist application and change its status to ap
 
   await applicationRow.getByRole('radio').check()
 
-  await page
-    .getByRole('button', {
-      name: 'View or edit application',
-    })
-    .click()
+  await clickButton(page, 'View or edit application')
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Request for David Winchurch, A1350DZ',
-    }),
-  ).toBeVisible()
+  await expectHeading(page, 'Request for David Winchurch, A1350DZ')
   await verifyPage(page, true)
 
-  const summaryRows = page.locator('.govuk-summary-list__row')
-
-  const statusRow = summaryRows.filter({ hasText: 'Status' })
-
-  await expect(statusRow).toContainText('Pending')
-  await expect(statusRow).toContainText('Last changed 20th June 2025 14:22')
-
-  await expect(summaryRows.filter({ hasText: 'Activity requested' })).toContainText(
-    'A basic english course suitable for introduction to the subject',
-  )
-
-  await expect(summaryRows.filter({ hasText: 'Requester' })).toContainText('Self-requested')
-
-  await expect(summaryRows.filter({ hasText: 'Date of request' })).toContainText('20th June 2025')
-
-  await expect(summaryRows.filter({ hasText: 'Comments' })).toContainText('None')
+  await expectSummaryRow(page, 'Status', 'Pending')
+  await expectSummaryRow(page, 'Status', 'Last changed 20th June 2025 14:22')
+  await expectSummaryRow(page, 'Activity requested', 'A basic english course suitable for introduction to the subject')
+  await expectSummaryRow(page, 'Requester', 'Self-requested')
+  await expectSummaryRow(page, 'Date of request', '20th June 2025')
+  await expectSummaryRow(page, 'Comments', 'None')
 
   await page
     .getByRole('tab', {
@@ -85,17 +63,9 @@ test('a user can view a pending waitlist application and change its status to ap
     })
     .click()
 
-  await page
-    .getByRole('link', {
-      name: 'Change status',
-    })
-    .click()
+  await clickLink(page, 'Change status')
 
-  await expect(
-    page.getByRole('heading', {
-      name: "Change the status of David Winchurch's application",
-    }),
-  ).toBeVisible()
+  await expectHeading(page, "Change the status of David Winchurch's application")
   await verifyPage(page, true)
 
   await expect(page.locator('.govuk-inset-text')).toContainText('Pending')
@@ -108,11 +78,7 @@ test('a user can view a pending waitlist application and change its status to ap
 
   await stubApprovedWaitlistApplication()
 
-  await page
-    .getByRole('button', {
-      name: 'Update application status',
-    })
-    .click()
+  await clickButton(page, 'Update application status')
 
   const successBanner = page.locator('.govuk-notification-banner--success')
 
@@ -121,5 +87,5 @@ test('a user can view a pending waitlist application and change its status to ap
 
   await expect(successBanner).toContainText("You have updated the status of David Winchurch's application")
 
-  await expect(summaryRow(page, 'Status')).toContainText('Approved')
+  await expectSummaryRow(page, 'Status', 'Approved')
 })

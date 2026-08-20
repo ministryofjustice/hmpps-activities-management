@@ -4,6 +4,7 @@ import stubs from '../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../integration_tests/mockApis/wiremock'
 import setupRecordAppointmentAttendanceScenario from '../helpers/appointments/recordAttendance'
 import { signIn } from '../helpers/auth'
+import { clickButton, clickLink, expectHeading, expectSummaryRow } from '../helpers/govuk'
 import verifyPage from '../helpers/page'
 
 test.beforeEach(async ({ page }) => {
@@ -17,30 +18,22 @@ test('a user can record and edit appointment attendance', async ({ page }) => {
   await page.goto('/appointments')
   await verifyPage(page, true)
 
-  await page.getByRole('link', { name: /Record appointment attendance/ }).click()
+  await clickLink(page, /Record appointment attendance/)
   await verifyPage(page, true)
 
   await page.getByRole('radio', { name: /^Today/ }).check()
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Find an appointment to record or edit attendance',
-    }),
-  ).toBeVisible()
+  await expectHeading(page, 'Find an appointment to record or edit attendance')
   await verifyPage(page, true)
 
   await page.getByRole('checkbox', { name: 'Select Gym' }).check()
 
   await page.getByRole('checkbox', { name: 'Select Chaplaincy' }).check()
 
-  await page.getByRole('button', { name: 'Record or edit attendance' }).click()
+  await clickButton(page, 'Record or edit attendance')
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Record attendance at 2 appointments',
-    }),
-  ).toBeVisible()
+  await expectHeading(page, 'Record attendance at 2 appointments')
   await verifyPage(page, true)
 
   const adalieRow = page.getByRole('row').filter({ hasText: 'Adalie, Izrmonntas' })
@@ -50,9 +43,9 @@ test('a user can record and edit appointment attendance', async ({ page }) => {
   await adalieRow.getByRole('checkbox').check()
   await augevieveRow.getByRole('checkbox').check()
 
-  await page.getByRole('button', { name: 'Mark as attended' }).click()
+  await clickButton(page, 'Mark as attended')
 
-  await expect(page.getByRole('heading', { name: 'Attendance recorded' })).toBeVisible()
+  await expectHeading(page, 'Attendance recorded')
   await verifyPage(page, true)
 
   await expect(page.getByText("You've saved attendance details for 2 attendees")).toBeVisible()
@@ -62,34 +55,23 @@ test('a user can record and edit appointment attendance', async ({ page }) => {
     .filter({ hasText: 'Alfres, Bumahwaju' })
     .filter({ hasText: 'Gym' })
 
-  await existingAttendanceRow.getByRole('link', { name: /View or edit/ }).click()
+  await clickLink(existingAttendanceRow, /View or edit/)
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Attendance record for Bumahwaju Alfres',
-    }),
-  ).toBeVisible()
+  await expectHeading(page, 'Attendance record for Bumahwaju Alfres')
   await verifyPage(page, true)
 
-  const summaryRows = page.locator('.govuk-summary-list__row')
+  await expectSummaryRow(page, 'Attendance', 'Attended')
+  await expectSummaryRow(page, 'Recorded by', 'jsmith - J. Smith')
 
-  await expect(summaryRows.filter({ hasText: 'Attendance' })).toContainText('Attended')
+  await clickLink(page, /^Change/)
 
-  await expect(summaryRows.filter({ hasText: 'Recorded by' })).toContainText('jsmith - J. Smith')
-
-  await page.getByRole('link', { name: /^Change/ }).click()
-
-  await expect(
-    page.getByRole('heading', {
-      name: 'Change attendance details for Bumahwaju Alfres',
-    }),
-  ).toBeVisible()
+  await expectHeading(page, 'Change attendance details for Bumahwaju Alfres')
   await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'No', exact: true }).check()
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
 
-  await expect(page.getByRole('heading', { name: 'Non-attendance recorded' })).toBeVisible()
+  await expectHeading(page, 'Non-attendance recorded')
   await verifyPage(page, true)
 
   await expect(page.getByText("You've saved details for Bumahwaju Alfres.")).toBeVisible()

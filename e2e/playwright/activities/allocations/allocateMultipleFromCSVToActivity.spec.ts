@@ -5,6 +5,7 @@ import { signIn } from '../../helpers/auth'
 import stubAllocateMultipleFromCsv from '../../helpers/activities/allocations/allocateMultipleFromCsv'
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
+import { clickButton, clickLink, expectHeading } from '../../helpers/govuk'
 import verifyPage from '../../helpers/page'
 
 test.describe('Allocate multiple people via CSV', () => {
@@ -18,16 +19,16 @@ test.describe('Allocate multiple people via CSV', () => {
   test('allocates multiple people to a paid activity using a CSV file', async ({ page }) => {
     await page.goto('/activities/allocation-dashboard/2')
 
-    await expect(page.getByRole('heading', { name: 'Entry level English 1' })).toBeVisible()
+    await expectHeading(page, 'Entry level English 1')
     await verifyPage(page, true)
 
     await page.getByRole('tab', { name: 'Other people' }).click()
-    await page.getByRole('link', { name: 'allocate a group of people' }).click()
+    await clickLink(page, 'allocate a group of people')
     await verifyPage(page, true)
 
     await page.getByRole('radio', { name: 'Add a group of people using a CSV file' }).check()
 
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await clickButton(page, 'Continue')
 
     await expect(page.getByText('Entry level English 1', { exact: true })).toBeVisible()
     await verifyPage(page, true)
@@ -38,48 +39,40 @@ test.describe('Allocate multiple people via CSV', () => {
         path.join(process.cwd(), 'integration_tests/fixtures/fileUpload/upload-prisoner-list-two-not-found.csv'),
       )
 
-    await page.getByRole('button', { name: 'Upload file' }).click()
+    await clickButton(page, 'Upload file')
 
-    await expect(page.getByRole('heading', { name: "Review who you're allocating" })).toBeVisible()
+    await expectHeading(page, "Review who you're allocating")
     await verifyPage(page, true)
 
     await expect(page.locator('[data-qa="inmate-list"] tbody tr')).toHaveCount(2)
 
-    await expect(
-      page.getByRole('heading', {
-        name: 'Some prison numbers in your CSV file could not be used',
-      }),
-    ).toBeVisible()
+    await expectHeading(page, 'Some prison numbers in your CSV file could not be used')
 
     await expect(page.locator('.govuk-list--bullet')).toContainText('NOTFOUND1')
     await expect(page.locator('.govuk-list--bullet')).toContainText('NOTFOUND2')
 
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await clickButton(page, 'Continue')
 
-    await expect(
-      page.getByRole('heading', {
-        name: 'Review 2 people who do not meet activity requirements',
-      }),
-    ).toBeVisible()
+    await expectHeading(page, 'Review 2 people who do not meet activity requirements')
     await verifyPage(page, true)
 
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await clickButton(page, 'Continue')
     await verifyPage(page, true)
 
     await page.getByRole('radio', { name: /^The next session/ }).check()
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await clickButton(page, 'Continue')
     await verifyPage(page, true)
 
     await page.getByRole('radio', { name: 'Yes' }).check()
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await clickButton(page, 'Continue')
     await verifyPage(page, true)
 
     const endDate = format(addMonths(new Date(), 8), 'dd/MM/yyyy')
 
     await page.locator('#endDate').fill(endDate)
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await clickButton(page, 'Continue')
 
-    await expect(page.getByRole('heading', { name: 'Select the pay rate for 2 people' })).toBeVisible()
+    await expectHeading(page, 'Select the pay rate for 2 people')
     await verifyPage(page, true)
 
     await page
@@ -96,16 +89,16 @@ test.describe('Allocate multiple people via CSV', () => {
       .getByRole('radio', { name: 'Medium - £2.00' })
       .check()
 
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await clickButton(page, 'Continue')
 
-    await expect(page.getByRole('heading', { name: 'Check and confirm 2 allocations' })).toBeVisible()
+    await expectHeading(page, 'Check and confirm 2 allocations')
     await verifyPage(page, true)
 
     await expect(page.locator('[data-qa="prisoner-pay-list"] tbody tr')).toHaveCount(2)
 
-    await page.getByRole('button', { name: 'Confirm 2 allocations' }).click()
+    await clickButton(page, 'Confirm 2 allocations')
 
-    await expect(page.getByRole('heading', { name: 'Allocations complete' })).toBeVisible()
+    await expectHeading(page, 'Allocations complete')
     await verifyPage(page, true)
 
     await expect(page.locator('.govuk-panel__body')).toContainText(

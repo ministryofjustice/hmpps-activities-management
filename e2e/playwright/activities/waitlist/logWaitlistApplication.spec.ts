@@ -5,6 +5,7 @@ import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import setupLogWaitlistApplicationScenario from '../../helpers/activities/waitlist/logWaitlistApplication'
 import { signIn } from '../../helpers/auth'
+import { clickButton, expectHeading, expectSummaryRow } from '../../helpers/govuk'
 import verifyPage from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
@@ -19,63 +20,45 @@ test('a user can log a pending waitlist application', async ({ page }) => {
 
   await page.goto('/activities/waitlist/2f0b204c-2d68-4c53-b581-b4d0075dd231/A1350DZ/apply')
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Enter the date shown on the application',
-    }),
-  ).toBeVisible()
+  await expectHeading(page, 'Enter the date shown on the application')
   await verifyPage(page, true)
 
   await page.getByLabel('Enter the date shown on the application').fill(format(yesterday, 'dd/MM/yyyy'))
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
 
-  await expect(page.getByRole('heading', { name: 'Search for the activity' })).toBeVisible()
+  await expectHeading(page, 'Search for the activity')
   await verifyPage(page, true)
 
   await page.locator('#activityId').fill('Maths level 1')
   await page.getByRole('option', { name: 'Maths level 1', exact: true }).click()
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
 
-  await expect(page.getByRole('heading', { name: 'Who made the application?' })).toBeVisible()
+  await expectHeading(page, 'Who made the application?')
   await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'David Winchurch', exact: true }).check()
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Record a status for this application',
-    }),
-  ).toBeVisible()
+  await expectHeading(page, 'Record a status for this application')
   await verifyPage(page, true)
 
   await page.getByRole('radio', { name: /^Pending/ }).check()
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Check and confirm application details',
-    }),
-  ).toBeVisible()
+  await expectHeading(page, 'Check and confirm application details')
   await verifyPage(page, true)
 
-  const summaryRows = page.locator('.govuk-summary-list__row')
+  await expectSummaryRow(page, 'Applicant', 'David Winchurch')
+  await expectSummaryRow(page, 'Applicant', 'A1350DZ')
+  await expectSummaryRow(page, 'Activity requested', 'Maths level 1')
+  await expectSummaryRow(page, 'Request date', format(yesterday, 'do MMMM yyyy'))
+  await expectSummaryRow(page, 'Requester', 'Self-requested')
+  await expectSummaryRow(page, 'Status', 'Pending')
+  await expectSummaryRow(page, 'Comment', 'None')
 
-  await expect(summaryRows.filter({ hasText: 'Applicant' })).toContainText('David Winchurch')
-  await expect(summaryRows.filter({ hasText: 'Applicant' })).toContainText('A1350DZ')
-  await expect(summaryRows.filter({ hasText: 'Activity requested' })).toContainText('Maths level 1')
-  await expect(summaryRows.filter({ hasText: 'Request date' })).toContainText(format(yesterday, 'do MMMM yyyy'))
-  await expect(summaryRows.filter({ hasText: 'Requester' })).toContainText('Self-requested')
-  await expect(summaryRows.filter({ hasText: 'Status' })).toContainText('Pending')
-  await expect(summaryRows.filter({ hasText: 'Comment' })).toContainText('None')
+  await clickButton(page, 'Log activity application')
 
-  await page.getByRole('button', { name: 'Log activity application' }).click()
-
-  await expect(
-    page.getByRole('heading', {
-      name: /You've successfully logged David Winchurch's application for Maths level 1/i,
-    }),
-  ).toBeVisible()
+  await expectHeading(page, /You've successfully logged David Winchurch's application for Maths level 1/i)
   await verifyPage(page, true)
 
   await expect(page.locator('.govuk-panel__body')).toContainText('The application status is Pending')
