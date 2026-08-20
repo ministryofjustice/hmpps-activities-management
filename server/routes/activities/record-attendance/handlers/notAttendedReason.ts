@@ -99,7 +99,14 @@ export default class NotAttendedReasonRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { selectedPrisoners } = req.journeyData.recordAttendanceJourney.notAttended
+    const notAttended = req.journeyData.recordAttendanceJourney?.notAttended
+
+    if (!notAttended?.selectedPrisoners?.length) {
+      res.redirect('/activities/attendance')
+      return
+    }
+
+    const { selectedPrisoners } = notAttended
 
     const notAttendedReasons = (await this.activitiesService.getAttendanceReasons(user))
       .filter(r => r.displayInAbsence)

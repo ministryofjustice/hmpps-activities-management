@@ -934,6 +934,35 @@ describe('Route Handlers - Attendance List', () => {
         expect(res.redirect).toHaveBeenCalledWith(url)
       },
     )
+
+    it('should redirect to the attendance dashboard when an attendance is no longer available', async () => {
+      req.body = {
+        selectedAttendances: ['1-111-ABC123'],
+      }
+
+      when(activitiesService.getScheduledActivity)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({ ...instanceA, attendances: [] })
+
+      when(activitiesService.getScheduledEventsForPrisoners)
+        .calledWith(expect.any(Date), ['ABC123'], res.locals.user)
+        .mockResolvedValue({
+          activities: [],
+          appointments: [],
+          courtHearings: [],
+          visits: [],
+          adjudications: [],
+        })
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC123'], res.locals.user)
+        .mockResolvedValue([prisoners[0]])
+
+      await handler.NOT_ATTENDED(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
+      expect(req.journeyData.recordAttendanceJourney.notAttended).toBeUndefined()
+    })
   })
 
   describe('Not required or excused', () => {
