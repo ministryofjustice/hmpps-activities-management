@@ -5,8 +5,8 @@ import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import { signInEAEnabled } from '../../helpers/auth'
 import stubAllocateMultipleToExternalActivity from '../../helpers/activities/allocations/allocateMultipleToExternalActivity'
-import { clickButton, clickLink, expectHeading } from '../../helpers/govuk'
-import verifyPage from '../../helpers/page'
+import { clickButton, clickLink } from '../../helpers/govuk'
+import verifyPage, { expectPage } from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -18,8 +18,7 @@ test.beforeEach(async ({ page }) => {
 test('a user can allocate multiple people to an externally paid activity', async ({ page }) => {
   await page.goto('/activities/allocation-dashboard/4')
 
-  await expectHeading(page, 'Hotel')
-  await verifyPage(page, true)
+  await expectPage(page, 'Hotel', true)
 
   await page.getByRole('tab', { name: 'Other people' }).click()
   await clickLink(page, /allocate a group of people/i)
@@ -68,8 +67,7 @@ test('a user can allocate multiple people to an externally paid activity', async
   await page.locator('#endDate').fill(format(endDate, 'dd/MM/yyyy'))
   await clickButton(page, 'Continue')
 
-  await expectHeading(page, 'Check and confirm 3 allocations')
-  await verifyPage(page, true)
+  await expectPage(page, 'Check and confirm 3 allocations', true)
   await expect(page.locator('[data-qa="prisoner-pay-list"]')).toHaveCount(0)
 
   const outsideLocation = page.locator('.govuk-summary-list__value').filter({
@@ -80,8 +78,7 @@ test('a user can allocate multiple people to an externally paid activity', async
 
   await clickButton(page, 'Confirm 3 allocations')
 
-  await expectHeading(page, 'Allocations complete')
-  await verifyPage(page, true)
+  await expectPage(page, 'Allocations complete', true)
   await expect(page.locator('.govuk-panel__body')).toContainText('3 people are now allocated to Hotel')
 
   await page.locator('[data-qa="activity-page-link"]').click()

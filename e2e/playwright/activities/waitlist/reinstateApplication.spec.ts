@@ -6,8 +6,8 @@ import setupReinstateWaitlistApplicationScenario, {
   stubReinstatedWaitlistApplication,
 } from '../../helpers/activities/waitlist/reinstateWaitlistApplication'
 import { signIn } from '../../helpers/auth'
-import { clickButton, clickLink, expectHeading, expectSummaryRow, successBanner } from '../../helpers/govuk'
-import verifyPage from '../../helpers/page'
+import { clickButton, clickLink, expectSummaryRow, successBanner } from '../../helpers/govuk'
+import verifyPage, { expectPage } from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -21,8 +21,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
 
   await page.goto('/activities/waitlist-dashboard')
 
-  await expectHeading(page, 'Manage applications and waitlists')
-  await verifyPage(page, true)
+  await expectPage(page, 'Manage applications and waitlists', true)
 
   const applicationRow = page.getByRole('row').filter({ hasText: 'Winchurch, David Bob' })
 
@@ -30,15 +29,13 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
 
   await clickButton(page, 'View or edit application')
 
-  await expectHeading(page, 'Request for David Winchurch, A1350DZ')
-  await verifyPage(page, true)
+  await expectPage(page, 'Request for David Winchurch, A1350DZ', true)
 
   await expectSummaryRow(page, 'Status', 'Withdrawn')
 
   await clickLink(page, 'Reinstate application')
 
-  await expectHeading(page, "Are you sure you want to reinstate David Winchurch's application?")
-  await verifyPage(page, true)
+  await expectPage(page, "Are you sure you want to reinstate David Winchurch's application?", true)
 
   await expect(page.getByText(/It will be reinstated as Pending/)).toBeVisible()
 
@@ -51,8 +48,7 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
 
   await clickButton(page, 'Continue')
 
-  await expectHeading(page, 'Enter the reason this application is being reinstated')
-  await verifyPage(page, true)
+  await expectPage(page, 'Enter the reason this application is being reinstated', true)
 
   await page
     .getByRole('textbox', {

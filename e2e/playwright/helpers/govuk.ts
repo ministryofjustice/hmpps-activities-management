@@ -6,6 +6,9 @@ type RoleScope = Page | Locator
 export const clickButton = (scope: RoleScope, name: string | RegExp): Promise<void> =>
   scope.getByRole('button', { name }).click()
 
+// RoleScope could be 'Locator' which would be defined like:
+// const cancelledEnglishRow = page.getByRole('row').filter({ hasText: 'English level 1' })
+// with cancelledEnglishRow passed in to the below
 export const clickLink = (scope: RoleScope, name: string | RegExp): Promise<void> =>
   scope.getByRole('link', { name }).click()
 

@@ -5,8 +5,8 @@ import { signIn } from '../../helpers/auth'
 import setupDeallocateAfterAllocationScenario from '../../helpers/activities/allocations/deallocateAfterAllocation'
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
-import { clickButton, clickLink, expectHeading, expectSummaryRow } from '../../helpers/govuk'
-import verifyPage from '../../helpers/page'
+import { clickButton, clickLink, expectSummaryRow } from '../../helpers/govuk'
+import verifyPage, { expectPage } from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -55,8 +55,7 @@ test('a user can deallocate from another activity immediately after making an al
 
   await clickButton(page, 'Confirm this allocation')
 
-  await expectHeading(page, 'Allocation complete')
-  await verifyPage(page, true)
+  await expectPage(page, 'Allocation complete', true)
 
   await clickLink(page, 'take Alfonso Cholak off Maths level 1')
   await verifyPage(page, true)
@@ -76,6 +75,5 @@ test('a user can deallocate from another activity immediately after making an al
 
   await clickButton(page, 'Confirm and remove')
 
-  await expectHeading(page, 'Removal complete')
-  await verifyPage(page, true)
+  await expectPage(page, 'Removal complete', true)
 })

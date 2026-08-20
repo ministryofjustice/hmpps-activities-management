@@ -9,8 +9,8 @@ import setupCancelMultipleSessionsScenario, {
   stubUncancelledSession,
 } from '../../helpers/activities/attendance/cancelMultipleSessions'
 import { signIn } from '../../helpers/auth'
-import { clickButton, clickLink, expectHeading, expectSummaryRow } from '../../helpers/govuk'
-import verifyPage from '../../helpers/page'
+import { clickButton, clickLink, expectSummaryRow } from '../../helpers/govuk'
+import verifyPage, { expectPage } from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -47,8 +47,7 @@ test('a user can cancel multiple sessions, update cancellation details and uncan
 
   await clickButton(page, 'Mark as cancelled')
 
-  await expectHeading(page, 'Why are you cancelling these sessions?')
-  await verifyPage(page, true)
+  await expectPage(page, 'Why are you cancelling these sessions?', true)
 
   await page.getByRole('radio', { name: 'Location unavailable' }).check()
 
@@ -90,15 +89,13 @@ test('a user can cancel multiple sessions, update cancellation details and uncan
 
   const attendancePage = await attendancePagePromise
 
-  await expectHeading(attendancePage, 'Session cancelled')
-  await verifyPage(attendancePage, true)
+  await expectPage(attendancePage, 'Session cancelled', true)
 
   await expect(attendancePage.getByText('Location unavailable - this is a comment')).toBeVisible()
 
   await clickLink(attendancePage, 'View or edit cancellation')
 
-  await expectHeading(attendancePage, 'View or edit cancellation details')
-  await verifyPage(attendancePage, true)
+  await expectPage(attendancePage, 'View or edit cancellation details', true)
 
   await expectSummaryRow(attendancePage, 'Reason', 'Location unavailable')
   await expectSummaryRow(attendancePage, 'Pay', 'No')
@@ -106,13 +103,11 @@ test('a user can cancel multiple sessions, update cancellation details and uncan
 
   await clickLink(attendancePage, 'Change pay')
 
-  await expectHeading(attendancePage, 'Change if people should be paid for this cancelled session')
-  await verifyPage(attendancePage, true)
+  await expectPage(attendancePage, 'Change if people should be paid for this cancelled session', true)
 
   await clickLink(attendancePage, 'Do not change pay for this session')
 
-  await expectHeading(attendancePage, 'View or edit cancellation details')
-  await verifyPage(attendancePage, true)
+  await expectPage(attendancePage, 'View or edit cancellation details', true)
 
   await clickLink(attendancePage, 'Change pay')
 
@@ -136,8 +131,7 @@ test('a user can cancel multiple sessions, update cancellation details and uncan
     .first()
     .click()
 
-  await expectHeading(attendancePage, 'Are you sure you want to uncancel this session?')
-  await verifyPage(attendancePage, true)
+  await expectPage(attendancePage, 'Are you sure you want to uncancel this session?', true)
 
   await attendancePage.getByRole('radio', { name: 'Yes' }).check()
 

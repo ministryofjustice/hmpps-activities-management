@@ -4,8 +4,8 @@ import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import { signIn } from '../../helpers/auth'
 import setupDeallocationScenario from '../../helpers/activities/allocations/deallocation'
-import { clickButton, clickLink, expectHeading } from '../../helpers/govuk'
-import verifyPage from '../../helpers/page'
+import { clickButton, clickLink } from '../../helpers/govuk'
+import verifyPage, { expectPage } from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -47,13 +47,11 @@ test('a user can end allocations on a future date', async ({ page }) => {
 
   await clickButton(page, 'Continue')
 
-  await expectHeading(page, "Check and confirm who you're taking off the activity")
-  await verifyPage(page, true)
+  await expectPage(page, "Check and confirm who you're taking off the activity", true)
 
   await clickButton(page, 'Confirm and remove')
 
-  await expectHeading(page, 'Removal complete')
-  await verifyPage(page, true)
+  await expectPage(page, 'Removal complete', true)
 
   await expect(page.locator('.govuk-panel__body')).toContainText(
     `2 prisoners are now scheduled to be removed from English level 1 on ${format(endDate, 'EEEE, d MMMM yyyy')}`,

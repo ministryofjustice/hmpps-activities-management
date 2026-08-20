@@ -4,8 +4,8 @@ import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import setupRecordNonAttendanceScenario from '../../helpers/activities/attendance/recordNonAttendance'
 import { signIn } from '../../helpers/auth'
-import { clickButton, clickLink, expectHeading } from '../../helpers/govuk'
-import verifyPage from '../../helpers/page'
+import { clickButton, clickLink } from '../../helpers/govuk'
+import verifyPage, { expectPage } from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -22,8 +22,7 @@ test('a user can review refusals and record non-attendance', async ({ page }) =>
 
   await clickLink(dailySummary, 'All refused')
 
-  await expectHeading(page, 'All refusals to attend')
-  await verifyPage(page, true)
+  await expectPage(page, 'All refusals to attend', true)
 
   const refusalRow = page.getByRole('row').filter({ hasText: 'Arianniver, Eeteljan' })
 
@@ -55,8 +54,7 @@ test('a user can review refusals and record non-attendance', async ({ page }) =>
 
   await clickButton(attendancePage, 'Confirm and record attendance')
 
-  await expectHeading(attendancePage, 'Attendance recorded')
-  await verifyPage(attendancePage, true)
+  await expectPage(attendancePage, 'Attendance recorded', true)
 
   await expect(attendancePage.getByText("You've saved attendance details for Cudmastarie Aborah")).toBeVisible()
 })

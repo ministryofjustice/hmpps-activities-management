@@ -6,8 +6,8 @@ import setupEditWaitlistStatusScenario, {
   stubApprovedWaitlistApplication,
 } from '../../helpers/activities/waitlist/editWaitlistStatus'
 import { signIn } from '../../helpers/auth'
-import { clickButton, clickLink, expectHeading, expectSummaryRow } from '../../helpers/govuk'
-import verifyPage from '../../helpers/page'
+import { clickButton, clickLink, expectSummaryRow } from '../../helpers/govuk'
+import verifyPage, { expectPage } from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -19,8 +19,7 @@ test.beforeEach(async ({ page }) => {
 test('a user can view a pending waitlist application and change its status to approved', async ({ page }) => {
   await page.goto('/activities/waitlist-dashboard')
 
-  await expectHeading(page, 'Manage applications and waitlists')
-  await verifyPage(page, true)
+  await expectPage(page, 'Manage applications and waitlists', true)
 
   const applicationRow = page.getByRole('row').filter({ hasText: 'Winchurch, David Bob' })
 
@@ -34,8 +33,7 @@ test('a user can view a pending waitlist application and change its status to ap
 
   await clickButton(page, 'View or edit application')
 
-  await expectHeading(page, 'Request for David Winchurch, A1350DZ')
-  await verifyPage(page, true)
+  await expectPage(page, 'Request for David Winchurch, A1350DZ', true)
 
   await expectSummaryRow(page, 'Status', 'Pending')
   await expectSummaryRow(page, 'Status', 'Last changed 20th June 2025 14:22')
@@ -65,8 +63,7 @@ test('a user can view a pending waitlist application and change its status to ap
 
   await clickLink(page, 'Change status')
 
-  await expectHeading(page, "Change the status of David Winchurch's application")
-  await verifyPage(page, true)
+  await expectPage(page, "Change the status of David Winchurch's application", true)
 
   await expect(page.locator('.govuk-inset-text')).toContainText('Pending')
 
