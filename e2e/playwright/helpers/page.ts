@@ -60,8 +60,7 @@ const verifyPage = async (page: Page, checkAccessibility: boolean): Promise<void
 }
 
 export const expectPage = async (page: Page, heading: string | RegExp, checkAccessibility: boolean): Promise<void> => {
-  // heading level 1 defaulted for this implementation intentionally
-  await expectHeading(page, heading, 1)
+  await expectHeading(page, heading)
   await verifyPage(page, checkAccessibility)
 }
 
