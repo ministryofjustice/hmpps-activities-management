@@ -471,50 +471,103 @@ describe('Route Handlers - Daily Attendance List', () => {
       })
     })
 
-    it('should include outside activities when selected by category', async () => {
-      const dateString = '2022-10-10'
-      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+    it.each([
+      {
+        page: 'all absences',
+        status: 'Absences',
+        attendanceStatus: AttendanceStatus.COMPLETED,
+        attendanceReason: AttendanceReason.SICK,
+        eventTier: undefined,
+      },
+      {
+        page: 'all attended',
+        status: 'Attended',
+        attendanceStatus: AttendanceStatus.COMPLETED,
+        attendanceReason: AttendanceReason.ATTENDED,
+        eventTier: undefined,
+      },
+      {
+        page: 'all not attended yet',
+        status: 'NotAttended',
+        attendanceStatus: AttendanceStatus.WAITING,
+        attendanceReason: null,
+        eventTier: undefined,
+      },
+      {
+        page: 'all Tier 1 attendances',
+        status: 'Attended',
+        attendanceStatus: AttendanceStatus.COMPLETED,
+        attendanceReason: AttendanceReason.ATTENDED,
+        eventTier: EventTier.TIER_1,
+      },
+      {
+        page: 'all Tier 2 attendances',
+        status: 'Attended',
+        attendanceStatus: AttendanceStatus.COMPLETED,
+        attendanceReason: AttendanceReason.ATTENDED,
+        eventTier: EventTier.TIER_2,
+      },
+      {
+        page: 'all routine attendances',
+        status: 'Attended',
+        attendanceStatus: AttendanceStatus.COMPLETED,
+        attendanceReason: AttendanceReason.ATTENDED,
+        eventTier: EventTier.FOUNDATION,
+      },
+    ])(
+      'should include outside activities when selected by category on $page',
+      async ({ status, attendanceStatus, attendanceReason, eventTier }) => {
+        const dateString = '2022-10-10'
+        const date = parse(dateString, 'yyyy-MM-dd', new Date())
 
-      res.locals.user.externalActivitiesRolledOut = true
-
-      mockApiResponse[0].categoryName = 'Industries'
-      mockApiResponse[0].outsideWork = true
-      mockApiResponse[0].paid = false
-
-      when(activitiesService.getAllAttendance)
-        .calledWith(date, res.locals.user, undefined)
-        .mockResolvedValue(mockApiResponse)
-
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['ABC123'], res.locals.user)
-        .mockResolvedValue(mockPrisonApiResponse)
-
-      req = {
-        query: {
-          date: dateString,
-          status: 'NotAttended',
-        },
-        journeyData: {
-          attendanceSummaryJourney: {
-            categoryFilters: ['SAA_ROTL'],
-            activityTypeFilters: ['inPrison'],
+        res.locals.user.externalActivitiesRolledOut = true
+        mockApiResponse = [
+          {
+            ...mockApiResponse[0],
+            status: attendanceStatus,
+            attendanceReasonCode: attendanceReason,
+            categoryName: 'Industries',
+            outsideWork: true,
+            paid: false,
+            eventTier: eventTier ?? EventTier.FOUNDATION,
           },
-        },
-      } as unknown as Request
+        ]
 
-      await handler.GET(req, res)
+        when(activitiesService.getAllAttendance)
+          .calledWith(date, res.locals.user, eventTier)
+          .mockResolvedValue(mockApiResponse)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/daily-attendance-summary/attendances',
-        expect.objectContaining({
-          uniqueCategories: [
-            { value: 'SAA_ROTL', text: 'Outside activity' },
-            { value: 'Prison Jobs', text: 'Prison Jobs' },
-          ],
-          attendees: [expect.objectContaining({ prisonerNumber: 'ABC123' })],
-        }),
-      )
-    })
+        when(prisonService.searchInmatesByPrisonerNumbers)
+          .calledWith(['ABC123'], res.locals.user)
+          .mockResolvedValue(mockPrisonApiResponse)
+
+        req = {
+          query: {
+            date: dateString,
+            status,
+            ...(eventTier && { eventTier }),
+          },
+          journeyData: {
+            attendanceSummaryJourney: {
+              categoryFilters: ['SAA_ROTL'],
+              activityTypeFilters: ['inPrison'],
+            },
+          },
+        } as unknown as Request
+
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith(
+          'pages/activities/daily-attendance-summary/attendances',
+          expect.objectContaining({
+            status,
+            tier: eventTier,
+            uniqueCategories: [{ value: 'SAA_ROTL', text: 'Outside activity' }],
+            attendees: [expect.objectContaining({ prisonerNumber: 'ABC123' })],
+          }),
+        )
+      },
+    )
 
     it('should not expose the outside activity category when the feature is not enabled', async () => {
       const dateString = '2022-10-10'
