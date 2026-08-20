@@ -142,6 +142,7 @@ describe('Route Handlers - Activities', () => {
         user: {
           username: 'joebloggs',
           activeCaseLoadId: 'MDI',
+          externalActivitiesRolledOut: true,
         },
       },
       render: jest.fn(),
@@ -178,7 +179,7 @@ describe('Route Handlers - Activities', () => {
         journeyData: {},
       } as unknown as Request
 
-      when(activitiesService.getActivityCategories).calledWith(res.locals.user).mockResolvedValue(mockCategories)
+      when(activitiesService.getActivityCategories).calledWith(res.locals.user, true).mockResolvedValue(mockCategories)
 
       when(activitiesService.getScheduledInstanceAttendanceSummary)
         .calledWith(res.locals.user.activeCaseLoadId, date, res.locals.user)
@@ -196,7 +197,10 @@ describe('Route Handlers - Activities', () => {
 
       await handler.GET(req, res)
 
+      expect(activitiesService.getActivityCategories).toHaveBeenCalledWith(res.locals.user, true)
+
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
+        externalActivitiesRolledOut: true,
         filterItems: {
           categoryFilters: [
             { value: 'SAA_EDUCATION', text: 'Education', checked: true },
@@ -225,6 +229,17 @@ describe('Route Handlers - Activities', () => {
       })
     })
 
+    it('should not request the ROTL category when external activities are not rolled out', async () => {
+      res.locals.user.externalActivitiesRolledOut = false
+      req.query = { date: dateString }
+
+      when(activitiesService.getActivityCategories).calledWith(res.locals.user, false).mockResolvedValue(mockCategories)
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getActivityCategories).toHaveBeenCalledWith(res.locals.user, false)
+    })
+
     it('should render with the expected view when multiple sessions are returned', async () => {
       req.query = {
         date: dateString,
@@ -235,6 +250,7 @@ describe('Route Handlers - Activities', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
+        externalActivitiesRolledOut: true,
         filterItems: {
           categoryFilters: [
             { value: 'SAA_EDUCATION', text: 'Education', checked: true },
@@ -296,6 +312,7 @@ describe('Route Handlers - Activities', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
+        externalActivitiesRolledOut: true,
         filterItems: {
           categoryFilters: [
             { value: 'SAA_EDUCATION', text: 'Education', checked: true },
@@ -358,6 +375,7 @@ describe('Route Handlers - Activities', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
+        externalActivitiesRolledOut: true,
         filterItems: {
           categoryFilters: [
             { value: 'SAA_EDUCATION', text: 'Education', checked: true },
