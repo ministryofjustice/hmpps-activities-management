@@ -4,6 +4,7 @@ import stubs from '../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../integration_tests/mockApis/wiremock'
 import setupRecordAppointmentAttendanceScenario from '../helpers/appointments/recordAttendance'
 import { signIn } from '../helpers/auth'
+import verifyPage from '../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -14,8 +15,10 @@ test.beforeEach(async ({ page }) => {
 
 test('a user can record and edit appointment attendance', async ({ page }) => {
   await page.goto('/appointments')
+  await verifyPage(page, true)
 
   await page.getByRole('link', { name: /Record appointment attendance/ }).click()
+  await verifyPage(page, true)
 
   await page.getByRole('radio', { name: /^Today/ }).check()
   await page.getByRole('button', { name: 'Continue' }).click()
@@ -25,6 +28,7 @@ test('a user can record and edit appointment attendance', async ({ page }) => {
       name: 'Find an appointment to record or edit attendance',
     }),
   ).toBeVisible()
+  await verifyPage(page, true)
 
   await page.getByRole('checkbox', { name: 'Select Gym' }).check()
 
@@ -37,6 +41,7 @@ test('a user can record and edit appointment attendance', async ({ page }) => {
       name: 'Record attendance at 2 appointments',
     }),
   ).toBeVisible()
+  await verifyPage(page, true)
 
   const adalieRow = page.getByRole('row').filter({ hasText: 'Adalie, Izrmonntas' })
 
@@ -48,6 +53,7 @@ test('a user can record and edit appointment attendance', async ({ page }) => {
   await page.getByRole('button', { name: 'Mark as attended' }).click()
 
   await expect(page.getByRole('heading', { name: 'Attendance recorded' })).toBeVisible()
+  await verifyPage(page, true)
 
   await expect(page.getByText("You've saved attendance details for 2 attendees")).toBeVisible()
 
@@ -63,6 +69,7 @@ test('a user can record and edit appointment attendance', async ({ page }) => {
       name: 'Attendance record for Bumahwaju Alfres',
     }),
   ).toBeVisible()
+  await verifyPage(page, true)
 
   const summaryRows = page.locator('.govuk-summary-list__row')
 
@@ -77,11 +84,13 @@ test('a user can record and edit appointment attendance', async ({ page }) => {
       name: 'Change attendance details for Bumahwaju Alfres',
     }),
   ).toBeVisible()
+  await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'No', exact: true }).check()
   await page.getByRole('button', { name: 'Continue' }).click()
 
   await expect(page.getByRole('heading', { name: 'Non-attendance recorded' })).toBeVisible()
+  await verifyPage(page, true)
 
   await expect(page.getByText("You've saved details for Bumahwaju Alfres.")).toBeVisible()
 })
