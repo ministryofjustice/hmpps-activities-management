@@ -564,6 +564,9 @@ describe('Route Handlers - Allocation dashboard', () => {
           ],
           filters: {
             candidateQuery: 'jack',
+            incentiveLevelFilter: 'All Incentive Levels',
+            riskLevelFilter: 'Any Workplace Risk Assessment',
+            employmentFilter: 'Everyone',
           },
           suitableForIep: 'All Incentive Levels',
           suitableForWra: 'Low or Medium or High',
@@ -853,6 +856,33 @@ describe('Route Handlers - Allocation dashboard', () => {
         1,
         user,
         undefined,
+        undefined,
+        undefined,
+        false,
+        'joe',
+        0,
+      )
+    })
+
+    it('should retain suitable incentive level filtering when searching for an outside activity candidate', async () => {
+      req.params = { activityId: '1' }
+      req.query.candidateQuery = 'joe'
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1, user, false))
+        .mockResolvedValue({
+          outsideWork: true,
+          paid: true,
+          pay: [{ incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
+          schedules: [activitySchedule],
+        } as unknown as Activity)
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        ['Standard', 'Enhanced'],
         undefined,
         undefined,
         false,
