@@ -148,9 +148,9 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-    fail-fast: false
-    matrix:
-      shard: [1, 2, 3]
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
 
     services:
       redis:
