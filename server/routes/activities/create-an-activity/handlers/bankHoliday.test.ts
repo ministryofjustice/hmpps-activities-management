@@ -47,6 +47,16 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
   })
 
   describe('POST', () => {
+    it('should save the selected option in the create journey and redirect to the location page', async () => {
+      req.routeContext = { mode: 'create' }
+      req.body = { runsOnBankHoliday: 'yes' }
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.createJourney.runsOnBankHoliday).toBe(true)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+    })
+
     it('should save entered end date in database', async () => {
       const updatedActivity = {
         runsOnBankHoliday: true,
