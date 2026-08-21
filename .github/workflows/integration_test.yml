@@ -205,7 +205,7 @@ jobs:
           npm run wait:ui
 
       - name: Run Playwright tests
-        run: npm run pw-test -- --shard=${{ matrix.shard }}/3
+        run: npm run pw-test -- --shard=${{ matrix.shard }}/2
 
       - name: Upload Playwright report
         if: always()
