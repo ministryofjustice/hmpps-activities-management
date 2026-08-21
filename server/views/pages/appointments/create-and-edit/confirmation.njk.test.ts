@@ -33,6 +33,7 @@ describe('Views - Create Appointment - Confirmation', () => {
 
   it('should not display repeat frequency or number of appointments when no schedule is defined', () => {
     viewContext.appointment = {
+      id: 11,
       appointmentSeries: { schedule: null },
       appointmentType: AppointmentType.GROUP,
       startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
@@ -51,10 +52,14 @@ describe('Views - Create Appointment - Confirmation', () => {
     expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
       `You have successfully scheduled an appointment for Test Prisoner on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
     )
+    expect($('[data-qa=create-another-link]').attr('href')).toEqual('/appointments')
+    expect($('[data-qa=view-appointment-link]').attr('href')).toEqual('/appointments/11')
+    expect($('[data-qa=record-attendance-link]')).toHaveLength(0)
   })
 
   it('should not display a back link', () => {
     viewContext.appointment = {
+      id: 11,
       appointmentSeries: { schedule: null },
       appointmentType: AppointmentType.GROUP,
       startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
@@ -76,6 +81,7 @@ describe('Views - Create Appointment - Confirmation', () => {
   it('should display create message when the appointment is retrospective', () => {
     const fiveDaysAgo = subDays(new Date(), 5)
     viewContext.appointment = {
+      id: 11,
       appointmentSeries: { schedule: null },
       appointmentType: AppointmentType.GROUP,
       startDate: formatDate(fiveDaysAgo, 'yyyy-MM-dd'),
@@ -96,6 +102,8 @@ describe('Views - Create Appointment - Confirmation', () => {
     expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
       `You have successfully created an appointment for Test Prisoner on ${format(fiveDaysAgo, 'EEEE, d MMMM yyyy')}.`,
     )
+    expect($('[data-qa=view-appointment-link]')).toHaveLength(0)
+    expect($('[data-qa=record-attendance-link]').attr('href')).toEqual('/appointments/attendance/11/select-appointment')
   })
 
   it('should display create message for single person in the appointment set', () => {
