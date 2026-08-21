@@ -70,16 +70,9 @@ export default class AllocationDashboardRoutes {
     const suitableForIep = this.getSuitableForIep(activity.pay, activity.paid, incentiveLevels)
     const suitableForWra = this.getSuitableForWra(activity.riskLevel)
 
-    if (!(
-      filters.incentiveLevelFilter ||
-      filters.riskLevelFilter ||
-      filters.employmentFilter ||
-      filters.candidateQuery
-    )) {
-      filters.incentiveLevelFilter = suitableForIep
-      filters.riskLevelFilter = 'Any Workplace Risk Assessment'
-      filters.employmentFilter = 'Everyone'
-    }
+    filters.incentiveLevelFilter ||= suitableForIep
+    filters.riskLevelFilter ||= 'Any Workplace Risk Assessment'
+    filters.employmentFilter ||= 'Everyone'
 
     const [currentlyAllocated, { waitlistedPrisoners, waitlistSize }, pagedCandidates] = await Promise.all([
       this.getCurrentlyAllocated(activitySchedule.id, user),
