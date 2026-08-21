@@ -7,7 +7,7 @@ import { SessionData } from 'express-session'
 import atLeast from '../../../../../jest.setup'
 import SessionTimesRoutes, { SessionTimes } from './sessionTimes'
 import ActivitiesService from '../../../../services/activitiesService'
-import { Activity, PrisonRegime } from '../../../../@types/activitiesAPI/types'
+import { Activity, PrisonRegime, Slot } from '../../../../@types/activitiesAPI/types'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import TimeSlot from '../../../../enum/timeSlot'
 import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
@@ -344,6 +344,8 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
   })
 
   describe('POST', () => {
+    let expectedCustomSlots: Slot[]
+
     beforeEach(() => {
       const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
       const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
@@ -364,10 +366,8 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         startTimes: startMap,
         endTimes: endMap,
       }
-    })
 
-    afterEach(() => {
-      expect(req.journeyData.createJourney.customSlots).toEqual([
+      expectedCustomSlots = [
         {
           customStartTime: '05:30',
           customEndTime: '09:44',
@@ -382,11 +382,47 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
           wednesday: false,
           weekNumber: 1,
         },
-      ])
+      ]
+    })
+
+    afterEach(() => {
+      expect(req.journeyData.createJourney.customSlots).toEqual(expectedCustomSlots)
     })
 
     describe('Create journey', () => {
       it('when using custom times redirect to the bank holiday page', async () => {
+        await handler.POST(req, res)
+
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+      })
+
+      it('should retain custom times from both weeks of a two-week schedule', async () => {
+        const weekTwoStartTime = new SimpleTime()
+        weekTwoStartTime.hour = 14
+        weekTwoStartTime.minute = 35
+        req.body.startTimes.set('2-TUESDAY-PM', weekTwoStartTime)
+
+        const weekTwoEndTime = new SimpleTime()
+        weekTwoEndTime.hour = 16
+        weekTwoEndTime.minute = 50
+        req.body.endTimes.set('2-TUESDAY-PM', weekTwoEndTime)
+
+        req.journeyData.createJourney.scheduleWeeks = 2
+        expectedCustomSlots.push({
+          customStartTime: '14:35',
+          customEndTime: '16:50',
+          daysOfWeek: ['TUESDAY'],
+          friday: false,
+          monday: false,
+          saturday: false,
+          sunday: false,
+          thursday: false,
+          timeSlot: TimeSlot.PM,
+          tuesday: true,
+          wednesday: false,
+          weekNumber: 2,
+        })
+
         await handler.POST(req, res)
 
         expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
