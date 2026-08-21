@@ -5,7 +5,15 @@ export default class ActivityTypePage extends Page {
     super('activity-type-page')
   }
 
-  selectInsideType = () => this.getInputById('type').click()
+  heading = () => cy.get('h1')
 
-  selectOutsideType = () => this.getInputById('type-2').click()
+  insideOption = () => cy.get('label[for="type"]')
+
+  outsideOption = () => cy.get('label[for="type-2"]')
+
+  outsideHint = () => cy.get('#type-2-item-hint')
+
+  selectInside = () => this.getInputById('type').click()
+
+  selectOutside = () => this.getInputById('type-2').click()
 }

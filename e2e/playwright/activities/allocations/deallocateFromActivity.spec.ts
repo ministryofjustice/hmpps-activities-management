@@ -4,6 +4,8 @@ import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import { signIn } from '../../helpers/auth'
 import setupDeallocationScenario from '../../helpers/activities/allocations/deallocation'
+import { clickButton, clickLink } from '../../helpers/govuk'
+import verifyPage, { expectPage } from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -18,8 +20,10 @@ test('a user can end allocations on a future date', async ({ page }) => {
   await setupDeallocationScenario(activityStartDate)
 
   await page.goto('/activities/allocation-dashboard')
+  await verifyPage(page, true)
 
-  await page.getByRole('link', { name: 'English level 1' }).click()
+  await clickLink(page, 'English level 1')
+  await verifyPage(page, true)
 
   const currentlyAllocated = page.getByRole('table', {
     name: 'Currently allocated',
@@ -29,27 +33,25 @@ test('a user can end allocations on a future date', async ({ page }) => {
 
   await currentlyAllocated.getByRole('row').filter({ hasText: 'A1351DZ' }).getByRole('checkbox').check()
 
-  await page.getByRole('button', { name: 'End allocation' }).click()
+  await clickButton(page, 'End allocation')
+  await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'On a different date' }).check()
 
   await page.getByLabel('Other date').fill(format(endDate, 'dd/MM/yyyy'))
 
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
+  await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'Withdrawn by staff' }).check()
 
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
 
-  await expect(
-    page.getByRole('heading', {
-      name: "Check and confirm who you're taking off the activity",
-    }),
-  ).toBeVisible()
+  await expectPage(page, "Check and confirm who you're taking off the activity", true)
 
-  await page.getByRole('button', { name: 'Confirm and remove' }).click()
+  await clickButton(page, 'Confirm and remove')
 
-  await expect(page.getByRole('heading', { name: 'Removal complete' })).toBeVisible()
+  await expectPage(page, 'Removal complete', true)
 
   await expect(page.locator('.govuk-panel__body')).toContainText(
     `2 prisoners are now scheduled to be removed from English level 1 on ${format(endDate, 'EEEE, d MMMM yyyy')}`,
@@ -62,8 +64,10 @@ test('a user sees an error when they do not enter a deallocation date', async ({
   await setupDeallocationScenario(activityStartDate)
 
   await page.goto('/activities/allocation-dashboard')
+  await verifyPage(page, true)
 
-  await page.getByRole('link', { name: 'English level 1' }).click()
+  await clickLink(page, 'English level 1')
+  await verifyPage(page, true)
 
   const currentlyAllocated = page.getByRole('table', {
     name: 'Currently allocated',
@@ -71,13 +75,15 @@ test('a user sees an error when they do not enter a deallocation date', async ({
 
   await currentlyAllocated.getByRole('row').filter({ hasText: 'G4793VF' }).getByRole('checkbox').check()
 
-  await page.getByRole('button', { name: 'End allocation' }).click()
+  await clickButton(page, 'End allocation')
+  await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'On a different date' }).check()
 
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
 
   await expect(page.getByRole('alert')).toContainText('Enter a date')
+  await verifyPage(page, true)
 
   await expect(page.getByLabel('Other date')).toBeVisible()
 })

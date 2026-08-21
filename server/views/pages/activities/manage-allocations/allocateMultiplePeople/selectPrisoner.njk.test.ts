@@ -20,6 +20,7 @@ describe('Views - Allocate to an activity - Select Prisoner', () => {
     const $ = cheerio.load(compiledTemplate.render({}))
 
     expect($('#prisoner-search-list').length).toBe(0)
+    expect($('label[for="query"]').text().trim()).toEqual('Search by name or prison number')
   })
 
   it('should display prisoner list with radios and "Select prisoner and continue" button when prisoners are in context', () => {

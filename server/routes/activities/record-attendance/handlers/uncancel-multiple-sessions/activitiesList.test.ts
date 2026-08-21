@@ -138,6 +138,7 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
           activeCaseLoadId: 'MDI',
           token: 'token',
           authSource: 'nomis',
+          externalActivitiesRolledOut: true,
         },
       },
       render: jest.fn(),
@@ -177,7 +178,7 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
         journeyData: {},
       } as unknown as Request
 
-      when(activitiesService.getActivityCategories).calledWith(res.locals.user).mockResolvedValue(mockCategories)
+      when(activitiesService.getActivityCategories).calledWith(res.locals.user, true).mockResolvedValue(mockCategories)
 
       when(activitiesService.getScheduledInstanceAttendanceSummary)
         .calledWith(res.locals.user.activeCaseLoadId, date, res.locals.user)
@@ -198,6 +199,7 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/record-attendance/uncancel-multiple-sessions/cancelled-activities',
         {
+          externalActivitiesRolledOut: true,
           filterItems: {
             categoryFilters: [
               { value: 'SAA_EDUCATION', text: 'Education', checked: true },
@@ -238,6 +240,7 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/record-attendance/uncancel-multiple-sessions/cancelled-activities',
         {
+          externalActivitiesRolledOut: true,
           filterItems: {
             categoryFilters: [
               { value: 'SAA_EDUCATION', text: 'Education', checked: true },

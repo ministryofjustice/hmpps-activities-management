@@ -14,6 +14,7 @@ import Organiser, { organiserDescriptions } from '../../../../enum/eventOrganise
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import TimeSlot from '../../../../enum/timeSlot'
+import { ActivityCategoryEnum } from '../../../../data/activityCategoryEnum'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -361,6 +362,11 @@ describe('Route Handlers - Create an activity - Check answers', () => {
 
     it('should create an external activity (paid by prison) and redirect to confirmation page', async () => {
       req.journeyData.createJourney.outsideWork = true
+      req.journeyData.createJourney.category = {
+        id: 10,
+        code: ActivityCategoryEnum.SAA_ROTL,
+        name: 'Outside activity',
+      }
       req.journeyData.createJourney.whoPays = 'prison'
       req.journeyData.createJourney.name = 'Prison driver'
       req.journeyData.createJourney.capacity = 1
@@ -369,7 +375,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       const expectedActivity = {
         prisonCode: 'MDI',
         summary: 'Prison driver',
-        categoryId: 1,
+        categoryId: 10,
         tierCode: EventTier.TIER_1,
         organiserCode: Organiser.PRISONER,
         riskLevel: 'low',
@@ -408,6 +414,11 @@ describe('Route Handlers - Create an activity - Check answers', () => {
 
     it('should create an external activity (paid by the employer) and redirect to confirmation page', async () => {
       req.journeyData.createJourney.outsideWork = true
+      req.journeyData.createJourney.category = {
+        id: 10,
+        code: ActivityCategoryEnum.SAA_ROTL,
+        name: 'Outside activity',
+      }
       req.journeyData.createJourney.whoPays = 'external'
       req.journeyData.createJourney.paid = false
       req.journeyData.createJourney.pay = []
@@ -420,7 +431,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       const expectedActivity = {
         prisonCode: 'MDI',
         summary: 'Driver',
-        categoryId: 1,
+        categoryId: 10,
         tierCode: EventTier.TIER_1,
         organiserCode: undefined,
         riskLevel: 'low',
