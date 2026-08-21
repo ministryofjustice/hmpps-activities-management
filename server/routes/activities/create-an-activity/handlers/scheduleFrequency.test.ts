@@ -47,6 +47,15 @@ describe('Route Handlers - Create an activity - Schedule frequency', () => {
       expect(res.redirect).toHaveBeenCalledWith('days-and-times/1')
     })
 
+    it('should set a two-week schedule and redirect to week 1 of days and time page', async () => {
+      req.body.scheduleFrequency = 'BI_WEEKLY'
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.createJourney.scheduleWeeks).toEqual(2)
+      expect(res.redirect).toHaveBeenCalledWith('days-and-times/1')
+    })
+
     it('should remove invalid slots', async () => {
       req.journeyData.createJourney = {
         scheduleWeeks: 2,
