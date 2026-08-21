@@ -314,6 +314,62 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         tier: eventTierDescriptions[req.journeyData.createJourney.tierCode],
       })
     })
+
+    it('should render custom slots from both weeks of a two-week schedule', async () => {
+      req.journeyData.createJourney.scheduleWeeks = 2
+      req.journeyData.createJourney.customSlots = [
+        {
+          customStartTime: '09:15',
+          customEndTime: '11:30',
+          daysOfWeek: ['MONDAY'],
+          friday: false,
+          monday: true,
+          saturday: false,
+          sunday: false,
+          thursday: false,
+          timeSlot: TimeSlot.AM,
+          tuesday: false,
+          wednesday: false,
+          weekNumber: 1,
+        },
+        {
+          customStartTime: '14:35',
+          customEndTime: '16:50',
+          daysOfWeek: ['TUESDAY'],
+          friday: false,
+          monday: false,
+          saturday: false,
+          sunday: false,
+          thursday: false,
+          timeSlot: TimeSlot.PM,
+          tuesday: true,
+          wednesday: false,
+          weekNumber: 2,
+        },
+      ]
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/create-an-activity/check-answers',
+        expect.objectContaining({
+          slots: expect.objectContaining({
+            '1': expect.arrayContaining([
+              {
+                day: 'Monday',
+                slots: [{ startTime: '09:15', endTime: '11:30', timeSlot: TimeSlot.AM }],
+              },
+            ]),
+            '2': expect.arrayContaining([
+              {
+                day: 'Tuesday',
+                slots: [{ startTime: '14:35', endTime: '16:50', timeSlot: TimeSlot.PM }],
+              },
+            ]),
+          }),
+        }),
+      )
+    })
   })
 
   describe('POST', () => {
@@ -468,7 +524,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
     })
 
-    it('should create the activity with custom time slots and redirect to confirmation page', async () => {
+    it('should create a two-week activity with custom time slots and redirect to confirmation page', async () => {
       const reqWithCustomSlots = {
         session: {},
         journeyData: {
@@ -497,7 +553,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             startDate: '2023-01-17',
             endDateOption: 'yes',
             endDate: '2023-01-18',
-            scheduleWeeks: 1,
+            scheduleWeeks: 2,
             outsideWork: false,
             customSlots: [
               {
@@ -523,10 +579,10 @@ describe('Route Handlers - Create an activity - Check answers', () => {
                 saturday: false,
                 sunday: false,
                 thursday: false,
-                timeSlot: 'ED',
+                timeSlot: 'PM',
                 tuesday: true,
                 wednesday: false,
-                weekNumber: 1,
+                weekNumber: 2,
               },
             ],
             location: {
@@ -563,7 +619,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         endDate: '2023-01-18',
         dpsLocationId: '99999999-0000-aaaa-bbbb-cccccccccccc',
         capacity: 12,
-        scheduleWeeks: 1,
+        scheduleWeeks: 2,
         slots: [
           {
             customStartTime: '09:15',
@@ -588,10 +644,10 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             saturday: false,
             sunday: false,
             thursday: false,
-            timeSlot: 'ED',
+            timeSlot: 'PM',
             tuesday: true,
             wednesday: false,
-            weekNumber: 1,
+            weekNumber: 2,
           },
         ],
       }
