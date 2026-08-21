@@ -1,11 +1,12 @@
-import { expect, test } from '@playwright/test'
+import { test } from '@playwright/test'
 import { format } from 'date-fns'
 
 import { signIn } from '../../helpers/auth'
 import setupDeallocateAfterAllocationScenario from '../../helpers/activities/allocations/deallocateAfterAllocation'
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
-import verifyPage from '../../helpers/page'
+import { clickButton, clickLink, expectSummaryRow } from '../../helpers/govuk'
+import verifyPage, { expectPage } from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -25,62 +26,54 @@ test('a user can deallocate from another activity immediately after making an al
 
   await otherPeopleTab.locator('#riskLevelFilter').selectOption('Any Workplace Risk Assessment')
 
-  await otherPeopleTab.getByRole('button', { name: 'Apply filters' }).click()
+  await clickButton(otherPeopleTab, 'Apply filters')
   await verifyPage(page, true)
 
   await otherPeopleTab.getByRole('radio', { name: 'Select Alfonso Cholak' }).check()
 
-  await otherPeopleTab.getByRole('button', { name: 'Allocate' }).click()
+  await clickButton(otherPeopleTab, 'Allocate')
   await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'Yes' }).check()
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
   await verifyPage(page, true)
 
   await page.getByRole('radio', { name: /^The next session/ }).check()
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
   await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'No' }).check()
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
   await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'Medium - £1.75' }).check()
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
   await verifyPage(page, true)
 
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
   await verifyPage(page, true)
 
-  await page.getByRole('button', { name: 'Confirm this allocation' }).click()
+  await clickButton(page, 'Confirm this allocation')
 
-  await expect(page.getByRole('heading', { name: 'Allocation complete' })).toBeVisible()
-  await verifyPage(page, true)
+  await expectPage(page, 'Allocation complete', true)
 
-  await page.getByRole('link', { name: 'take Alfonso Cholak off Maths level 1' }).click()
+  await clickLink(page, 'take Alfonso Cholak off Maths level 1')
   await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'At the end of today' }).check()
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
   await verifyPage(page, true)
 
   await page.getByRole('radio', { name: 'Completed course or task' }).check()
 
-  await page.getByRole('button', { name: 'Continue' }).click()
+  await clickButton(page, 'Continue')
   await verifyPage(page, true)
 
-  const summaryRows = page.locator('.govuk-summary-list__row')
+  await expectSummaryRow(page, 'Activity', 'Maths level 1')
+  await expectSummaryRow(page, 'End of allocation', format(new Date(), 'd MMMM yyyy'))
+  await expectSummaryRow(page, 'Reason for allocation ending', 'Completed course or task')
 
-  await expect(summaryRows.filter({ hasText: 'Activity' })).toContainText('Maths level 1')
+  await clickButton(page, 'Confirm and remove')
 
-  await expect(summaryRows.filter({ hasText: 'End of allocation' })).toContainText(format(new Date(), 'd MMMM yyyy'))
-
-  await expect(summaryRows.filter({ hasText: 'Reason for allocation ending' })).toContainText(
-    'Completed course or task',
-  )
-
-  await page.getByRole('button', { name: 'Confirm and remove' }).click()
-
-  await expect(page.getByRole('heading', { name: 'Removal complete' })).toBeVisible()
-  await verifyPage(page, true)
+  await expectPage(page, 'Removal complete', true)
 })
