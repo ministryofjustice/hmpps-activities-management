@@ -183,6 +183,7 @@ describe('Route Handlers - Attend All - List Activities', () => {
         user: {
           username: 'joebloggs',
           activeCaseLoadId: 'MDI',
+          externalActivitiesRolledOut: true,
         },
       },
       render: jest.fn(),
@@ -206,7 +207,7 @@ describe('Route Handlers - Attend All - List Activities', () => {
 
       when(locationsService.getLocationById).calledWith('100', res.locals.user).mockResolvedValue(aWing)
 
-      when(activitiesService.getActivityCategories).calledWith(res.locals.user).mockResolvedValue(mockCategories)
+      when(activitiesService.getActivityCategories).calledWith(res.locals.user, true).mockResolvedValue(mockCategories)
 
       when(activitiesService.getScheduledInstanceAttendanceSummary)
         .calledWith(res.locals.user.activeCaseLoadId, date, res.locals.user)

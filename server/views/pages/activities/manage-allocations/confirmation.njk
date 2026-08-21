@@ -29,7 +29,7 @@
                 <p class='govuk-body'>You can{% if not activitiesPresentToDeallocate %} either{% endif %}:</p>
                 <ul class='govuk-list govuk-list--bullet'>
                     {% if activitiesPresentToDeallocate %}
-                        <li><a href={{ deallocationHref }} class='govuk-link'>take {{ prisonerName }} off {{ deallocationText }}</li>
+                        <li><a href={{ deallocationHref }} class='govuk-link'>take {{ prisonerName }} off {{ deallocationText }}</a></li>
                     {% endif %}
                     <li><a href="/activities/prisoner-allocations/{{ prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>check and manage {{ prisonerName | possessive }} allocations</a></li>
                     <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link govuk-link--no-visited-state'>review the allocations for {{ activityName }}</a> and continue allocating</li>

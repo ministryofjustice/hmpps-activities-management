@@ -24,7 +24,10 @@ export default class PlannedEventsRoutes {
       .getLocationGroups(user)
       .then(locations => locations.find(loc => loc.key === locationKey))
 
-    const activityCategories = await this.activitiesService.getActivityCategories(user)
+    const activityCategories = await this.activitiesService.getActivityCategories(
+      user,
+      user.externalActivitiesRolledOut,
+    )
 
     const alertOptions = this.alertsFilterService.getAllAlertFilterOptions()
 

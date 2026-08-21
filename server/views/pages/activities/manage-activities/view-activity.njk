@@ -34,7 +34,7 @@
                             text: "Activity category"
                         },
                         value: {
-                            text: activity.category.name
+                            text: "Outside activity" if outsideWork else activity.category.name
                         },
                         actions: {
                             items: [
@@ -46,7 +46,7 @@
                                     attributes: { "data-qa": "change-category-link" }
                                 }
                             ]
-                        } if not activityEnded
+                        } if not activityEnded and not outsideWork
                     },
                     {
                         key: {

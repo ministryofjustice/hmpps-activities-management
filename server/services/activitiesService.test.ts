@@ -120,7 +120,18 @@ describe('Activities Service', () => {
       const actualResult = await activitiesService.getActivityCategories(user)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getActivityCategories).toHaveBeenCalledWith(user)
+      expect(activitiesApiClient.getActivityCategories).toHaveBeenCalledWith(user, false)
+    })
+
+    it('should request the ROTL category when required', async () => {
+      const expectedResult = [{ id: 10, description: 'Outside activity' }] as ActivityCategory[]
+
+      when(activitiesApiClient.getActivityCategories).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getActivityCategories(user, true)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getActivityCategories).toHaveBeenCalledWith(user, true)
     })
   })
 

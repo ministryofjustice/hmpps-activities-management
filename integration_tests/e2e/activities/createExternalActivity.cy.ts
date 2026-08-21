@@ -11,6 +11,7 @@ import QualificationPage from '../../pages/createActivity/qualification'
 import EducationLevelPage from '../../pages/createActivity/educationLevel'
 import CheckEducationLevelsPage from '../../pages/createActivity/checkEducationLevels'
 import getCategories from '../../fixtures/activitiesApi/getCategories.json'
+import getCategoriesIncludingRotl from '../../fixtures/activitiesApi/getCategoriesIncludingRotl.json'
 import getActivities from '../../fixtures/activitiesApi/getActivities.json'
 import moorlandPayBands from '../../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import moorlandIncentiveLevels from '../../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
@@ -46,6 +47,7 @@ context('Create external activity', () => {
     cy.task('stubSignIn')
     cy.signInEAEnabled()
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
+    cy.stubEndpoint('GET', '/activity-categories\\?includeRotl=true', getCategoriesIncludingRotl)
     cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=false', getActivities)
@@ -73,8 +75,18 @@ context('Create external activity', () => {
     manageActivitiesPage.createAnActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
-    activityTypePage.selectInsideType()
+    activityTypePage
+      .heading()
+      .should('contain.text', 'Does the activity take place inside or outside the prison grounds?')
+    activityTypePage.insideOption().should('contain.text', 'Inside')
+    activityTypePage.outsideOption().should('contain.text', 'Outside')
+    activityTypePage.outsideHint().should('contain.text', 'The activity category will be set as ‘Outside activity’.')
     activityTypePage.continue()
+
+    const activityTypePageWithErrors = Page.verifyOnPage(ActivityTypePage)
+    activityTypePageWithErrors.assertValidationError('type', 'Select if the activity takes place inside or outside')
+    activityTypePageWithErrors.selectInside()
+    activityTypePageWithErrors.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.caption().should('contain.text', 'Create an activity')
@@ -205,14 +217,8 @@ context('Create external activity', () => {
     manageActivitiesPage.createAnActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
-    activityTypePage.selectOutsideType()
+    activityTypePage.selectOutside()
     activityTypePage.continue()
-
-    const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.caption().should('contain.text', 'Create an outside activity')
-    categoryPage.categoryLabels().should('not.contain', 'Not in work')
-    categoryPage.selectCategory('Industries')
-    categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
     activityNamePage.enterName('Workshop')
@@ -257,6 +263,8 @@ context('Create external activity', () => {
     capacityPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.assertActivityDetail('Activity category', 'Outside activity')
+    checkAnswersPage.changeActivityCategoryLink().should('not.exist')
     checkAnswersPage.createActivity()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
@@ -275,13 +283,8 @@ context('Create external activity', () => {
     manageActivitiesPage.createAnActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
-    activityTypePage.selectOutsideType()
+    activityTypePage.selectOutside()
     activityTypePage.continue()
-
-    const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.categoryLabels().should('not.contain', 'Induction')
-    categoryPage.selectCategory('Industries')
-    categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
     activityNamePage.enterName('Workshop')
@@ -355,6 +358,8 @@ context('Create external activity', () => {
     capacityPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.assertActivityDetail('Activity category', 'Outside activity')
+    checkAnswersPage.changeActivityCategoryLink().should('not.exist')
     checkAnswersPage.createActivity()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)

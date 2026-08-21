@@ -78,6 +78,21 @@ describe('activitiesApiClient', () => {
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
+
+    it('should include the ROTL category when requested', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/activity-categories')
+        .query({ includeRotl: true })
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getActivityCategories(user, true)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
   })
 
   describe('getActivityCategories', () => {

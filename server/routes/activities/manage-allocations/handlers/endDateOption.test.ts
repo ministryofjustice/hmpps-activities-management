@@ -59,6 +59,16 @@ describe('Route Handlers - Allocation - End Date option', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-band')
     })
 
+    it('should redirect to the multiple pay band page when selecting no end date for a paid multiple allocation', async () => {
+      req.body.endDateOption = 'no'
+      req.journeyData.allocateJourney.activity.paid = true
+      req.journeyData.allocateJourney.allocateMultipleInmatesMode = true
+
+      await handler.POST(req, res)
+
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('multiple/pay-band-multiple')
+    })
+
     it('should redirect to exclusions page when selecting no and activity is unpaid (single allocation mode)', async () => {
       req.body.endDateOption = 'no'
       req.journeyData.allocateJourney.activity.paid = false
@@ -69,7 +79,7 @@ describe('Route Handlers - Allocation - End Date option', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('exclusions')
     })
 
-    it('should redirect to exclusions page when selecting no and activity is unpaid (multiple allocation mode)', async () => {
+    it('should redirect to the multiple pay band route when selecting no end date for an unpaid multiple allocation', async () => {
       req.body.endDateOption = 'no'
       req.journeyData.allocateJourney.activity.paid = false
       req.journeyData.allocateJourney.allocateMultipleInmatesMode = true

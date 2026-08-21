@@ -96,6 +96,33 @@ describe('Route Handlers - Allocation dashboard', () => {
   afterEach(() => jest.resetAllMocks())
 
   describe('GET', () => {
+    const waitlistApplicationsWithDifferentStatuses = [
+      {
+        id: 1,
+        scheduleId: 1,
+        prisonerNumber: 'A0013DZ',
+        status: 'PENDING',
+        requestedDate: '2023-08-07',
+        requestedBy: 'PRISONER',
+      },
+      {
+        id: 2,
+        scheduleId: 1,
+        prisonerNumber: 'B2222CD',
+        status: 'DECLINED',
+        requestedDate: '2023-08-07',
+        requestedBy: 'PRISONER',
+      },
+      {
+        id: 3,
+        scheduleId: 1,
+        prisonerNumber: 'F4444FF',
+        status: 'WITHDRAWN',
+        requestedDate: '2023-08-07',
+        requestedBy: 'PRISONER',
+      },
+    ] as WaitingListApplication[]
+
     beforeEach(() => {
       activitiesService.getActivity = jest.fn()
 
@@ -537,6 +564,9 @@ describe('Route Handlers - Allocation dashboard', () => {
           ],
           filters: {
             candidateQuery: 'jack',
+            incentiveLevelFilter: 'All Incentive Levels',
+            riskLevelFilter: 'Any Workplace Risk Assessment',
+            employmentFilter: 'Everyone',
           },
           suitableForIep: 'All Incentive Levels',
           suitableForWra: 'Low or Medium or High',
@@ -834,6 +864,33 @@ describe('Route Handlers - Allocation dashboard', () => {
       )
     })
 
+    it('should retain suitable incentive level filtering when searching for an outside activity candidate', async () => {
+      req.params = { activityId: '1' }
+      req.query.candidateQuery = 'joe'
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1, user, false))
+        .mockResolvedValue({
+          outsideWork: true,
+          paid: true,
+          pay: [{ incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
+          schedules: [activitySchedule],
+        } as unknown as Activity)
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        ['Standard', 'Enhanced'],
+        undefined,
+        undefined,
+        false,
+        'joe',
+        0,
+      )
+    })
+
     it('should populate the status filter correctly', async () => {
       req.params = { activityId: '1' }
 
@@ -855,6 +912,38 @@ describe('Route Handlers - Allocation dashboard', () => {
           },
         }),
       )
+    })
+
+    it('should exclude withdrawn applications when no waitlist status filter is selected', async () => {
+      req.params = { activityId: '1' }
+
+      activitiesService.fetchActivityWaitlist.mockReset()
+      activitiesService.fetchActivityWaitlist.mockResolvedValue(waitlistApplicationsWithDifferentStatuses)
+
+      await handler.GET(req, res)
+
+      const [, viewModel] = (res.render as jest.Mock).mock.calls[0]
+      const statuses = viewModel.waitlistedPrisoners.map((prisoner: { status: string }) => prisoner.status)
+
+      expect(statuses).toHaveLength(2)
+      expect(statuses).toContain('PENDING')
+      expect(statuses).toContain('DECLINED')
+      expect(statuses).not.toContain('WITHDRAWN')
+    })
+
+    it('should only return withdrawn applications when waitlist status filter is withdrawn', async () => {
+      req.params = { activityId: '1' }
+      req.query.waitlistStatusFilter = 'WITHDRAWN'
+
+      activitiesService.fetchActivityWaitlist.mockReset()
+      activitiesService.fetchActivityWaitlist.mockResolvedValue(waitlistApplicationsWithDifferentStatuses)
+
+      await handler.GET(req, res)
+
+      const [, viewModel] = (res.render as jest.Mock).mock.calls[0]
+      const statuses = viewModel.waitlistedPrisoners.map((prisoner: { status: string }) => prisoner.status)
+
+      expect(statuses).toEqual(['WITHDRAWN'])
     })
   })
 
