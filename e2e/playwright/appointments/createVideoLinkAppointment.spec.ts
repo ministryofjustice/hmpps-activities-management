@@ -60,6 +60,10 @@ const enterDateAndTime = async (page: Page, date: Date, court: boolean): Promise
       .getByRole('group', { name: 'Do you want to add a pre-court hearing briefing?' })
       .getByRole('radio', { name: 'No' })
       .check()
+    await page
+      .getByRole('group', { name: 'Do you want to add a post-court hearing briefing?' })
+      .getByRole('radio', { name: 'No' })
+      .check()
   }
 
   await continueTo(page, 'Review scheduled events to avoid clashes')
