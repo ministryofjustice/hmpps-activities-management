@@ -9,6 +9,7 @@ import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import AlertsFilterService from '../../../../services/alertsFilterService'
 import activityCategories from '../../../../services/fixtures/activity_categories.json'
+import { ActivityCategoryEnum } from '../../../../data/activityCategoryEnum'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/unlockListService')
@@ -19,6 +20,15 @@ const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesS
 const unlockListService = new UnlockListService(null, null, null) as jest.Mocked<UnlockListService>
 const alertsFilterService = new AlertsFilterService() as jest.Mocked<AlertsFilterService>
 const metricsService = new MetricsService() as jest.Mocked<MetricsService>
+const activityCategoriesWithRotl = [
+  ...activityCategories,
+  {
+    id: 10,
+    code: ActivityCategoryEnum.SAA_ROTL,
+    name: 'Outside activity',
+    description: 'Activities which take place outside the prison',
+  },
+] as ActivityCategory[]
 
 describe('Unlock list routes - planned events', () => {
   const handler = new PlannedEventRoutes(activitiesService, unlockListService, metricsService, alertsFilterService)
@@ -51,6 +61,7 @@ describe('Unlock list routes - planned events', () => {
       locals: {
         user: {
           activeCaseLoadId: 'MDI',
+          externalActivitiesRolledOut: true,
         },
       },
       render: jest.fn(),
@@ -96,7 +107,9 @@ describe('Unlock list routes - planned events', () => {
       when(activitiesService.getLocationGroups).mockResolvedValue(locationsAtPrison)
       when(unlockListService.getFilteredUnlockList).mockResolvedValue(unlockListItems)
       when(alertsFilterService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
-      when(activitiesService.getActivityCategories).mockResolvedValue(activityCategories as ActivityCategory[])
+      when(activitiesService.getActivityCategories)
+        .calledWith(res.locals.user, true)
+        .mockResolvedValue(activityCategoriesWithRotl)
 
       await handler.GET(req, res)
 
@@ -116,6 +129,7 @@ describe('Unlock list routes - planned events', () => {
           'SAA_FAITH_SPIRITUALITY',
           'SAA_NOT_IN_WORK',
           'SAA_OTHER',
+          ActivityCategoryEnum.SAA_ROTL,
         ],
         'Both',
         ['ALERT_HA'],
@@ -136,7 +150,7 @@ describe('Unlock list routes - planned events', () => {
             { name: 'C-Wing', key: 'C', children: [] },
           ],
         },
-        activityCategories,
+        activityCategories: activityCategoriesWithRotl,
         timeSlot: 'AM',
         unlockListItems,
         movementCounts: {
@@ -182,7 +196,9 @@ describe('Unlock list routes - planned events', () => {
       when(activitiesService.getLocationGroups).mockResolvedValue(locationsAtPrison)
       when(unlockListService.getFilteredUnlockList).mockResolvedValue(unlockListItems)
       when(alertsFilterService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
-      when(activitiesService.getActivityCategories).mockResolvedValue(activityCategories as ActivityCategory[])
+      when(activitiesService.getActivityCategories)
+        .calledWith(res.locals.user, true)
+        .mockResolvedValue(activityCategoriesWithRotl)
 
       await handler.GET(req, res)
 
@@ -202,6 +218,7 @@ describe('Unlock list routes - planned events', () => {
           'SAA_FAITH_SPIRITUALITY',
           'SAA_NOT_IN_WORK',
           'SAA_OTHER',
+          ActivityCategoryEnum.SAA_ROTL,
         ],
         'Leaving',
         ['CAT_A'],
@@ -226,7 +243,7 @@ describe('Unlock list routes - planned events', () => {
             { name: 'C-Wing', key: 'C', children: [] },
           ],
         },
-        activityCategories,
+        activityCategories: activityCategoriesWithRotl,
         timeSlot: 'AM',
         unlockListItems,
         movementCounts: {
@@ -236,6 +253,35 @@ describe('Unlock list routes - planned events', () => {
         alertOptions: alertFilterOptions,
       })
     })
+
+    it('should not request the ROTL category when external activities are not rolled out', async () => {
+      res.locals.user.externalActivitiesRolledOut = false
+      req = {
+        query: { date: '2022-01-01' },
+        journeyData: {
+          unlockListJourney: {
+            locationKey: 'A',
+            timeSlot: 'AM',
+          },
+        },
+      } as unknown as Request
+
+      when(activitiesService.getLocationGroups).mockResolvedValue(locationsAtPrison)
+      when(activitiesService.getActivityCategories)
+        .calledWith(res.locals.user, false)
+        .mockResolvedValue(activityCategories as ActivityCategory[])
+      when(unlockListService.getFilteredUnlockList).mockResolvedValue([])
+      when(alertsFilterService.getAllAlertFilterOptions).mockReturnValue([])
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getActivityCategories).toHaveBeenCalledWith(res.locals.user, false)
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/unlock-list/planned-events',
+        expect.objectContaining({ activityCategories }),
+      )
+    })
+
     it('should pass true into function call if the user has selected/removed any activity category filters', async () => {
       req = {
         query: {
@@ -272,7 +318,9 @@ describe('Unlock list routes - planned events', () => {
       when(alertsFilterService.getAllAlertFilterOptions).mockReturnValue([
         { key: 'CAT_A', description: 'CAT A', codes: ['A', 'E'] },
       ])
-      when(activitiesService.getActivityCategories).mockResolvedValue(activityCategories as ActivityCategory[])
+      when(activitiesService.getActivityCategories)
+        .calledWith(res.locals.user, true)
+        .mockResolvedValue(activityCategoriesWithRotl)
 
       await handler.GET(req, res)
 

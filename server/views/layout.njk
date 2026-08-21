@@ -29,7 +29,7 @@
 
 {% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
 
-{% block govukHeader %}
+{% block header %}
   {{ feComponents.header | safe }}
   {% block meta %}{% endblock %}
 {% endblock %}
@@ -49,7 +49,7 @@
 {% endblock %}
 
 
-{% block govukFooter %}
+{% block footer %}
   {{ feComponents.footer | safe }}
 {% endblock %}
 

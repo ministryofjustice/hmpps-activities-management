@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-import verifyPage from './page'
+import { expectPage } from './page'
 
 const accessiblePage = `
   <!doctype html>
@@ -15,7 +15,7 @@ const accessiblePage = `
 test('runs the accessibility check when enabled', async ({ page }) => {
   await page.setContent(accessiblePage)
 
-  await verifyPage(page, true)
+  await expectPage(page, 'Test page', true)
 
   const axeType = await page.evaluate(() => {
     const browser = globalThis as unknown as { axe?: unknown }
@@ -28,7 +28,7 @@ test('runs the accessibility check when enabled', async ({ page }) => {
 test('skips the accessibility check when disabled', async ({ page }) => {
   await page.setContent(accessiblePage)
 
-  await verifyPage(page, false)
+  await expectPage(page, 'Test page', false)
 
   const axeType = await page.evaluate(() => {
     const browser = globalThis as unknown as { axe?: unknown }
