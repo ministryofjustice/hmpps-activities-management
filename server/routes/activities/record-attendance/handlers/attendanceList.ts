@@ -350,7 +350,10 @@ export default class AttendanceListRoutes {
       }
     })
 
-    if (selectedPrisoners.some(prisoner => !prisoner)) return res.redirect('/activities/attendance')
+    if (selectedPrisoners.some(prisoner => !prisoner)) {
+      delete recordAttendanceJourney.notAttended
+      return res.redirect('/activities/attendance')
+    }
 
     recordAttendanceJourney.notAttended = { selectedPrisoners }
 

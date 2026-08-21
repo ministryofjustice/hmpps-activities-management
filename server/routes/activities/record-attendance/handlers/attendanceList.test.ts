@@ -935,9 +935,22 @@ describe('Route Handlers - Attendance List', () => {
       },
     )
 
-    it('should redirect to the attendance dashboard when an attendance is no longer available', async () => {
+    it('should clear the not attended journey and redirect when an attendance is no longer available', async () => {
       req.body = {
         selectedAttendances: ['1-111-ABC123'],
+      }
+      req.journeyData.recordAttendanceJourney.notAttended = {
+        selectedPrisoners: [
+          {
+            instanceId: 99,
+            attendanceId: 999,
+            prisonerNumber: 'OLD123',
+            prisonerName: 'Old Prisoner',
+            firstName: 'Old',
+            lastName: 'Prisoner',
+            otherEvents: [],
+          },
+        ],
       }
 
       when(activitiesService.getScheduledActivity)
