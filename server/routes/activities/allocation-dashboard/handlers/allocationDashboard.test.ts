@@ -1096,26 +1096,21 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     it('should redirect to confirm the existing end date when a selected allocation already has a planned deallocation', async () => {
       req.body.selectedAllocations = ['1']
-      req.params.activityId = '2'
+      req.params.activityId = '1'
 
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(2, user, false))
-        .mockResolvedValue({
-          ...mockActivity,
-          id: 2,
-          schedules: [{ ...activitySchedule, id: 1 }],
-        } as unknown as Activity)
+      activitiesService.getActivity.mockReset()
+      activitiesService.getAllocations.mockReset()
 
-      when(activitiesService.getAllocations)
-        .calledWith(1, user)
-        .mockResolvedValue([
-          {
-            id: 1,
-            plannedDeallocation: {
-              plannedDate: '2026-09-01',
-            },
-          } as Allocation,
-        ])
+      activitiesService.getActivity.mockResolvedValue(mockActivity)
+
+      activitiesService.getAllocations.mockResolvedValue([
+        {
+          id: 1,
+          plannedDeallocation: {
+            plannedDate: '2026-09-01',
+          },
+        } as Allocation,
+      ])
 
       await handler.DEALLOCATE(req, res)
 
