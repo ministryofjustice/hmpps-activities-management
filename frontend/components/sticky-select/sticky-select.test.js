@@ -2,6 +2,10 @@
 
 import StickySelect from './sticky-select'
 
+jest.mock('../../utils', () => ({
+  nodeListForEach: (nodes, callback) => nodes.forEach(callback),
+}))
+
 describe('StickySelect', () => {
   const createStickySelect = ({ selectedCheckboxes = 1, maxItems = '1' } = {}) => {
     const stickySelect = Object.create(StickySelect.prototype)
