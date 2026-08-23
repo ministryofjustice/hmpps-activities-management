@@ -6,7 +6,6 @@ import { signIn } from '../../helpers/auth'
 import setupDeallocationScenario from '../../helpers/activities/allocations/deallocation'
 import { clickButton, clickLink, successBanner, expectSummaryRow } from '../../helpers/govuk'
 import verifyPage, { expectPage } from '../../helpers/page'
-import {} from '../../helpers/govuk'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
