@@ -510,6 +510,21 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(res.redirect).toHaveBeenCalledWith('../location')
     })
 
+    it('should retain the appointments dashboard URL from the appointment details referrer', async () => {
+      const returnUrl = '/appointments/search?startDate=2023-05-26&timeSlots=AM&createdBy=USER1'
+      req.params = {
+        journeyId,
+        property: 'location',
+      }
+      when(req.get)
+        .calledWith('Referrer')
+        .mockReturnValue(`http://localhost:3000/appointments/12?returnUrl=${encodeURIComponent(returnUrl)}`)
+
+      await handler.EDIT(req, res)
+
+      expect(req.journeyData.editAppointmentJourney.returnUrl).toBe(returnUrl)
+    })
+
     it('should accept an invalid end date value', async () => {
       req.appointment.endTime = null
       req.params = {
@@ -661,6 +676,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
   describe('ADD_PRISONERS', () => {
     beforeEach(() => {
       req = {
+        get: jest.fn(),
         session: {},
         journeyData: {},
         params: { journeyId },
@@ -712,6 +728,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
   describe('CANCEL', () => {
     beforeEach(() => {
       req = {
+        get: jest.fn(),
         session: {},
         journeyData: {},
         params: { journeyId },
@@ -760,6 +777,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
   describe('UNCANCEL', () => {
     beforeEach(() => {
       req = {
+        get: jest.fn(),
         session: {},
         journeyData: {},
         params: { journeyId },
