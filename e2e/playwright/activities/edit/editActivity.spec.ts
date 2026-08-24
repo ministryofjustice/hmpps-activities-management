@@ -40,11 +40,12 @@ test.describe('Edit an activity', () => {
 
     await expect(page.locator('input[name="timeSlotsMonday"][value="AM"]')).toBeChecked()
 
-    for (const day of ['Monday', 'Tuesday', 'Wednesday', 'Thursday']) {
-      await page.locator(`input[name="timeSlots${day}"][value="AM"]`).uncheck()
-
-      await page.locator(`input[name="days"][value="${day.toLowerCase()}"]`).uncheck()
-    }
+    await Promise.all(
+      ['Monday', 'Tuesday', 'Wednesday', 'Thursday'].flatMap(day => [
+        page.locator(`input[name="timeSlots${day}"][value="AM"]`).uncheck(),
+        page.locator(`input[name="days"][value="${day.toLowerCase()}"]`).uncheck(),
+      ]),
+    )
 
     await page.locator('input[name="days"][value="monday"]').check()
     await page.locator('input[name="timeSlotsMonday"][value="AM"]').check()
