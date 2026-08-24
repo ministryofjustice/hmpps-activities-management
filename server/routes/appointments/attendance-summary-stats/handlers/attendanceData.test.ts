@@ -196,6 +196,51 @@ describe('Route Handlers - Attendance data', () => {
       })
     })
 
+    it('should pass a prison number search to the activities service', async () => {
+      req.query.date = '2025-07-09'
+      req.query.searchTerm = 'G3757GX'
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getAppointmentsByStatusAndDate).toHaveBeenCalledWith(
+        'MDI',
+        AttendanceStatus.EVENT_TIER,
+        new Date('2025-07-09'),
+        res.locals.user,
+        'Medical & Doctor',
+        'Custom Medical & Doctor',
+        'G3757GX',
+        EventTier.TIER_1,
+        EventOrganiser.EXTERNAL_PROVIDER,
+      )
+    })
+
+    it('should search names after enriching appointments with prisoner details', async () => {
+      req.query.date = '2025-07-09'
+      req.query.searchTerm = 'egurztof'
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getAppointmentsByStatusAndDate).toHaveBeenCalledWith(
+        'MDI',
+        AttendanceStatus.EVENT_TIER,
+        new Date('2025-07-09'),
+        res.locals.user,
+        'Medical & Doctor',
+        'Custom Medical & Doctor',
+        null,
+        EventTier.TIER_1,
+        EventOrganiser.EXTERNAL_PROVIDER,
+      )
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/attendance-summary-stats/attendanceData',
+        expect.objectContaining({
+          appointments: [expect.objectContaining({ prisonerNumber: 'G3757GX', firstName: 'EGURZTOF' })],
+          searchTerm: 'egurztof',
+        }),
+      )
+    })
+
     it('should set isOlderThanSevenDays to true when date is more than 7 days ago', async () => {
       const eightDaysAgo = new Date()
       eightDaysAgo.setDate(eightDaysAgo.getDate() - 8)
