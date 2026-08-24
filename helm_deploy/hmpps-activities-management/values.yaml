@@ -35,7 +35,7 @@ generic-service:
     PRISONER_EXTRA_INFORMATION_ENABLED: "false"
     NODE_USE_ENV_PROXY: "1"
     APPLICATION_INSIGHTS_NO_STATSBEAT: "true"
-    VIDEO_CONFERENCE_ROOM_AVAILABILITY_PRISONS: "XXX"
+    VIDEO_CONFERENCE_ROOM_AVAILABILITY_PRISONS: "PVI,PNI,WWI,WSI,WCI,HOI,NMI,NHI,CDI,HEI,HHI"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
