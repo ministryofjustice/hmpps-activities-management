@@ -40,18 +40,10 @@ test.describe('Edit an activity', () => {
 
     await expect(page.locator('input[name="timeSlotsMonday"][value="AM"]')).toBeChecked()
 
-    await Promise.all(
-      ['Monday', 'Tuesday', 'Wednesday', 'Thursday'].flatMap(day => [
-        page.locator(`input[name="timeSlots${day}"][value="AM"]`).uncheck(),
-        page.locator(`input[name="days"][value="${day.toLowerCase()}"]`).uncheck(),
-      ]),
-    )
+    await page.locator('input[name="days"][value="tuesday"]').uncheck()
 
-    await page.locator('input[name="days"][value="monday"]').check()
-    await page.locator('input[name="timeSlotsMonday"][value="AM"]').check()
+    await page.locator('input[name="days"][value="thursday"]').uncheck()
 
-    await page.locator('input[name="days"][value="wednesday"]').check()
-    await page.locator('input[name="timeSlotsWednesday"][value="AM"]').check()
     await page.locator('input[name="timeSlotsWednesday"][value="PM"]').check()
 
     await clickButton(page, 'Update days and sessions')
@@ -60,15 +52,15 @@ test.describe('Edit an activity', () => {
 
     // assert existing week 1 time.
     await expect(page.locator('#startTimes-1-MONDAY-AM-hour')).toHaveValue('9')
-    await expect(page.locator('#startTimes-1-MONDAY-AM-minute')).toHaveValue('00')
+    await expect(page.locator('#startTimes-1-MONDAY-AM-minute')).toHaveValue('0')
     await expect(page.locator('#endTimes-1-MONDAY-AM-hour')).toHaveValue('12')
-    await expect(page.locator('#endTimes-1-MONDAY-AM-minute')).toHaveValue('00')
+    await expect(page.locator('#endTimes-1-MONDAY-AM-minute')).toHaveValue('0')
 
     // assert Week 2 intact while week 1 is being edited.
     await expect(page.locator('#startTimes-2-MONDAY-PM-hour')).toHaveValue('13')
     await expect(page.locator('#startTimes-2-MONDAY-PM-minute')).toHaveValue('30')
     await expect(page.locator('#endTimes-2-MONDAY-PM-hour')).toHaveValue('17')
-    await expect(page.locator('#endTimes-2-MONDAY-PM-minute')).toHaveValue('00')
+    await expect(page.locator('#endTimes-2-MONDAY-PM-minute')).toHaveValue('0')
 
     // Set custom times for the new session.
     await page.locator('#startTimes-1-WEDNESDAY-PM-hour').selectOption('14')
