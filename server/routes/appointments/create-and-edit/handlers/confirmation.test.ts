@@ -233,7 +233,6 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
     it('should render a retrospective confirmation consistently on refresh', async () => {
       req.journeyData.appointmentJourney.retrospective = YesNo.YES
-      req.journeyData.appointmentJourney.confirmation = { id: 11 }
       req.appointment = {
         id: 11,
         appointmentSeries: { id: 2 },
