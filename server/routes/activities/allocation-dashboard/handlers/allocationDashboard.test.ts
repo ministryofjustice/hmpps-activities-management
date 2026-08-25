@@ -1093,6 +1093,31 @@ describe('Route Handlers - Allocation dashboard', () => {
         expect.stringContaining('/activities/allocations/remove/end-decision?allocationIds=1&scheduleId=1'),
       )
     })
+
+    it('should redirect to confirm the existing end date when a selected allocation already has a planned deallocation', async () => {
+      req.body.selectedAllocations = ['1']
+      req.params.activityId = '1'
+
+      activitiesService.getActivity.mockReset()
+      activitiesService.getAllocations.mockReset()
+
+      activitiesService.getActivity.mockResolvedValue(mockActivity)
+
+      activitiesService.getAllocations.mockResolvedValue([
+        {
+          id: 1,
+          plannedDeallocation: {
+            plannedDate: '2026-09-01',
+          },
+        } as Allocation,
+      ])
+
+      await handler.DEALLOCATE(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        '/activities/allocations/remove/confirm-deallocation-if-existing?allocationIds=1&scheduleId=1',
+      )
+    })
   })
 
   describe('VIEW_APPLICATION', () => {

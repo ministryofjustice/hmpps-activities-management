@@ -27,6 +27,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     const inmate = {
@@ -488,6 +489,31 @@ describe('Route Handlers - Allocate - Check answers', () => {
           123,
         )
         expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      })
+    })
+
+    describe('Edit allocation', () => {
+      it('should update the end date and redirect back to the allocation details', async () => {
+        req.routeContext = { mode: 'edit' }
+        req.params = { allocationId: '2' }
+
+        await handler.POST(req, res)
+
+        expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
+          1,
+          ['ABC123'],
+          'COMPLETED',
+          { type: 'GEN', text: 'test case note' },
+          '2023-02-01',
+          { username: 'joebloggs' },
+          null,
+        )
+
+        expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+          '/activities/allocations/view/2',
+          'Allocation updated',
+          'You have changed the end date for this allocation',
+        )
       })
     })
   })
