@@ -7,13 +7,18 @@ import NameRoutes, { Name } from './name'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentCategorySummary } from '../../../../@types/activitiesAPI/types'
 import { AppointmentType } from '../appointmentJourney'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
+import { MetricsEventType } from '../../../../@types/metricsEvents'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const metricsService = new MetricsService() as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Create Appointment - Name', () => {
-  const handler = new NameRoutes(activitiesService)
+  const handler = new NameRoutes(activitiesService, metricsService)
   let req: Request
   let res: Response
 
@@ -54,6 +59,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
     } as unknown as Response
 
     req = {
+      session: {},
       journeyData: {
         appointmentJourney: {},
       },
@@ -92,6 +98,24 @@ describe('Route Handlers - Create Appointment - Name', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
         categories: filteredCategories,
       })
+    })
+
+    it('should start journey metrics when scheduling another appointment from the confirmation page', async () => {
+      req.journeyData.appointmentJourney.type = AppointmentType.GROUP
+      req.journeyData.appointmentJourney.fromAppointmentConfirmation = true
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.GET(req, res)
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toEqual('appointmentConfirmation')
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', 'journeyId')
+          .addProperty('journeySource', 'appointmentConfirmation'),
+      )
+      expect(req.journeyData.appointmentJourney.fromAppointmentConfirmation).toBeUndefined()
     })
   })
 

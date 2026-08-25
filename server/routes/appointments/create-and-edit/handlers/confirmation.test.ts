@@ -70,9 +70,11 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
         appointmentSetJourney: {},
       },
       appointment: {
+        id: 1,
         appointmentSeries: { id: 2 },
+        attendees: [],
       } as AppointmentDetails,
-      appointmentSet: { id: 3 } as AppointmentSetDetails,
+      appointmentSet: { id: 3, appointments: [] } as AppointmentSetDetails,
       params: {
         journeyId,
         id: '1',
@@ -97,6 +99,19 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
       )
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         appointment: req.appointment,
+        appointmentJourney: expect.any(Object),
+        actions: [
+          {
+            href: '/appointments',
+            text: 'Schedule an appointment',
+            dataQa: 'create-another-link',
+          },
+          {
+            href: '/appointments/1',
+            text: 'View, manage and print a movement slip for this appointment',
+            dataQa: 'view-appointment-link',
+          },
+        ],
       })
     })
 
@@ -115,7 +130,131 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
       )
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         appointment: req.appointment,
+        appointmentJourney: expect.any(Object),
+        actions: [
+          {
+            href: '/appointments',
+            text: 'Schedule an appointment',
+            dataQa: 'create-another-link',
+          },
+          {
+            href: '/appointments/1',
+            text: 'View, manage and print a movement slip for this appointment',
+            dataQa: 'view-appointment-link',
+          },
+        ],
       })
+    })
+
+    it('should offer prisoner actions and prepare a new journey for a single attendee', async () => {
+      req.appointment = {
+        id: 11,
+        appointmentSeries: { id: 2 },
+        attendees: [
+          {
+            prisoner: {
+              prisonerNumber: 'A1234BC',
+              firstName: 'JOHN',
+              lastName: 'SMITH',
+              prisonCode: 'TPR',
+              status: 'ACTIVE IN',
+              cellLocation: '1-1-1',
+              category: 'C',
+            },
+          },
+        ],
+      } as AppointmentDetails
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
+        appointment: req.appointment,
+        appointmentJourney: expect.any(Object),
+        actions: [
+          {
+            href: '/appointments',
+            text: 'Schedule an appointment',
+            dataQa: 'create-another-link',
+          },
+          {
+            href: `/appointments/create/${journeyId}/name`,
+            text: 'Schedule another appointment for John Smith',
+            dataQa: 'create-another-for-prisoner-link',
+          },
+          {
+            href: 'https://prisoner-dev.digital.prison.service.justice.gov.uk/prisoner/A1234BC',
+            text: 'Go to John Smith’s prisoner profile',
+            dataQa: 'prisoner-profile-link',
+          },
+          {
+            href: '/appointments/11',
+            text: 'View, manage and print a movement slip for this appointment',
+            dataQa: 'view-appointment-link',
+          },
+        ],
+      })
+      expect(req.journeyData.appointmentJourney).toEqual({
+        mode: 'CREATE',
+        type: 'GROUP',
+        createJourneyComplete: false,
+        prisoners: [
+          {
+            number: 'A1234BC',
+            name: 'JOHN SMITH',
+            firstName: 'JOHN',
+            lastName: 'SMITH',
+            prisonCode: 'TPR',
+            status: 'ACTIVE IN',
+            cellLocation: '1-1-1',
+            category: 'C',
+          },
+        ],
+        fromAppointmentConfirmation: true,
+      })
+    })
+
+    it('should not offer prisoner actions for multiple attendees', async () => {
+      req.appointment.attendees = [
+        {
+          id: 1,
+          prisoner: {
+            prisonerNumber: 'A1234BC',
+            bookingId: 1,
+            firstName: 'FIRST',
+            lastName: 'PRISONER',
+            prisonCode: 'TPR',
+            cellLocation: '1-1-1',
+          },
+        },
+        {
+          id: 2,
+          prisoner: {
+            prisonerNumber: 'B2345CD',
+            bookingId: 2,
+            firstName: 'SECOND',
+            lastName: 'PRISONER',
+            prisonCode: 'TPR',
+            cellLocation: '1-1-2',
+          },
+        },
+      ]
+
+      await handler.GET(req, res)
+
+      const renderContext = (res.render as jest.Mock).mock.calls[0][1]
+      expect(renderContext.actions).toEqual([
+        {
+          href: '/appointments',
+          text: 'Schedule an appointment',
+          dataQa: 'create-another-link',
+        },
+        {
+          href: '/appointments/1',
+          text: 'View, manage and print a movement slip for this appointment',
+          dataQa: 'view-appointment-link',
+        },
+      ])
+      expect(req.journeyData.appointmentJourney).toBeNull()
     })
 
     it('should clear session', async () => {
@@ -139,7 +278,83 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
       )
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         appointmentSet: req.appointmentSet,
+        appointmentJourney: expect.any(Object),
+        actions: [
+          {
+            href: '/appointments',
+            text: 'Schedule an appointment',
+            dataQa: 'create-another-link',
+          },
+          {
+            href: '/appointments/set/3',
+            text: 'View, print movement slips and manage this set of appointments',
+            dataQa: 'view-appointment-link',
+          },
+        ],
       })
+    })
+
+    it('should offer prisoner actions and prepare a new journey for a one-person appointment set', async () => {
+      req.session.journeyMetrics.source = null
+      req.appointmentSet = {
+        id: 3,
+        appointments: [
+          {
+            attendees: [
+              {
+                prisoner: {
+                  prisonerNumber: 'A1234BC',
+                  firstName: 'JOHN',
+                  lastName: 'SMITH',
+                  prisonCode: 'TPR',
+                  status: 'ACTIVE IN',
+                  cellLocation: '1-1-1',
+                  category: 'C',
+                },
+              },
+            ],
+          },
+        ],
+      } as AppointmentSetDetails
+
+      await handler.GET_SET(req, res)
+
+      const renderContext = (res.render as jest.Mock).mock.calls[0][1]
+      expect(renderContext.actions).toEqual([
+        {
+          href: '/appointments',
+          text: 'Schedule an appointment',
+          dataQa: 'create-another-link',
+        },
+        {
+          href: `/appointments/create/${journeyId}/name`,
+          text: 'Schedule another appointment for John Smith',
+          dataQa: 'create-another-for-prisoner-link',
+        },
+        {
+          href: 'https://prisoner-dev.digital.prison.service.justice.gov.uk/prisoner/A1234BC',
+          text: 'Go to John Smith’s prisoner profile',
+          dataQa: 'prisoner-profile-link',
+        },
+        {
+          href: '/appointments/set/3',
+          text: 'View, print movement slips and manage this set of appointments',
+          dataQa: 'view-appointment-link',
+        },
+      ])
+      expect(req.journeyData.appointmentJourney.prisoners).toEqual([
+        {
+          number: 'A1234BC',
+          name: 'JOHN SMITH',
+          firstName: 'JOHN',
+          lastName: 'SMITH',
+          prisonCode: 'TPR',
+          status: 'ACTIVE IN',
+          cellLocation: '1-1-1',
+          category: 'C',
+        },
+      ])
+      expect(req.journeyData.appointmentSetJourney).toBeNull()
     })
 
     it('should clear session', async () => {
