@@ -23,6 +23,8 @@ export default class CheckAnswersRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
+    if (this.redirectToConfirmationIfAlreadyCreated(req, res)) return
+
     const { appointmentJourney } = req.journeyData
 
     appointmentJourney.createJourneyComplete = true
@@ -38,12 +40,15 @@ export default class CheckAnswersRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    if (this.redirectToConfirmationIfAlreadyCreated(req, res)) return
+
     const { user } = res.locals
     const { appointmentJourney } = req.journeyData
 
     if (appointmentJourney.type === AppointmentType.SET) {
       const request = this.createAppointmentSetRequest(req, res)
       const response = await this.activitiesService.createAppointmentSet(request, user)
+      appointmentJourney.confirmation = { id: response.id }
 
       this.metricsService.trackEvent(
         MetricsEvent.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED(response.id, req, res.locals.user),
@@ -54,6 +59,7 @@ export default class CheckAnswersRoutes {
     } else {
       const request = this.createAppointmentRequest(req, res)
       const response = await this.activitiesService.createAppointmentSeries(request, user)
+      appointmentJourney.confirmation = { id: response.appointments[0].id }
 
       this.metricsService.trackEvent(
         MetricsEvent.CREATE_APPOINTMENT_JOURNEY_COMPLETED(response.id, req, res.locals.user, appointmentJourney),
@@ -62,6 +68,15 @@ export default class CheckAnswersRoutes {
 
       res.redirect(`confirmation/${response.appointments[0].id}`)
     }
+  }
+
+  private redirectToConfirmationIfAlreadyCreated(req: Request, res: Response): boolean {
+    const { appointmentJourney } = req.journeyData
+    if (!appointmentJourney.confirmation) return false
+
+    const confirmationRoute = appointmentJourney.type === AppointmentType.SET ? 'set-confirmation' : 'confirmation'
+    res.redirect(`${confirmationRoute}/${appointmentJourney.confirmation.id}`)
+    return true
   }
 
   // TODO REMOVE after investigating caching of journeys
