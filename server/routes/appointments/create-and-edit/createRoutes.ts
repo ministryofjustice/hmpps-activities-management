@@ -68,7 +68,7 @@ export default function Create({
   const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService, appointeeAttendeeService)
   const selectPrisonerRoutes = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const nameRoutes = new NameRoutes(activitiesService)
+  const nameRoutes = new NameRoutes(activitiesService, metricsService)
   const tierRoutes = new TierRoutes(editAppointmentService)
   const hostRoutes = new HostRoutes(editAppointmentService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)

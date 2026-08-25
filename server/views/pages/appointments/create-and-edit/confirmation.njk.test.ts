@@ -18,6 +18,7 @@ describe('Views - Create Appointment - Confirmation', () => {
     appointment: {} as AppointmentDetails,
     appointmentJourney: {} as AppointmentJourney,
     appointmentSet: null as AppointmentSetDetails,
+    actions: [] as { href: string; text: string; dataQa: string }[],
   }
 
   const njkEnv = registerNunjucks()
@@ -28,6 +29,7 @@ describe('Views - Create Appointment - Confirmation', () => {
       appointment: {} as AppointmentDetails,
       appointmentJourney: {} as AppointmentJourney,
       appointmentSet: null as AppointmentSetDetails,
+      actions: [],
     }
   })
 
@@ -46,6 +48,28 @@ describe('Views - Create Appointment - Confirmation', () => {
         },
       ],
     } as AppointmentDetails
+    viewContext.actions = [
+      {
+        href: '/appointments',
+        text: 'Schedule an appointment',
+        dataQa: 'create-another-link',
+      },
+      {
+        href: '/appointments/create/test-journey/name',
+        text: 'Schedule another appointment for Test Prisoner',
+        dataQa: 'create-another-for-prisoner-link',
+      },
+      {
+        href: 'https://prisoner-dev.digital.prison.service.justice.gov.uk/prisoner/A1234BC',
+        text: 'Go to Test Prisoner’s prisoner profile',
+        dataQa: 'prisoner-profile-link',
+      },
+      {
+        href: '/appointments/11',
+        text: 'View, manage and print a movement slip for this appointment',
+        dataQa: 'view-appointment-link',
+      },
+    ]
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -53,8 +77,12 @@ describe('Views - Create Appointment - Confirmation', () => {
       `You have successfully scheduled an appointment for Test Prisoner on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
     )
     expect($('[data-qa=create-another-link]').attr('href')).toEqual('/appointments')
+    expect($('[data-qa=create-another-link]').text()).toEqual('Schedule an appointment')
     expect($('[data-qa=view-appointment-link]').attr('href')).toEqual('/appointments/11')
     expect($('[data-qa=record-attendance-link]')).toHaveLength(0)
+    expect($('h2 + p, h2 + p ~ p').text().trim().replace(/\s+/g, ' ')).toEqual(
+      'Schedule an appointment Schedule another appointment for Test Prisoner Go to Test Prisoner’s prisoner profile View, manage and print a movement slip for this appointment',
+    )
   })
 
   it('should not display a back link', () => {
@@ -96,6 +124,13 @@ describe('Views - Create Appointment - Confirmation', () => {
     } as AppointmentDetails
 
     viewContext.appointmentJourney.retrospective = YesNo.YES
+    viewContext.actions = [
+      {
+        href: '/appointments/attendance/11/select-appointment',
+        text: 'Record appointment attendance',
+        dataQa: 'record-attendance-link',
+      },
+    ]
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 

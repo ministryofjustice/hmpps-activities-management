@@ -9,11 +9,9 @@ import stubCreateAppointmentScenario from '../helpers/appointments/createAppoint
 import { clickButton, clickLink, expectSummaryRow } from '../helpers/govuk'
 import { expectPage } from '../helpers/page'
 
-const expectAccessiblePage = (page: Page, heading: string | RegExp): Promise<void> => expectPage(page, heading, true)
-
 const continueTo = async (page: Page, heading: string | RegExp, button: string | RegExp = 'Continue') => {
   await clickButton(page, button)
-  await expectAccessiblePage(page, heading)
+  await expectPage(page, heading, true)
 }
 
 const selectAutocompleteOption = async (page: Page, label: string | RegExp, option: string): Promise<void> => {
@@ -24,7 +22,7 @@ const selectAutocompleteOption = async (page: Page, label: string | RegExp, opti
 
 const startGroupAppointment = async (page: Page): Promise<void> => {
   await page.goto('/appointments/create/start-group')
-  await expectAccessiblePage(page, 'How do you want to select attendees?')
+  await expectPage(page, 'How do you want to select attendees?', true)
 }
 
 const addOnePrisoner = async (page: Page): Promise<void> => {
@@ -33,10 +31,10 @@ const addOnePrisoner = async (page: Page): Promise<void> => {
 
   await page.getByLabel('Who is the appointment for?').fill('A8644DY')
   await clickButton(page, 'Search')
-  await expectAccessiblePage(page, 'Who is the appointment for?')
+  await expectPage(page, 'Who is the appointment for?', true)
   await clickButton(page, 'Continue')
 
-  await expectAccessiblePage(page, 'Review who’s attending the appointment')
+  await expectPage(page, 'Review who’s attending the appointment', true)
   await expect(page.getByRole('row').filter({ hasText: 'Gregs, Stephen' })).toBeVisible()
   await continueTo(page, 'Review attendee alerts')
   await continueTo(page, 'What’s the appointment?')
@@ -59,14 +57,14 @@ const addGroupFromCsv = async (page: Page): Promise<void> => {
   await expect(page.getByRole('row').filter({ hasText: 'Gregs, Stephen' })).toBeVisible()
   await expect(page.getByRole('row').filter({ hasText: 'Winchurch, David' })).toBeVisible()
   await clickButton(page, 'Add another person individually')
-  await expectAccessiblePage(page, 'Who is the appointment for?')
+  await expectPage(page, 'Who is the appointment for?', true)
 
   await page.getByLabel('Who is the appointment for?').fill('lee')
   await clickButton(page, 'Search')
-  await expectAccessiblePage(page, 'Who is the appointment for?')
+  await expectPage(page, 'Who is the appointment for?', true)
   await clickButton(page, 'Continue')
 
-  await expectAccessiblePage(page, 'Review who’s attending the appointment')
+  await expectPage(page, 'Review who’s attending the appointment', true)
   await expect(page.getByRole('row').filter({ hasText: 'Jacobson, Lee' })).toBeVisible()
   await continueTo(page, 'Review attendee alerts')
 
@@ -106,7 +104,7 @@ const completeCoreDetails = async (page: Page, appointmentDate: Date): Promise<v
 }
 
 const finishFutureAppointment = async (page: Page, repeat: boolean): Promise<void> => {
-  await expectAccessiblePage(page, 'Will the appointment repeat?')
+  await expectPage(page, 'Will the appointment repeat?', true)
   await page.getByRole('radio', { name: repeat ? 'Yes' : 'No', exact: true }).check()
 
   if (repeat) {
@@ -143,18 +141,20 @@ test.describe('Create appointments', () => {
     await expectSummaryRow(page, 'Repeats', 'No')
 
     await clickLink(page, 'Change change location')
-    await expectAccessiblePage(page, 'Where will the appointment take place?')
+    await expectPage(page, 'Where will the appointment take place?', true)
     await continueTo(page, 'Check and confirm the appointment details')
     await expectSummaryRow(page, 'Location', 'Chapel')
 
     await clickButton(page, 'Confirm')
-    await expectAccessiblePage(page, /Appointment scheduled/)
+    await expectPage(page, /Appointment scheduled/, true)
     await expect(page.locator('[data-qa="message"]')).toContainText(
       `You have successfully scheduled an appointment for 3 people on ${format(tomorrow, 'EEEE, d MMMM yyyy')}`,
     )
+    await expect(page.locator('[data-qa="create-another-for-prisoner-link"]')).toHaveCount(0)
+    await expect(page.locator('[data-qa="prisoner-profile-link"]')).toHaveCount(0)
 
-    await clickLink(page, /View, print movement slips and manage this appointment/)
-    await expectAccessiblePage(page, 'Chaplain Meeting (Chaplaincy)')
+    await clickLink(page, 'View, manage and print a movement slip for this appointment')
+    await expectPage(page, 'Chaplain Meeting (Chaplaincy)', true)
     await expectSummaryRow(page, 'Location', 'Chapel')
     await expect(page.locator('[data-qa="prisoner-list-title"]')).toContainText('3 attendees')
   })
@@ -174,10 +174,37 @@ test.describe('Create appointments', () => {
     await expectSummaryRow(page, 'Number of appointments', '7')
     await clickButton(page, 'Confirm')
 
-    await expectAccessiblePage(page, /Appointment scheduled/)
+    await expectPage(page, /Appointment scheduled/, true)
     await expect(page.locator('[data-qa="message"]')).toContainText(
       'It will repeat daily (includes weekends) for 7 appointments',
     )
+
+    const nextActionLinks = page.locator(
+      '[data-qa="create-another-link"], [data-qa="create-another-for-prisoner-link"], [data-qa="prisoner-profile-link"], [data-qa="view-appointment-link"]',
+    )
+    await expect(nextActionLinks).toHaveText([
+      'Schedule an appointment',
+      'Schedule another appointment for Stephen Gregs',
+      'Go to Stephen Gregs’ prisoner profile',
+      'View, manage and print a movement slip for this appointment',
+    ])
+    await expect(nextActionLinks.nth(0)).toHaveAttribute('href', '/appointments')
+    await expect(nextActionLinks.nth(1)).toHaveAttribute('href', /\/appointments\/create\/[0-9a-f-]+\/name/)
+    await expect(nextActionLinks.nth(2)).toHaveAttribute(
+      'href',
+      'https://prisoner-dev.digital.prison.service.justice.gov.uk/prisoner/A8644DY',
+    )
+    await expect(nextActionLinks.nth(3)).toHaveAttribute('href', '/appointments/11')
+
+    await clickLink(page, 'Schedule another appointment for Stephen Gregs')
+    await expectPage(page, 'What’s the appointment?', true)
+    await expect(page).toHaveURL(/\/appointments\/create\/[0-9a-f-]+\/name$/)
+
+    await completeCoreDetails(page, tomorrow)
+    await expectPage(page, 'Will the appointment repeat?', true)
+    await page.getByRole('radio', { name: 'No', exact: true }).check()
+    await continueTo(page, 'Review scheduled events to avoid clashes')
+    await expect(page.locator('[data-qa="schedule-card-title-prison-number-A8644DY"]')).toContainText('Stephen Gregs')
   })
 
   test('creates a retrospective appointment and offers attendance recording', async ({ page }) => {
@@ -189,11 +216,11 @@ test.describe('Create appointments', () => {
     await addOnePrisoner(page)
     await completeCoreDetails(page, fiveDaysAgo)
 
-    await expectAccessiblePage(page, 'Check and confirm the appointment details')
+    await expectPage(page, 'Check and confirm the appointment details', true)
     await expectSummaryRow(page, 'Repeats', 'No')
     await clickButton(page, 'Confirm')
 
-    await expectAccessiblePage(page, /Appointment created/)
+    await expectPage(page, /Appointment created/, true)
     await expect(page.locator('[data-qa="message"]')).toContainText(
       `You have successfully created an appointment for Stephen Gregs on ${format(fiveDaysAgo, 'EEEE, d MMMM yyyy')}`,
     )
