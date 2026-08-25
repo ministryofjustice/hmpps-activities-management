@@ -189,7 +189,7 @@ test.describe('Create appointments', () => {
       'View, manage and print a movement slip for this appointment',
     ])
     await expect(nextActionLinks.nth(0)).toHaveAttribute('href', '/appointments')
-    await expect(nextActionLinks.nth(1)).toHaveAttribute('href', /\/appointments\/create\/[0-9a-f-]+\/name/)
+    await expect(nextActionLinks.nth(1)).toHaveAttribute('href', '/appointments/create/start-prisoner/A8644DY/name')
     await expect(nextActionLinks.nth(2)).toHaveAttribute(
       'href',
       'https://prisoner-dev.digital.prison.service.justice.gov.uk/prisoner/A8644DY',

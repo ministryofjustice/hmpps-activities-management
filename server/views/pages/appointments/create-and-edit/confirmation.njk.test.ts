@@ -55,7 +55,7 @@ describe('Views - Create Appointment - Confirmation', () => {
         dataQa: 'create-another-link',
       },
       {
-        href: '/appointments/create/test-journey/name',
+        href: '/appointments/create/start-prisoner/A1234BC/name',
         text: 'Schedule another appointment for Test Prisoner',
         dataQa: 'create-another-for-prisoner-link',
       },
