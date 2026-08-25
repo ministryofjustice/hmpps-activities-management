@@ -376,6 +376,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         type: AppointmentType.GROUP,
         createJourneyComplete: false,
         prisoners: [],
+        fromAppointmentConfirmation: true,
       })
       expect(req.session.journeyMetrics.source).toEqual('appointmentConfirmation')
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
@@ -406,6 +407,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
         createJourneyComplete: false,
+        fromAppointmentConfirmation: true,
         prisoners: [
           {
             number: 'A1234BC',
