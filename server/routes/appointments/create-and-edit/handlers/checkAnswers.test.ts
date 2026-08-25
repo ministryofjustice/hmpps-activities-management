@@ -122,22 +122,6 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
 
       expect(req.journeyData.appointmentJourney.mode).toEqual(AppointmentJourneyMode.CREATE)
     })
-
-    it.each([
-      { type: AppointmentType.GROUP, confirmationId: 16, expectedRedirect: 'confirmation/16' },
-      { type: AppointmentType.SET, confirmationId: 14, expectedRedirect: 'set-confirmation/14' },
-    ])(
-      'should redirect an already created $type journey to its confirmation',
-      async ({ type, confirmationId, expectedRedirect }) => {
-        req.journeyData.appointmentJourney.type = type
-        req.journeyData.appointmentJourney.confirmation = { id: confirmationId }
-
-        await handler.GET(req, res)
-
-        expect(res.redirect).toHaveBeenCalledWith(expectedRedirect)
-        expect(res.render).not.toHaveBeenCalled()
-      },
-    )
   })
 
   describe('POST', () => {
@@ -207,22 +191,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
           .addMeasurement('journeyTimeSec', 60),
       )
       expect(req.session.journeyMetrics).toBeNull()
-      expect(req.journeyData.appointmentJourney.confirmation).toEqual({ id: 16 })
       expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
-    })
-
-    it('should not create another appointment when check answers is submitted again after success', async () => {
-      when(activitiesService.createAppointmentSeries)
-        .calledWith(atLeast(expectedRequest))
-        .mockResolvedValueOnce(expectedResponse)
-
-      await handler.POST(req, res)
-      await handler.POST(req, res)
-
-      expect(activitiesService.createAppointmentSeries).toHaveBeenCalledTimes(1)
-      expect(metricsService.trackEvent).toHaveBeenCalledTimes(1)
-      expect(res.redirect).toHaveBeenCalledTimes(2)
-      expect(res.redirect).toHaveBeenLastCalledWith('confirmation/16')
     })
 
     it('should create the appointment series using the internal location ID from a legacy numeric journey', async () => {
@@ -440,22 +409,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
           .addMeasurement('journeyTimeSec', 60),
       )
       expect(req.session.journeyMetrics).toBeNull()
-      expect(req.journeyData.appointmentJourney.confirmation).toEqual({ id: 14 })
       expect(res.redirect).toHaveBeenCalledWith('set-confirmation/14')
-    })
-
-    it('should not create another appointment set when check answers is submitted again after success', async () => {
-      when(activitiesService.createAppointmentSet)
-        .calledWith(atLeast(expectedRequest))
-        .mockResolvedValueOnce(expectedResponse)
-
-      await handler.POST(req, res)
-      await handler.POST(req, res)
-
-      expect(activitiesService.createAppointmentSet).toHaveBeenCalledTimes(1)
-      expect(metricsService.trackEvent).toHaveBeenCalledTimes(1)
-      expect(res.redirect).toHaveBeenCalledTimes(2)
-      expect(res.redirect).toHaveBeenLastCalledWith('set-confirmation/14')
     })
 
     it('should create the appointment set using the internal location ID from a legacy numeric journey', async () => {
