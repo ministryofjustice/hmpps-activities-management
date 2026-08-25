@@ -327,30 +327,35 @@ export default class AttendanceListRoutes {
 
     const allPrisoners = await this.prisonService.searchInmatesByPrisonerNumbers(allPrisonerNumbers, user)
 
-    recordAttendanceJourney.notAttended = {
-      selectedPrisoners: [],
-    }
-
-    ids.forEach(id => {
+    const selectedPrisoners = ids.map(id => {
       const instance = allInstances.find(inst => inst.id === id.instanceId)
-
       const prisoner = allPrisoners.find(pris => pris.prisonerNumber === id.prisonerNumber)
+      const attendance = instance?.attendances.find(a => a.prisonerNumber === id.prisonerNumber)
+
+      if (!instance || !prisoner || !attendance) return null
 
       const otherEvents = allEvents
         .filter(event => event.prisonerNumber === prisoner.prisonerNumber)
         .filter(event => event.scheduledInstanceId !== id.instanceId)
         .filter(event => eventClashes(event, instance))
 
-      recordAttendanceJourney.notAttended.selectedPrisoners.push({
+      return {
         instanceId: instance.id,
-        attendanceId: this.getAttendanceId(id.prisonerNumber, instance.attendances),
+        attendanceId: attendance.id,
         prisonerNumber: id.prisonerNumber,
         prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
         firstName: prisoner.firstName,
         lastName: prisoner.lastName,
         otherEvents,
-      })
+      }
     })
+
+    if (selectedPrisoners.some(prisoner => !prisoner)) {
+      delete recordAttendanceJourney.notAttended
+      return res.redirect('/activities/attendance')
+    }
+
+    recordAttendanceJourney.notAttended = { selectedPrisoners }
 
     if (req.journeyData.recordAttendanceJourney.singleInstanceSelected) {
       return res.redirect('../not-attended-reason')
@@ -382,11 +387,6 @@ export default class AttendanceListRoutes {
     }
 
     return res.redirect('not-required-or-excused/paid-or-not')
-  }
-
-  private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {
-    const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
-    return attendance.id
   }
 
   private filterForTerm = (att, term) =>

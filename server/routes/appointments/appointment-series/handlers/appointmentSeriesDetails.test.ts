@@ -63,7 +63,20 @@ describe('Route Handlers - Appointment Series Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-series/details', {
         appointmentSeries: req.appointmentSeries,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        returnUrl: undefined,
       })
+    })
+
+    it('should pass a valid appointments dashboard return URL to the view', async () => {
+      const returnUrl = '/appointments/search?startDate=2023-05-26&timeSlots=PM'
+      req.query = { returnUrl }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/appointment-series/details',
+        expect.objectContaining({ returnUrl }),
+      )
     })
 
     it('should remove appointments in the past', async () => {
@@ -81,6 +94,7 @@ describe('Route Handlers - Appointment Series Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-series/details', {
         appointmentSeries: req.appointmentSeries,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        returnUrl: undefined,
       })
     })
   })

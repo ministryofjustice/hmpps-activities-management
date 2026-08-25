@@ -14,6 +14,7 @@ const normaliseWhitespace = (value: string): string => value.replace(/\s+/g, ' '
 describe('Views - Appointments Management - Appointment Search Results', () => {
   let compiledTemplate: Template
   let viewContext = {
+    dashboardUrl: '/appointments/search?startDate=2023-05-26',
     user: {
       username: '',
     },
@@ -34,6 +35,8 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
+      dashboardUrl:
+        '/appointments/search?startDate=2023-05-26&timeSlots=AM,PM&appointmentName=Medical%20-%20Doctor&locationId=33333333-3333-3333-3333-333333333333&prisonerNumber=A1234BC&createdBy=all',
       user: {
         username: 'test.user',
       },
@@ -180,7 +183,9 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(normaliseWhitespace(manageDetailsLink.find('.govuk-visually-hidden').text())).toEqual(
       'of Test appointment name 1 (Test Category 1) at 09:30 to 11:00',
     )
-    expect(manageDetailsLink.attr('href')).toEqual('/appointments/2')
+    expect(manageDetailsLink.attr('href')).toEqual(
+      `/appointments/2?returnUrl=${encodeURIComponent(viewContext.dashboardUrl)}`,
+    )
 
     expect($('[data-qa=result-time-1]').text().trim()).toEqual('13:00 to 14:30')
     expect($('[data-qa=result-appointment-name-1]').text().trim()).toEqual('Test appointment name 2 (Test Category 2)')
@@ -195,7 +200,9 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(normaliseWhitespace(expiredAppointmentLink.find('.govuk-visually-hidden').text())).toEqual(
       'Test appointment name 2 (Test Category 2) at 13:00 to 14:30',
     )
-    expect(expiredAppointmentLink.attr('href')).toEqual('/appointments/3')
+    expect(expiredAppointmentLink.attr('href')).toEqual(
+      `/appointments/3?returnUrl=${encodeURIComponent(viewContext.dashboardUrl)}`,
+    )
 
     expect($('[data-qa=result-time-2]').text().trim()).toEqual('16:00 to 17:30')
     expect($('[data-qa=result-appointment-name-2]').text().trim()).toEqual('Test appointment name 3 (Test Category 3)')
@@ -210,7 +217,9 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(normaliseWhitespace(cancelledAppointmentLink.find('.govuk-visually-hidden').text())).toEqual(
       'Test appointment name 3 (Test Category 3) at 16:00 to 17:30',
     )
-    expect(cancelledAppointmentLink.attr('href')).toEqual('/appointments/4')
+    expect(cancelledAppointmentLink.attr('href')).toEqual(
+      `/appointments/4?returnUrl=${encodeURIComponent(viewContext.dashboardUrl)}`,
+    )
   })
 
   it('should not display end time when result does not have an end time', () => {

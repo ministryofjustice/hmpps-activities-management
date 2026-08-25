@@ -43,15 +43,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container: [ 1, 2, 3, 4, 5, 6, 7 ]
+        container: [ 1, 2, 3, 4, 5 ]
     outputs:
       timings-1: ${{ steps.timings.outputs.t1 }}
       timings-2: ${{ steps.timings.outputs.t2 }}
       timings-3: ${{ steps.timings.outputs.t3 }}
       timings-4: ${{ steps.timings.outputs.t4 }}
       timings-5: ${{ steps.timings.outputs.t5 }}
-      timings-6: ${{ steps.timings.outputs.t6 }}
-      timings-7: ${{ steps.timings.outputs.t7 }}
     steps:
       - name: Clone repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -147,6 +145,11 @@ jobs:
     name: Run Playwright tests
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+
     services:
       redis:
         image: redis:8.10
@@ -202,13 +205,13 @@ jobs:
           npm run wait:ui
 
       - name: Run Playwright tests
-        run: npm run pw-test
+        run: npm run pw-test -- --shard=${{ matrix.shard }}/2
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shard }}
           path: |
             playwright-report/
             playwright-test-results/

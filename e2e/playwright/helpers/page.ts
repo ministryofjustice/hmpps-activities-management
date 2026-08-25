@@ -1,5 +1,6 @@
 import { expect, Page, test } from '@playwright/test'
 import * as axe from 'axe-core'
+import { expectHeading } from './govuk'
 
 const accessibilityOptions: axe.RunOptions = {
   rules: {
@@ -56,6 +57,11 @@ const verifyPage = async (page: Page, checkAccessibility: boolean): Promise<void
 
     expect(results.violations, `Accessibility violations:\n${formatViolations(results.violations)}`).toEqual([])
   })
+}
+
+export const expectPage = async (page: Page, heading: string | RegExp, checkAccessibility: boolean): Promise<void> => {
+  await expectHeading(page, heading)
+  await verifyPage(page, checkAccessibility)
 }
 
 export default verifyPage

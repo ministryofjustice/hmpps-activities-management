@@ -564,6 +564,9 @@ describe('Route Handlers - Allocation dashboard', () => {
           ],
           filters: {
             candidateQuery: 'jack',
+            incentiveLevelFilter: 'All Incentive Levels',
+            riskLevelFilter: 'Any Workplace Risk Assessment',
+            employmentFilter: 'Everyone',
           },
           suitableForIep: 'All Incentive Levels',
           suitableForWra: 'Low or Medium or High',
@@ -861,6 +864,33 @@ describe('Route Handlers - Allocation dashboard', () => {
       )
     })
 
+    it('should retain suitable incentive level filtering when searching for an outside activity candidate', async () => {
+      req.params = { activityId: '1' }
+      req.query.candidateQuery = 'joe'
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1, user, false))
+        .mockResolvedValue({
+          outsideWork: true,
+          paid: true,
+          pay: [{ incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
+          schedules: [activitySchedule],
+        } as unknown as Activity)
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        ['Standard', 'Enhanced'],
+        undefined,
+        undefined,
+        false,
+        'joe',
+        0,
+      )
+    })
+
     it('should populate the status filter correctly', async () => {
       req.params = { activityId: '1' }
 
@@ -1061,6 +1091,31 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       expect(res.redirect).toHaveBeenCalledWith(
         expect.stringContaining('/activities/allocations/remove/end-decision?allocationIds=1&scheduleId=1'),
+      )
+    })
+
+    it('should redirect to confirm the existing end date when a selected allocation already has a planned deallocation', async () => {
+      req.body.selectedAllocations = ['1']
+      req.params.activityId = '1'
+
+      activitiesService.getActivity.mockReset()
+      activitiesService.getAllocations.mockReset()
+
+      activitiesService.getActivity.mockResolvedValue(mockActivity)
+
+      activitiesService.getAllocations.mockResolvedValue([
+        {
+          id: 1,
+          plannedDeallocation: {
+            plannedDate: '2026-09-01',
+          },
+        } as Allocation,
+      ])
+
+      await handler.DEALLOCATE(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        '/activities/allocations/remove/confirm-deallocation-if-existing?allocationIds=1&scheduleId=1',
       )
     })
   })

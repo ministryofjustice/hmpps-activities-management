@@ -119,4 +119,37 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
     expect($('[data-qa=appointment-status-1]').text()).not.toContain('Edited')
     expect($('[data-qa=appointment-status-2]').text()).toContain('Edited')
   })
+
+  it('should retain the dashboard URL when linking to an appointment', () => {
+    const returnUrl = '/appointments/search?startDate=2023-05-26&timeSlots=AM&createdBy=USER1'
+    viewContext.appointmentSeries.appointments = [
+      {
+        id: 100,
+        sequenceNumber: 1,
+        startDate: '2023-05-26',
+      },
+    ] as AppointmentSeriesDetails['appointments']
+
+    const $ = cheerio.load(compiledTemplate.render({ ...viewContext, returnUrl }))
+
+    expect($('[data-qa=view-and-edit-appointment-1] a').attr('href')).toBe(
+      `/appointments/100?returnUrl=${encodeURIComponent(returnUrl)}`,
+    )
+  })
+
+  it('should use the appointment date for the dashboard URL when no retained URL exists', () => {
+    viewContext.appointmentSeries.appointments = [
+      {
+        id: 100,
+        sequenceNumber: 1,
+        startDate: '2023-05-26',
+      },
+    ] as AppointmentSeriesDetails['appointments']
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=view-and-edit-appointment-1] a').attr('href')).toBe(
+      `/appointments/100?returnUrl=${encodeURIComponent('/appointments/search?startDate=2023-05-26')}`,
+    )
+  })
 })
