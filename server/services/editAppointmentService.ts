@@ -37,7 +37,8 @@ export default class EditAppointmentService {
   ) {}
 
   async redirectOrEdit(req: Request, res: Response, property: string) {
-    const { appointmentId } = req.params
+    const { appointmentId } = req.params as { appointmentId: string }
+    const returnUrl = req.journeyData?.editAppointmentJourney?.returnUrl
     if (hasAnyAppointmentPropertyChanged(req.journeyData.appointmentJourney, req.journeyData.editAppointmentJourney)) {
       if (isApplyToQuestionRequired(req.journeyData.editAppointmentJourney)) {
         return res.redirect(`${property}/apply-to`)
@@ -58,14 +59,15 @@ export default class EditAppointmentService {
 
     this.clearSession(req)
 
-    return res.redirect(`/appointments/${appointmentId}`)
+    return res.redirect(this.getAppointmentDetailsUrl(appointmentId, returnUrl))
   }
 
   async edit(req: Request, res: Response, applyTo: AppointmentApplyTo) {
     const { user } = res.locals
     const { appointmentJourney } = req.journeyData
     const { editAppointmentJourney } = req.journeyData
-    const { appointmentId } = req.params
+    const { appointmentId } = req.params as { appointmentId: string }
+    const returnUrl = editAppointmentJourney?.returnUrl
 
     if (editAppointmentJourney.cancellationReason) {
       const { cancellationReason } = editAppointmentJourney
@@ -83,7 +85,7 @@ export default class EditAppointmentService {
 
       this.clearSession(req)
 
-      return res.redirect(`/appointments/${appointmentId}`)
+      return res.redirect(this.getAppointmentDetailsUrl(appointmentId, returnUrl))
     }
 
     if (editAppointmentJourney.uncancel) {
@@ -97,7 +99,7 @@ export default class EditAppointmentService {
       )
       this.clearSession(req)
       return res.redirectWithSuccess(
-        `/appointments/${appointmentId}`,
+        this.getAppointmentDetailsUrl(appointmentId, returnUrl),
         `You've uncancelled ${this.getUncancelledAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`,
       )
     }
@@ -164,7 +166,7 @@ export default class EditAppointmentService {
 
     this.clearSession(req)
     return res.redirectWithSuccess(
-      `/appointments/${appointmentId}`,
+      this.getAppointmentDetailsUrl(appointmentId, returnUrl),
       `You've ${this.getEditedMessage(
         appointmentJourney,
         editAppointmentJourney,
@@ -231,5 +233,11 @@ export default class EditAppointmentService {
     req.journeyData.editAppointmentJourney = null
     req.journeyData.appointmentJourney = null
     req.session.journeyMetrics = null
+  }
+
+  private getAppointmentDetailsUrl(appointmentId: string, returnUrl?: string) {
+    return returnUrl
+      ? `/appointments/${appointmentId}?returnUrl=${encodeURIComponent(returnUrl)}`
+      : `/appointments/${appointmentId}`
   }
 }

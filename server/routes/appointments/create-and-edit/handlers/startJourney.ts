@@ -12,6 +12,7 @@ import MetricsEvent from '../../../../data/metricsEvent'
 import EventOrganiser from '../../../../enum/eventOrganisers'
 import EventTier from '../../../../enum/eventTiers'
 import AppointeeAttendeeService from '../../../../services/appointeeAttendeeService'
+import { getAppointmentsDashboardReturnUrlFromReferrer } from '../../utils/appointmentReturnUrl'
 
 export default class StartJourneyRoutes {
   constructor(
@@ -240,6 +241,7 @@ export default class StartJourneyRoutes {
     const { appointmentSeries, appointment } = req
 
     req.journeyData.editAppointmentJourney = {
+      returnUrl: getAppointmentsDashboardReturnUrlFromReferrer(req.get('Referrer')),
       numberOfAppointments: appointment.appointmentSeries?.schedule?.numberOfAppointments ?? 1,
       appointments: appointmentSeries?.appointments.map(a => ({
         sequenceNumber: a.sequenceNumber,
