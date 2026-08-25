@@ -90,7 +90,7 @@
                                             "data-sort-value": activity.category.name
                                         },
                                         text: activity.category.name
-                                    },
+                                    } if filters.isOutsideWorkFilter === 'false',
                                     {
                                         attributes: {
                                             id: 'activity-' + loop.index,
@@ -126,7 +126,7 @@
                                     attributes: {
                                         "aria-sort": "none"
                                     }
-                                },
+                                } if filters.isOutsideWorkFilter === 'false',
                                 {
                                     text: "State",
                                     attributes: {
