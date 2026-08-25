@@ -54,4 +54,7 @@ export type AppointmentJourney = {
   retrospective?: YesNo
   originalAppointmentId?: number
   prisonersNotFound?: string[]
+  confirmation?: {
+    id: number
+  }
 }
