@@ -2,16 +2,10 @@ import { Request, Response } from 'express'
 import { randomUUID } from 'crypto'
 import ConfirmationRoutes from './confirmation'
 import { AppointmentDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
-import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/metricsEvent'
-import { MetricsEventType } from '../../../../@types/metricsEvents'
-
-jest.mock('../../../../services/metricsService')
-
-const metricsService = new MetricsService() as jest.Mocked<MetricsService>
+import { YesNo } from '../../../../@types/activities'
 
 describe('Route Handlers - Create Appointment - Confirmation', () => {
-  const handler = new ConfirmationRoutes(metricsService)
+  const handler = new ConfirmationRoutes()
   let req: Request
   let res: Response
   const journeyId = randomUUID()
@@ -90,13 +84,6 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should render the confirmation page with appointment details when creating a new appointment', async () => {
       await handler.GET(req, res)
 
-      expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
-          .addProperty('journeyId', journeyId)
-          .addProperty('journeySource', 'startLink')
-          .addProperty('appointmentSeriesId', 2)
-          .addMeasurement('journeyTimeSec', 60),
-      )
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         appointment: req.appointment,
         appointmentJourney: expect.any(Object),
@@ -120,14 +107,6 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
       await handler.GET(req, res)
 
-      expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
-          .addProperty('journeyId', journeyId)
-          .addProperty('journeySource', 'startLink')
-          .addProperty('appointmentSeriesId', 2)
-          .addProperty('originalId', 789)
-          .addMeasurement('journeyTimeSec', 60),
-      )
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         appointment: req.appointment,
         appointmentJourney: expect.any(Object),
@@ -146,7 +125,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
       })
     })
 
-    it('should offer prisoner actions and prepare a new journey for a single attendee', async () => {
+    it('should offer prisoner actions without changing the completed journey for a single attendee', async () => {
       req.appointment = {
         id: 11,
         appointmentSeries: { id: 2 },
@@ -165,6 +144,8 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
         ],
       } as AppointmentDetails
 
+      const completedJourney = req.journeyData.appointmentJourney
+
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
@@ -177,7 +158,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
             dataQa: 'create-another-link',
           },
           {
-            href: `/appointments/create/${journeyId}/name`,
+            href: '/appointments/create/start-prisoner/A1234BC/name',
             text: 'Schedule another appointment for John Smith',
             dataQa: 'create-another-for-prisoner-link',
           },
@@ -193,24 +174,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
           },
         ],
       })
-      expect(req.journeyData.appointmentJourney).toEqual({
-        mode: 'CREATE',
-        type: 'GROUP',
-        createJourneyComplete: false,
-        prisoners: [
-          {
-            number: 'A1234BC',
-            name: 'JOHN SMITH',
-            firstName: 'JOHN',
-            lastName: 'SMITH',
-            prisonCode: 'TPR',
-            status: 'ACTIVE IN',
-            cellLocation: '1-1-1',
-            category: 'C',
-          },
-        ],
-        fromAppointmentConfirmation: true,
-      })
+      expect(req.journeyData.appointmentJourney).toBe(completedJourney)
     })
 
     it('should not offer prisoner actions for multiple attendees', async () => {
@@ -254,13 +218,71 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
           dataQa: 'view-appointment-link',
         },
       ])
-      expect(req.journeyData.appointmentJourney).toBeNull()
+      expect(req.journeyData.appointmentJourney).toBeDefined()
     })
 
-    it('should clear session', async () => {
+    it('should not change the completed journey or its metrics', async () => {
+      const completedJourney = req.journeyData.appointmentJourney
+      const completedMetrics = req.session.journeyMetrics
+
       await handler.GET(req, res)
-      expect(req.journeyData.appointmentJourney).toBeNull()
-      expect(req.session.journeyMetrics).toBeNull()
+
+      expect(req.journeyData.appointmentJourney).toBe(completedJourney)
+      expect(req.session.journeyMetrics).toBe(completedMetrics)
+    })
+
+    it('should render a retrospective confirmation consistently on refresh', async () => {
+      req.journeyData.appointmentJourney.retrospective = YesNo.YES
+      req.appointment = {
+        id: 11,
+        appointmentSeries: { id: 2 },
+        attendees: [
+          {
+            prisoner: {
+              prisonerNumber: 'A1234BC',
+              firstName: 'JOHN',
+              lastName: 'SMITH',
+              prisonCode: 'TPR',
+              status: 'ACTIVE IN',
+              cellLocation: '1-1-1',
+            },
+          },
+        ],
+      } as AppointmentDetails
+
+      const completedJourney = req.journeyData.appointmentJourney
+      const completedMetrics = req.session.journeyMetrics
+
+      await handler.GET(req, res)
+      await handler.GET(req, res)
+
+      expect(req.journeyData.appointmentJourney).toBe(completedJourney)
+      expect(req.journeyData.appointmentJourney.retrospective).toEqual(YesNo.YES)
+      expect(req.session.journeyMetrics).toBe(completedMetrics)
+      expect(res.render).toHaveBeenCalledTimes(2)
+      expect((res.render as jest.Mock).mock.calls[0][1]).toEqual((res.render as jest.Mock).mock.calls[1][1])
+      expect((res.render as jest.Mock).mock.calls[1][1].actions).toEqual([
+        {
+          href: '/appointments',
+          text: 'Schedule an appointment',
+          dataQa: 'create-another-link',
+        },
+        {
+          href: '/appointments/create/start-prisoner/A1234BC/name',
+          text: 'Schedule another appointment for John Smith',
+          dataQa: 'create-another-for-prisoner-link',
+        },
+        {
+          href: 'https://prisoner-dev.digital.prison.service.justice.gov.uk/prisoner/A1234BC',
+          text: 'Go to John Smith’s prisoner profile',
+          dataQa: 'prisoner-profile-link',
+        },
+        {
+          href: '/appointments/attendance/11/select-appointment',
+          text: 'Record appointment attendance',
+          dataQa: 'record-attendance-link',
+        },
+      ])
     })
   })
 
@@ -270,12 +292,6 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
       await handler.GET_SET(req, res)
 
-      expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED, res.locals.user)
-          .addProperty('journeyId', journeyId)
-          .addProperty('appointmentSetId', 3)
-          .addMeasurement('journeyTimeSec', 60),
-      )
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         appointmentSet: req.appointmentSet,
         appointmentJourney: expect.any(Object),
@@ -294,7 +310,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
       })
     })
 
-    it('should offer prisoner actions and prepare a new journey for a one-person appointment set', async () => {
+    it('should offer prisoner actions without changing the completed journey for a one-person appointment set', async () => {
       req.session.journeyMetrics.source = null
       req.appointmentSet = {
         id: 3,
@@ -317,6 +333,9 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
         ],
       } as AppointmentSetDetails
 
+      const completedJourney = req.journeyData.appointmentJourney
+      const completedSetJourney = req.journeyData.appointmentSetJourney
+
       await handler.GET_SET(req, res)
 
       const renderContext = (res.render as jest.Mock).mock.calls[0][1]
@@ -327,7 +346,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
           dataQa: 'create-another-link',
         },
         {
-          href: `/appointments/create/${journeyId}/name`,
+          href: '/appointments/create/start-prisoner/A1234BC/name',
           text: 'Schedule another appointment for John Smith',
           dataQa: 'create-another-for-prisoner-link',
         },
@@ -342,26 +361,20 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
           dataQa: 'view-appointment-link',
         },
       ])
-      expect(req.journeyData.appointmentJourney.prisoners).toEqual([
-        {
-          number: 'A1234BC',
-          name: 'JOHN SMITH',
-          firstName: 'JOHN',
-          lastName: 'SMITH',
-          prisonCode: 'TPR',
-          status: 'ACTIVE IN',
-          cellLocation: '1-1-1',
-          category: 'C',
-        },
-      ])
-      expect(req.journeyData.appointmentSetJourney).toBeNull()
+      expect(req.journeyData.appointmentJourney).toBe(completedJourney)
+      expect(req.journeyData.appointmentSetJourney).toBe(completedSetJourney)
     })
 
-    it('should clear session', async () => {
+    it('should not change the completed journeys or their metrics', async () => {
+      const completedJourney = req.journeyData.appointmentJourney
+      const completedSetJourney = req.journeyData.appointmentSetJourney
+      const completedMetrics = req.session.journeyMetrics
+
       await handler.GET_SET(req, res)
-      expect(req.journeyData.appointmentJourney).toBeNull()
-      expect(req.journeyData.appointmentSetJourney).toBeNull()
-      expect(req.session.journeyMetrics).toBeNull()
+
+      expect(req.journeyData.appointmentJourney).toBe(completedJourney)
+      expect(req.journeyData.appointmentSetJourney).toBe(completedSetJourney)
+      expect(req.session.journeyMetrics).toBe(completedMetrics)
     })
   })
 })
