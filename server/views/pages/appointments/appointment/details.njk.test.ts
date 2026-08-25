@@ -24,6 +24,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
     appointment: AppointmentDetails
     userMap: Map<string, UserDetails>
     uncancellable: boolean
+    returnUrl?: string
   } = {
     appointment: {} as AppointmentDetails,
     userMap: {} as Map<string, UserDetails>,
@@ -70,6 +71,59 @@ describe('Views - Appointments Management - Appointment Details', () => {
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=heading]').text().trim()).toBe('Test Category')
+  })
+
+  it('should link directly back to the appointments dashboard when a return URL is provided', () => {
+    viewContext.returnUrl =
+      '/appointments/search?startDate=2023-05-26&timeSlots=AM&appointmentName=Medical%20-%20Doctor'
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    const backLink = $('.govuk-back-link')
+    expect(backLink.text().trim()).toBe('Back to appointments dashboard')
+    expect(backLink.attr('href')).toBe(viewContext.returnUrl)
+    expect(backLink.hasClass('js-backlink')).toBe(false)
+  })
+
+  it('should retain the JavaScript back link when no return URL is provided', () => {
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    const backLink = $('.govuk-back-link')
+    expect(backLink.text().trim()).toBe('Back')
+    expect(backLink.hasClass('js-backlink')).toBe(true)
+  })
+
+  it('should retain the dashboard URL when navigating to the appointment series', () => {
+    const returnUrl = '/appointments/search?startDate=2023-05-26&timeSlots=PM'
+    viewContext.returnUrl = returnUrl
+    viewContext.appointment.appointmentSeries = {
+      id: 5,
+      schedule: { frequency: 'WEEKLY', numberOfAppointments: 2 },
+      appointmentCount: 2,
+      scheduledAppointmentCount: 2,
+    }
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=view-series]').attr('href')).toBe(
+      `/appointments/series/5?returnUrl=${encodeURIComponent(returnUrl)}`,
+    )
+  })
+
+  it('should retain the dashboard URL when navigating to the appointment set', () => {
+    const returnUrl = '/appointments/search?startDate=2023-05-26&prisonerNumber=A1234BC'
+    viewContext.returnUrl = returnUrl
+    viewContext.appointment.appointmentSet = {
+      id: 6,
+      appointmentCount: 2,
+      scheduledAppointmentCount: 2,
+    }
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('a:contains("view the set")').attr('href')).toBe(
+      `/appointments/set/6?returnUrl=${encodeURIComponent(returnUrl)}`,
+    )
   })
 
   it('should display date in sub heading', () => {
