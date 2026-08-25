@@ -54,5 +54,4 @@ export type AppointmentJourney = {
   retrospective?: YesNo
   originalAppointmentId?: number
   prisonersNotFound?: string[]
-  fromAppointmentConfirmation?: boolean
 }

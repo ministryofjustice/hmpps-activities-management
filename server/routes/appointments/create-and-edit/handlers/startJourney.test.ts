@@ -361,6 +361,73 @@ describe('Route Handlers - Create Appointment - Start', () => {
     })
   })
 
+  describe('PRISONER_FROM_CONFIRMATION', () => {
+    beforeEach(() => {
+      req.params.prisonNumber = 'A1234BC'
+    })
+
+    it('should start a new journey and redirect to prisoner search if the prisoner is not found', async () => {
+      when(prisonService.getInmateByPrisonerNumber).calledWith('A1234BC', res.locals.user).mockResolvedValue(null)
+
+      await handler.PRISONER_FROM_CONFIRMATION(req, res)
+
+      expect(req.journeyData.appointmentJourney).toEqual({
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        createJourneyComplete: false,
+        prisoners: [],
+      })
+      expect(req.session.journeyMetrics.source).toEqual('appointmentConfirmation')
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('journeySource', 'appointmentConfirmation'),
+      )
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/create/${journeyId}/select-prisoner?query=A1234BC`)
+    })
+
+    it('should start a new journey with the prisoner selected and redirect to the name page', async () => {
+      const prisonerInfo = {
+        prisonerNumber: 'A1234BC',
+        firstName: 'John',
+        lastName: 'Smith',
+        prisonId: 'TPR',
+        status: 'ACTIVE IN',
+        cellLocation: '1-1-1',
+      } as Prisoner
+
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('A1234BC', res.locals.user)
+        .mockResolvedValue(prisonerInfo)
+
+      await handler.PRISONER_FROM_CONFIRMATION(req, res)
+
+      expect(req.journeyData.appointmentJourney).toEqual({
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        createJourneyComplete: false,
+        prisoners: [
+          {
+            number: 'A1234BC',
+            name: 'John Smith',
+            firstName: 'John',
+            lastName: 'Smith',
+            prisonCode: 'TPR',
+            status: 'ACTIVE IN',
+            cellLocation: '1-1-1',
+          },
+        ],
+      })
+      expect(req.session.journeyMetrics.source).toEqual('appointmentConfirmation')
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('journeySource', 'appointmentConfirmation'),
+      )
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/create/${journeyId}/name`)
+    })
+  })
+
   const expectedJourney = (
     mode: AppointmentJourneyMode,
     originalAppointmentId: number = undefined,

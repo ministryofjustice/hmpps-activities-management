@@ -3,9 +3,6 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty, MaxLength } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentType } from '../appointmentJourney'
-import MetricsService from '../../../../services/metricsService'
-import { initJourneyMetrics } from '../../../../utils/metricsUtils'
-import MetricsEvent from '../../../../data/metricsEvent'
 
 export class Name {
   @Expose()
@@ -17,21 +14,11 @@ export class Name {
 }
 
 export default class NameRoutes {
-  constructor(
-    private readonly activitiesService: ActivitiesService,
-    private readonly metricsService: MetricsService,
-  ) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { appointmentJourney } = req.journeyData
-    const { type } = appointmentJourney
-
-    if (appointmentJourney.fromAppointmentConfirmation) {
-      initJourneyMetrics(req, 'appointmentConfirmation')
-      this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, user))
-      delete appointmentJourney.fromAppointmentConfirmation
-    }
+    const { type } = req.journeyData.appointmentJourney
 
     const categories = (
       await this.activitiesService.getAppointmentCategories(user).then(cat => {
