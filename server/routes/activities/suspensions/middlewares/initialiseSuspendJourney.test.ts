@@ -171,4 +171,31 @@ describe('initialiseSuspendJourney', () => {
     })
     expect(next).toHaveBeenCalled()
   })
+
+  it('should preserve outside work on allocations in the suspension journey', async () => {
+    req.params = { prisonerNumber: 'ABC123' }
+    req.query.allocationIds = '2'
+    req.routeContext = { mode: 'suspend' }
+
+    when(activitiesService.getActivity)
+      .calledWith(20, user)
+      .mockResolvedValue({
+        pay: [],
+        riskLevel: 'low',
+        schedules: [],
+        outsideWork: true,
+      } as unknown as Activity)
+
+    await middleware(req, res, next)
+
+    expect(req.session.suspendJourney.allocations).toEqual([
+      {
+        activityId: 20,
+        activityName: 'Activity 2',
+        allocationId: 2,
+        payBand: undefined,
+        outsideWork: true,
+      },
+    ])
+  })
 })

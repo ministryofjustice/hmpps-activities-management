@@ -52,6 +52,11 @@ const stubManageAppointmentScenario = async (
     username: 'jsmith',
     authSource: 'nomis',
   })
+  await stubEndpoint('GET', '/users/AAA01U', {
+    name: 'Activity User',
+    username: 'AAA01U',
+    authSource: 'nomis',
+  })
   await stubEndpoint('POST', '/search/alerts/prison-numbers\\?includeInactive=false', getPrisonerAlerts)
   await stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${formattedDate}`, getScheduledEvents)
   await stubEndpoint('PUT', '/appointments/11/cancel', cancelledDetails)
