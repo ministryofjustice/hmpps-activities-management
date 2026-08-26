@@ -7,12 +7,14 @@ import moorlandIncentiveLevels from '../../../../integration_tests/fixtures/ince
 import educationLevels from '../../../../integration_tests/fixtures/prisonApi/educationLevels.json'
 import studyAreas from '../../../../integration_tests/fixtures/prisonApi/studyAreas.json'
 import getPayProfile from '../../../../integration_tests/fixtures/prisonApi/getPayProfile.json'
+import getCategoriesIncludingRotl from '../../../../integration_tests/fixtures/activitiesApi/getCategoriesIncludingRotl.json'
 import getNonResidentialActivityLocations from '../../../../integration_tests/fixtures/locationsinsideprison/non-residential-usage-activities.json'
 import { stubEndpoint } from '../../../../integration_tests/mockApis/wiremock'
 
 const stubCreateActivity = async (): Promise<void> => {
   await Promise.all([
     stubEndpoint('GET', '/activity-categories', getCategories),
+    stubEndpoint('GET', '/activity-categories\\?includeRotl=true', getCategoriesIncludingRotl),
     stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime),
     stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands),
     stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=false', getActivities),

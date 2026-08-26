@@ -53,6 +53,44 @@ describe('Route Handlers - Suspensions - Pay', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/pay', { extraContent: false })
     })
+
+    it('should render bulk pay details for a mixture of paid and unpaid allocations', async () => {
+      req.session.suspendJourney.allocations = [
+        {
+          activityId: 1,
+          allocationId: 2,
+          activityName: 'Paid activity',
+          payBand: { id: 1 } as PrisonPayBand,
+          outsideWork: false,
+        },
+        {
+          activityId: 2,
+          allocationId: 3,
+          activityName: 'Unpaid activity',
+          payBand: null,
+          outsideWork: false,
+        },
+      ]
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/pay', {
+        extraContent: {
+          totalAllocations: 2,
+          numberPaid: 1,
+          paidAllocations: [
+            {
+              activityId: 1,
+              allocationId: 2,
+              activityName: 'Paid activity',
+              payBand: { id: 1 },
+              outsideWork: false,
+            },
+          ],
+          hasOutsideWork: false,
+        },
+      })
+    })
   })
   describe('POST', () => {
     it('should add YES to the session', async () => {

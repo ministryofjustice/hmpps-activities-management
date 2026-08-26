@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container: [ 1, 2, 3, 4, 5 ]
+        container: [ 1, 2, 3]
     outputs:
       timings-1: ${{ steps.timings.outputs.t1 }}
       timings-2: ${{ steps.timings.outputs.t2 }}
