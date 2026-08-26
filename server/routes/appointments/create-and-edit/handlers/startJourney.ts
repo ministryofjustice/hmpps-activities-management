@@ -120,6 +120,7 @@ export default class StartJourneyRoutes {
       type: AppointmentType.GROUP,
       createJourneyComplete: false,
       prisoners: [],
+      fromAppointmentConfirmation: true,
     }
 
     initJourneyMetrics(req, 'appointmentConfirmation')

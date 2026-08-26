@@ -199,6 +199,22 @@ test.describe('Create appointments', () => {
     await clickLink(page, 'Schedule another appointment for Stephen Gregs')
     await expectPage(page, 'What’s the appointment?', true)
     await expect(page).toHaveURL(/\/appointments\/create\/[0-9a-f-]+\/name$/)
+    await expect(page.getByRole('link', { name: 'Review and edit attendees' })).toHaveAttribute(
+      'href',
+      /\/appointments\/create\/[0-9a-f-]+\/review-prisoners/,
+    )
+
+    await clickLink(page, 'Review and edit attendees')
+    await expectPage(page, 'Review who’s attending the appointment', true)
+    await expect(page.getByRole('row').filter({ hasText: 'Gregs, Stephen' })).toBeVisible()
+    await continueTo(page, 'Review attendee alerts')
+    await continueTo(page, 'What’s the appointment?')
+
+    await page.goBack()
+    await expectPage(page, 'Review who’s attending the appointment', true)
+    await expect(page.getByRole('row').filter({ hasText: 'Gregs, Stephen' })).toBeVisible()
+    await continueTo(page, 'Review attendee alerts')
+    await continueTo(page, 'What’s the appointment?')
 
     await completeCoreDetails(page, tomorrow)
     await expectPage(page, 'Will the appointment repeat?', true)
