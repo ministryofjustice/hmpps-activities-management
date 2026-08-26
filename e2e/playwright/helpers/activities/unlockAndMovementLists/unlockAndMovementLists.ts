@@ -8,7 +8,7 @@ import { stubEndpoint } from '../../../../../integration_tests/mockApis/wiremock
 
 const today = (): string => format(new Date(), 'yyyy-MM-dd')
 
-export const setupOutsideMovementList = async (): Promise<void> => {
+const setupOutsideMovementList = async (): Promise<void> => {
   const date = today()
 
   await Promise.all([
@@ -22,3 +22,4 @@ export const setupOutsideMovementList = async (): Promise<void> => {
     stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${date}`, getScheduledEventsForMovementList),
   ])
 }
+export default setupOutsideMovementList
