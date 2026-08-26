@@ -3,11 +3,8 @@ import { expect, test } from '@playwright/test'
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 
-import {
-  setupOutsideMovementList,
-  setupUnlockList,
-} from '../../helpers/activities/unlockAndMovementLists/unlockAndMovementLists'
-import { signIn, signInEAEnabled } from '../../helpers/auth'
+import { setupOutsideMovementList } from '../../helpers/activities/unlockAndMovementLists/unlockAndMovementLists'
+import { signInEAEnabled } from '../../helpers/auth'
 import { clickButton, clickLink } from '../../helpers/govuk'
 import { expectPage } from '../../helpers/page'
 
