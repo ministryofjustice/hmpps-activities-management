@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test'
-
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 
@@ -7,6 +6,7 @@ import stubEditTwoWeekActivity from '../../helpers/activities/editActivity'
 import { signIn } from '../../helpers/auth'
 import { clickButton, successBanner } from '../../helpers/govuk'
 import { expectPage } from '../../helpers/page'
+import handleSameDayModification from '../../helpers/sameDayModificationHandler'
 
 test.describe('Edit an activity', () => {
   test.beforeEach(async ({ page }) => {
@@ -35,34 +35,53 @@ test.describe('Edit an activity', () => {
 
     await expectPage(page, /Week 1 of 2: change the days and sessions when this activity runs/i, false)
 
-    await expect(page.locator('input[name="days"][value="monday"]')).toBeChecked()
-    await expect(page.locator('input[name="days"][value="thursday"]')).toBeChecked()
+    const monday = page.locator('input[name="days"][value="monday"]')
+    const tuesday = page.locator('input[name="days"][value="tuesday"]')
+    const thursday = page.locator('input[name="days"][value="thursday"]')
+    const mondayAm = page.locator('input[name="timeSlotsMonday"][value="AM"]')
+    const wednesdayPm = page.locator('input[name="timeSlotsWednesday"][value="PM"]')
 
-    await expect(page.locator('input[name="timeSlotsMonday"][value="AM"]')).toBeChecked()
+    await expect(monday).toBeChecked()
+    await expect(thursday).toBeChecked()
+    await expect(mondayAm).toBeChecked()
 
-    await page.locator('input[name="days"][value="tuesday"]').uncheck()
+    await tuesday.uncheck()
+    await expect(tuesday).not.toBeChecked()
 
-    await page.locator('input[name="days"][value="thursday"]').uncheck()
+    await thursday.uncheck()
+    await expect(thursday).not.toBeChecked()
 
-    await page.locator('input[name="timeSlotsWednesday"][value="PM"]').check()
+    await wednesdayPm.check()
+    await expect(wednesdayPm).toBeChecked()
 
     await clickButton(page, 'Update days and sessions')
 
     await expectPage(page, 'Change the start and end times for the sessions when this activity runs', false)
 
-    // assert existing week 1 time.
+    // Existing week 1 time.
     await expect(page.locator('#startTimes-1-MONDAY-AM-hour')).toHaveValue('9')
     await expect(page.locator('#startTimes-1-MONDAY-AM-minute')).toHaveValue('0')
     await expect(page.locator('#endTimes-1-MONDAY-AM-hour')).toHaveValue('12')
     await expect(page.locator('#endTimes-1-MONDAY-AM-minute')).toHaveValue('0')
 
-    // assert Week 2 intact while week 1 is being edited.
+    // Week 2 remains intact while week 1 is being edited.
     await expect(page.locator('#startTimes-2-MONDAY-PM-hour')).toHaveValue('13')
     await expect(page.locator('#startTimes-2-MONDAY-PM-minute')).toHaveValue('30')
     await expect(page.locator('#endTimes-2-MONDAY-PM-hour')).toHaveValue('17')
     await expect(page.locator('#endTimes-2-MONDAY-PM-minute')).toHaveValue('0')
 
-    // Set custom times for the new session.
+    // Explicitly set the existing values so the submitted form is deterministic.
+    await page.locator('#startTimes-1-MONDAY-AM-hour').selectOption('9')
+    await page.locator('#startTimes-1-MONDAY-AM-minute').selectOption('0')
+    await page.locator('#endTimes-1-MONDAY-AM-hour').selectOption('12')
+    await page.locator('#endTimes-1-MONDAY-AM-minute').selectOption('0')
+
+    await page.locator('#startTimes-2-MONDAY-PM-hour').selectOption('13')
+    await page.locator('#startTimes-2-MONDAY-PM-minute').selectOption('30')
+    await page.locator('#endTimes-2-MONDAY-PM-hour').selectOption('17')
+    await page.locator('#endTimes-2-MONDAY-PM-minute').selectOption('0')
+
+    // Set custom times for the newly-added Wednesday PM session.
     await page.locator('#startTimes-1-WEDNESDAY-PM-hour').selectOption('14')
     await page.locator('#startTimes-1-WEDNESDAY-PM-minute').selectOption('45')
     await page.locator('#endTimes-1-WEDNESDAY-PM-hour').selectOption('17')
@@ -70,7 +89,7 @@ test.describe('Edit an activity', () => {
 
     await clickButton(page, 'Continue')
 
-    await expectPage(page, 'Edit activity details', false)
+    await handleSameDayModification(page)
 
     await expect(successBanner(page)).toContainText('Activity updated')
     await expect(successBanner(page)).toContainText("You've updated the daily schedule for English level 1")
