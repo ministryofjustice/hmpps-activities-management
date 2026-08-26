@@ -31,7 +31,7 @@ describe('Views - Suspensions - View allocations', () => {
     compiledTemplate = compile(view.toString(), njkEnv)
   })
 
-  it('renders all-suspended state and preserves unpaid activities as unpaid', () => {
+  it('renders an unpaid activity as unpaid when included in a paid suspension', () => {
     const $ = cheerio.load(
       compiledTemplate.render({
         ...baseContext,
