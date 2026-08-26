@@ -8,6 +8,8 @@ import { YesNo } from '../../../../@types/activities'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 type AppointmentLocationRequest = {
   internalLocationId?: number
@@ -15,7 +17,10 @@ type AppointmentLocationRequest = {
 }
 
 export default class CheckAnswersRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentJourney } = req.journeyData
@@ -40,10 +45,20 @@ export default class CheckAnswersRoutes {
       const request = this.createAppointmentSetRequest(req, res)
       const response = await this.activitiesService.createAppointmentSet(request, user)
 
+      this.metricsService.trackEvent(
+        MetricsEvent.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED(response.id, req, res.locals.user),
+      )
+      req.session.journeyMetrics = null
+
       res.redirect(`set-confirmation/${response.id}`)
     } else {
       const request = this.createAppointmentRequest(req, res)
       const response = await this.activitiesService.createAppointmentSeries(request, user)
+
+      this.metricsService.trackEvent(
+        MetricsEvent.CREATE_APPOINTMENT_JOURNEY_COMPLETED(response.id, req, res.locals.user, appointmentJourney),
+      )
+      req.session.journeyMetrics = null
 
       res.redirect(`confirmation/${response.appointments[0].id}`)
     }
