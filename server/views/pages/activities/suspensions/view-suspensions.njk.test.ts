@@ -2,6 +2,7 @@ import * as cheerio from 'cheerio'
 import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
+import { PaidType } from '../../../../routes/activities/suspensions/handlers/viewSuspensions'
 
 const view = fs.readFileSync('server/views/pages/activities/suspensions/view-suspensions.njk')
 
@@ -61,5 +62,56 @@ describe('Views - Suspensions - View suspensions', () => {
     expect(values.eq(3).text().trim()).toBe('Yes')
 
     expect(keys.eq(4).text().trim()).toBe('Added by')
+  })
+
+  it.each([
+    [PaidType.YES, { id: 1 }, 'Yes'],
+    [PaidType.NO, { id: 1 }, 'No'],
+    [PaidType.NO_UNPAID, null, 'No - activity is unpaid'],
+  ])('renders the paid status %s correctly', (paidWhileSuspended, prisonPayBand, expected) => {
+    const $ = cheerio.load(
+      compiledTemplate.render({
+        groupedAllocations: [
+          [
+            {
+              id: 1,
+              activitySummary: 'Activity 1',
+              prisonPayBand,
+              paidWhileSuspended,
+              plannedSuspension: {
+                plannedStartDate: '2026-08-20',
+                plannedEndDate: null,
+                plannedBy: 'USER1',
+                plannedAt: '2026-08-20T12:00:00',
+                dpsCaseNoteId: null,
+              },
+            },
+          ],
+        ],
+        userMap: new Map([
+          [
+            'USER1',
+            {
+              username: 'USER1',
+              name: 'Joe Bloggs',
+            },
+          ],
+        ]),
+        caseNotesMap: new Map(),
+        session: {
+          req: {
+            params: {
+              prisonerNumber: 'G0995GW',
+            },
+          },
+        },
+      }),
+    )
+
+    const paidRow = $('[data-qa="suspension-summary"] .govuk-summary-list__row').filter((_, element) =>
+      $(element).find('.govuk-summary-list__key').text().includes('Paid while suspended?'),
+    )
+
+    expect(paidRow.find('.govuk-summary-list__value').text().trim()).toBe(expected)
   })
 })
