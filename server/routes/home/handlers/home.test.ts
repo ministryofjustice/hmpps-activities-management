@@ -35,4 +35,20 @@ describe('Route Handlers - Home', () => {
       })
     })
   })
+
+  describe('ACTIVITIES_ACCESSIBILITY_STATEMENT', () => {
+    it('should render the activities accessibility statement', async () => {
+      await handler.ACTIVITIES_ACCESSIBILITY_STATEMENT(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/home/activities-accessibility-statement')
+    })
+  })
+
+  describe('APPOINTMENTS_ACCESSIBILITY_STATEMENT', () => {
+    it('should render the appointments accessibility statement', async () => {
+      await handler.APPOINTMENTS_ACCESSIBILITY_STATEMENT(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/home/appointments-accessibility-statement')
+    })
+  })
 })
