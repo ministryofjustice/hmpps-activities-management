@@ -71,6 +71,7 @@ describe('Route Handlers - Not Required or Excused - Check and Confirm', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -121,6 +122,40 @@ describe('Route Handlers - Not Required or Excused - Check and Confirm', () => {
           instance: mockInstance,
           instances: [mockInstance],
         },
+      )
+    })
+  })
+
+  describe('POST', () => {
+    it.each([[true], [false]])('should mark selected prisoners as not required with issuePayment %s', async isPaid => {
+      req.journeyData.recordAttendanceJourney.notRequiredOrExcused.isPaid = isPaid
+
+      await handler.POST(req, res)
+
+      expect(activitiesService.postAdvanceAttendances).toHaveBeenCalledTimes(2)
+
+      expect(activitiesService.postAdvanceAttendances).toHaveBeenCalledWith(
+        {
+          scheduleInstanceId: 123456,
+          prisonerNumber: 'A1234BC',
+          issuePayment: isPaid,
+        },
+        res.locals.user,
+      )
+
+      expect(activitiesService.postAdvanceAttendances).toHaveBeenCalledWith(
+        {
+          scheduleInstanceId: 123456,
+          prisonerNumber: 'A2345CD',
+          issuePayment: isPaid,
+        },
+        res.locals.user,
+      )
+
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '../attendance-list',
+        'Attendee list updated',
+        "You've marked 2 people as not required for this session.",
       )
     })
   })
