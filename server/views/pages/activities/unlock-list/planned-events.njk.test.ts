@@ -181,54 +181,55 @@ describe('Views - Unlock list', () => {
     expect(events.eq(1).text()).toContain('Prisoner suspended')
     expect(events.eq(1).text()).not.toContain('Not required')
   })
+})
 
-  describe('with prisoner extra information enabled', () => {
+describe('with prisoner extra information enabled', () => {
+  let viewContext: Record<string, unknown>
+  config.prisonerExtraInformationEnabled = true
+
+  const njkEnv = registerNunjucks()
+  const compiledTemplate = compile(view.toString(), njkEnv)
+
+  it('renders extra information for appointments with staff or prisoner comments', () => {
     config.prisonerExtraInformationEnabled = true
 
-    const njkEnv = registerNunjucks()
-    const compiledTemplate = compile(view.toString(), njkEnv)
+    const $ = cheerio.load(
+      compiledTemplate.render({
+        ...viewContext,
+        unlockListItems: [
+          {
+            prisonerNumber: 'A1111AA',
+            isLeavingWing: true,
+            firstName: 'John',
+            lastName: 'Doe',
+            cellLocation: '1-1-001',
+            alerts: [],
+            events: [
+              {
+                eventType: 'APPOINTMENT',
+                eventSource: 'SAA',
+                appointmentId: 38314,
+                summary: 'Chaplaincy',
+                startTime: '09:00',
+                endTime: '10:00',
+                comments: 'Staff comment',
+              },
+              {
+                eventType: 'APPOINTMENT',
+                eventSource: 'SAA',
+                appointmentId: 38315,
+                summary: 'Healthcare',
+                startTime: '10:00',
+                endTime: '11:00',
+                prisonerComments: 'Prisoner information',
+              },
+            ],
+          },
+        ],
+      }),
+    )
 
-    it('renders extra information for appointments with staff or prisoner comments', () => {
-      config.prisonerExtraInformationEnabled = true
-
-      const $ = cheerio.load(
-        compiledTemplate.render({
-          ...viewContext,
-          unlockListItems: [
-            {
-              prisonerNumber: 'A1111AA',
-              isLeavingWing: true,
-              firstName: 'John',
-              lastName: 'Doe',
-              cellLocation: '1-1-001',
-              alerts: [],
-              events: [
-                {
-                  eventType: 'APPOINTMENT',
-                  eventSource: 'SAA',
-                  appointmentId: 38314,
-                  summary: 'Chaplaincy',
-                  startTime: '09:00',
-                  endTime: '10:00',
-                  comments: 'Staff comment',
-                },
-                {
-                  eventType: 'APPOINTMENT',
-                  eventSource: 'SAA',
-                  appointmentId: 38315,
-                  summary: 'Healthcare',
-                  startTime: '10:00',
-                  endTime: '11:00',
-                  prisonerComments: 'Prisoner information',
-                },
-              ],
-            },
-          ],
-        }),
-      )
-
-      expect($('[data-qa="extra-info-tag-38314"]')).toHaveLength(1)
-      expect($('[data-qa="extra-info-tag-38315"]')).toHaveLength(1)
-    })
+    expect($('[data-qa="extra-info-tag-38314"]')).toHaveLength(1)
+    expect($('[data-qa="extra-info-tag-38315"]')).toHaveLength(1)
   })
 })
