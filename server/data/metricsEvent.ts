@@ -146,14 +146,14 @@ export default class MetricsEvent {
   }
 
   static CREATE_APPOINTMENT_JOURNEY_COMPLETED(
-    appointment: AppointmentDetails,
+    appointmentSeriesId: number,
     req: Request,
     user: ServiceUser,
     appointmentJourney: AppointmentJourney,
   ) {
     return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, user)
       .addJourneyCompletedMetrics(req)
-      .addProperty('appointmentSeriesId', appointment.appointmentSeries.id)
+      .addProperty('appointmentSeriesId', appointmentSeriesId)
       .addProperty('originalId', appointmentJourney.originalAppointmentId)
   }
 
@@ -161,14 +161,10 @@ export default class MetricsEvent {
     return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_STARTED, user).addJourneyStartedMetrics(req)
   }
 
-  static CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED(
-    appointmentSet: AppointmentSetDetails,
-    req: Request,
-    user: ServiceUser,
-  ) {
+  static CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED(appointmentSetId: number, req: Request, user: ServiceUser) {
     return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED, user)
       .addJourneyCompletedMetrics(req)
-      .addProperty('appointmentSetId', appointmentSet.id)
+      .addProperty('appointmentSetId', appointmentSetId)
   }
 
   static EDIT_APPOINTMENT_JOURNEY_STARTED(appointment: AppointmentDetails, req: Request, user: ServiceUser) {

@@ -6,7 +6,8 @@ import setupReinstateWaitlistApplicationScenario, {
   stubReinstatedWaitlistApplication,
 } from '../../helpers/activities/waitlist/reinstateWaitlistApplication'
 import { signIn } from '../../helpers/auth'
-import { successBanner, summaryRow } from '../../helpers/govuk'
+import { clickButton, clickLink, expectSummaryRow, successBanner } from '../../helpers/govuk'
+import verifyPage, { expectPage } from '../../helpers/page'
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
@@ -20,43 +21,21 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
 
   await page.goto('/activities/waitlist-dashboard')
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Manage applications and waitlists',
-    }),
-  ).toBeVisible()
+  await expectPage(page, 'Manage applications and waitlists', true)
 
   const applicationRow = page.getByRole('row').filter({ hasText: 'Winchurch, David Bob' })
 
   await applicationRow.getByRole('radio').check()
 
-  await page
-    .getByRole('button', {
-      name: 'View or edit application',
-    })
-    .click()
+  await clickButton(page, 'View or edit application')
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Request for David Winchurch, A1350DZ',
-    }),
-  ).toBeVisible()
+  await expectPage(page, 'Request for David Winchurch, A1350DZ', true)
 
-  const summaryRows = page.locator('.govuk-summary-list__row')
+  await expectSummaryRow(page, 'Status', 'Withdrawn')
 
-  await expect(summaryRows.filter({ hasText: 'Status' })).toContainText('Withdrawn')
+  await clickLink(page, 'Reinstate application')
 
-  await page
-    .getByRole('link', {
-      name: 'Reinstate application',
-    })
-    .click()
-
-  await expect(
-    page.getByRole('heading', {
-      name: "Are you sure you want to reinstate David Winchurch's application?",
-    }),
-  ).toBeVisible()
+  await expectPage(page, "Are you sure you want to reinstate David Winchurch's application?", true)
 
   await expect(page.getByText(/It will be reinstated as Pending/)).toBeVisible()
 
@@ -67,17 +46,9 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
     })
     .check()
 
-  await page
-    .getByRole('button', {
-      name: 'Continue',
-    })
-    .click()
+  await clickButton(page, 'Continue')
 
-  await expect(
-    page.getByRole('heading', {
-      name: 'Enter the reason this application is being reinstated',
-    }),
-  ).toBeVisible()
+  await expectPage(page, 'Enter the reason this application is being reinstated', true)
 
   await page
     .getByRole('textbox', {
@@ -87,20 +58,14 @@ test('a user can reinstate a withdrawn waitlist application', async ({ page }) =
 
   await stubReinstatedWaitlistApplication(reinstateReason)
 
-  await page
-    .getByRole('button', {
-      name: 'Confirm and reinstate application',
-    })
-    .click()
+  await clickButton(page, 'Confirm and reinstate application')
 
   const banner = successBanner(page)
 
   await expect(banner).toBeVisible()
+  await verifyPage(page, true)
   await expect(banner).toContainText("You have updated the status of David Winchurch's application")
 
-  await expect(page.locator('.govuk-summary-list__row').filter({ hasText: 'Status' })).toContainText('Pending')
-
-  await expect(summaryRow(page, 'Status')).toContainText('Pending')
-
-  await expect(summaryRow(page, 'Comments')).toContainText(reinstateReason)
+  await expectSummaryRow(page, 'Status', 'Pending')
+  await expectSummaryRow(page, 'Comments', reinstateReason)
 })

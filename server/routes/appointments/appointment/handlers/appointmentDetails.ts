@@ -3,6 +3,7 @@ import UserService from '../../../../services/userService'
 import { isUncancellable } from '../../../../utils/editAppointmentUtils'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import { errorHasStatus } from '../../../../utils/helpers/errorHelpers'
+import { getAppointmentsDashboardReturnUrl } from '../../utils/appointmentReturnUrl'
 
 export default class AppointmentDetailsRoutes {
   constructor(
@@ -13,6 +14,7 @@ export default class AppointmentDetailsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointment } = req
     const { user } = res.locals
+    const returnUrl = getAppointmentsDashboardReturnUrl(req.query?.returnUrl)
 
     if (appointment.category.code === 'VLB' || appointment.category.code === 'VLPM') {
       const videoLinkBooking = await this.bookAVideoLinkService
@@ -46,6 +48,7 @@ export default class AppointmentDetailsRoutes {
       appointment,
       userMap,
       uncancellable: isUncancellable(appointment),
+      returnUrl,
     })
   }
 

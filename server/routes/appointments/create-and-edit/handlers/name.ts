@@ -18,7 +18,8 @@ export default class NameRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { type } = req.journeyData.appointmentJourney
+    const { journeyId } = req.params
+    const { type, fromAppointmentConfirmation } = req.journeyData.appointmentJourney
 
     const categories = (
       await this.activitiesService.getAppointmentCategories(user).then(cat => {
@@ -29,7 +30,15 @@ export default class NameRoutes {
       })
     ).sort((a, b) => a.description.localeCompare(b.description))
 
-    res.render(`pages/appointments/create-and-edit/name`, { categories })
+    res.render(`pages/appointments/create-and-edit/name`, {
+      categories,
+      ...(fromAppointmentConfirmation && {
+        backLink: {
+          href: `/appointments/create/${journeyId}/review-prisoners`,
+          text: 'Review and edit attendees',
+        },
+      }),
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

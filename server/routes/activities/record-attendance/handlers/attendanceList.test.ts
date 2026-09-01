@@ -934,10 +934,52 @@ describe('Route Handlers - Attendance List', () => {
         expect(res.redirect).toHaveBeenCalledWith(url)
       },
     )
+
+    it('should clear the not attended journey and redirect when an attendance is no longer available', async () => {
+      req.body = {
+        selectedAttendances: ['1-111-ABC123'],
+      }
+      req.journeyData.recordAttendanceJourney.notAttended = {
+        selectedPrisoners: [
+          {
+            instanceId: 99,
+            attendanceId: 999,
+            prisonerNumber: 'OLD123',
+            prisonerName: 'Old Prisoner',
+            firstName: 'Old',
+            lastName: 'Prisoner',
+            otherEvents: [],
+          },
+        ],
+      }
+
+      when(activitiesService.getScheduledActivity)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({ ...instanceA, attendances: [] })
+
+      when(activitiesService.getScheduledEventsForPrisoners)
+        .calledWith(expect.any(Date), ['ABC123'], res.locals.user)
+        .mockResolvedValue({
+          activities: [],
+          appointments: [],
+          courtHearings: [],
+          visits: [],
+          adjudications: [],
+        })
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC123'], res.locals.user)
+        .mockResolvedValue([prisoners[0]])
+
+      await handler.NOT_ATTENDED(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
+      expect(req.journeyData.recordAttendanceJourney.notAttended).toBeUndefined()
+    })
   })
 
   describe('Not required or excused', () => {
-    it('should redirect to the paid or not page', async () => {
+    it('should store the selected prisoners and redirect to the paid or not page', async () => {
       req.body = {
         selectedAttendances: ['1-undefined-ABC123', '1-undefined-ABC321'],
       }
@@ -959,7 +1001,130 @@ describe('Route Handlers - Attendance List', () => {
 
       await handler.NOT_REQUIRED_OR_EXCUSED(req, res)
 
+      expect(req.journeyData.recordAttendanceJourney.notRequiredOrExcused.selectedPrisoners).toEqual([
+        {
+          instanceId: 1,
+          prisonerNumber: 'ABC123',
+          prisonerName: 'Joe Bloggs',
+        },
+        {
+          instanceId: 1,
+          prisonerNumber: 'ABC321',
+          prisonerName: 'Mary Smith',
+        },
+      ])
+
       expect(res.redirect).toHaveBeenCalledWith('not-required-or-excused/paid-or-not')
     })
+
+    it('should skip the pay question when the activity is unpaid', async () => {
+      req.body = {
+        selectedAttendances: ['1-undefined-ABC123', '1-undefined-ABC321'],
+      }
+
+      const unpaidInstance = {
+        ...instanceA,
+        activitySchedule: {
+          ...instanceA.activitySchedule,
+          activity: {
+            ...instanceA.activitySchedule.activity,
+            paid: false,
+          },
+        },
+      } as ScheduledActivity
+
+      when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(unpaidInstance)
+
+      when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(unpaidInstance)
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC123', 'ABC321'], res.locals.user)
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'ABC123',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
+          },
+          {
+            prisonerNumber: 'ABC321',
+            firstName: 'Mary',
+            lastName: 'Smith',
+          },
+        ] as Prisoner[])
+
+      await handler.NOT_REQUIRED_OR_EXCUSED(req, res)
+
+      expect(req.journeyData.recordAttendanceJourney.notRequiredOrExcused).toEqual({
+        selectedPrisoners: [
+          {
+            instanceId: 1,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+          },
+          {
+            instanceId: 1,
+            prisonerNumber: 'ABC321',
+            prisonerName: 'Mary Smith',
+          },
+        ],
+        isPaid: false,
+      })
+
+      expect(res.redirect).toHaveBeenCalledWith('not-required-or-excused/check-and-confirm')
+    })
+  })
+
+  it('should skip the pay question when the activity is unpaid', async () => {
+    req.body = {
+      selectedAttendances: ['1-undefined-ABC123', '1-undefined-ABC321'],
+    }
+
+    const unpaidInstance = {
+      ...instanceA,
+      activitySchedule: {
+        ...instanceA.activitySchedule,
+        activity: {
+          ...instanceA.activitySchedule.activity,
+          paid: false,
+        },
+      },
+    } as ScheduledActivity
+
+    when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(unpaidInstance)
+
+    when(prisonService.searchInmatesByPrisonerNumbers)
+      .calledWith(['ABC123', 'ABC321'], res.locals.user)
+      .mockResolvedValue([
+        {
+          prisonerNumber: 'ABC123',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+        },
+        {
+          prisonerNumber: 'ABC321',
+          firstName: 'Mary',
+          lastName: 'Smith',
+        },
+      ] as Prisoner[])
+
+    await handler.NOT_REQUIRED_OR_EXCUSED(req, res)
+
+    expect(req.journeyData.recordAttendanceJourney.notRequiredOrExcused).toEqual({
+      selectedPrisoners: [
+        {
+          instanceId: 1,
+          prisonerNumber: 'ABC123',
+          prisonerName: 'Joe Bloggs',
+        },
+        {
+          instanceId: 1,
+          prisonerNumber: 'ABC321',
+          prisonerName: 'Mary Smith',
+        },
+      ],
+      isPaid: false,
+    })
+
+    expect(res.redirect).toHaveBeenCalledWith('not-required-or-excused/check-and-confirm')
   })
 })

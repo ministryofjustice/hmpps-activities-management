@@ -17,7 +17,15 @@ export default class SuspendedPrisonersRoutes {
     const { user } = res.locals
     const { date } = req.query
 
-    const categories = await this.activitiesService.getActivityCategories(user)
+    const categories = await this.activitiesService
+      .getActivityCategories(user, user.externalActivitiesRolledOut)
+      .then(result =>
+        result.filter(category => user.externalActivitiesRolledOut || category.code !== ActivityCategoryEnum.SAA_ROTL),
+      )
+    const categoryOptions = categories.map(category => ({
+      value: category.code === ActivityCategoryEnum.SAA_ROTL ? category.code : category.name,
+      text: category.name,
+    }))
 
     // Set the default filter values if they are not set
     req.journeyData.attendanceSummaryJourney ??= {}
@@ -34,14 +42,21 @@ export default class SuspendedPrisonersRoutes {
 
     let reason = null
     if (reasonFilter !== 'BOTH') reason = reasonFilter
+    const selectedCategoryCodes =
+      categoryFilters &&
+      categoryFilters.flatMap(categoryFilter => {
+        const category = categories.find(c => c.name === categoryFilter || c.code === categoryFilter)
+        return category ? [ActivityCategoryEnum[category.code]] : []
+      })
+
     const suspendedPrisonerAttendance = await this.activitiesService.getSuspendedPrisonersActivityAttendance(
       activityDate,
       user,
-      categoryFilters && categoryFilters.map(cf => ActivityCategoryEnum[categories.find(c => c.name === cf).code]),
+      selectedCategoryCodes,
       reason,
     )
 
-    req.journeyData.attendanceSummaryJourney.categoryFilters = categories.map(c => c.name)
+    req.journeyData.attendanceSummaryJourney.categoryFilters = categoryOptions.map(category => category.value)
 
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(
       _.uniq(suspendedPrisonerAttendance.map(a => a.prisonerNumber)),
@@ -85,7 +100,7 @@ export default class SuspendedPrisonersRoutes {
       )
 
     return res.render('pages/activities/daily-attendance-summary/suspended-prisoners', {
-      uniqueCategories: categories,
+      uniqueCategories: categoryOptions,
       activityDate,
       suspendedAttendancesByPrisoner,
     })

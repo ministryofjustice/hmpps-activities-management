@@ -90,7 +90,7 @@ export default function Index({
   const capacityHandler = new CapacityRoutes(activitiesService)
   const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(activitiesService)
 
-  const activityTypeHandler = new ActivityTypeRoutes()
+  const activityTypeHandler = new ActivityTypeRoutes(activitiesService)
   get('/activity-type', activityTypeHandler.GET, true)
   post('/activity-type', activityTypeHandler.POST, ActivityType)
 

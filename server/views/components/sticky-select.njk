@@ -6,12 +6,15 @@
 
     {% set head = [
         {
+            html: '<span class="govuk-visually-hidden">Select ' + (params.itemsDescription or 'item') + '</span>',
             attributes: {
                 id: selectAllId
             },
             classes: 'govuk-!-display-none-print'
         }
-    ] if params.type == 'check' and params.selectAllAvailable else [{}] %}
+    ] if params.type == 'check' and params.selectAllAvailable else [{
+        html: '<span class="govuk-visually-hidden">Select ' + (params.itemsDescription or 'item') + '</span>'
+    }] %}
     {% for column in params.head %}
         {% set head = (head.push(column), head) %}
     {% endfor %}

@@ -11,21 +11,36 @@ describe('Views - Manage activities - View activity', () => {
 
   const njkEnv = registerNunjucks()
 
+  const scheduleSummaryList = ($: CheerioAPI) => $('[data-qa="schedule-summary-list"]')
+
   const currentWeekTags = ($: CheerioAPI) =>
-    $('[data-qa="schedule-summary-list"] .govuk-tag').filter(
-      (_, element) => $(element).text().trim() === 'Current week',
-    )
+    scheduleSummaryList($)
+      .find('.govuk-tag')
+      .filter((_, element) => $(element).text().trim() === 'Current week')
 
   const weekRow = ($: CheerioAPI, weekNumber: number) =>
-    $('[data-qa="schedule-summary-list"] .govuk-summary-list__row').filter((_, element) =>
-      $(element).find('.govuk-summary-list__key').text().includes(`Week ${weekNumber}`),
-    )
+    scheduleSummaryList($)
+      .find('.govuk-summary-list__row')
+      .filter(
+        (_, element) =>
+          $(element).find('.govuk-summary-list__key > span').first().text().trim() === `Week ${weekNumber}`,
+      )
 
-  const renderView = (scheduleWeeks: number, currentWeek = 1): CheerioAPI => {
+  const renderView = (
+    scheduleWeeks: number,
+    currentWeek = 1,
+    overrides: {
+      externalActivitiesRolledOut?: boolean
+      outsideWork?: boolean
+      paid?: boolean
+    } = {},
+  ): CheerioAPI => {
+    const { externalActivitiesRolledOut = false, outsideWork = false, paid = false } = overrides
+
     const viewContext = {
       user: {
         username: 'joebloggs',
-        externalActivitiesRolledOut: false,
+        externalActivitiesRolledOut,
       },
       feComponents: {
         cssIncludes: [],
@@ -44,8 +59,8 @@ describe('Views - Manage activities - View activity', () => {
         category: { code: 'EDUCATION', name: 'Education' },
         summary: 'Maths Level 1',
         attendanceRequired: false,
-        outsideWork: false,
-        paid: false,
+        outsideWork,
+        paid,
         riskLevel: 'low',
         minimumEducationLevel: [],
         tier: { code: 'STANDARD' },
@@ -58,8 +73,8 @@ describe('Views - Manage activities - View activity', () => {
         runsOnBankHoliday: false,
         internalLocation: { description: 'Education - R1' },
         activity: {
-          paid: false,
-          outsideWork: false,
+          paid,
+          outsideWork,
           inCell: false,
         },
       },
@@ -102,23 +117,99 @@ describe('Views - Manage activities - View activity', () => {
     compiledTemplate = compile(view.toString(), njkEnv)
   })
 
-  it('does not show the current week tag for one-week schedules', () => {
-    const $ = renderView(1)
+  describe('current week', () => {
+    it('does not show the current week tag for a one-week schedule', () => {
+      const $ = renderView(1)
 
-    expect(currentWeekTags($).length).toBe(0)
+      expect(weekRow($, 1)).toHaveLength(1)
+      expect(currentWeekTags($)).toHaveLength(0)
+    })
+
+    it.each([
+      [1, 2],
+      [2, 1],
+    ])('shows the current week tag only on Week %s', (currentWeek, otherWeek) => {
+      const $ = renderView(2, currentWeek)
+
+      expect(weekRow($, 1)).toHaveLength(1)
+      expect(weekRow($, 2)).toHaveLength(1)
+
+      expect(currentWeekTags($)).toHaveLength(1)
+      expect(weekRow($, currentWeek).find('.govuk-tag').text().trim()).toBe('Current week')
+      expect(weekRow($, otherWeek).find('.govuk-tag')).toHaveLength(0)
+    })
   })
 
-  it('shows the current week tag on Week 1 when currentWeek is 1 for two-week schedules', () => {
-    const $ = renderView(2, 1)
+  describe('outside work activities', () => {
+    it('shows outside work activity details when external activities are rolled out', () => {
+      const $ = renderView(1, 1, {
+        externalActivitiesRolledOut: true,
+        outsideWork: true,
+      })
 
-    expect(weekRow($, 1).find('.govuk-tag').text().trim()).toBe('Current week')
-    expect(weekRow($, 2).find('.govuk-tag').length).toBe(0)
-  })
+      const activityDetails = $('[data-qa="activity-details-summary-list"]')
+      const locationAndCapacity = $('[data-qa="location-and-capacity-summary-list"]')
 
-  it('shows the current week tag on Week 2 when currentWeek is 2 for two-week schedules', () => {
-    const $ = renderView(2, 2)
+      expect(activityDetails.text()).toContain('Outside activity')
+      expect(activityDetails.text()).not.toContain('Tier')
 
-    expect(weekRow($, 1).find('.govuk-tag').length).toBe(0)
-    expect(weekRow($, 2).find('.govuk-tag').text().trim()).toBe('Current week')
+      expect(locationAndCapacity.text()).toContain('Location')
+      expect(locationAndCapacity.text()).toContain('Outside')
+
+      expect($('[data-qa="requirements-and-suitability-summary-list"]')).toHaveLength(0)
+      expect($('[data-qa="change-category-link"]')).toHaveLength(0)
+      expect($('[data-qa="change-location-link"]')).toHaveLength(0)
+    })
+
+    it('does not treat the activity as outside work when external activities are not rolled out', () => {
+      const $ = renderView(1, 1, {
+        externalActivitiesRolledOut: false,
+        outsideWork: true,
+      })
+
+      const activityDetails = $('[data-qa="activity-details-summary-list"]')
+      const locationAndCapacity = $('[data-qa="location-and-capacity-summary-list"]')
+
+      const locationRow = locationAndCapacity
+        .find('.govuk-summary-list__row')
+        .filter((_, element) => $(element).find('.govuk-summary-list__key').text().trim() === 'Location')
+
+      expect(activityDetails.text()).toContain('Education')
+      expect(activityDetails.text()).toContain('Tier')
+
+      expect(locationRow.find('.govuk-summary-list__value').text().trim()).toBe('Education - r1')
+
+      expect($('[data-qa="requirements-and-suitability-summary-list"]')).toHaveLength(1)
+      expect($('[data-qa="change-category-link"]')).toHaveLength(1)
+      expect($('[data-qa="change-location-link"]')).toHaveLength(1)
+    })
+
+    it('shows the prison as paying for a paid outside work activity', () => {
+      const $ = renderView(1, 1, {
+        externalActivitiesRolledOut: true,
+        outsideWork: true,
+        paid: true,
+      })
+
+      const activityDetails = $('[data-qa="activity-details-summary-list"]')
+
+      expect(activityDetails.text()).toContain('Paid by')
+      expect(activityDetails.text()).toContain('The prison')
+      expect($('[data-qa="pay-rates-summary-list"]')).toHaveLength(1)
+    })
+
+    it('shows an external employer as paying for an unpaid outside work activity', () => {
+      const $ = renderView(1, 1, {
+        externalActivitiesRolledOut: true,
+        outsideWork: true,
+        paid: false,
+      })
+
+      const activityDetails = $('[data-qa="activity-details-summary-list"]')
+
+      expect(activityDetails.text()).toContain('Paid by')
+      expect(activityDetails.text()).toContain('An external employer')
+      expect($('[data-qa="pay-rates-summary-list"]')).toHaveLength(0)
+    })
   })
 })

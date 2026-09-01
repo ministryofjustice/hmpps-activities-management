@@ -118,6 +118,15 @@ describe('Route Handlers - Non Attendance', () => {
   })
 
   describe('GET', () => {
+    it('should redirect to attendance dashboard when not attended journey data is not available', async () => {
+      req.journeyData.recordAttendanceJourney.notAttended = undefined
+
+      await handler.GET(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
+      expect(activitiesService.getAttendanceReasons).not.toHaveBeenCalled()
+    })
+
     it('should render with the expected single view', async () => {
       req = {
         journeyData: {

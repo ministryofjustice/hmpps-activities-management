@@ -74,6 +74,7 @@ describe('Route Handlers - Not Required or Excused - Paid or Not', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -128,6 +129,21 @@ describe('Route Handlers - Not Required or Excused - Paid or Not', () => {
           timePeriods: [mockInstance.timeSlot],
         },
       )
+    })
+  })
+
+  describe('POST', () => {
+    it.each([
+      ['yes', true],
+      ['no', false],
+    ])('should set isPaid when "%s" is selected', async (paidOrNot, expectedIsPaid) => {
+      req.body = { paidOrNot }
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.recordAttendanceJourney.notRequiredOrExcused.isPaid).toBe(expectedIsPaid)
+
+      expect(res.redirect).toHaveBeenCalledWith('check-and-confirm')
     })
   })
 

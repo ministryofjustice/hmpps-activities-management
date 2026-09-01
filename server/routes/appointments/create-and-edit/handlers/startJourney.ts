@@ -12,6 +12,7 @@ import MetricsEvent from '../../../../data/metricsEvent'
 import EventOrganiser from '../../../../enum/eventOrganisers'
 import EventTier from '../../../../enum/eventTiers'
 import AppointeeAttendeeService from '../../../../services/appointeeAttendeeService'
+import { getAppointmentsDashboardReturnUrlFromReferrer } from '../../utils/appointmentReturnUrl'
 
 export default class StartJourneyRoutes {
   constructor(
@@ -108,6 +109,41 @@ export default class StartJourneyRoutes {
     req.journeyData.appointmentJourney.fromPrisonNumberProfile = prisonNumber
 
     return res.redirect('../review-prisoners')
+  }
+
+  PRISONER_FROM_CONFIRMATION = async (req: Request, res: Response): Promise<void> => {
+    const { journeyId, prisonNumber } = req.params as { journeyId: string; prisonNumber: string }
+    const { user } = res.locals
+
+    req.journeyData.appointmentJourney = {
+      mode: AppointmentJourneyMode.CREATE,
+      type: AppointmentType.GROUP,
+      createJourneyComplete: false,
+      prisoners: [],
+      fromAppointmentConfirmation: true,
+    }
+
+    initJourneyMetrics(req, 'appointmentConfirmation')
+    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, user))
+
+    const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumber, user).catch(_ => null)
+    if (!prisoner) {
+      return res.redirect(`/appointments/create/${journeyId}/select-prisoner?query=${prisonNumber}`)
+    }
+
+    req.journeyData.appointmentJourney.prisoners = [
+      {
+        number: prisoner.prisonerNumber,
+        name: `${prisoner.firstName} ${prisoner.lastName}`,
+        firstName: prisoner.firstName,
+        lastName: prisoner.lastName,
+        prisonCode: prisoner.prisonId,
+        status: prisoner.status,
+        cellLocation: prisoner.cellLocation,
+      },
+    ]
+
+    return res.redirect(`/appointments/create/${journeyId}/name`)
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
@@ -240,6 +276,7 @@ export default class StartJourneyRoutes {
     const { appointmentSeries, appointment } = req
 
     req.journeyData.editAppointmentJourney = {
+      returnUrl: getAppointmentsDashboardReturnUrlFromReferrer(req.get('Referrer')),
       numberOfAppointments: appointment.appointmentSeries?.schedule?.numberOfAppointments ?? 1,
       appointments: appointmentSeries?.appointments.map(a => ({
         sequenceNumber: a.sequenceNumber,
