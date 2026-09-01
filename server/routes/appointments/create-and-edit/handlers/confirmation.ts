@@ -73,7 +73,7 @@ export default class ConfirmationRoutes {
     if (appointmentSet) {
       actions.push({
         href: `/appointments/set/${appointmentSet.id}`,
-        text: 'View, print movement slips and manage this set of appointments',
+        text: 'View, manage and print movement slips for this set of appointments',
         dataQa: 'view-appointment-link',
       })
     } else if (appointmentJourney.retrospective === YesNo.YES) {
@@ -85,7 +85,10 @@ export default class ConfirmationRoutes {
     } else {
       actions.push({
         href: `/appointments/${appointment.id}`,
-        text: 'View, manage and print a movement slip for this appointment',
+        text:
+          attendees.length > 1
+            ? 'View, manage and print movement slips for this appointment'
+            : 'View, manage and print a movement slip for this appointment',
         dataQa: 'view-appointment-link',
       })
     }
