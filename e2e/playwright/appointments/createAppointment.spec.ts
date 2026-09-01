@@ -153,7 +153,7 @@ test.describe('Create appointments', () => {
     await expect(page.locator('[data-qa="create-another-for-prisoner-link"]')).toHaveCount(0)
     await expect(page.locator('[data-qa="prisoner-profile-link"]')).toHaveCount(0)
 
-    await clickLink(page, 'View, manage and print a movement slip for this appointment')
+    await clickLink(page, 'View, manage and print movement slips for this appointment')
     await expectPage(page, 'Chaplain Meeting (Chaplaincy)', true)
     await expectSummaryRow(page, 'Location', 'Chapel')
     await expect(page.locator('[data-qa="prisoner-list-title"]')).toContainText('3 attendees')
