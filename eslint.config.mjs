@@ -3,11 +3,11 @@ import hmppsConfig from '@ministryofjustice/eslint-config-hmpps'
 export default [
   ...hmppsConfig({
     extraIgnorePaths: [
-      'assets', 
-      'frontend', 
-      'cypress.json', 
-      'reporter-config.json', 
-      'server/@types', 
+      'assets',
+      'frontend',
+      'cypress.json',
+      'reporter-config.json',
+      'server/@types',
       'playwright-report/**',
       'playwright-test-results/**',
     ],
