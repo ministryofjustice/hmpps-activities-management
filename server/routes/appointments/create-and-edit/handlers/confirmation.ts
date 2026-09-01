@@ -85,7 +85,10 @@ export default class ConfirmationRoutes {
     } else {
       actions.push({
         href: `/appointments/${appointment.id}`,
-        text: 'View, manage and print a movement slip for this appointment',
+        text:
+          attendees.length > 1
+            ? 'View, manage and print a movement slips for this appointment'
+            : 'View, manage and print a movement slip for this appointment',
         dataQa: 'view-appointment-link',
       })
     }

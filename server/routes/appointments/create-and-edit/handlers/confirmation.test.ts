@@ -214,7 +214,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
         },
         {
           href: '/appointments/1',
-          text: 'View, manage and print a movement slip for this appointment',
+          text: 'View, manage and print a movement slips for this appointment',
           dataQa: 'view-appointment-link',
         },
       ])
