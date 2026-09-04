@@ -173,6 +173,11 @@ Start the required containers:
 Start a local `hmpps-activities-management` service with `$ npm run start`, which will use you `.env` file to set
 up its environment to reference the DEV APIs, local activities API and local containers.
 
+### Diagnosing slow page requests
+
+Local request timing can show downstream calls, rendering duration and request sequencing. See the
+[server request timing guide](server/middleware/serverRequestTiming/README.md) for enablement, browser inspection and help interpreting the output.
+
 ## Digital Prison Reporting (DPR)
 
 DPR integration has been started and first report is available [here](https://activities-dev.prison.service.justice.gov.uk/dpr-reporting/waitlist-agg).
