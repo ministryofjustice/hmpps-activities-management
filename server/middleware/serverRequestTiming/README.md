@@ -115,7 +115,7 @@ The `RestClient` prototype is wrapped once when the feature is enabled. The wrap
 
 ### Privacy
 
-Only method, service name, status, timing information and normalised routes are recorded. Query parameters, request bodies, headers, authentication tokens and raw URLs are never added to the timing output. Express route parameters and identifier-like downstream path segments are replaced before logging.
+Only method, service name, status, timing information and normalised routes are recorded. Query parameters, request bodies, headers, authentication tokens and raw URLs are never added to the timing output. Express route parameters and identifier-like downstream path segments are replaced before logging. Static text is retained only when it comes from a registered Express route template or the explicit set of known application/API path labels; unrecognised path text is replaced with `:value`.
 
 Keep sanitisation tests alongside any new downstream path shape that contains user-supplied or identifying values.
 

@@ -2,9 +2,60 @@ import type { Request } from 'express'
 
 const sensitivePathParents = new Set(['offender', 'offenderno', 'offenders', 'prisoner', 'prisoners', 'user', 'users'])
 
-const normaliseSegment = (segment: string): string => {
+const knownStaticPathSegments = new Set([
+  'activities',
+  'activity',
+  'allocate',
+  'allocation-dashboard',
+  'allocation',
+  'allocations',
+  'amend',
+  'appointments',
+  'attendance',
+  'attendance-summary',
+  'authenticate',
+  'cancel',
+  'change-of-circumstances',
+  'components',
+  'court',
+  'create',
+  'details',
+  'edit',
+  'exclude',
+  'exclusions',
+  'locations',
+  'movement-list',
+  'non-associations',
+  'page',
+  'prison',
+  'prisoner',
+  'prisoner-allocations',
+  'prisoner-numbers',
+  'prisoner-search',
+  'prisoners',
+  'prisons',
+  'probation',
+  'profileImage',
+  'remove',
+  'scheduled-instances',
+  'schedules',
+  'search',
+  'series',
+  'set',
+  'start-date',
+  'suspend',
+  'suspensions',
+  'unlock-list',
+  'unsuspend',
+  'users',
+  'video-link-booking',
+  'waitlist',
+  'waitlist-dashboard',
+])
+
+const normaliseUntrustedSegment = (segment: string, allowNamedParameter: boolean): string => {
   if (!segment) return segment
-  if (/^:[A-Za-z][A-Za-z0-9_]*$/.test(segment)) return segment
+  if (/^:[A-Za-z][A-Za-z0-9_]*$/.test(segment)) return allowNamedParameter ? segment : ':value'
   if (/^[*{]/.test(segment)) return ':path'
 
   let decoded: string
@@ -19,12 +70,35 @@ const normaliseSegment = (segment: string): string => {
   if (/^\d+(?:,\d+)*$/.test(decoded)) return ':id'
   if (/^[A-Z][A-Z0-9_.-]*$/.test(decoded)) return ':value'
   if (/\d/.test(decoded) && !/^[a-z]+-v\d+$/i.test(decoded)) return ':value'
-  if (decoded.length > 40 || !/^[a-z][a-z-]*$/.test(decoded)) return ':value'
+  if (knownStaticPathSegments.has(decoded)) return decoded
 
-  return decoded
+  return ':value'
 }
 
-const normalisePath = (path: string): string => {
+const normaliseRouteTemplateSegment = (segment: string): string => {
+  if (!segment) return segment
+  if (/^:[A-Za-z][A-Za-z0-9_]*$/.test(segment)) return segment
+  if (/^[*{]/.test(segment)) return ':path'
+
+  let decoded: string
+  try {
+    decoded = decodeURIComponent(segment)
+  } catch {
+    return ':value'
+  }
+
+  return /^[A-Za-z][A-Za-z0-9-]*$/.test(decoded) ? decoded : ':value'
+}
+
+interface NormalisePathOptions {
+  allowNamedParameters?: boolean
+  trustedRouteTemplate?: boolean
+}
+
+const normalisePath = (
+  path: string,
+  { allowNamedParameters = false, trustedRouteTemplate = false }: NormalisePathOptions = {},
+): string => {
   let pathname: string
   try {
     pathname = new URL(path, 'http://local').pathname
@@ -41,7 +115,11 @@ const normalisePath = (path: string): string => {
       return ':value'
     }
 
-    return sensitivePathParents.has(parentSegment) ? ':value' : normaliseSegment(segment)
+    if (!trustedRouteTemplate && sensitivePathParents.has(parentSegment)) return ':value'
+
+    return trustedRouteTemplate
+      ? normaliseRouteTemplateSegment(segment)
+      : normaliseUntrustedSegment(segment, allowNamedParameters)
   })
   const normalised = segments.join('/').replace(/\/{2,}/g, '/')
   return normalised.startsWith('/') ? normalised : `/${normalised}`
@@ -74,7 +152,7 @@ export const normaliseExpressRoute = (req: Request): string => {
       }
     })
     .join('/')
-  const requestPath = normalisePath(parameterisedPath)
+  const requestPath = normalisePath(parameterisedPath, { allowNamedParameters: true })
   const routePath = req.route?.path
 
   if (typeof routePath !== 'string' || routePath === '/' || routePath.length === 0) {
@@ -82,9 +160,9 @@ export const normaliseExpressRoute = (req: Request): string => {
   }
 
   const requestSegments = requestPath.split('/').filter(Boolean)
-  const routeSegments = routePath.split('/').filter(Boolean).map(normaliseSegment)
+  const routeSegments = routePath.split('/').filter(Boolean).map(normaliseRouteTemplateSegment)
 
-  if (routeSegments.length > requestSegments.length) return normalisePath(routePath)
+  if (routeSegments.length > requestSegments.length) return normalisePath(routePath, { trustedRouteTemplate: true })
 
   return `/${[...requestSegments.slice(0, requestSegments.length - routeSegments.length), ...routeSegments].join('/')}`
 }

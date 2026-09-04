@@ -8,6 +8,9 @@ describe('sanitiseDownstreamEndpoint', () => {
     ['/locations/0d813283-1d70-4048-85ec-9b6509f9f9a0', '/locations/:id'],
     ['https://example.test/users/BLOGGSJ?token=secret', '/users/:value'],
     ['/users/jbloggs/authenticate', '/users/:value/authenticate'],
+    ['/john-smith', '/:value'],
+    ['/aliases/john-smith/preferences', '/:value/:value/:value'],
+    ['/:johnSmith', '/:value'],
   ])('normalises %s', (endpoint, expected) => {
     expect(sanitiseDownstreamEndpoint(endpoint)).toBe(expected)
   })

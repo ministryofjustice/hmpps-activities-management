@@ -104,6 +104,22 @@ describe('serverRequestTiming middleware', () => {
     expect(loggedTiming().request.route).toBe('/activities/allocations/edit/:allocationId/:journeyId/start-date')
   })
 
+  it('does not log unrecognised segments from an unmatched request path', async () => {
+    const app = express()
+    app.use(serverRequestTiming({ enabled: true, timingLogger }))
+    app.use((_req, res) => res.sendStatus(404))
+
+    await request(app).get('/john-smith?token=do-not-log').expect(404)
+
+    expect(loggedTiming().request).toMatchObject({
+      route: '/:value',
+      status: 404,
+      outcome: 'failed',
+    })
+    expect(JSON.stringify(loggedTiming())).not.toContain('john-smith')
+    expect(JSON.stringify(loggedTiming())).not.toContain('do-not-log')
+  })
+
   it('records sanitised, concurrent and duplicate downstream calls with their statuses', async () => {
     const client = new RestClient('Activities Management API', apiConfig, clientLogger as unknown as Console)
     nock(apiConfig.url).get('/activities/123').query({ prisonerNumber: 'A1234BC' }).thrice().delay(10).reply(200, {})
