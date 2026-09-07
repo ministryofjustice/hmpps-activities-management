@@ -23,7 +23,6 @@
     "integration_tests",
     "e2e",
     "dist",
-    "cypress.config.ts",
     "playwright.config.ts",
     "playwright-report",
     "playwright-test-results",
