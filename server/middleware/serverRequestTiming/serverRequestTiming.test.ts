@@ -301,7 +301,14 @@ describe('serverRequestTiming middleware', () => {
     app.use(serverRequestTiming({ enabled: true, timingLogger }))
     app.get('/allocation/:allocationId', (_req, res) => res.destroy())
 
-    await expect(request(app).get('/allocation/123')).rejects.toThrow()
+    // Nock's intercepted socket retains an open handle when the server destroys the response.
+    // This test makes no downstream calls, so exercise the real HTTP socket instead.
+    nock.restore()
+    try {
+      await expect(request(app).get('/allocation/123')).rejects.toThrow()
+    } finally {
+      nock.activate()
+    }
 
     expect(timingLogger.info).toHaveBeenCalledTimes(1)
     expect(loggedTiming()).toMatchObject({
