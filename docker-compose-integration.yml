@@ -12,7 +12,7 @@ services:
     healthcheck:
       test: ['CMD', 'wget', '-q', '-O', '-', 'http://localhost:6379/health']
 
-  # Needed only when running cypress tests
+  # Needed only when running PW tests
   wiremock:
     image: wiremock/wiremock
     networks:
