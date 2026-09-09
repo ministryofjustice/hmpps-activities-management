@@ -953,9 +953,9 @@ describe('Route Handlers - Attendance List', () => {
         ],
       }
 
-      when(activitiesService.getScheduledActivity)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue({ ...instanceA, attendances: [] })
+      when(activitiesService.getScheduledActivities)
+        .calledWith([1], res.locals.user)
+        .mockResolvedValue([{ ...instanceA, attendances: [] }])
 
       when(activitiesService.getScheduledEventsForPrisoners)
         .calledWith(expect.any(Date), ['ABC123'], res.locals.user)
