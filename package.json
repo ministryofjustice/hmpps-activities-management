@@ -28,7 +28,6 @@
     "wait:wiremock": "wait-on tcp:127.0.0.1:9091 --timeout 60000",
     "pw-test": "playwright test",
     "pw-test-ui": "playwright test --ui",
-    "pw-test:noPull": "npm run deps:down && npm run deps:up && npm run build && concurrently -k --success first -n ui,playwright \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run pw-test\"",
     "pw-test:local": "npm run deps:down && npm run deps:pull && npm run deps:up && npm run build && concurrently -k --success first -n ui,playwright \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run pw-test\"",
     "pw-test-ui:local": "npm run deps:down && npm run deps:pull && npm run deps:up && npm run build && concurrently -k -n ui,playwright \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run pw-test-ui\""
   },

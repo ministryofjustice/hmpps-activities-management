@@ -975,6 +975,8 @@ describe('Route Handlers - Attendance List', () => {
 
       expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
       expect(req.journeyData.recordAttendanceJourney.notAttended).toBeUndefined()
+
+      expect(activitiesService.getScheduledActivities).toHaveBeenCalledWith([1], res.locals.user)
     })
   })
 
