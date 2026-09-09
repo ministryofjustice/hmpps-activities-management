@@ -6,7 +6,6 @@ import PrisonService from '../../../../services/prisonService'
 import { eventClashes, toDate } from '../../../../utils/utils'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
-import { Attendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 
 enum EditAttendanceOptions {
   YES = 'yes',
@@ -32,7 +31,7 @@ export default class EditAttendanceRoutes {
     const { user } = res.locals
     const { id, attendanceId } = req.params
 
-    const [instance, attendance]: [ScheduledActivity, Attendance] = await Promise.all([
+    const [instance, attendance] = await Promise.all([
       this.activitiesService.getScheduledActivity(+id, user),
       this.activitiesService.getAttendanceDetails(+attendanceId),
     ])
@@ -70,41 +69,43 @@ export default class EditAttendanceRoutes {
     }
 
     if (req.body.attendanceOption === EditAttendanceOptions.NO) {
-      const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId)
-      const instance = await this.activitiesService.getScheduledActivity(+id, user)
+      const [attendance, instance] = await Promise.all([
+        this.activitiesService.getAttendanceDetails(+attendanceId),
+        this.activitiesService.getScheduledActivity(+id, user),
+      ])
 
-      const otherScheduledEvents = await this.activitiesService
-        .getScheduledEventsForPrisoners(toDate(instance.date), [attendance.prisonerNumber], user)
-        .then(response => [
-          ...response.activities,
-          ...response.appointments,
-          ...response.courtHearings,
-          ...response.visits,
-        ])
-        .then(events => events.filter(e => !e.cancelled))
-        .then(events => events.filter(e => e.scheduledInstanceId !== +id))
-        .then(events => events.filter(e => eventClashes(e, instance)))
+      const [scheduledEvents, prisoner] = await Promise.all([
+        this.activitiesService.getScheduledEventsForPrisoners(toDate(instance.date), [attendance.prisonerNumber], user),
+        this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user),
+      ])
 
-      const attendee = await this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user).then(i => ({
-        name: `${i.firstName} ${i.lastName}`,
-        firstName: i.firstName,
-        lastName: i.lastName,
-        otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
-      }))
+      const otherScheduledEvents = [
+        ...scheduledEvents.activities,
+        ...scheduledEvents.appointments,
+        ...scheduledEvents.courtHearings,
+        ...scheduledEvents.visits,
+      ]
+        .filter(event => !event.cancelled)
+        .filter(event => event.scheduledInstanceId !== +id)
+        .filter(event => eventClashes(event, instance))
+
+      const otherEvents = otherScheduledEvents.filter(event => event.prisonerNumber === prisoner.prisonerNumber)
+
       req.journeyData.recordAttendanceJourney.notAttended = {
         selectedPrisoners: [
           {
             instanceId: +id,
             attendanceId: +attendanceId,
             prisonerNumber: attendance.prisonerNumber,
-            prisonerName: attendee.name,
-            firstName: attendee.firstName,
-            lastName: attendee.lastName,
-            otherEvents: attendee.otherEvents,
+            prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+            firstName: prisoner.firstName,
+            lastName: prisoner.lastName,
+            otherEvents: otherEvents,
           },
         ],
       }
-      return res.redirect(`../../../not-attended-reason?preserveHistory=true`)
+
+      return res.redirect('../../../not-attended-reason?preserveHistory=true')
     }
 
     // If not "yes" or "no", assume "reset"
