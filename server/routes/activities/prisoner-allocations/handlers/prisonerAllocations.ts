@@ -16,19 +16,22 @@ export default class PrisonerAllocationsHandler {
     const { prisonerNumber } = req.params as { prisonerNumber: string }
     const { user } = res.locals
 
-    const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
-    const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations([prisonerNumber], user)
-    const allocationsData = prisonerAllocations[0]?.allocations.flat(1)
-    const activities: ActivitySummary[] = await this.activitiesService.getActivities(false, user)
+    const [prisoner, prisonerAllocations, activities, prisonerNonAssociations, waitlistSearchResults] =
+      await Promise.all([
+        this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user),
+        this.activitiesService.getActivePrisonPrisonerAllocations([prisonerNumber], user),
+        this.activitiesService.getActivities(false, user),
+        // TO DO: handle non-associations better - we don't need to retrieve the whole object for hasNonAssociations.
+        this.nonAssociationsService.getNonAssociationByPrisonerId(prisonerNumber, user),
+        this.activitiesService.getWaitlistApplicationsForPrisoner(user.activeCaseLoadId, prisonerNumber, user),
+      ])
 
-    const waitlistApplications = await this.activitiesService
-      .getWaitlistApplicationsForPrisoner(user.activeCaseLoadId, prisonerNumber, user)
-      .then(searchResults =>
-        searchResults.content.map(applications => ({
-          ...applications,
-          activity: activities.find(act => act.id === applications.activityId),
-        })),
-      )
+    const waitlistApplications = waitlistSearchResults.content.map(application => ({
+      ...application,
+      activity: activities.find(act => act.id === application.activityId),
+    }))
+
+    const allocationsData = prisonerAllocations[0]?.allocations.flat(1)
 
     const filterByStatus = status =>
       waitlistApplications.filter(app => app.activity.activityState === 'LIVE' && app.status === status)
@@ -40,10 +43,6 @@ export default class PrisonerAllocationsHandler {
 
     const activeAllocations = allocationsData?.filter(all => !all.plannedSuspension)
 
-    const prisonerNonAssociations = await this.nonAssociationsService.getNonAssociationByPrisonerId(
-      prisonerNumber,
-      user,
-    )
     const hasNonAssociations = prisonerNonAssociations.nonAssociations.length > 0
 
     return res.render('pages/activities/prisoner-allocations/dashboard', {
