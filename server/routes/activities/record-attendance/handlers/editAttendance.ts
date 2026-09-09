@@ -30,25 +30,25 @@ export default class EditAttendanceRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { id } = req.params
-    const { attendanceId } = req.params
+    const { id, attendanceId } = req.params
 
     const [instance, attendance]: [ScheduledActivity, Attendance] = await Promise.all([
       this.activitiesService.getScheduledActivity(+id, user),
       this.activitiesService.getAttendanceDetails(+attendanceId),
     ])
 
-    const attendee = await this.prisonService
-      .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
-      .then(i => ({ name: `${i.firstName} ${i.lastName}` }))
+    const prisoner = await this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user)
+
+    const attendee = {
+      name: `${prisoner.firstName} ${prisoner.lastName}`,
+    }
 
     res.render('pages/activities/record-attendance/edit-attendance', { instance, attendance, attendee })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { id } = req.params
-    const { attendanceId } = req.params
+    const { id, attendanceId } = req.params
 
     if (req.body.attendanceOption === EditAttendanceOptions.YES) {
       const attendances = [

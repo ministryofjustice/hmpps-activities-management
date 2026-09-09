@@ -72,16 +72,17 @@ export default class AttendanceListRoutes {
 
     const prisonerNumbers = instanceAttendees.map(attendee => attendee.prisonerNumber)
 
-    // Start this immediately while we fetch attendee/event data below.
-    const userMapPromise = this.userService.getUserMap([instance.cancelledBy], user)
-
     let attendance: ScheduledInstanceAttendance[] = []
+    let userMap
 
     if (prisonerNumbers.length > 0) {
-      const [attendees, otherEvents] = await Promise.all([
+      const [attendees, otherEvents, users] = await Promise.all([
         this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
         this.activitiesService.getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user),
+        this.userService.getUserMap([instance.cancelledBy], user),
       ])
+
+      userMap = users
 
       const eventsByPrisoner = _.groupBy(flattenPrisonerScheduledEvents(otherEvents), 'prisonerNumber')
 
@@ -103,9 +104,9 @@ export default class AttendanceListRoutes {
           otherEvents: prisonerEvents,
         }
       })
+    } else {
+      userMap = await this.userService.getUserMap([instance.cancelledBy], user)
     }
-
-    const userMap = await userMapPromise
 
     req.journeyData.recordAttendanceJourney ??= {}
 
@@ -206,15 +207,7 @@ export default class AttendanceListRoutes {
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
 
-    const selectedPrisonerPromise =
-      selectedAttendances.length === 1
-        ? this.prisonService.getInmateByPrisonerNumber(selectedAttendances[0].split('-')[2], user)
-        : Promise.resolve(undefined)
-
-    const [instance, selectedPrisoner] = await Promise.all([
-      this.activitiesService.getScheduledActivity(instanceId, user),
-      selectedPrisonerPromise,
-    ])
+    const instance = await this.activitiesService.getScheduledActivity(instanceId, user)
 
     const attendances = selectedAttendances.map(selectedAttendance => ({
       id: Number(selectedAttendance.split('-')[1]),
@@ -224,7 +217,15 @@ export default class AttendanceListRoutes {
       issuePayment: instance.activitySchedule.activity.paid,
     }))
 
-    await this.activitiesService.updateAttendances(attendances, user)
+    const selectedPrisonerPromise =
+      selectedAttendances.length === 1
+        ? this.prisonService.getInmateByPrisonerNumber(selectedAttendances[0].split('-')[2], user)
+        : Promise.resolve(undefined)
+
+    const [, selectedPrisoner] = await Promise.all([
+      this.activitiesService.updateAttendances(attendances, user),
+      selectedPrisonerPromise,
+    ])
 
     const prisonerName = selectedPrisoner ? this.formatPrisonerName(selectedPrisoner) : undefined
 
@@ -241,15 +242,7 @@ export default class AttendanceListRoutes {
 
     const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
 
-    const selectedPrisonerPromise =
-      selectedAttendances.length === 1
-        ? this.prisonService.getInmateByPrisonerNumber(selectedAttendances[0].split('-')[2], user)
-        : Promise.resolve(undefined)
-
-    const [instances, selectedPrisoner] = await Promise.all([
-      this.activitiesService.getScheduledActivities(instanceIds, user),
-      selectedPrisonerPromise,
-    ])
+    const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
 
     const instancesById = new Map(instances.map(instance => [instance.id, instance]))
 
@@ -266,7 +259,15 @@ export default class AttendanceListRoutes {
       }
     })
 
-    await this.activitiesService.updateAttendances(attendances, user)
+    const selectedPrisonerPromise =
+      selectedAttendances.length === 1
+        ? this.prisonService.getInmateByPrisonerNumber(selectedAttendances[0].split('-')[2], user)
+        : Promise.resolve(undefined)
+
+    const [, selectedPrisoner] = await Promise.all([
+      this.activitiesService.updateAttendances(attendances, user),
+      selectedPrisonerPromise,
+    ])
 
     const prisonerName = selectedPrisoner ? this.formatPrisonerName(selectedPrisoner) : undefined
 
@@ -296,7 +297,6 @@ export default class AttendanceListRoutes {
     const instanceIds = _.uniq(ids.map(id => id.instanceId))
     const prisonerNumbers = _.uniq(ids.map(id => id.prisonerNumber))
 
-    // Use the bulk endpoint instead of one getScheduledActivity call per instance.
     const allInstances = await this.activitiesService.getScheduledActivities(instanceIds, user)
 
     const [scheduledEvents, allPrisoners] = await Promise.all([
