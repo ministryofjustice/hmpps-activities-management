@@ -25,11 +25,13 @@ export default class ViewAllocationsRoutes {
 
     const activityIds = [...new Set(allocations.map(allocation => allocation.activityId))]
 
-    const activities = await Promise.all(
-      activityIds.map(activityId => this.activitiesService.getActivity(activityId, user)),
+    const activityEntries = await Promise.all(
+      activityIds.map(
+        async activityId => [activityId, await this.activitiesService.getActivity(activityId, user)] as const,
+      ),
     )
 
-    const activitiesById = new Map(activities.map(activity => [activity.id, activity]))
+    const activitiesById = new Map(activityEntries)
 
     const enhancedAllocations = allocations.map(allocation => {
       const activity = activitiesById.get(allocation.activityId)
