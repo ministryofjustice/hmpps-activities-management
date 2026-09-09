@@ -100,7 +100,7 @@ export default class EditAttendanceRoutes {
             prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
             firstName: prisoner.firstName,
             lastName: prisoner.lastName,
-            otherEvents: otherEvents,
+            otherEvents,
           },
         ],
       }
