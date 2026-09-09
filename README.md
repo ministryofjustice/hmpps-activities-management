@@ -128,35 +128,6 @@ OR
 
 `$ npm run pw-test-ui` - to run tests interactively
 
-## Integration tests (Cypress/Wiremock)
-
-**Quick start commands**
-
-To run the entire Cypress suite locally: `npm run int-test:local`
-To run the interactive Cypress UI locally: `npm run int-test-ui:local`
-
-Alternativaly, the follow steps allow manual running:
-
-Pull images and start dependent services (redis and wiremock):
-
-`$ docker compose -f docker-compose-integration.yml pull`
-
-`$ docker compose -f docker-compose-integration.yml up -d`
-
-In a different terminal:
-
-`$ npm run build` - to compile ts and resources
-
-`$ npm run start-feature` - to start the UI service with env settings to reference locally-mocked (wiremock) APIs:
-
-In a third terminal:
-
-`$ npm run int-test` - to run Cypress tests in the background
-
-OR
-
-`$ npm run int-test-ui` - to run tests interactively
-
 ## Running locally (against DEV auth & APIs)
 
 The essential local containers are - `redis` and `postgres`. All other dependent services
@@ -172,6 +143,11 @@ Start the required containers:
 
 Start a local `hmpps-activities-management` service with `$ npm run start`, which will use you `.env` file to set
 up its environment to reference the DEV APIs, local activities API and local containers.
+
+### Diagnosing slow page requests
+
+Local request timing can show downstream calls, rendering duration and request sequencing. See the
+[server request timing guide](server/middleware/serverRequestTiming/README.md) for enablement, browser inspection and help interpreting the output.
 
 ## Digital Prison Reporting (DPR)
 

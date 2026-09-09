@@ -30,6 +30,7 @@ import logger from '../logger'
 import redirectInterceptor from './middleware/redirectInterceptor'
 import renderInterceptor from './middleware/renderInterceptor'
 import storeSessionInLocals from './middleware/storeSessionInLocals'
+import serverRequestTiming from './middleware/serverRequestTiming'
 
 export default function createApp(services: Services): express.Application {
   const app = express()
@@ -38,6 +39,23 @@ export default function createApp(services: Services): express.Application {
   app.set('trust proxy', true)
   app.set('port', process.env.PORT || 3000)
   app.use(setUpHealthChecks(services))
+
+  // DevTools probes this path on localhost for automatic workspace discovery.
+  // Handle it explicitly so the expected 404 is not logged as an application error.
+  if (process.env.NODE_ENV !== 'production') {
+    app.get('/.well-known/appspecific/com.chrome.devtools.json', (_req, res) => {
+      res.sendStatus(404)
+    })
+  }
+
+  if (config.serverRequestTiming.enabled) {
+    app.use(
+      serverRequestTiming({
+        enabled: true,
+        serverTimingHeader: config.serverRequestTiming.serverTimingHeader,
+      }),
+    )
+  }
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
   app.use(flash())
