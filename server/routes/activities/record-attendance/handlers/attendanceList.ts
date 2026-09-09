@@ -60,61 +60,52 @@ export default class AttendanceListRoutes {
     const instanceId = +req.params.id
     const { user } = res.locals
 
-    let attendance: ScheduledInstanceAttendance[] = []
+    const [scheduledActivity, instanceAttendees] = await Promise.all([
+      this.activitiesService.getScheduledActivity(instanceId, user),
+      this.activitiesService.getAttendees(instanceId, user),
+    ])
 
-    const instance = await this.activitiesService.getScheduledActivity(instanceId, user).then(i => ({
-      ...i,
-      isAmendable: startOfDay(toDate(i.date)) >= startOfToday(),
-      isInFuture: startOfDay(toDate(i.date)) > startOfToday(),
+    const instance = {
+      ...scheduledActivity,
+      isAmendable: startOfDay(toDate(scheduledActivity.date)) >= startOfToday(),
+      isInFuture: startOfDay(toDate(scheduledActivity.date)) > startOfToday(),
+    }
+
+    const prisonerNumbers = instanceAttendees.map(attendee => attendee.prisonerNumber)
+    const hasAttendees = prisonerNumbers.length > 0
+
+    const [userMap, attendees, otherEvents] = await Promise.all([
+      this.userService.getUserMap([instance.cancelledBy], user),
+      hasAttendees ? this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user) : [],
+      hasAttendees
+        ? this.activitiesService.getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user)
+        : undefined,
+    ])
+
+    const allEvents = otherEvents ? flattenPrisonerScheduledEvents(otherEvents) : []
+
+    const attendance: ScheduledInstanceAttendance[] = attendees.map(attendee => ({
+      prisoner: {
+        ...attendee,
+        alerts: attendee.alerts.filter(alert => this.RELEVANT_ALERT_CODES.includes(alert.alertCode)),
+      },
+      attendance: instance.attendances.find(a => a.prisonerNumber === attendee.prisonerNumber),
+      advancedAttendance: instance.isInFuture
+        ? instance.advanceAttendances.find(a => a.prisonerNumber === attendee.prisonerNumber)
+        : undefined,
+      otherEvents: allEvents
+        .filter(event => event.prisonerNumber === attendee.prisonerNumber)
+        .filter(event => event.scheduledInstanceId !== instanceId)
+        .filter(event => eventClashes(event, instance))
+        .filter(event => event.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(event)),
     }))
 
-    const prisonerNumbers = (await this.activitiesService.getAttendees(instanceId, user)).map(a => a.prisonerNumber)
+    req.journeyData.recordAttendanceJourney ??= {}
 
-    if (prisonerNumbers.length > 0) {
-      const [attendees, otherEvents] = await Promise.all([
-        this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
-        this.activitiesService.getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user),
-      ])
-
-      const allEvents = [
-        ...otherEvents.activities,
-        ...otherEvents.appointments,
-        ...otherEvents.courtHearings,
-        ...otherEvents.visits,
-        ...otherEvents.adjudications,
-      ]
-
-      attendance = attendees.map(att => {
-        const prisonerEvents = allEvents
-          .filter(e => e.prisonerNumber === att.prisonerNumber)
-          .filter(e => e.scheduledInstanceId !== instanceId)
-          .filter(e => eventClashes(e, instance))
-          .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e))
-
-        const attendee = {
-          ...att,
-          alerts: att.alerts.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
-        }
-
-        return {
-          prisoner: attendee,
-          attendance: instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber),
-          advancedAttendance: instance.isInFuture
-            ? instance.advanceAttendances.find(a => a.prisonerNumber === att.prisonerNumber)
-            : undefined,
-          otherEvents: prisonerEvents,
-        }
-      })
-    }
-
-    const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
-
-    if (!req.journeyData.recordAttendanceJourney) {
-      req.journeyData.recordAttendanceJourney = {}
-    }
-
-    const selectedSessions = req.journeyData.recordAttendanceJourney?.sessionFilters
-      ? Object.values(TimeSlot).filter(t => req.journeyData.recordAttendanceJourney.sessionFilters.includes(t))
+    const selectedSessions = req.journeyData.recordAttendanceJourney.sessionFilters
+      ? Object.values(TimeSlot).filter(timeSlot =>
+          req.journeyData.recordAttendanceJourney.sessionFilters.includes(timeSlot),
+        )
       : []
 
     req.journeyData.recordAttendanceJourney.singleInstanceSelected = true
@@ -136,8 +127,8 @@ export default class AttendanceListRoutes {
   GET_ATTENDANCES = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { searchTerm } = req.query
-    const { selectedInstanceIds, locationTypeFilter, returnUrl } = req.journeyData.recordAttendanceJourney
-    let locationName
+    const { selectedInstanceIds, locationTypeFilter, returnUrl, sessionFilters } =
+      req.journeyData.recordAttendanceJourney
 
     const instances = await this.activitiesService.getScheduledActivities(
       convertToNumberArray(selectedInstanceIds),
@@ -146,50 +137,41 @@ export default class AttendanceListRoutes {
 
     const prisonerNumbers = getPrisonerNumbersFromScheduledActivities(instances)
 
-    const [allAttendees, otherEvents] = await Promise.all([
+    const cancelledByUserIds = _.uniq(instances.map(instance => instance.cancelledBy).filter(Boolean))
+
+    const [allAttendees, otherEvents, userMap] = await Promise.all([
       this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
       this.activitiesService.getScheduledEventsForPrisoners(toDate(instances[0].date), prisonerNumbers, user),
+      this.userService.getUserMap(cancelledByUserIds, user),
     ])
 
     const allEvents = flattenPrisonerScheduledEvents(otherEvents)
 
-    if (locationTypeFilter === 'OUT_OF_CELL') {
-      const locations = _.uniq(instances.map(i => i.activitySchedule.internalLocation?.description))
-      locationName = locations.length === 1 ? locations[0] : undefined
-    }
+    const searchedAttendees = searchTerm
+      ? allAttendees.filter(attendee => this.filterForTerm(attendee, asString(searchTerm).toLowerCase()))
+      : allAttendees
 
-    const attendanceRows = (
-      await Promise.all(
-        instances.map(async instance => {
-          const session = instance.timeSlot
-          const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
-          let searchedAttendees = allAttendees
-          if (searchTerm) {
-            const term = asString(searchTerm).toLowerCase()
-            searchedAttendees = allAttendees.filter(att => this.filterForTerm(att, term))
-          }
-          return searchedAttendees
-            .filter(att => instance.attendances.map(a => a.prisonerNumber).includes(att.prisonerNumber))
-            .map(att => {
-              const prisonerEvents = allEvents
-                .filter(e => e.prisonerNumber === att.prisonerNumber)
-                .filter(e => e.scheduledInstanceId !== instance.id)
-                .filter(e => eventClashes(e, instance))
-                .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e))
+    const attendanceRows = instances.flatMap(instance => {
+      const attendeeNumbers = new Set(instance.attendances.map(attendance => attendance.prisonerNumber))
 
-              return {
-                instance,
-                session,
-                prisoner: att,
-                attendance: instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber),
-                otherEvents: prisonerEvents,
-                isAmendable: startOfDay(toDate(instance.date)) >= startOfToday(),
-                userMap,
-              }
-            })
-        }),
-      )
-    ).flat()
+      return searchedAttendees
+        .filter(attendee => attendeeNumbers.has(attendee.prisonerNumber))
+        .map(attendee => ({
+          instance,
+          session: instance.timeSlot,
+          prisoner: attendee,
+          attendance: instance.attendances.find(attendance => attendance.prisonerNumber === attendee.prisonerNumber),
+          otherEvents: allEvents
+            .filter(event => event.prisonerNumber === attendee.prisonerNumber)
+            .filter(event => event.scheduledInstanceId !== instance.id)
+            .filter(event => eventClashes(event, instance))
+            .filter(event => event.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(event)),
+          isAmendable: startOfDay(toDate(instance.date)) >= startOfToday(),
+          userMap,
+        }))
+    })
+
+    const locationName = locationTypeFilter === 'OUT_OF_CELL' ? getLocationName(instances) : undefined
 
     const numActivities = _.uniq(instances.map(instance => instance.activitySchedule.activity.summary)).length
 
@@ -198,9 +180,7 @@ export default class AttendanceListRoutes {
       numActivities,
       attendanceSummary: getAttendanceSummary(attendanceRows.flatMap(row => row.attendance)),
       selectedDate: instances[0].date,
-      selectedSessions: Object.values(TimeSlot).filter(t =>
-        req.journeyData.recordAttendanceJourney.sessionFilters.includes(t),
-      ),
+      selectedSessions: Object.values(TimeSlot).filter(timeSlot => sessionFilters.includes(timeSlot)),
       locationName,
       returnUrl,
     })
@@ -393,4 +373,10 @@ export default class AttendanceListRoutes {
     att.firstName.toLowerCase().includes(term) ||
     att.lastName.toLowerCase().includes(term) ||
     att.prisonerNumber.toLowerCase().includes(term)
+}
+
+function getLocationName(instances) {
+  const locations = _.uniq(instances.map(instance => instance.activitySchedule.internalLocation?.description))
+
+  return locations.length === 1 ? locations[0] : undefined
 }
