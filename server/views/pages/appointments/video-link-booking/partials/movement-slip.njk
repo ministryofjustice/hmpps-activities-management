@@ -1,0 +1,50 @@
+{% macro movementSlip(user, preAppointment, mainAppointment, postAppointment, prisoner, printedAt) %}
+    {% macro labelAndValue(label, value, rowClasses, valueClasses) %}
+        <div class="movement-slip__summary__row {{ rowClasses }}">
+            <dt class="movement-slip__summary__row__key">{{ label }}</dt>
+            <dd class="movement-slip__summary__row__value {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dd>
+        </div>
+    {% endmacro %}
+
+    {% macro appointmentTime(appointment) -%}
+        {{ appointment.startTime }}{% if appointment.endTime %} to {{ appointment.endTime }}{% endif %}
+    {%- endmacro %}
+    <div class="movement-slip">
+        <div class="govuk-heading-m movement-slip-header">{{ user.activeCaseLoad.description }} <span class="govuk-!-font-weight-regular">Movement authorisation slip</span></div>
+        <h2 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa="prisoner-name-and-number">
+            {% if prisoner | fullName %}{{ prisoner | fullName | toTitleCase }}, {% endif %}{{ prisoner.prisonerNumber }}
+        </h2>
+        <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="cell-location">
+            {% if prisoner.cellLocation == "UNKNOWN"%}
+                No matching cell location
+            {% else %}
+                {{ mainAppointment.prisonCode + '-' + prisoner.cellLocation }}
+            {% endif %}
+        </span>
+
+        <dl class='movement-slip__summary'>
+            {{ labelAndValue('Appointment', 'Video Link - Court Hearing') }}
+
+            {% if preAppointment %}
+              {{ labelAndValue('Pre-court hearing', appointmentTime(preAppointment)) }}
+            {% endif %}
+            {{ labelAndValue('Court hearing', '<ul class="govuk-list">' +
+                '<li>' + appointmentTime(mainAppointment) + '</li>' +
+                '<li>' + (mainAppointment.appointmentDate | toDate | formatDate) + '</li>' +
+            '</ul>') }}
+            {% if postAppointment %}
+              {{ labelAndValue('Post-court hearing', appointmentTime(postAppointment)) }}
+            {% endif %}
+
+            {{ labelAndValue('Location', mainAppointment.locationDescription) }}
+
+            {% if not prisonerExtraInformationEnabled %}
+              {{ labelAndValue('Extra information', mainAppointment.notesForStaff | escape, 'movement-slip__row--no-border', 'preserve-line-breaks') if mainAppointment.notesForStaff }}
+            {% else %}
+              {{ labelAndValue('Extra information', mainAppointment.notesForPrisoners | escape, 'movement-slip__row--no-border', 'preserve-line-breaks') if mainAppointment.notesForPrisoners }}
+            {% endif %}
+        </dl>
+
+        <p class="govuk-body-s movement-slip-footer">Printed at {{ printedAt | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}</p>
+    </div>
+{% endmacro %}
