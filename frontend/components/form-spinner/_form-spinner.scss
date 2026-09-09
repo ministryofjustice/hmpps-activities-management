@@ -1,4 +1,4 @@
-@use "sass:math";
+@use 'sass:math';
 
 .form-spinner {
   display: flex;
@@ -9,13 +9,13 @@
   top: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.3);
-  color: govuk-colour("white");
+  background: rgba(0, 0, 0, 0.3);
+  color: govuk-colour('white');
   @include govuk-font($size: 24, $line-height: 1, $weight: bold);
 
   &__notification-box {
     border-radius: 10px;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
     padding: govuk-spacing(4);
   }
 
@@ -29,7 +29,7 @@
 
 // Source: https://loading.io/css/
 $size: 50px;
-$scale: $size / 80px;
+$scale: math.div($size, 80px);
 .lds-spinner {
   display: inline-block;
   position: relative;
@@ -41,7 +41,7 @@ $scale: $size / 80px;
   animation: lds-spinner 1.2s linear infinite;
 }
 .lds-spinner div:after {
-  content: " ";
+  content: ' ';
   display: block;
   position: absolute;
   top: 3px * $scale;
