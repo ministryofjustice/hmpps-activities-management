@@ -3,7 +3,6 @@ import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
 import ActivitiesService from '../../../../services/activitiesService'
-import { ActivitySummary } from '../../../../@types/activitiesAPI/types'
 
 export default class PrisonerAllocationsHandler {
   constructor(
