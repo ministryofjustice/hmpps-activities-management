@@ -80,31 +80,47 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     const instanceIds = instancesForDateAndSlot.map(i => i.id)
 
-    let attendanceList
-    let selector: 'scheduleInstanceId' | 'scheduledInstanceId'
+    let attendanceRecords: { prisonerNumber: string; scheduledInstanceId: number }[] = []
 
-    if (instancesForDateAndSlot.length > 0 && instancesForDateAndSlot[0].attendances.length === 0) {
-      attendanceList = await this.activitiesService.getAttendeesForScheduledInstances(instanceIds, user)
-      selector = 'scheduledInstanceId'
-    } else {
-      attendanceList = instancesForDateAndSlot.map(instance => instance.attendances)
-      selector = 'scheduleInstanceId'
+    if (instancesForDateAndSlot.length > 0) {
+      if (instancesForDateAndSlot[0].attendances.length > 0) {
+        attendanceRecords = instancesForDateAndSlot.flatMap(instance =>
+          instance.attendances.map(attendance => ({
+            prisonerNumber: attendance.prisonerNumber,
+            scheduledInstanceId: attendance.scheduleInstanceId,
+          })),
+        )
+      } else {
+        attendanceRecords = await this.activitiesService
+          .getAttendeesForScheduledInstances(instanceIds, user)
+          .then(attendances =>
+            attendances.map(attendance => ({
+              prisonerNumber: attendance.prisonerNumber,
+              scheduledInstanceId: attendance.scheduledInstanceId,
+            })),
+          )
+      }
     }
 
-    const attendees = attendanceList.flat().reduce((accumulator, currentValue) => {
-      const existingIndex = accumulator.findIndex(a => a.prisonerNumber === currentValue.prisonerNumber)
-      if (existingIndex !== -1) {
-        accumulator[existingIndex].scheduledInstanceIds.push(currentValue[selector])
-      } else {
-        accumulator.push({
-          prisonerNumber: currentValue.prisonerNumber,
-          scheduledInstanceIds: [currentValue[selector]],
-        })
-      }
-      return accumulator
-    }, [])
+    const attendees = attendanceRecords.reduce<{ prisonerNumber: string; scheduledInstanceIds: number[] }[]>(
+      (accumulator, currentValue) => {
+        const existingIndex = accumulator.findIndex(a => a.prisonerNumber === currentValue.prisonerNumber)
 
-    const attendingPrisonerNumbers = Array.from(new Set(attendees.map(a => a.prisonerNumber)))
+        if (existingIndex !== -1) {
+          accumulator[existingIndex].scheduledInstanceIds.push(currentValue.scheduledInstanceId)
+        } else {
+          accumulator.push({
+            prisonerNumber: currentValue.prisonerNumber,
+            scheduledInstanceIds: [currentValue.scheduledInstanceId],
+          })
+        }
+
+        return accumulator
+      },
+      [],
+    )
+
+    const attendingPrisonerNumbers = attendees.map(a => a.prisonerNumber)
 
     const otherEvents =
       attendingPrisonerNumbers.length > 0
