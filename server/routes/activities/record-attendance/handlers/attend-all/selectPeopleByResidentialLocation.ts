@@ -78,13 +78,17 @@ export default class SelectPeopleByResidentialLocationRoutes {
       user,
     )
 
-    const instancesIds = instancesForDateAndSlot.map(i => i.id)
+    const instanceIds = instancesForDateAndSlot.map(i => i.id)
+
+    const hasEmbeddedAttendances = instancesForDateAndSlot.some(instance => instance.attendances.length > 0)
 
     const attendanceList =
-      instancesForDateAndSlot[0].attendances.length > 0
-        ? instancesForDateAndSlot.map(a => a.attendances)
-        : await this.activitiesService.getAttendeesForScheduledInstances(instancesIds, user)
-    const selector = instancesForDateAndSlot[0].attendances.length > 0 ? 'scheduleInstanceId' : 'scheduledInstanceId'
+      instancesForDateAndSlot.length === 0
+        ? []
+        : hasEmbeddedAttendances
+          ? instancesForDateAndSlot.map(instance => instance.attendances)
+          : await this.activitiesService.getAttendeesForScheduledInstances(instanceIds, user)
+    const selector = hasEmbeddedAttendances ? 'scheduleInstanceId' : 'scheduledInstanceId'
 
     const attendees = attendanceList.flat().reduce((accumulator, currentValue) => {
       const existingIndex = accumulator.findIndex(a => a.prisonerNumber === currentValue.prisonerNumber)
@@ -101,11 +105,15 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     const attendingPrisonerNumbers = Array.from(new Set(attendees.map(a => a.prisonerNumber)))
 
-    const otherEvents = await this.activitiesService.getScheduledEventsForPrisoners(
-      activityDate,
-      attendingPrisonerNumbers,
-      user,
-    )
+    const otherEvents =
+      attendingPrisonerNumbers.length === 0
+        ? {
+            appointments: [],
+            courtHearings: [],
+            visits: [],
+            adjudications: [],
+          }
+        : await this.activitiesService.getScheduledEventsForPrisoners(activityDate, attendingPrisonerNumbers, user)
 
     const allEvents = [
       ...otherEvents.appointments,
