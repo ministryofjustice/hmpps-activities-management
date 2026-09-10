@@ -2,6 +2,7 @@ import path from 'node:path'
 import compression from 'compression'
 import express from 'express'
 import nock from 'nock'
+import http from 'node:http'
 import request from 'supertest'
 import { RestClient } from '@ministryofjustice/hmpps-rest-client'
 import { trace } from '@ministryofjustice/hmpps-azure-telemetry'
@@ -301,13 +302,42 @@ describe('serverRequestTiming middleware', () => {
     app.use(serverRequestTiming({ enabled: true, timingLogger }))
     app.get('/allocation/:allocationId', (_req, res) => res.destroy())
 
-    // Nock's intercepted socket retains an open handle when the server destroys the response.
-    // This test makes no downstream calls, so exercise the real HTTP socket instead.
-    nock.restore()
+    const server = http.createServer(app)
+
+    await new Promise<void>(resolve => {
+      server.listen(0, '127.0.0.1', resolve)
+    })
+
     try {
-      await expect(request(app).get('/allocation/123')).rejects.toThrow()
+      const address = server.address()
+
+      if (!address || typeof address === 'string') {
+        throw new Error('Expected server to be listening on a TCP port')
+      }
+
+      await expect(
+        new Promise<void>((resolve, reject) => {
+          const req = http.get(
+            {
+              hostname: '127.0.0.1',
+              port: address.port,
+              path: '/allocation/123',
+            },
+            response => {
+              response.resume()
+              response.on('end', resolve)
+            },
+          )
+
+          req.on('error', reject)
+        }),
+      ).rejects.toThrow()
     } finally {
-      nock.activate()
+      server.closeAllConnections()
+
+      await new Promise<void>(resolve => {
+        server.close(() => resolve())
+      })
     }
 
     expect(timingLogger.info).toHaveBeenCalledTimes(1)
