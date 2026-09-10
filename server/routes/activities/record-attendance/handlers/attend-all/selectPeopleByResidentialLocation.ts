@@ -80,15 +80,16 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     const instanceIds = instancesForDateAndSlot.map(i => i.id)
 
-    const hasEmbeddedAttendances = instancesForDateAndSlot.some(instance => instance.attendances.length > 0)
+    let attendanceList
+    let selector: 'scheduleInstanceId' | 'scheduledInstanceId'
 
-    const attendanceList =
-      instancesForDateAndSlot.length === 0
-        ? []
-        : hasEmbeddedAttendances
-          ? instancesForDateAndSlot.map(instance => instance.attendances)
-          : await this.activitiesService.getAttendeesForScheduledInstances(instanceIds, user)
-    const selector = hasEmbeddedAttendances ? 'scheduleInstanceId' : 'scheduledInstanceId'
+    if (instancesForDateAndSlot.length > 0 && instancesForDateAndSlot[0].attendances.length === 0) {
+      attendanceList = await this.activitiesService.getAttendeesForScheduledInstances(instanceIds, user)
+      selector = 'scheduledInstanceId'
+    } else {
+      attendanceList = instancesForDateAndSlot.map(instance => instance.attendances)
+      selector = 'scheduleInstanceId'
+    }
 
     const attendees = attendanceList.flat().reduce((accumulator, currentValue) => {
       const existingIndex = accumulator.findIndex(a => a.prisonerNumber === currentValue.prisonerNumber)
@@ -106,20 +107,20 @@ export default class SelectPeopleByResidentialLocationRoutes {
     const attendingPrisonerNumbers = Array.from(new Set(attendees.map(a => a.prisonerNumber)))
 
     const otherEvents =
-      attendingPrisonerNumbers.length === 0
-        ? {
+      attendingPrisonerNumbers.length > 0
+        ? await this.activitiesService.getScheduledEventsForPrisoners(activityDate, attendingPrisonerNumbers, user)
+        : {
             appointments: [],
             courtHearings: [],
             visits: [],
             adjudications: [],
           }
-        : await this.activitiesService.getScheduledEventsForPrisoners(activityDate, attendingPrisonerNumbers, user)
 
     const allEvents = [
-      ...otherEvents.appointments,
-      ...otherEvents.courtHearings,
-      ...otherEvents.visits,
-      ...otherEvents.adjudications,
+      ...(otherEvents.appointments ?? []),
+      ...(otherEvents.courtHearings ?? []),
+      ...(otherEvents.visits ?? []),
+      ...(otherEvents.adjudications ?? []),
     ]
 
     const searchTerm = req.journeyData.recordAttendanceJourney.searchTerm?.toLowerCase() || ''
@@ -241,6 +242,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
     if (typeof selectedAttendances === 'string') {
       selectedAttendances = [selectedAttendances]
     }
+
     const { instanceIds } = parseSelectedAttendances(selectedAttendances)
 
     const allInstances = await this.activitiesService.getScheduledActivities(instanceIds, user)
@@ -271,6 +273,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
         const prisonerNumber = getPrisonerNumberFromAttendance(prisonerAttendance)
         const instance = allInstances.find(inst => inst.id === +selectedInstanceId)
         const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
+
         if (!instance.cancelled && attendance && attendance.status === AttendanceStatus.WAITING) {
           return {
             id: attendance.id,
@@ -293,6 +296,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
         getPrisonerNumberFromAttendance(selectedAttendances[0]),
         user,
       )
+
       if (selectedPrisoner) {
         prisonerName = formatName(
           selectedPrisoner.firstName,
@@ -346,6 +350,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
         }
       }
     }
+
     // Where a location has no sub-locations e.g. Segregation unit, there will be no cell-patterns to match against.
     return ''
   }
