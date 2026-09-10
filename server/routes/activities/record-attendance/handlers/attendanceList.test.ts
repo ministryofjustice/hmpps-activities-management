@@ -953,9 +953,9 @@ describe('Route Handlers - Attendance List', () => {
         ],
       }
 
-      when(activitiesService.getScheduledActivity)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue({ ...instanceA, attendances: [] })
+      when(activitiesService.getScheduledActivities)
+        .calledWith([1], res.locals.user)
+        .mockResolvedValue([{ ...instanceA, attendances: [] }])
 
       when(activitiesService.getScheduledEventsForPrisoners)
         .calledWith(expect.any(Date), ['ABC123'], res.locals.user)
@@ -975,6 +975,8 @@ describe('Route Handlers - Attendance List', () => {
 
       expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
       expect(req.journeyData.recordAttendanceJourney.notAttended).toBeUndefined()
+
+      expect(activitiesService.getScheduledActivities).toHaveBeenCalledWith([1], res.locals.user)
     })
   })
 

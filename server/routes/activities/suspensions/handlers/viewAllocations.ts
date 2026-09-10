@@ -2,9 +2,6 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { formatFirstLastName } from '../../../../utils/utils'
-import { Allocation } from '../../../../@types/activitiesAPI/types'
-import { ServiceUser } from '../../../../@types/express'
-import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import getCurrentPay from '../../../../utils/helpers/getCurrentPay'
 
 export default class ViewAllocationsRoutes {
@@ -19,57 +16,61 @@ export default class ViewAllocationsRoutes {
 
     req.session.prisonerSearchBackLinkHref = `/activities/suspensions/prisoner/${prisonerNumber}`
 
-    const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
+    const [prisoner, prisonerAllocations] = await Promise.all([
+      this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user),
+      this.activitiesService.getActivePrisonPrisonerAllocations([prisonerNumber], user),
+    ])
 
-    const allocations = await this.activitiesService
-      .getActivePrisonPrisonerAllocations([prisonerNumber], user)
-      .then(r => r.flatMap(a => a.allocations))
+    const allocations = prisonerAllocations.flatMap(result => result.allocations)
 
-    const activeAllocations = allocations.filter(all => !all.plannedSuspension)
+    const activityIds = [...new Set(allocations.map(allocation => allocation.activityId))]
 
-    const enhancedActiveAllocations = await this.enhanceActiveAllocations(activeAllocations, prisoner, res.locals.user)
-
-    const suspendedAllocations = allocations
-      .filter(all => all.plannedSuspension)
-      .sort((a, b) => (a.plannedSuspension.plannedStartDate < b.plannedSuspension.plannedStartDate ? -1 : 1))
-
-    const enhancedSuspendedAllocations = await this.enhanceActiveAllocations(
-      suspendedAllocations,
-      prisoner,
-      res.locals.user,
+    const activityEntries = await Promise.all(
+      activityIds.map(
+        async activityId => [activityId, await this.activitiesService.getActivity(activityId, user)] as const,
+      ),
     )
-    const sortedActiveAllocations = enhancedActiveAllocations.sort((a, b) =>
-      a.activitySummary < b.activitySummary ? -1 : 1,
-    )
+
+    const activitiesById = new Map(activityEntries)
+
+    const enhancedAllocations = allocations.map(allocation => {
+      const activity = activitiesById.get(allocation.activityId)
+
+      if (!activity) {
+        throw new Error(`Activity ${allocation.activityId} not found for allocation ${allocation.id}`)
+      }
+
+      if (!activity.paid) {
+        return {
+          ...allocation,
+          outsideWork: activity.outsideWork,
+        }
+      }
+
+      const currentPay = getCurrentPay(activity, allocation, prisoner)
+
+      return {
+        ...allocation,
+        payRate: currentPay?.rate,
+        outsideWork: activity.outsideWork,
+      }
+    })
+
+    const activeAllocations = enhancedAllocations
+      .filter(allocation => !allocation.plannedSuspension)
+      .sort((a, b) => a.activitySummary.localeCompare(b.activitySummary))
+
+    const suspendedAllocations = enhancedAllocations
+      .filter(allocation => allocation.plannedSuspension)
+      .sort((a, b) => a.plannedSuspension.plannedStartDate.localeCompare(b.plannedSuspension.plannedStartDate))
 
     res.render('pages/activities/suspensions/view-allocations', {
       prisonerNumber,
       prisonerName: formatFirstLastName(prisoner.firstName, prisoner.lastName),
-      allocationCount: allocations?.length,
-      suspendedAllocations: enhancedSuspendedAllocations,
-      activeAllocations: sortedActiveAllocations,
+      allocationCount: allocations.length,
+      suspendedAllocations,
+      activeAllocations,
       activeAllocationIdsForSuspending: activeAllocations.map(allocation => allocation.id),
     })
-  }
-
-  private enhanceActiveAllocations = async (activeAllocations: Allocation[], prisoner: Prisoner, user: ServiceUser) => {
-    return Promise.all(
-      activeAllocations.map(async allocation => {
-        const activity = await this.activitiesService.getActivity(allocation.activityId, user)
-        if (!activity.paid) {
-          return {
-            ...allocation,
-            outsideWork: activity.outsideWork,
-          }
-        }
-
-        const currentPay = getCurrentPay(activity, allocation, prisoner)
-        return {
-          ...allocation,
-          payRate: currentPay?.rate,
-          outsideWork: activity.outsideWork,
-        }
-      }),
-    )
   }
 }
