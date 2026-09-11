@@ -24,7 +24,7 @@ describe('Route Handlers - Suspensions - Case note question', () => {
     req = {
       body: {},
       query: {},
-      session: { suspendJourney: {} },
+      journeyData: { suspendJourney: {} },
     } as unknown as Request
   })
 
@@ -51,7 +51,7 @@ describe('Route Handlers - Suspensions - Case note question', () => {
     })
 
     it('should redirect to check answers if choice is no', async () => {
-      req.session.suspendJourney.caseNote = {
+      req.journeyData.suspendJourney.caseNote = {
         type: 'GEN',
         text: 'test',
       }
@@ -62,7 +62,7 @@ describe('Route Handlers - Suspensions - Case note question', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.caseNote).toEqual(null)
+      expect(req.journeyData.suspendJourney.caseNote).toEqual(null)
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })

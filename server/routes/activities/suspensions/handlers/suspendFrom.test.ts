@@ -26,7 +26,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
     req = {
       body: {},
       query: {},
-      session: {
+      journeyData: {
         suspendJourney: {
           allocations: [
             {
@@ -60,7 +60,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.suspendFrom).toEqual(format(new Date(), 'yyyy-MM-dd'))
+      expect(req.journeyData.suspendJourney.suspendFrom).toEqual(format(new Date(), 'yyyy-MM-dd'))
     })
 
     it('should add tomorrows date to the session if TOMORROW is selected', async () => {
@@ -70,7 +70,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.suspendFrom).toEqual(format(addDays(new Date(), 1), 'yyyy-MM-dd'))
+      expect(req.journeyData.suspendJourney.suspendFrom).toEqual(format(addDays(new Date(), 1), 'yyyy-MM-dd'))
     })
 
     it('should add a different date to the session if OTHER is selected', async () => {
@@ -81,7 +81,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.suspendFrom).toEqual(format(new Date('2026-04-20'), 'yyyy-MM-dd'))
+      expect(req.journeyData.suspendJourney.suspendFrom).toEqual(format(new Date('2026-04-20'), 'yyyy-MM-dd'))
     })
 
     it('should redirect to the pay question page if the single allocation has a pay rate', async () => {
@@ -95,7 +95,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
     })
 
     it('should redirect to the pay question page if there is an allocation with a pay rate being suspended', async () => {
-      req.session.suspendJourney = {
+      req.journeyData.suspendJourney = {
         inmate: {
           prisonerName: '',
           prisonerNumber: '',
@@ -128,7 +128,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
     })
 
     it('should redirect to the case note question page if none of the allocations have paybands', async () => {
-      req.session.suspendJourney = {
+      req.journeyData.suspendJourney = {
         inmate: {
           prisonerName: '',
           prisonerNumber: '',

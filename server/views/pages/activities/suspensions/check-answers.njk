@@ -21,31 +21,31 @@
         <div class="govuk-grid-column-two-thirds">
             {% set prisonerDetailsHtml %}
                 <ul class="govuk-list">
-                    <li>{{ session.suspendJourney.inmate.prisonerName }}</li>
-                    <li>{{ session.suspendJourney.inmate.prisonerNumber }}</li>
+                    <li>{{ suspendJourney.inmate.prisonerName }}</li>
+                    <li>{{ suspendJourney.inmate.prisonerNumber }}</li>
                 </ul>
             {% endset %}
 
             {% set activitiesText %}
-                {% if session.suspendJourney.allocations | length == 1 %}
-                    {{ session.suspendJourney.allocations[0].activityName | safe }}
+                {% if suspendJourney.allocations | length == 1 %}
+                    {{ suspendJourney.allocations[0].activityName | safe }}
                 {% else %}
                     <ul class="govuk-list">
-                        {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
+                        {% for allocation in suspendJourney.allocations | sortBy('activityName') %}
                             <li>{{allocation.activityName}}</li>
                         {% endfor %}
                     </ul>
                 {% endif %}
             {% endset %}
             {% set paidText %}
-                {% if session.suspendJourney.paid == YesNo.YES and paidCount == session.suspendJourney.allocations | length %}
+                {% if suspendJourney.paid == YesNo.YES and paidCount == suspendJourney.allocations | length %}
                     Yes
-                {% elif session.suspendJourney.paid == YesNo.NO %}
+                {% elif suspendJourney.paid == YesNo.NO %}
                     No
-                {% elif session.suspendJourney.paid == YesNo.YES and paidCount > 0 %}
+                {% elif suspendJourney.paid == YesNo.YES and paidCount > 0 %}
                     Yes, for:
                     <ul class="govuk-list govuk-list--bullet">
-                        {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
+                        {% for allocation in suspendJourney.allocations | sortBy('activityName') %}
                             {% if allocation.payBand %}
                                 <li>{{allocation.activityName}}</li>
                             {% endif %}
@@ -73,9 +73,9 @@
                         key: { text: "First day of suspension" },
                         value: {
                             text: (
-                                ("Today - suspension starts immediately" if session.suspendJourney.suspendFrom == now | toDateString) or
-                                ("Tomorrow: " + session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom == now | addDays(1) | toDateString) or
-                                (session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom > now | addDays(1) | toDateString)
+                                ("Today - suspension starts immediately" if suspendJourney.suspendFrom == now | toDateString) or
+                                ("Tomorrow: " + suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if suspendJourney.suspendFrom == now | addDays(1) | toDateString) or
+                                (suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if suspendJourney.suspendFrom > now | addDays(1) | toDateString)
                             )
                         },
                         actions: {
@@ -105,13 +105,13 @@
                                 }
                             ]
                         }
-                    } if session.suspendJourney.paid != null and paidCount > 0,
+                    } if suspendJourney.paid != null and paidCount > 0,
                     {
                         key: { text: "Last day of suspension" },
                         value: {
                             text: (
-                                ("Immediately" if session.suspendJourney.suspendUntil == now | toDateString) or
-                                (session.suspendJourney.suspendUntil | subDays(1) | formatDate('d MMMM yyyy'))
+                                ("Immediately" if suspendJourney.suspendUntil == now | toDateString) or
+                                (suspendJourney.suspendUntil | subDays(1) | formatDate('d MMMM yyyy'))
                             )
                         },
                         actions: {
@@ -129,7 +129,7 @@
                             text: "Do you want to add a case note?"
                         },
                         value: {
-                            text: "Yes" if session.suspendJourney.caseNote else "No"
+                            text: "Yes" if suspendJourney.caseNote else "No"
                         },
                         actions: {
                             items: [
@@ -146,7 +146,7 @@
                             text: "Case note type"
                         },
                         value: {
-                            text: "General" if session.suspendJourney.caseNote.type == 'GEN' else "Negative"
+                            text: "General" if suspendJourney.caseNote.type == 'GEN' else "Negative"
                         },
                         actions: {
                             items: [
@@ -158,13 +158,13 @@
                                 }
                             ]
                         }
-                    } if session.suspendJourney.caseNote and session.req.routeContext.mode == 'suspend',
+                    } if suspendJourney.caseNote and session.req.routeContext.mode == 'suspend',
                     {
                         key: {
                             text: "Case note"
                         },
                         value: {
-                            text: session.suspendJourney.caseNote.text
+                            text: suspendJourney.caseNote.text
                         },
                         actions: {
                             items: [
@@ -176,7 +176,7 @@
                                 }
                             ]
                         }
-                    } if session.suspendJourney.caseNote and session.req.routeContext.mode == 'suspend'
+                    } if suspendJourney.caseNote and session.req.routeContext.mode == 'suspend'
                 ]
             }) }}
 
@@ -187,7 +187,7 @@
                         text: "Confirm and suspend" if session.req.routeContext.mode == 'suspend' else "Confirm end of suspension",
                         preventDoubleClick: true
                     }) }}
-                    <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
+                    <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
                 </div>
             </form>
         </div>

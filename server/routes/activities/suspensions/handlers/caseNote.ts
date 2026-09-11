@@ -19,7 +19,7 @@ export default class CaseNoteRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { type, text } = req.body
 
-    req.session.suspendJourney.caseNote = { type, text }
+    req.journeyData.suspendJourney.caseNote = { type, text }
     return res.redirect('check-answers')
   }
 }

@@ -31,7 +31,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
       body: {},
       params: { prisonerNumber: 'ABC123' },
       query: {},
-      session: {
+      journeyData: {
         suspendJourney: {
           allocations: [
             {
@@ -101,7 +101,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
     it('suspend mode should post the allocation amendments (SUSPENDED and redirect', async () => {
       req.routeContext = { mode: 'suspend' }
 
-      req.session.suspendJourney.paid = YesNo.NO
+      req.journeyData.suspendJourney.paid = YesNo.NO
 
       await handler.POST(req, res)
 

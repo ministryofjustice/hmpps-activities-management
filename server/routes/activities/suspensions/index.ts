@@ -9,6 +9,8 @@ import suspendRoutes from './suspendRoutes'
 import unsuspendRoutes from './unsuspendRoutes'
 import ViewSuspensionsRoutes from './handlers/viewSuspensions'
 import insertRouteContext from '../../../middleware/routeContext'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
+import syncJourneyDataToLocals from '../../../middleware/syncJourneyDataToLocals'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -35,13 +37,17 @@ export default function Index(services: Services): Router {
   router.use(
     '/suspend/:prisonerNumber/:journeyId',
     insertRouteContext('suspend'),
+    setUpJourneyData(services.tokenStore),
     initialiseSuspendJourney(services.prisonService, services.activitiesService),
+    syncJourneyDataToLocals(),
     suspendRoutes(services),
   )
   router.use(
     '/unsuspend/:prisonerNumber/:journeyId',
     insertRouteContext('unsuspend'),
+    setUpJourneyData(services.tokenStore),
     initialiseSuspendJourney(services.prisonService, services.activitiesService),
+    syncJourneyDataToLocals(),
     unsuspendRoutes(services),
   )
 
