@@ -56,12 +56,12 @@ export default class SuspendFromRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { datePresetOption, date } = req.body
-    req.session.suspendJourney.suspendFrom = toDateString(this.dateFromOptions(datePresetOption, date))
+    req.journeyData.suspendJourney.suspendFrom = toDateString(this.dateFromOptions(datePresetOption, date))
 
-    const allocationHasPayRate = activityHasPayBand(req.session.suspendJourney.allocations)
+    const allocationHasPayRate = activityHasPayBand(req.journeyData.suspendJourney.allocations)
     if (allocationHasPayRate) return res.redirectOrReturn('pay')
 
-    req.session.suspendJourney.paid = null
+    req.journeyData.suspendJourney.paid = null
     return res.redirectOrReturn('case-note-question')
   }
 

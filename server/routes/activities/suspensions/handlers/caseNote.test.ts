@@ -24,7 +24,7 @@ describe('Route Handlers - Suspensions - Case note', () => {
     req = {
       body: {},
       query: {},
-      session: { suspendJourney: {} },
+      journeyData: { suspendJourney: {} },
     } as unknown as Request
   })
 
@@ -48,8 +48,8 @@ describe('Route Handlers - Suspensions - Case note', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.caseNote.type).toEqual('GEN')
-      expect(req.session.suspendJourney.caseNote.text).toEqual('Test case note')
+      expect(req.journeyData.suspendJourney.caseNote.type).toEqual('GEN')
+      expect(req.journeyData.suspendJourney.caseNote.text).toEqual('Test case note')
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })
