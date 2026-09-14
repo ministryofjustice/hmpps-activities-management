@@ -28,13 +28,11 @@ export default class UnlockListService {
     user: ServiceUser,
   ): Promise<UnlockListItem[]> {
     const prison = user.activeCaseLoadId
-    const subLocationCellPatterns = await this.activitiesApiClient.getPrisonLocationPrefixesByGroups(
-      prison,
-      location,
-      subLocationFilters,
-      user,
-    )
-    const { locationPrefix } = await this.activitiesApiClient.getPrisonLocationPrefixByGroup(prison, location, user)
+
+    const [subLocationCellPatterns, { locationPrefix }] = await Promise.all([
+      this.activitiesApiClient.getPrisonLocationPrefixesByGroups(prison, location, subLocationFilters, user),
+      this.activitiesApiClient.getPrisonLocationPrefixByGroup(prison, location, user),
+    ])
 
     // Get all prisoners located in the main location by cell prefix e.g. MDI-1-.+
     const results = await this.prisonerSearchApiClient.searchPrisonersByLocationPrefix(
@@ -51,77 +49,121 @@ export default class UnlockListService {
     }
 
     // Create unlock list items for each prisoner returned and populate their sub-location by cell-matching
-    const prisoners = results?.content?.map(prisoner => {
+    const prisoners = results.content.map(prisoner => {
       return {
         prisonerNumber: prisoner.prisonerNumber,
-        bookingId: prisoner?.bookingId,
+        bookingId: prisoner.bookingId,
         firstName: prisoner.firstName,
         lastName: prisoner.lastName,
         middleNames: prisoner.middleNames,
-        cellLocation: prisoner?.cellLocation,
-        category: this.alertsFilterService.getFilteredCategory(alertFilters, prisoner?.category),
-        incentiveLevel: prisoner?.currentIncentive,
-        alerts: this.alertsFilterService.getFilteredAlerts(alertFilters, prisoner?.alerts),
-        status: prisoner?.inOutStatus,
-        prisonCode: prisoner?.prisonId,
+        cellLocation: prisoner.cellLocation,
+        category: this.alertsFilterService.getFilteredCategory(alertFilters, prisoner.category),
+        incentiveLevel: prisoner.currentIncentive,
+        alerts: this.alertsFilterService.getFilteredAlerts(alertFilters, prisoner.alerts),
+        status: prisoner.inOutStatus,
+        prisonCode: prisoner.prisonId,
         locationGroup: location,
-        locationSubGroup: this.getSubLocationFromCell(prison, subLocationCellPatterns, prisoner?.cellLocation),
+        locationSubGroup: this.getSubLocationFromCell(prison, subLocationCellPatterns, prisoner.cellLocation),
       } as unknown as UnlockListItem
     })
 
     const filteredPrisoners = prisoners.filter(
-      prisoner => subLocationFilters.includes(prisoner.locationSubGroup) || subLocationFilters.length === 0,
+      prisoner => subLocationFilters.length === 0 || subLocationFilters.includes(prisoner.locationSubGroup),
     )
 
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       prison,
       toDateString(date),
-      filteredPrisoners.map(p => p.prisonerNumber),
+      filteredPrisoners.map(prisoner => prisoner.prisonerNumber),
       user,
       timeSlot,
       true,
     )
 
-    // populate an array of prisoners with events in any searched activity
-    // if a prisoner has any category in the list the event should be added to the unlock items
-    const prisonersInAnyActivityCategory: string[] = []
-    filteredPrisoners.forEach(prisoner => {
-      const activities = scheduledEvents?.activities.filter(act => act.prisonerNumber === prisoner.prisonerNumber)
-      activities.forEach(act => {
-        if (activityCategoriesFilters.includes(act.categoryCode)) {
-          prisonersInAnyActivityCategory.push(act.prisonerNumber)
-        }
-      })
+    const activitiesByPrisoner = new Map<string, typeof scheduledEvents.activities>()
+
+    scheduledEvents.activities.forEach(activity => {
+      const activities = activitiesByPrisoner.get(activity.prisonerNumber) ?? []
+      activities.push(activity)
+      activitiesByPrisoner.set(activity.prisonerNumber, activities)
     })
+
+    const appointmentsByPrisoner = new Map<string, typeof scheduledEvents.appointments>()
+
+    scheduledEvents.appointments.forEach(appointment => {
+      const appointments = appointmentsByPrisoner.get(appointment.prisonerNumber) ?? []
+      appointments.push(appointment)
+      appointmentsByPrisoner.set(appointment.prisonerNumber, appointments)
+    })
+
+    const courtHearingsByPrisoner = new Map<string, typeof scheduledEvents.courtHearings>()
+
+    scheduledEvents.courtHearings.forEach(courtHearing => {
+      const courtHearings = courtHearingsByPrisoner.get(courtHearing.prisonerNumber) ?? []
+
+      courtHearings.push(courtHearing)
+      courtHearingsByPrisoner.set(courtHearing.prisonerNumber, courtHearings)
+    })
+
+    const visitsByPrisoner = new Map<string, typeof scheduledEvents.visits>()
+
+    scheduledEvents.visits.forEach(visit => {
+      const visits = visitsByPrisoner.get(visit.prisonerNumber) ?? []
+      visits.push(visit)
+      visitsByPrisoner.set(visit.prisonerNumber, visits)
+    })
+
+    const adjudicationsByPrisoner = new Map<string, typeof scheduledEvents.adjudications>()
+
+    scheduledEvents.adjudications.forEach(adjudication => {
+      const adjudications = adjudicationsByPrisoner.get(adjudication.prisonerNumber) ?? []
+
+      adjudications.push(adjudication)
+      adjudicationsByPrisoner.set(adjudication.prisonerNumber, adjudications)
+    })
+
+    const transfersByPrisoner = new Map<string, typeof scheduledEvents.externalTransfers>()
+
+    scheduledEvents.externalTransfers.forEach(transfer => {
+      const transfers = transfersByPrisoner.get(transfer.prisonerNumber) ?? []
+      transfers.push(transfer)
+      transfersByPrisoner.set(transfer.prisonerNumber, transfers)
+    })
+
+    const prisonersInAnyActivityCategory = new Set(
+      scheduledEvents.activities
+        .filter(activity => activityCategoriesFilters.includes(activity.categoryCode))
+        .map(activity => activity.prisonerNumber),
+    )
 
     let unlockListItems: UnlockListItem[] = []
 
     if (activityCategoryFilterBeingUsed) {
       unlockListItems = filteredPrisoners.map(prisoner => {
-        const activities = scheduledEvents?.activities
-          .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
-          .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
-          .filter(act => !act.cancelled || cancelledEventsFilter === YesNo.YES)
+        const activities = prisonersInAnyActivityCategory.has(prisoner.prisonerNumber)
+          ? (activitiesByPrisoner.get(prisoner.prisonerNumber) ?? []).filter(
+              activity => !activity.cancelled || cancelledEventsFilter === YesNo.YES,
+            )
+          : []
 
-        const appointments = scheduledEvents?.appointments
-          .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
-          .filter(app => applyCancellationDisplayRule(app))
-          .filter(app => !app.cancelled || cancelledEventsFilter === YesNo.YES)
+        const appointments = (appointmentsByPrisoner.get(prisoner.prisonerNumber) ?? [])
+          .filter(applyCancellationDisplayRule)
+          .filter(appointment => !appointment.cancelled || cancelledEventsFilter === YesNo.YES)
 
         const clashingApptsToShow = []
-        activities.forEach(act => {
-          const clashingApps = appointments.filter(app => eventClashes(act, app))
-          // if there are any appointments for the prisoner that clash with the activities that match the chosen filter, include them in the results
-          if (clashingApps.length) {
-            clashingApps.forEach(clashingAppointment => {
-              if (
-                // don't add the appointment if it's already in the array
-                !clashingApptsToShow.find(app => app.scheduledInstanceId === clashingAppointment.scheduledInstanceId)
-              ) {
-                clashingApptsToShow.push(clashingAppointment)
-              }
-            })
-          }
+
+        activities.forEach(activity => {
+          const clashingAppointments = appointments.filter(appointment => eventClashes(activity, appointment))
+
+          clashingAppointments.forEach(clashingAppointment => {
+            if (
+              !clashingApptsToShow.find(
+                appointment => appointment.scheduledInstanceId === clashingAppointment.scheduledInstanceId,
+              )
+            ) {
+              clashingApptsToShow.push(clashingAppointment)
+            }
+          })
         })
 
         const events = [...activities, ...clashingApptsToShow]
@@ -133,30 +175,33 @@ export default class UnlockListService {
         } as UnlockListItem
       })
     } else {
-      // Match the prisoners with their events by prisonerNumber
       unlockListItems = filteredPrisoners.map(prisoner => {
         const isCancelled = event => event.cancelled || event.status === 'Cancelled' || event.status === 'Paused'
+
         const isCancellationShown = event => !isCancelled(event) || cancelledEventsFilter === YesNo.YES
 
-        const appointments = scheduledEvents?.appointments
-          .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
-          .filter(app => applyCancellationDisplayRule(app))
-          .filter(app => !app.cancelled || cancelledEventsFilter === YesNo.YES)
-        const courtHearings = scheduledEvents?.courtHearings
-          .filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
-          .filter(crt => !crt.cancelled || cancelledEventsFilter === YesNo.YES)
-        const visits = scheduledEvents?.visits
-          .filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
-          .filter(vis => !vis.cancelled || cancelledEventsFilter === YesNo.YES)
-        const adjudications = scheduledEvents?.adjudications
-          .filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
-          .filter(adj => !adj.cancelled || cancelledEventsFilter === YesNo.YES)
-        const transfers = scheduledEvents?.externalTransfers
-          .filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
-          .filter(tra => !tra.cancelled || cancelledEventsFilter === YesNo.YES)
-        const activities = scheduledEvents?.activities
-          .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
-          .filter(isCancellationShown)
+        const appointments = (appointmentsByPrisoner.get(prisoner.prisonerNumber) ?? [])
+          .filter(applyCancellationDisplayRule)
+          .filter(appointment => !appointment.cancelled || cancelledEventsFilter === YesNo.YES)
+
+        const courtHearings = (courtHearingsByPrisoner.get(prisoner.prisonerNumber) ?? []).filter(
+          courtHearing => !courtHearing.cancelled || cancelledEventsFilter === YesNo.YES,
+        )
+
+        const visits = (visitsByPrisoner.get(prisoner.prisonerNumber) ?? []).filter(
+          visit => !visit.cancelled || cancelledEventsFilter === YesNo.YES,
+        )
+
+        const adjudications = (adjudicationsByPrisoner.get(prisoner.prisonerNumber) ?? []).filter(
+          adjudication => !adjudication.cancelled || cancelledEventsFilter === YesNo.YES,
+        )
+
+        const transfers = (transfersByPrisoner.get(prisoner.prisonerNumber) ?? []).filter(
+          transfer => !transfer.cancelled || cancelledEventsFilter === YesNo.YES,
+        )
+
+        const activities = (activitiesByPrisoner.get(prisoner.prisonerNumber) ?? []).filter(isCancellationShown)
+
         const allEventsForPrisoner = [
           ...appointments,
           ...courtHearings,
@@ -165,6 +210,7 @@ export default class UnlockListService {
           ...transfers,
           ...activities,
         ]
+
         return {
           ...prisoner,
           isLeavingWing: this.isLeaving(allEventsForPrisoner),
@@ -177,23 +223,23 @@ export default class UnlockListService {
 
     return unlockListItems
       .filter(
-        i =>
+        item =>
           activityFilter === 'Both' ||
-          (activityFilter === 'With' && i.events.length > 0) ||
-          (activityFilter === 'Without' && i.events.length === 0),
+          (activityFilter === 'With' && item.events.length > 0) ||
+          (activityFilter === 'Without' && item.events.length === 0),
       )
       .filter(
-        i =>
+        item =>
           stayingOrLeavingFilter === 'Both' ||
-          (stayingOrLeavingFilter === 'Leaving' && i.isLeavingWing) ||
-          (stayingOrLeavingFilter === 'Staying' && !i.isLeavingWing),
+          (stayingOrLeavingFilter === 'Leaving' && item.isLeavingWing) ||
+          (stayingOrLeavingFilter === 'Staying' && !item.isLeavingWing),
       )
       .filter(
-        i =>
+        item =>
           !searchTermLowerCase ||
-          i.prisonerName?.toLowerCase().includes(searchTermLowerCase) ||
-          i.prisonerNumber?.toLowerCase().includes(searchTermLowerCase) ||
-          i.events?.find(e => e.summary?.toLowerCase().includes(searchTermLowerCase)),
+          item.prisonerName?.toLowerCase().includes(searchTermLowerCase) ||
+          item.prisonerNumber?.toLowerCase().includes(searchTermLowerCase) ||
+          item.events?.find(event => event.summary?.toLowerCase().includes(searchTermLowerCase)),
       )
   }
 
@@ -204,14 +250,13 @@ export default class UnlockListService {
 
     // TODO: Check rules - event types which are always off-wing?
     const leavingEventTypes = ['COURT_HEARING', 'EXTERNAL_TRANSFER', 'ADJUDICATION_HEARING', 'VISIT']
-    const eventsOffWing = events.filter(ev => leavingEventTypes.includes(ev.eventType))
-    if (eventsOffWing.length > 0) {
+
+    if (events.some(event => leavingEventTypes.includes(event.eventType))) {
       return true
     }
 
     // If it's not an off-wing event, check if the event location is off-wing
-    const offWingLocations = events.filter(e => !e.inCell && !e.onWing && !e.internalLocationCode?.includes('WOW'))
-    return offWingLocations.length > 0
+    return events.some(event => !event.inCell && !event.onWing && !event.internalLocationCode?.includes('WOW'))
   }
 
   private getSubLocationFromCell = (
@@ -224,11 +269,13 @@ export default class UnlockListService {
 
       for (const pattern of splitPatterns) {
         const regex = new RegExp(pattern)
+
         if (regex.test(`${prison}-${cellLocation}`)) {
           return cellPattern.subLocation
         }
       }
     }
+
     // Where a location has no sub-locations e.g. Segregation unit, there will be no cell-patterns to match against.
     return ''
   }

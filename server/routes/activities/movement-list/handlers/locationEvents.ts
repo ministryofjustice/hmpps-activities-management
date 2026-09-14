@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { isValid } from 'date-fns'
+import _ from 'lodash'
 import DateOption from '../../../../enum/dateOption'
 import { EventType, MovementListLocation, MovementListPrisonerEvents, YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -21,11 +22,13 @@ export default class LocationEventsRoutes {
     const { user } = res.locals
     const { locationIds, dateOption, date, timeSlot, isOutside } = req.query
     const { movementListJourney } = req.journeyData
+
     const outsideList = user.externalActivitiesRolledOut && isOutside === 'true'
 
     const richDate = dateFromDateOption(dateOption as DateOption, date as string)
+
     if (!richDate || !isValid(richDate) || (!(locationIds as string) && !outsideList)) {
-      return res.redirect(`choose-details`)
+      return res.redirect('choose-details')
     }
 
     const locationEvent = outsideList
@@ -49,20 +52,18 @@ export default class LocationEventsRoutes {
           movementListJourney,
         })
       }
+
       const dateQuery = dateOption === DateOption.OTHER ? `&date=${formatIsoDate(richDate)}` : ''
+
       return res.redirect(`locations?dateOption=${dateOption}${dateQuery}&timeSlot=${timeSlot}`)
     }
 
-    const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(
-      [...new Set(locationEvent.events.map(e => e.prisonerNumber))],
-      user,
-    )
+    const prisonerNumbers = [...new Set(locationEvent.events.map(event => event.prisonerNumber))]
 
-    const otherEvents = await this.activitiesService.getScheduledEventsForPrisoners(
-      richDate,
-      prisoners.map(p => p.prisonerNumber),
-      user,
-    )
+    const [prisoners, otherEvents] = await Promise.all([
+      this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
+      this.activitiesService.getScheduledEventsForPrisoners(richDate, prisonerNumbers, user),
+    ])
 
     const allEvents = [
       ...otherEvents.activities,
@@ -73,9 +74,12 @@ export default class LocationEventsRoutes {
       ...otherEvents.externalTransfers,
     ] as ScheduledEvent[]
 
+    const locationEventsByPrisoner = _.groupBy(locationEvent.events, event => event.prisonerNumber)
+    const allEventsByPrisoner = _.groupBy(allEvents, event => event.prisonerNumber)
+
     const alertOptions = this.alertsFilterService.getAllAlertFilterOptions()
 
-    movementListJourney.alertFilters ??= alertOptions.map(a => a.key)
+    movementListJourney.alertFilters ??= alertOptions.map(option => option.key)
     movementListJourney.cancelledEventsFilter ??= YesNo.YES
 
     const selectedAlerts = movementListJourney.alertFilters
@@ -84,54 +88,52 @@ export default class LocationEventsRoutes {
       ...locationEvent,
       prisonerEvents: prisoners
         .map(currentPrisoner => {
-          const events = scheduledEventSort(
-            locationEvent.events.filter(e => e.prisonerNumber === currentPrisoner.prisonerNumber),
-          )
+          const events = scheduledEventSort(locationEventsByPrisoner[currentPrisoner.prisonerNumber] ?? [])
 
           if (events.length === 0) {
             return null
           }
+
           const clashingEvents = scheduledEventSort(
-            allEvents
-              .filter(clash => clash.prisonerNumber === currentPrisoner.prisonerNumber)
-              // Prevent showing clashing with activities if the clashing event is already shown as an activity
+            (allEventsByPrisoner[currentPrisoner.prisonerNumber] ?? [])
+              // Prevent showing clashing activities if the clashing event is already shown as an activity
               .filter(
                 clash =>
                   !events
                     .filter(event => event.eventType === EventType.ACTIVITY)
-                    .map(e => e.scheduledInstanceId)
+                    .map(event => event.scheduledInstanceId)
                     .filter(id => id !== null)
                     .includes(clash.scheduledInstanceId),
               )
               .filter(
                 clash =>
                   !events
-                    .filter(e => e.eventType === EventType.APPOINTMENT)
-                    .map(e => e.appointmentId)
+                    .filter(event => event.eventType === EventType.APPOINTMENT)
+                    .map(event => event.appointmentId)
                     .includes(clash.appointmentId),
               )
               .filter(
                 clash =>
                   !events
-                    .filter(e => e.eventType === EventType.VISIT)
-                    .map(e => e.eventId)
+                    .filter(event => event.eventType === EventType.VISIT)
+                    .map(event => event.eventId)
                     .includes(clash.eventId),
               )
               .filter(
                 clash =>
                   !events
-                    .filter(e => e.eventType === EventType.ADJUDICATION_HEARING)
-                    .map(e => e.oicHearingId)
+                    .filter(event => event.eventType === EventType.ADJUDICATION_HEARING)
+                    .map(event => event.oicHearingId)
                     .includes(clash.oicHearingId),
               )
               // Exclude any event not considered a clash
-              .filter(clash => events.filter(e => eventClashes(clash, e)).length > 0)
+              .filter(clash => events.some(event => eventClashes(clash, event)))
               // Exclude cancelled appointments that have expired
-              .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e)),
+              .filter(event => event.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(event)),
           )
 
           const filteredEvents = events.filter(
-            e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e),
+            event => event.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(event),
           )
 
           const visibleEvents =
@@ -143,13 +145,13 @@ export default class LocationEventsRoutes {
 
           return {
             ...currentPrisoner,
-            alerts: this.alertsFilterService.getFilteredAlerts(selectedAlerts, currentPrisoner?.alerts),
-            category: this.alertsFilterService.getFilteredCategory(selectedAlerts, currentPrisoner?.category),
+            alerts: this.alertsFilterService.getFilteredAlerts(selectedAlerts, currentPrisoner.alerts),
+            category: this.alertsFilterService.getFilteredCategory(selectedAlerts, currentPrisoner.category),
             events: visibleEvents,
             clashingEvents,
           } as MovementListPrisonerEvents
         })
-        .filter(pe => pe && pe.events.length > 0),
+        .filter(prisonerEvent => prisonerEvent && prisonerEvent.events.length > 0),
     } as MovementListLocation
 
     return res.render('pages/activities/movement-list/location-events', {
