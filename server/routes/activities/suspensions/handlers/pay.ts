@@ -19,13 +19,13 @@ export class SuspensionPay {
 export default class SuspensionPayRoutes {
   GET = async (req: Request, res: Response) => {
     res.render('pages/activities/suspensions/pay', {
-      extraContent: this.showExtraContent(req.session.suspendJourney.allocations),
+      extraContent: this.showExtraContent(req.journeyData.suspendJourney.allocations),
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { paid } = req.body
-    req.session.suspendJourney.paid = paid
+    req.journeyData.suspendJourney.paid = paid
 
     return res.redirectOrReturn('case-note-question')
   }

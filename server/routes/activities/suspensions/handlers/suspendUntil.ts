@@ -55,7 +55,7 @@ export default class SuspendUntilRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { datePresetOption, date } = req.body
-    req.session.suspendJourney.suspendUntil = toDateString(this.dateFromOptions(datePresetOption, date))
+    req.journeyData.suspendJourney.suspendUntil = toDateString(this.dateFromOptions(datePresetOption, date))
     return res.redirect('check-answers')
   }
 

@@ -9,12 +9,12 @@ export default class CheckAnswersRoutes {
 
   GET = async (req: Request, res: Response) => {
     return res.render('pages/activities/suspensions/check-answers', {
-      paidCount: req.session.suspendJourney.allocations.filter(allocation => allocation.payBand).length,
+      paidCount: req.journeyData.suspendJourney.allocations.filter(allocation => allocation.payBand).length,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { allocations, suspendFrom, suspendUntil, caseNote, paid } = req.session.suspendJourney
+    const { allocations, suspendFrom, suspendUntil, caseNote, paid } = req.journeyData.suspendJourney
     const { user } = res.locals
     const { prisonerNumber } = req.params as { prisonerNumber: string }
     const { mode } = req.routeContext

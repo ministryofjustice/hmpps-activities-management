@@ -7,7 +7,7 @@ export default class ConfirmationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const allocationEvent = MetricsEvent.SUSPEND_ALLOCATION_JOURNEY_COMPLETED(
-      req.session.suspendJourney,
+      req.journeyData.suspendJourney,
       res.locals.user,
     ).addJourneyCompletedMetrics(req)
     this.metricsService.trackEvent(allocationEvent)

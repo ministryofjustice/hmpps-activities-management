@@ -8,7 +8,7 @@ import logger from '../../../../../logger'
 
 export default (prisonService: PrisonService, activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
-    if (req.session.suspendJourney) return next()
+    if (req.journeyData.suspendJourney) return next()
 
     const allocationIds = (req.query.allocationIds as string)?.split(',')
     const { prisonerNumber } = req.params as { prisonerNumber: string }
@@ -39,7 +39,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         }),
     )
 
-    req.session.suspendJourney = {
+    req.journeyData.suspendJourney = {
       allocations: allocationsWithOutsideData.map(a => ({
         allocationId: a.id,
         activityId: a.activityId,
