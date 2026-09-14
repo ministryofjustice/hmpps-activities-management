@@ -318,6 +318,50 @@ describe('Route Handlers - Select people by residential location', () => {
         },
       )
     })
+
+    it('should render an empty attendance list when there are no scheduled activities', async () => {
+      when(activitiesService.getLocationGroups).mockResolvedValue([
+        {
+          key: 'C-Wing',
+          name: 'C Wing',
+          children: [],
+        },
+      ])
+
+      when(activitiesService.getScheduledActivitiesAtPrisonByDateAndSlot).mockResolvedValue([])
+
+      when(activitiesService.getPrisonLocationPrefixByGroup).mockResolvedValue({
+        locationPrefix: 'C',
+      })
+
+      when(prisonService.searchPrisonersByLocationPrefix).mockResolvedValue({
+        content: [],
+      })
+
+      when(activitiesService.getPrisonLocationPrefixesByGroups).mockResolvedValue([])
+
+      req.query = {
+        date: '2022-01-01',
+        locationKey: 'C-Wing',
+      }
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getAttendeesForScheduledInstances).not.toHaveBeenCalled()
+      expect(activitiesService.getScheduledEventsForPrisoners).not.toHaveBeenCalled()
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/record-attendance/attend-all/select-people-by-residential-location',
+        expect.objectContaining({
+          attendanceRows: [],
+          instance: null,
+          instancesForDateAndSlot: [],
+          totalAttendees: 0,
+          totalAttendanceRecords: 0,
+          totalAbsences: 0,
+        }),
+      )
+    })
   })
 
   describe('NOT_ATTENDED', () => {
