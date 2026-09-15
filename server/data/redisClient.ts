@@ -2,6 +2,7 @@ import { createClient, type RedisClientType } from 'redis'
 
 import logger from '../../logger'
 import config from '../config'
+import logRedisConnectionError from '../telemetry/redisConnectionDiagnostics'
 
 export type RedisClient = RedisClientType
 
@@ -24,7 +25,8 @@ export const createRedisClient = (): RedisClient => {
     },
   })
 
-  client.on('error', (e: Error) => logger.error('Redis client error', e))
+  // helper enriches the error with additional fields - connection states, syscall etc
+  client.on('error', (error: NodeJS.ErrnoException) => logRedisConnectionError(error, client))
 
   return client
 }
