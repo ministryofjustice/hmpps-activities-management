@@ -26,7 +26,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
     req = {
       body: {},
       query: {},
-      session: {
+      journeyData: {
         suspendJourney: {
           inmate: {
             prisonerName: 'Fred Smith',
@@ -55,7 +55,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
     })
 
     it('should render bulk pay details for a mixture of paid and unpaid allocations', async () => {
-      req.session.suspendJourney.allocations = [
+      req.journeyData.suspendJourney.allocations = [
         {
           activityId: 1,
           allocationId: 2,
@@ -100,7 +100,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.paid).toEqual(YesNo.YES)
+      expect(req.journeyData.suspendJourney.paid).toEqual(YesNo.YES)
     })
     it('should add NO to the session', async () => {
       req.body = {
@@ -109,7 +109,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.paid).toEqual(YesNo.NO)
+      expect(req.journeyData.suspendJourney.paid).toEqual(YesNo.NO)
     })
   })
   describe('VALIDATION', () => {

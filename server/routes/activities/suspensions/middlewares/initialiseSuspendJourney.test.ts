@@ -31,7 +31,7 @@ describe('initialiseSuspendJourney', () => {
     jest.resetAllMocks()
     req = {
       get: jest.fn(),
-      session: {},
+      journeyData: {},
       params: {},
       query: {},
       routeContext: { mode: 'suspend' },
@@ -84,7 +84,7 @@ describe('initialiseSuspendJourney', () => {
   })
 
   it('should call next if suspend journey is already populated', async () => {
-    req.session.suspendJourney = {} as SuspendJourney
+    req.journeyData.suspendJourney = {} as SuspendJourney
 
     await middleware(req, res, next)
 
@@ -120,7 +120,7 @@ describe('initialiseSuspendJourney', () => {
 
     await middleware(req, res, next)
 
-    expect(req.session.suspendJourney).toEqual({
+    expect(req.journeyData.suspendJourney).toEqual({
       allocations: [
         {
           activityId: 10,
@@ -153,7 +153,7 @@ describe('initialiseSuspendJourney', () => {
 
     await middleware(req, res, next)
 
-    expect(req.session.suspendJourney).toEqual({
+    expect(req.journeyData.suspendJourney).toEqual({
       allocations: [
         {
           activityId: 20,
@@ -188,7 +188,7 @@ describe('initialiseSuspendJourney', () => {
 
     await middleware(req, res, next)
 
-    expect(req.session.suspendJourney.allocations).toEqual([
+    expect(req.journeyData.suspendJourney.allocations).toEqual([
       {
         activityId: 20,
         activityName: 'Activity 2',

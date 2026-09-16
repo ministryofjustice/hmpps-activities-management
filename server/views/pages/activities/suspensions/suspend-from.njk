@@ -15,10 +15,10 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">Manage suspensions</span>
             <h1 class='govuk-heading-l'>
-                {% if session.suspendJourney.allocations | length == 1 %}
-                    When does {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension from {{ session.suspendJourney.allocations[0].activityName | safe }} start?
+                {% if suspendJourney.allocations | length == 1 %}
+                    When does {{ suspendJourney.inmate.prisonerName | safe }}'s suspension from {{ suspendJourney.allocations[0].activityName | safe }} start?
                 {% else %}
-                    When does {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension start?
+                    When does {{ suspendJourney.inmate.prisonerName | safe }}'s suspension start?
                 {% endif %}
             </h1>
 
@@ -34,17 +34,17 @@
                             hint: {
                                 text: "Unlock and movement lists for later today may need to be printed again."
                             },
-                            checked: formResponses.datePresetOption == 'immediately' or session.suspendJourney.suspendFrom == now | toDateString
+                            checked: formResponses.datePresetOption == 'immediately' or suspendJourney.suspendFrom == now | toDateString
                         },
                         {
                             value: "tomorrow",
                             text: "Tomorrow",
-                            checked: formResponses.datePresetOption == 'tomorrow' or session.suspendJourney.suspendFrom == now | addDays(1) | toDateString
+                            checked: formResponses.datePresetOption == 'tomorrow' or suspendJourney.suspendFrom == now | addDays(1) | toDateString
                         },
                         {
                             value: "other",
                             text: "On another date",
-                            checked: formResponses.datePresetOption == 'other' or session.suspendJourney.suspendFrom > now | addDays(1) | toDateString,
+                            checked: formResponses.datePresetOption == 'other' or suspendJourney.suspendFrom > now | addDays(1) | toDateString,
                             conditional: {
                                 html: mojDatePicker({
                                     id: 'date',
@@ -55,17 +55,17 @@
                                     },
                                     classes: 'moj-datepicker--fixed-width',
                                     errorMessage: validationErrors | findError('date'),
-                                    value: formResponses.date or session.suspendJourney.suspendFrom | isoDateToDatePickerDate
+                                    value: formResponses.date or suspendJourney.suspendFrom | isoDateToDatePickerDate
                                 })
                             }
                         }
                     ]
                 }) }}
 
-                {% if session.suspendJourney.allocations | length > 1 %}
+                {% if suspendJourney.allocations | length > 1 %}
                     {% set activitiesHtml %}
                         {% set rows = [] %}
-                        {% for allocation in session.suspendJourney.allocations | sortBy('activityName') %}
+                        {% for allocation in suspendJourney.allocations | sortBy('activityName') %}
                             {% set rows = (rows.push(
                                 {
                                     value: { text: allocation.activityName }
@@ -80,7 +80,7 @@
                     {% endset %}
 
                     {{ govukDetails({
-                        summaryText: session.suspendJourney.inmate.prisonerName + " will be suspended from " + session.suspendJourney.allocations | length + " activities",
+                        summaryText: suspendJourney.inmate.prisonerName + " will be suspended from " + suspendJourney.allocations | length + " activities",
                         html: activitiesHtml
                     }) }}
                 {% endif %}
@@ -88,7 +88,7 @@
                 <div class='govuk-button-group'>
                     {{ govukButton({ text: "Continue"}) }}
                     {% if not session.req.query.preserveHistory %}
-                        <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
+                        <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
                     {% endif %}
                 </div>
             </form>

@@ -36,23 +36,23 @@ describe('Views - Suspensions - Confirmation', () => {
               mode,
             },
           },
-          suspendJourney: {
-            inmate: {
-              prisonerName: 'Alfonso Cholak',
-              prisonerNumber: 'G0995GW',
-            },
-            allocations: [
-              {
-                allocationId: 1,
-                activityId: 14,
-                activityName: 'Hotel',
-                outsideWork,
-              },
-            ],
-            paid: 'YES',
-            suspendFrom,
-            suspendUntil,
+        },
+        suspendJourney: {
+          inmate: {
+            prisonerName: 'Alfonso Cholak',
+            prisonerNumber: 'G0995GW',
           },
+          allocations: [
+            {
+              allocationId: 1,
+              activityId: 14,
+              activityName: 'Hotel',
+              outsideWork,
+            },
+          ],
+          paid: 'YES',
+          suspendFrom,
+          suspendUntil,
         },
       }),
     )
