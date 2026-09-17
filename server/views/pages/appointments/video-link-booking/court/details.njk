@@ -35,6 +35,7 @@
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-two-thirds">
                         <div class="govuk-button-group">
+                          {% if showVideoCourtHearingMovementSlip %}
                             {{ govukButton({
                                 attributes: { id: 'print-movement-slip', target: "_blank", 'data-qa': 'print-movement-slip' },
                                 text: "Print movement slip",
@@ -42,6 +43,15 @@
                                 preventDoubleClick: true,
                                 href: '/appointments/video-link-booking/court/' + videoBooking.videoLinkBookingId + '/movement-slip'
                             }) }}
+                          {% else %}
+                            {{ govukButton({
+                              attributes: { id: 'print-movement-slip', target: "_blank", 'data-qa': 'print-movement-slip' },
+                              text: "Print movement slip",
+                              classes: "govuk-button--blue govuk-link govuk-link--no-visited-state",
+                              preventDoubleClick: true,
+                              href: '/appointments/' + mainAppointmentId + '/movement-slip'
+                            }) }}
+                          {% endif %}
                         </div>
                     </div>
                 </div>

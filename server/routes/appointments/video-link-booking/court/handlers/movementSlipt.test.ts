@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../../services/prisonService'
 import MovementSlipRoutes from './movementSlip'
-import { Location, VideoLinkBooking } from '../../../../../@types/bookAVideoLinkApi/types'
+import { Location, PrisonAppointment, VideoLinkBooking } from '../../../../../@types/bookAVideoLinkApi/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../../../services/bookAVideoLinkService')
@@ -15,6 +15,9 @@ describe('MovementSlipRoutes', () => {
   let prisonService: jest.Mocked<PrisonService>
   let movementSlipRoutes: MovementSlipRoutes
   let videoLinkBooking: VideoLinkBooking
+  let preCourtHearing: PrisonAppointment
+  let mainCourtHearing: PrisonAppointment
+  let postCourtHearing: PrisonAppointment
 
   beforeEach(() => {
     req = {
@@ -33,12 +36,51 @@ describe('MovementSlipRoutes', () => {
       videoLinkBookingId: 1,
       statusCode: 'ACTIVE',
       bookingType: 'COURT',
+      courtHearingTypeDescription: 'Appeal',
       prisonAppointments: [],
       createdBy: 'user1',
       amendedBy: 'user2',
       createdAt: '2023-09-01T10:00:00Z',
       amendedAt: '2023-09-02T10:00:00Z',
     } as unknown as VideoLinkBooking
+
+    preCourtHearing = {
+      prisonAppointmentId: 1,
+      prisonCode: 'PRISON1',
+      prisonerNumber: 'A1234BC',
+      appointmentType: 'VLB_COURT_PRE',
+      appointmentDate: '2023-10-01',
+      startTime: '10:00',
+      endTime: '10:30',
+      dpsLocationId: 'LOCATION_ID_1',
+      prisonLocKey: '',
+      timeSlot: 'AM',
+    }
+
+    mainCourtHearing = {
+      prisonAppointmentId: 2,
+      prisonCode: 'PRISON1',
+      prisonerNumber: 'A1234BC',
+      appointmentType: 'VLB_COURT_MAIN',
+      appointmentDate: '2023-10-01',
+      startTime: '10:30',
+      endTime: '11:00',
+      dpsLocationId: 'LOCATION_ID_2',
+      prisonLocKey: '',
+      timeSlot: 'AM',
+    }
+    postCourtHearing = {
+      prisonAppointmentId: 3,
+      prisonCode: 'PRISON1',
+      prisonerNumber: 'A1234BC',
+      appointmentType: 'VLB_COURT_POST',
+      appointmentDate: '2023-10-01',
+      startTime: '11:00',
+      endTime: '11:30',
+      dpsLocationId: 'LOCATION_ID_3',
+      prisonLocKey: '',
+      timeSlot: 'AM',
+    }
 
     bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
       { dpsLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
@@ -55,48 +97,126 @@ describe('MovementSlipRoutes', () => {
     } as Prisoner)
   })
 
+  describe('Court hearings at same locations', () => {
+    it('should render the movement slip page for pre, main and post hearing', async () => {
+      preCourtHearing = { ...preCourtHearing, dpsLocationId: 'LOCATION_ID_3' }
+      mainCourtHearing = { ...mainCourtHearing, dpsLocationId: 'LOCATION_ID_3' }
+      postCourtHearing = { ...postCourtHearing, dpsLocationId: 'LOCATION_ID_3' }
+
+      videoLinkBooking = {
+        ...videoLinkBooking,
+        prisonAppointments: [preCourtHearing, mainCourtHearing, postCourtHearing],
+      }
+
+      bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
+
+      await movementSlipRoutes.GET(req as Request, res as Response)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/video-link-booking/court/movement-slip',
+        expect.objectContaining({
+          preAppointment: {
+            ...videoLinkBooking.prisonAppointments[0],
+            locationDescription: 'Room 3',
+          },
+          mainAppointment: {
+            ...videoLinkBooking.prisonAppointments[1],
+            locationDescription: 'Same location',
+            hearingTypeDescription: 'Appeal',
+          },
+          postAppointment: {
+            ...videoLinkBooking.prisonAppointments[2],
+            locationDescription: 'Same location',
+          },
+          prisoner: {
+            prisonerNumber: 'A1234BC',
+            firstName: 'John',
+            lastName: 'Doe',
+            dateOfBirth: '1980-01-01',
+            prisonId: 'PRISON1',
+          },
+        }),
+      )
+    })
+
+    it('should render same location when pre and main are the same', async () => {
+      preCourtHearing = { ...preCourtHearing, dpsLocationId: 'LOCATION_ID_1' }
+      mainCourtHearing = { ...mainCourtHearing, dpsLocationId: 'LOCATION_ID_1' }
+
+      videoLinkBooking = {
+        ...videoLinkBooking,
+        prisonAppointments: [preCourtHearing, mainCourtHearing],
+      }
+
+      bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
+
+      await movementSlipRoutes.GET(req as Request, res as Response)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/video-link-booking/court/movement-slip',
+        expect.objectContaining({
+          preAppointment: {
+            ...videoLinkBooking.prisonAppointments[0],
+            locationDescription: 'Room 1',
+          },
+          mainAppointment: {
+            ...videoLinkBooking.prisonAppointments[1],
+            locationDescription: 'Same location',
+            hearingTypeDescription: 'Appeal',
+          },
+          prisoner: {
+            prisonerNumber: 'A1234BC',
+            firstName: 'John',
+            lastName: 'Doe',
+            dateOfBirth: '1980-01-01',
+            prisonId: 'PRISON1',
+          },
+        }),
+      )
+    })
+
+    it('should render same location when main and post are the same', async () => {
+      mainCourtHearing = { ...mainCourtHearing, dpsLocationId: 'LOCATION_ID_2' }
+      postCourtHearing = { ...postCourtHearing, dpsLocationId: 'LOCATION_ID_2' }
+
+      videoLinkBooking = {
+        ...videoLinkBooking,
+        prisonAppointments: [mainCourtHearing, postCourtHearing],
+      }
+
+      bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
+
+      await movementSlipRoutes.GET(req as Request, res as Response)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/video-link-booking/court/movement-slip',
+        expect.objectContaining({
+          mainAppointment: {
+            ...videoLinkBooking.prisonAppointments[0],
+            locationDescription: 'Room 2',
+            hearingTypeDescription: 'Appeal',
+          },
+          postAppointment: {
+            ...videoLinkBooking.prisonAppointments[1],
+            locationDescription: 'Same location',
+          },
+          prisoner: {
+            prisonerNumber: 'A1234BC',
+            firstName: 'John',
+            lastName: 'Doe',
+            dateOfBirth: '1980-01-01',
+            prisonId: 'PRISON1',
+          },
+        }),
+      )
+    })
+  })
+
   describe('GET', () => {
     it('should render the movement slip page for pre, main and post hearing', async () => {
       videoLinkBooking = {
         ...videoLinkBooking,
-        prisonAppointments: [
-          {
-            prisonAppointmentId: 1,
-            prisonCode: 'PRISON1',
-            prisonerNumber: 'A1234BC',
-            appointmentType: 'VLB_COURT_PRE',
-            appointmentDate: '2023-10-01',
-            startTime: '10:00',
-            endTime: '10:30',
-            dpsLocationId: 'LOCATION_ID_1',
-            prisonLocKey: '',
-            timeSlot: 'AM',
-          },
-          {
-            prisonAppointmentId: 2,
-            prisonCode: 'PRISON1',
-            prisonerNumber: 'A1234BC',
-            appointmentType: 'VLB_COURT_MAIN',
-            appointmentDate: '2023-10-01',
-            startTime: '10:30',
-            endTime: '11:00',
-            dpsLocationId: 'LOCATION_ID_2',
-            prisonLocKey: '',
-            timeSlot: 'AM',
-          },
-          {
-            prisonAppointmentId: 3,
-            prisonCode: 'PRISON1',
-            prisonerNumber: 'A1234BC',
-            appointmentType: 'VLB_COURT_POST',
-            appointmentDate: '2023-10-01',
-            startTime: '11:00',
-            endTime: '11:30',
-            dpsLocationId: 'LOCATION_ID_3',
-            prisonLocKey: '',
-            timeSlot: 'AM',
-          },
-        ],
+        prisonAppointments: [preCourtHearing, mainCourtHearing, postCourtHearing],
       }
 
       bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
@@ -113,6 +233,7 @@ describe('MovementSlipRoutes', () => {
           mainAppointment: {
             ...videoLinkBooking.prisonAppointments[1],
             locationDescription: 'Room 2',
+            hearingTypeDescription: 'Appeal',
           },
           postAppointment: {
             ...videoLinkBooking.prisonAppointments[2],
@@ -132,32 +253,7 @@ describe('MovementSlipRoutes', () => {
     it('should render the movement slip page for pre and main hearing', async () => {
       videoLinkBooking = {
         ...videoLinkBooking,
-        prisonAppointments: [
-          {
-            prisonAppointmentId: 1,
-            prisonCode: 'PRISON1',
-            prisonerNumber: 'A1234BC',
-            appointmentType: 'VLB_COURT_PRE',
-            appointmentDate: '2023-10-01',
-            startTime: '10:00',
-            endTime: '10:30',
-            dpsLocationId: 'LOCATION_ID_1',
-            prisonLocKey: '',
-            timeSlot: 'AM',
-          },
-          {
-            prisonAppointmentId: 2,
-            prisonCode: 'PRISON1',
-            prisonerNumber: 'A1234BC',
-            appointmentType: 'VLB_COURT_MAIN',
-            appointmentDate: '2023-10-01',
-            startTime: '10:30',
-            endTime: '11:00',
-            dpsLocationId: 'LOCATION_ID_2',
-            prisonLocKey: '',
-            timeSlot: 'AM',
-          },
-        ],
+        prisonAppointments: [preCourtHearing, mainCourtHearing],
       }
 
       bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
@@ -174,6 +270,7 @@ describe('MovementSlipRoutes', () => {
           mainAppointment: {
             ...videoLinkBooking.prisonAppointments[1],
             locationDescription: 'Room 2',
+            hearingTypeDescription: 'Appeal',
           },
           prisoner: {
             prisonerNumber: 'A1234BC',
@@ -190,32 +287,7 @@ describe('MovementSlipRoutes', () => {
   it('should render the movement slip page for main and post hearing', async () => {
     videoLinkBooking = {
       ...videoLinkBooking,
-      prisonAppointments: [
-        {
-          prisonAppointmentId: 2,
-          prisonCode: 'PRISON1',
-          prisonerNumber: 'A1234BC',
-          appointmentType: 'VLB_COURT_MAIN',
-          appointmentDate: '2023-10-01',
-          startTime: '10:30',
-          endTime: '11:00',
-          dpsLocationId: 'LOCATION_ID_2',
-          prisonLocKey: '',
-          timeSlot: 'AM',
-        },
-        {
-          prisonAppointmentId: 3,
-          prisonCode: 'PRISON1',
-          prisonerNumber: 'A1234BC',
-          appointmentType: 'VLB_COURT_POST',
-          appointmentDate: '2023-10-01',
-          startTime: '11:00',
-          endTime: '11:30',
-          dpsLocationId: 'LOCATION_ID_3',
-          prisonLocKey: '',
-          timeSlot: 'AM',
-        },
-      ],
+      prisonAppointments: [mainCourtHearing, postCourtHearing],
     }
 
     bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
@@ -228,6 +300,7 @@ describe('MovementSlipRoutes', () => {
         mainAppointment: {
           ...videoLinkBooking.prisonAppointments[0],
           locationDescription: 'Room 2',
+          hearingTypeDescription: 'Appeal',
         },
         postAppointment: {
           ...videoLinkBooking.prisonAppointments[1],
@@ -247,20 +320,7 @@ describe('MovementSlipRoutes', () => {
   it('should render the movement slip page for main hearing', async () => {
     videoLinkBooking = {
       ...videoLinkBooking,
-      prisonAppointments: [
-        {
-          prisonAppointmentId: 2,
-          prisonCode: 'PRISON1',
-          prisonerNumber: 'A1234BC',
-          appointmentType: 'VLB_COURT_MAIN',
-          appointmentDate: '2023-10-01',
-          startTime: '10:30',
-          endTime: '11:00',
-          dpsLocationId: 'LOCATION_ID_2',
-          prisonLocKey: '',
-          timeSlot: 'AM',
-        },
-      ],
+      prisonAppointments: [mainCourtHearing],
     }
 
     bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
@@ -273,6 +333,7 @@ describe('MovementSlipRoutes', () => {
         mainAppointment: {
           ...videoLinkBooking.prisonAppointments[0],
           locationDescription: 'Room 2',
+          hearingTypeDescription: 'Appeal',
         },
         prisoner: {
           prisonerNumber: 'A1234BC',

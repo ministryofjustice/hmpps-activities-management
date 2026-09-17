@@ -1,0 +1,9 @@
+.movement-slip__summary__row__key-override {
+  @extend .movement-slip__summary__row__key;
+  font-weight: normal;
+}
+
+.movement-slip__summary__row-key-override {
+  @extend .movement-slip__summary__row__key;
+  padding: 10px 0 10px 0;
+}
