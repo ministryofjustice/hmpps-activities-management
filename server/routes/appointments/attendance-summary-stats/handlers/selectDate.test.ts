@@ -1,8 +1,11 @@
 import { Request, Response } from 'express'
 import { addDays, subDays } from 'date-fns'
-import SelectDateRoutes from './selectDate'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import SelectDateRoutes, { SelectDate } from './selectDate'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import DateOption from '../../../../enum/dateOption'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 describe('Route Handlers - Select Date', () => {
   const handler = new SelectDateRoutes()
@@ -83,6 +86,31 @@ describe('Route Handlers - Select Date', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`dashboard?date=${formatIsoDate(new Date())}`)
+    })
+  })
+
+  describe('Validation', () => {
+    it('fails when no date option is selected', async () => {
+      const requestObject = plainToInstance(SelectDate, {})
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([{ error: 'Select a date to record attendance for', property: 'dateOption' }]),
+      )
+    })
+
+    it('fails when other is selected without a valid date', async () => {
+      const requestObject = plainToInstance(SelectDate, { dateOption: DateOption.OTHER, date: 'not-a-date' })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'Enter a valid date', property: 'date' }]))
+    })
+
+    it('does not require a date when a preset option is selected', async () => {
+      const requestObject = plainToInstance(SelectDate, { dateOption: DateOption.TODAY })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
     })
   })
 })

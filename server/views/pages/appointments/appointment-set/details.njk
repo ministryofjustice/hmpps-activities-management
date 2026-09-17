@@ -17,6 +17,7 @@
 {% set appointmentTableRows = [] %}
 {% for appointment in appointmentSet.appointments %}
     {% set prisoner = appointment.attendees[0].prisoner %}
+    {% set appointmentReturnUrl = returnUrl or '/appointments/search?startDate=' + appointment.startDate %}
     {% set appointmentTableRows = (appointmentTableRows.push([
         {
             html: showProfileLink({
@@ -59,7 +60,7 @@
             (govukTag({ text: "Deleted", classes: "govuk-tag--red" }) if appointment.isDeleted),
             attributes: { 'data-qa': 'appointment-' + appointment.id + '-status' }
         }, {
-            html: '<a href="/appointments/' + appointment.id + '"
+            html: '<a href="/appointments/' + appointment.id + '?returnUrl=' + (appointmentReturnUrl | urlencode) + '"
                 class="govuk-link--no-visited-state">
                 View' + (' and manage' if not appointment.isCancelled and not appointment.isDeleted and not appointment.isExpired) + '<span class="govuk-visually-hidden"> appointment ' + appointment.id + '</span>
             </a>',

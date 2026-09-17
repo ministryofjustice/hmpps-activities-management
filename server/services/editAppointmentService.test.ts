@@ -204,6 +204,51 @@ describe('Edit Appointment Service', () => {
     })
   })
 
+  describe('appointments dashboard return URL', () => {
+    const returnUrl =
+      '/appointments/search?startDate=2023-05-26&timeSlots=AM&appointmentName=Chaplaincy&createdBy=USER1'
+    const detailsUrl = `/appointments/${appointmentId}?returnUrl=${encodeURIComponent(returnUrl)}`
+
+    it('should preserve it when no property has changed', async () => {
+      req.journeyData.editAppointmentJourney.returnUrl = returnUrl
+
+      await service.redirectOrEdit(req, res, '')
+
+      expect(res.redirect).toHaveBeenCalledWith(detailsUrl)
+    })
+
+    it('should preserve it after cancelling', async () => {
+      req.journeyData.editAppointmentJourney.returnUrl = returnUrl
+      req.journeyData.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
+
+      await service.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
+
+      expect(res.redirect).toHaveBeenCalledWith(detailsUrl)
+    })
+
+    it('should preserve it after uncancelling', async () => {
+      req.journeyData.editAppointmentJourney.returnUrl = returnUrl
+      req.journeyData.editAppointmentJourney.uncancel = true
+
+      await service.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
+
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(detailsUrl, expect.any(String))
+    })
+
+    it('should preserve it after a successful edit', async () => {
+      req.journeyData.editAppointmentJourney.returnUrl = returnUrl
+      req.journeyData.editAppointmentJourney.property = 'location'
+      req.journeyData.editAppointmentJourney.location = {
+        id: '2',
+        description: 'Updated location',
+      }
+
+      await service.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
+
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(detailsUrl, expect.any(String))
+    })
+  })
+
   describe('edit', () => {
     describe('apply to this appointment', () => {
       it('when cancelling', async () => {

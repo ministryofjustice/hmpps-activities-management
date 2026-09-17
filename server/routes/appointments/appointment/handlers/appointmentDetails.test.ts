@@ -72,7 +72,44 @@ describe('Route Handlers - Appointment Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
         appointment,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        returnUrl: undefined,
       })
+    })
+
+    it('should pass a valid appointments dashboard return URL to the view', async () => {
+      const returnUrl = '/appointments/search?startDate=2023-05-26&timeSlots=AM&appointmentName=Chaplaincy&locationId=1'
+      req = {
+        params: { id: '10' },
+        query: { returnUrl },
+        appointment,
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/appointment/details',
+        expect.objectContaining({ returnUrl }),
+      )
+    })
+
+    it.each([
+      'https://example.com/appointments/search?startDate=2023-05-26',
+      '//example.com/appointments/search',
+      '/appointments',
+      '/appointments/search/select-date',
+    ])('should not pass an invalid or external return URL to the view', async returnUrl => {
+      req = {
+        params: { id: '10' },
+        query: { returnUrl },
+        appointment,
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/appointment/details',
+        expect.objectContaining({ returnUrl: undefined }),
+      )
     })
 
     it('should redirect to view a video link booking', async () => {
@@ -182,6 +219,7 @@ describe('Route Handlers - Appointment Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
         appointment: vlbAppointment,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        returnUrl: undefined,
       })
     })
   })
@@ -221,6 +259,7 @@ describe('Route Handlers - Appointment Details', () => {
         appointment,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
         uncancellable: true,
+        returnUrl: undefined,
       })
     })
 
@@ -241,6 +280,7 @@ describe('Route Handlers - Appointment Details', () => {
         appointment,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
         uncancellable: false,
+        returnUrl: undefined,
       })
     })
   })

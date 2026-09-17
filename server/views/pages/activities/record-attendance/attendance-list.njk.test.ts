@@ -111,4 +111,21 @@ describe('Views - Attendance list', () => {
     const $ = cheerio.load(compiledTemplate.render(attendanceListContext))
     expect($('strong:contains("Employer-paid")')).toHaveLength(1)
   })
+
+  it('should treat attendance as not required when the activity does not require attendance', () => {
+    const context = structuredClone(attendanceListContext)
+    context.instance.activitySchedule.activity.attendanceRequired = false
+
+    const $ = cheerio.load(compiledTemplate.render(context))
+    const attendanceCells = $('[data-qa="attendance"]')
+
+    expect(attendanceCells).toHaveLength(context.attendance.length)
+
+    attendanceCells.each((_, element) => {
+      expect($(element).text()).toContain('Not required')
+    })
+
+    expect($('input[name="selectedAttendances"]')).toHaveLength(0)
+    expect($('h2.govuk-heading-m').next('ul.govuk-list')).toHaveLength(0)
+  })
 })

@@ -53,6 +53,20 @@ const setupCancelMultipleSessionsScenario = async (): Promise<void> => {
   await stubEndpoint('PUT', '/scheduled-instances/93/uncancel')
 }
 
+export const stubMultipleSessionsUncancelled = async (): Promise<void> => {
+  const today = getToday()
+
+  const attendanceSummary = structuredClone(getAttendanceSummary).map(summary => ({
+    ...summary,
+    sessionDate: today,
+  }))
+
+  await Promise.all([
+    stubEndpoint('PUT', '/scheduled-instances/uncancel'),
+    stubEndpoint('GET', `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`, attendanceSummary),
+  ])
+}
+
 export const stubCancelledSessionsSummary = async (): Promise<void> => {
   const today = getToday()
 

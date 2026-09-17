@@ -1,5 +1,4 @@
 services:
-
   redis:
     image: 'redis:8.10'
     networks:
@@ -11,7 +10,7 @@ services:
     ports:
       - '6379:6379'
     healthcheck:
-      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost:6379/health" ]
+      test: ['CMD', 'wget', '-q', '-O', '-', 'http://localhost:6379/health']
 
   hmpps-activities-management-api:
     image: ghcr.io/ministryofjustice/hmpps-activities-management-api:latest
@@ -20,14 +19,14 @@ services:
     container_name: hmpps-activities-management-api
     restart: always
     ports:
-      - "8080:8080"
+      - '8080:8080'
     env_file:
       - .env
     environment:
       - SPRING_PROFILES_ACTIVE=local
       - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal/activities-management-db
     healthcheck:
-      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost:8080/health" ]
+      test: ['CMD', 'wget', '-q', '-O', '-', 'http://localhost:8080/health']
 
   # For the API to seed & interact with - there is no direct connection from the UI service
   activities-db:
@@ -37,22 +36,22 @@ services:
     container_name: activities-db
     restart: always
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       - POSTGRES_PASSWORD=activities-management
       - POSTGRES_USER=activities-management
       - POSTGRES_DB=activities-management-db
     healthcheck:
-      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost:5432/health" ]
+      test: ['CMD', 'wget', '-q', '-O', '-', 'http://localhost:5432/health']
 
-  # Needed only when running cypress tests
+  # Needed only when running PW tests
   wiremock:
     image: wiremock/wiremock
     networks:
       - hmpps
     container_name: wiremock
     ports:
-      - "9091:8080"
+      - '9091:8080'
 
 networks:
   hmpps:

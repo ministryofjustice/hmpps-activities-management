@@ -15,14 +15,14 @@ describe('Views - Daily attendance summary - Attendances', () => {
     compiledTemplate = compile(view.toString(), njkEnv)
   })
 
-  it('should render the activity type filters', () => {
+  it('should render the outside activity category without the activity type filters', () => {
     const $ = cheerio.load(
       compiledTemplate.render({
         status: 'Absences',
         activityDate: new Date('2026-08-17'),
         now: new Date('2026-08-17T12:00:00'),
         absenceReasons: [],
-        uniqueCategories: [],
+        uniqueCategories: [{ value: 'SAA_ROTL', text: 'Outside activity' }],
         attendees: [],
         showRefusalsLink: false,
         csrfToken: 'csrf',
@@ -31,8 +31,7 @@ describe('Views - Daily attendance summary - Attendances', () => {
         attendanceSummaryJourney: {
           absenceReasonFilters: [],
           payFilters: [],
-          activityTypeFilters: [],
-          categoryFilters: [],
+          categoryFilters: ['SAA_ROTL'],
           searchTerm: '',
         },
 
@@ -54,6 +53,8 @@ describe('Views - Daily attendance summary - Attendances', () => {
       }),
     )
 
-    expect($('input[name="activityTypeFilters"]')).not.toHaveLength(0)
+    expect($('input[name="activityTypeFilters"]')).toHaveLength(0)
+    expect($('input[name="categoryFilters"][value="SAA_ROTL"]')).toHaveLength(1)
+    expect($('label').text()).toContain('Outside activity')
   })
 })

@@ -1,32 +1,34 @@
+@use 'sass:map';
+
 $hmpps-width-percentages: (
-    20-percent: 20%,
-    30-percent: 30%,
-    40-percent: 40%,
-    50-percent: 50%,
-    60-percent: 60%,
-    80-percent: 80%
+  20-percent: 20%,
+  30-percent: 30%,
+  40-percent: 40%,
+  50-percent: 50%,
+  60-percent: 60%,
+  80-percent: 80%
 );
 
-@each $width in map-keys($hmpps-width-percentages) {
-    .hmpps-width-#{$width} {
-        width: map-get($hmpps-width-percentages, $width);
-    }
+@each $width in map.keys($hmpps-width-percentages) {
+  .hmpps-width-#{$width} {
+    width: map.get($hmpps-width-percentages, $width);
+  }
 }
 
 $hmpps-widths: (
-    200: 200px,
-    220: 220px,
-    240: 240px
+  200: 200px,
+  220: 220px,
+  240: 240px,
 );
 
-@each $width in map-keys($hmpps-widths) {
-    .hmpps-max-width-#{$width} {
-        max-width: map-get($hmpps-widths, $width);
-    }
+@each $width in map.keys($hmpps-widths) {
+  .hmpps-max-width-#{$width} {
+    max-width: map.get($hmpps-widths, $width);
+  }
 }
 
 .min-width {
-    &--110 {
-        min-width: 110px;
-    }
+  &--110 {
+    min-width: 110px;
+  }
 }

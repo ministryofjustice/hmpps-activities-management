@@ -94,6 +94,7 @@ export default class SearchRoutes {
     }
 
     return res.render('pages/appointments/search/results', {
+      dashboardUrl: req.originalUrl,
       startDate,
       timeSlots: selectedTimeSlots,
       appointmentNameFilters,

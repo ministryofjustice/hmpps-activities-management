@@ -9,11 +9,17 @@ import ListFilter from './components/list-filter/list-filter'
 import AppointmentEndDate from './components/appointment-end-date/end-date'
 import SelectAllLink from './components/select-all-link/select-all-link'
 import FormSpinner from './components/form-spinner/form-spinner'
+import BrowserBackRedirect from './components/browser-back-redirect/browser-back-redirect'
 
 function initAll() {
   var $backLinks = document.querySelectorAll('[class*=js-backlink]')
   nodeListForEach($backLinks, function ($backLink) {
     new BackLink($backLink)
+  })
+
+  var $browserBackRedirects = document.getElementsByName('browserBackRedirect')
+  nodeListForEach($browserBackRedirects, function ($browserBackRedirect) {
+    new BrowserBackRedirect($browserBackRedirect)
   })
 
   var $printButtons = document.querySelectorAll('[class*=js-print]')
@@ -78,4 +84,5 @@ export {
   AppointmentEndDate,
   SelectAllLink,
   FormSpinner,
+  BrowserBackRedirect,
 }

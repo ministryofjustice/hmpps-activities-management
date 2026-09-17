@@ -53,7 +53,20 @@ describe('Route Handlers - Appointment Set Details', () => {
         appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: false,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        returnUrl: undefined,
       })
+    })
+
+    it('should pass a valid appointments dashboard return URL to the view', async () => {
+      const returnUrl = '/appointments/search?startDate=2023-05-26&createdBy=USER1'
+      req.query = { returnUrl }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/appointment-set/details',
+        expect.objectContaining({ returnUrl }),
+      )
     })
 
     it('should render print movement slips link when at least one appointment is not cancelled and not expired', async () => {
@@ -78,6 +91,7 @@ describe('Route Handlers - Appointment Set Details', () => {
         appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: true,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        returnUrl: undefined,
       })
     })
 
@@ -103,6 +117,7 @@ describe('Route Handlers - Appointment Set Details', () => {
         appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: false,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        returnUrl: undefined,
       })
     })
   })

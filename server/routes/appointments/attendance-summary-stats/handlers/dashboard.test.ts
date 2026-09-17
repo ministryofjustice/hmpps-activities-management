@@ -179,6 +179,14 @@ describe('Route Handlers - Dashboard', () => {
           },
         ],
       })
+
+      expect(activitiesService.getAppointmentAttendanceSummaries).toHaveBeenCalledWith(
+        'MDI',
+        new Date(req.query.date),
+        res.locals.user,
+        'Medical & Doctor',
+        'Custom Medical & Doctor',
+      )
     })
 
     it('should set isOlderThanSevenDays to true when date is more than 7 days ago', async () => {

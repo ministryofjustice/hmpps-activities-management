@@ -142,7 +142,9 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
   const results = [appointment1, appointment2, appointment3] as AppointmentSearchResult[]
 
   beforeEach(() => {
-    req = {} as unknown as Request
+    req = {
+      originalUrl: '/appointments/search?startDate=2023-05-26',
+    } as unknown as Request
 
     res = {
       locals: {
@@ -216,6 +218,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/search/results', {
+        dashboardUrl: '/appointments/search?startDate=2023-05-26',
         startDate: formatIsoDate(today),
         timeSlots: [],
         appointmentNameFilters,
@@ -237,6 +240,10 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
     })
 
     it('should render fully filtered search view with categories, locations and search results', async () => {
+      req.originalUrl =
+        `/appointments/search?startDate=${formatIsoDate(today)}` +
+        '&timeSlots=PM&appointmentName=Medical%20-%20Doctor' +
+        '&locationId=33333333-3333-3333-3333-333333333333&prisonerNumber=A1111AA&createdBy=USER1'
       req.query = {
         startDate: formatIsoDate(today),
         timeSlots: ['PM'],
@@ -262,6 +269,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/search/results', {
+        dashboardUrl: req.originalUrl,
         startDate: formatIsoDate(today),
         timeSlots: ['PM'],
         appointmentNameFilters,

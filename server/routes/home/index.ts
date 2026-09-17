@@ -9,6 +9,8 @@ export default function Index(): Router {
   const homeHandler = new HomeRoutes()
 
   get('/', homeHandler.GET)
+  get('/activities-accessibility-statement', homeHandler.ACTIVITIES_ACCESSIBILITY_STATEMENT)
+  get('/appointments-accessibility-statement', homeHandler.APPOINTMENTS_ACCESSIBILITY_STATEMENT)
 
   return router
 }

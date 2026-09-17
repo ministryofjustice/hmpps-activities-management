@@ -1,4 +1,4 @@
-import './server/utils/azureAppInsights'
+import './server/telemetry'
 
 import app from './server/index'
 import logger from './logger'

@@ -11,4 +11,12 @@ export default class HomeRoutes {
     }
     return res.render('pages/home/index')
   }
+
+  ACTIVITIES_ACCESSIBILITY_STATEMENT = async (req: Request, res: Response): Promise<void> => {
+    res.render('pages/home/activities-accessibility-statement')
+  }
+
+  APPOINTMENTS_ACCESSIBILITY_STATEMENT = async (req: Request, res: Response): Promise<void> => {
+    res.render('pages/home/appointments-accessibility-statement')
+  }
 }

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { JourneyData } from '../@types/express'
 import TokenStoreInterface from '../data/tokenStoreInterface'
 
-// Off by default for cypress tests to enable the many isolated page tests to work without mocking
+// Off by default for PW tests to enable the many isolated page tests to work without mocking
 // Enable this in test explicitly by injecting journeyData with stateGuard set to true
 // const stateGuard = process.env.NODE_ENV !== 'e2e-test'
 

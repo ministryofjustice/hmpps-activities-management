@@ -5,6 +5,7 @@ import EventTier from '../../../enum/eventTiers'
 import { AppointmentPrisonerDetails } from './appointmentPrisonerDetails'
 
 export type EditAppointmentJourney = {
+  returnUrl?: string
   numberOfAppointments: number
   appointments: {
     sequenceNumber: number

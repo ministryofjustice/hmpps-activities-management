@@ -6,6 +6,7 @@ import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import setupCancelMultipleSessionsScenario, {
   stubCancelledSession,
   stubCancelledSessionsSummary,
+  stubMultipleSessionsUncancelled,
   stubUncancelledSession,
 } from '../../helpers/activities/attendance/cancelMultipleSessions'
 import { signIn } from '../../helpers/auth'
@@ -143,4 +144,68 @@ test('a user can cancel multiple sessions, update cancellation details and uncan
   await expect(attendancePage.getByText('Session no longer cancelled')).toBeVisible()
 
   await expect(attendancePage.getByRole('heading', { name: 'Session cancelled' })).toHaveCount(0)
+})
+
+test('a user can uncancel multiple sessions', async ({ page }) => {
+  await stubCancelledSessionsSummary()
+
+  await page.goto('/activities/attendance')
+
+  await page
+    .getByRole('link', {
+      name: 'Record attendance and cancel activity sessions',
+    })
+    .click()
+
+  await page
+    .getByRole('radio', {
+      name: 'Select activities from the full list',
+    })
+    .check()
+
+  await page.getByRole('button', { name: 'Continue' }).click()
+
+  await page.getByRole('radio', { name: /^Today/ }).check()
+  await page.getByRole('checkbox', { name: 'AM (morning)' }).check()
+  await page.getByRole('checkbox', { name: 'PM (afternoon)' }).check()
+  await page.getByRole('checkbox', { name: 'ED (evening)' }).check()
+
+  await page.getByRole('button', { name: 'Continue' }).click()
+
+  await page
+    .getByRole('link', {
+      name: 'Uncancel sessions that have been cancelled',
+    })
+    .click()
+
+  await expect(
+    page.getByRole('heading', {
+      name: 'Uncancel activity sessions that have been cancelled',
+    }),
+  ).toBeVisible()
+
+  const englishLevel1Row = page.getByRole('row').filter({ hasText: 'English level 1' })
+
+  const englishLevel2Row = page.getByRole('row').filter({ hasText: 'English level 2' })
+
+  await englishLevel1Row.getByRole('checkbox').check()
+  await englishLevel2Row.getByRole('checkbox').check()
+
+  await page.getByRole('button', { name: 'Uncancel' }).click()
+
+  await expect(
+    page.getByRole('heading', {
+      name: 'Are you sure you want to uncancel 2 activity sessions?',
+    }),
+  ).toBeVisible()
+
+  await page.getByRole('radio', { name: 'Yes' }).check()
+
+  await stubMultipleSessionsUncancelled()
+
+  await page.getByRole('button', { name: 'Confirm' }).click()
+
+  await expect(page.getByText('Sessions uncancelled')).toBeVisible()
+
+  await expect(page.getByText('You’ve uncancelled 2 activity sessions.')).toBeVisible()
 })

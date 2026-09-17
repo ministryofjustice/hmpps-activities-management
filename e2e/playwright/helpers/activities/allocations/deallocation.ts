@@ -65,14 +65,37 @@ const stubActivityAndSchedule = async (activityStartDate: Date): Promise<void> =
   ])
 }
 
-const setupDeallocationScenario = async (activityStartDate: Date): Promise<void> => {
+const setupDeallocationScenario = async (activityStartDate: Date, existingEndDate?: Date): Promise<void> => {
+  const allocations = structuredClone(getAllocations)
+
+  if (existingEndDate) {
+    const endDate = format(existingEndDate, 'yyyy-MM-dd')
+
+    const allocationWithPlannedDeallocation = {
+      ...allocations[0],
+      endDate,
+      plannedDeallocation: {
+        id: 11,
+        plannedDate: endDate,
+        plannedBy: 'USER1',
+        plannedReason: {
+          code: 'OTHER',
+          description: 'Other',
+        },
+        plannedAt: new Date().toISOString(),
+      },
+    }
+
+    allocations.splice(0, 1, allocationWithPlannedDeallocation)
+  }
+
   await Promise.all([
     stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities),
     stubEndpoint('GET', '/prison/prison-regime/MDI', getMdiPrisonRegime),
     stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels),
 
-    stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations),
-    stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true', getAllocations),
+    stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', allocations),
+    stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true', allocations),
 
     stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations),
 
@@ -85,6 +108,21 @@ const setupDeallocationScenario = async (activityStartDate: Date): Promise<void>
 
     stubEndpoint('PUT', '/schedules/2/deallocate'),
   ])
+
+  if (existingEndDate) {
+    const allocation = {
+      ...allocations[0],
+      allocatedBy: 'USER1',
+      exclusions: [],
+      prisonPayBand: { id: 11 },
+    }
+
+    await Promise.all([
+      stubEndpoint('GET', '/allocations/id/2', allocation),
+      stubEndpoint('GET', '/allocations/id/2/exclusions/history', []),
+      stubEndpoint('GET', '/prisoner/G4793VF', getInmateDetails[0]),
+    ])
+  }
 
   await stubActivityAndSchedule(activityStartDate)
 }

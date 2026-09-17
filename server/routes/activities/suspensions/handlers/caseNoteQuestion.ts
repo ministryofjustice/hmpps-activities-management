@@ -18,7 +18,7 @@ export default class CaseNoteQuestionRoutes {
       return res.redirect('case-note')
     }
 
-    req.session.suspendJourney.caseNote = null
+    req.journeyData.suspendJourney.caseNote = null
     return res.redirect('check-answers')
   }
 }

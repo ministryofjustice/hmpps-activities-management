@@ -4,7 +4,7 @@ import { expect, Page, test } from '@playwright/test'
 import stubs from '../../../../integration_tests/mockApis/stubs'
 import { resetStubs } from '../../../../integration_tests/mockApis/wiremock'
 import stubCreateActivity from '../../helpers/activities/createActivityStubs'
-import { signIn } from '../../helpers/auth'
+import { signIn, signInEAEnabled } from '../../helpers/auth'
 import { clickButton, clickLink, expectSummaryRow } from '../../helpers/govuk'
 import { expectPage } from '../../helpers/page'
 
@@ -22,7 +22,7 @@ const selectAutocompleteOption = async (page: Page, label: string, option: strin
   await page.getByRole('option', { name: optionName }).click()
 }
 
-const openCreateActivityJourney = async (page: Page): Promise<void> => {
+const openCreateActivityJourney = async (page: Page, externalActivitiesRolledOut = false): Promise<void> => {
   await expectAccessiblePage(page, 'Select service')
   await clickLink(page, 'Activities, unlock and attendance')
   await expectAccessiblePage(page, 'Activities, unlock and attendance')
@@ -33,7 +33,13 @@ const openCreateActivityJourney = async (page: Page): Promise<void> => {
   const createActivityCard = page.locator('[data-qa="create-an-activity"]')
   await expect(createActivityCard).toContainText('Create an activity')
   await clickLink(createActivityCard, 'Create an activity')
-  await expectAccessiblePage(page, 'Select a category for the new activity')
+
+  await expectAccessiblePage(
+    page,
+    externalActivitiesRolledOut
+      ? 'Does the activity take place inside or outside the prison grounds?'
+      : 'Select a category for the new activity',
+  )
 }
 
 const completeActivityDetails = async (page: Page): Promise<void> => {
@@ -156,14 +162,14 @@ const createActivityAndVerifyConfirmation = async (page: Page): Promise<void> =>
 }
 
 test.describe('Create an activity', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async () => {
     await resetStubs()
     await stubs.stubSignIn()
     await stubCreateActivity()
-    await signIn(page)
   })
 
   test('creates a standard activity using prison regime times', async ({ page }) => {
+    await signIn(page)
     await openCreateActivityJourney(page)
     await completeActivityDetails(page)
 
@@ -185,6 +191,7 @@ test.describe('Create an activity', () => {
   })
 
   test('creates a two-week activity using custom session times', async ({ page }) => {
+    await signIn(page)
     await openCreateActivityJourney(page)
     await completeActivityDetails(page)
 
@@ -212,5 +219,77 @@ test.describe('Create an activity', () => {
 
     await completeLocationAndCapacity(page)
     await createActivityAndVerifyConfirmation(page)
+  })
+
+  test('creates an outside activity paid by an external employer', async ({ page }) => {
+    await signInEAEnabled(page)
+
+    await openCreateActivityJourney(page, true)
+
+    await page.getByRole('radio', { name: 'Outside', exact: true }).check()
+    await continueTo(page, "What's the new activity called?")
+
+    await page.locator('#name').fill('Workshop')
+    await continueTo(page, 'Who pays prisoners for this activity?')
+
+    await page.getByRole('radio', { name: 'An external employer' }).check()
+    await continueTo(page, 'Enter the start date for this activity')
+
+    await page.locator('#startDate').fill(format(addMonths(new Date(), 1), 'dd/MM/yyyy'))
+
+    await continueTo(page, 'Do you want to enter an end date for this activity?')
+
+    await page.getByRole('radio', { name: 'Yes' }).check()
+    await continueTo(page, 'Enter the end date for this activity')
+
+    await page.locator('#endDate').fill(format(addMonths(new Date(), 8), 'dd/MM/yyyy'))
+
+    await continueTo(page, 'How often do you want the schedule to repeat?')
+
+    await page.getByRole('radio', { name: 'Weekly', exact: true }).check()
+
+    await continueTo(page, 'Select the days and sessions when people can be out at this activity')
+
+    await selectSessions(page, [
+      {
+        day: 'Monday',
+        sessions: ['AM'],
+      },
+    ])
+
+    await continueTo(page, "Do sessions of this activity follow the prison's regime times?")
+
+    await page.getByRole('radio', { name: 'Yes' }).check()
+
+    await continueTo(page, 'How many people can be allocated to this activity?')
+
+    await page.locator('#capacity').fill('6')
+
+    await continueTo(page, 'Check details for Workshop')
+
+    await expectSummaryRow(page, 'Activity category', 'Outside activity')
+
+    const activityDetails = page.locator('[data-qa="activity-details"]')
+
+    const categoryKey = activityDetails.locator('.govuk-summary-list__key').and(
+      activityDetails.getByText('Activity category', {
+        exact: true,
+      }),
+    )
+
+    const categoryRow = activityDetails.locator('.govuk-summary-list__row').filter({ has: categoryKey })
+
+    await expect(categoryRow.getByRole('link', { name: /Change/ })).toHaveCount(0)
+
+    await clickButton(page, 'Create activity')
+
+    await expectAccessiblePage(page, "You've created a new activity: Workshop")
+
+    await expect(page.locator('[data-qa="allocate-link"]')).toHaveAttribute(
+      'href',
+      '/activities/allocation-dashboard/2#candidates-tab',
+    )
+
+    await expect(page.locator('[data-qa="review-pay-link"]')).toHaveCount(0)
   })
 })

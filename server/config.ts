@@ -52,6 +52,10 @@ export default {
   branchName: get('GIT_BRANCH', 'xxxxxxxxxxxxxxxxxxx', requiredInProduction),
   journeyDataTokenDurationHours: Number(get('JOURNEY_DATA_TOKEN_DURATION_HOURS', 8, requiredInProduction)),
   production,
+  serverRequestTiming: {
+    enabled: !production && toBoolean(get('SERVER_REQUEST_TIMING_ENABLED', 'false')),
+    serverTimingHeader: !production && toBoolean(get('SERVER_TIMING_HEADER_ENABLED', 'false')),
+  },
   https: process.env.NO_HTTPS === 'true' ? false : production,
   staticResourceCacheDuration: '1h',
   redis: {
@@ -265,4 +269,5 @@ export default {
   plannedDowntimeEndTime: get('PLANNED_DOWNTIME_END_TIME', '5pm'),
   defaultCourtVideoUrl: get('DEFAULT_COURT_VIDEO_URL', 'meet.video.justice.gov.uk'),
   prisonerExtraInformationEnabled: toBoolean(get('PRISONER_EXTRA_INFORMATION_ENABLED', 'false')),
+  videoConferenceRoomAvailabilityPrisons: get('VIDEO_CONFERENCE_ROOM_AVAILABILITY_PRISONS', 'XXX'),
 }

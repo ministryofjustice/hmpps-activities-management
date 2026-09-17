@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { randomUUID } from 'crypto'
 import { when } from 'jest-when'
 import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -17,15 +18,21 @@ import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { AppointmentSetJourney } from '../appointmentSetJourney'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
+import { MetricsEventType } from '../../../../@types/metricsEvents'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const metricsService = new MetricsService() as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Create Appointment - Check answers', () => {
-  const handler = new CheckAnswersRoutes(activitiesService)
+  const handler = new CheckAnswersRoutes(activitiesService, metricsService)
   let req: Request
   let res: Response
+  const journeyId = randomUUID()
 
   beforeEach(() => {
     res = {
@@ -40,7 +47,13 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     } as unknown as Response
 
     req = {
-      session: {},
+      session: {
+        journeyMetrics: {
+          journeyStartTime: Date.now() - 60000,
+          source: 'startLink',
+        },
+      },
+      params: { journeyId },
       journeyData: {
         appointmentJourney: {
           type: AppointmentType.GROUP,
@@ -170,6 +183,14 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
       await handler.POST(req, res)
 
       expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('journeySource', 'startLink')
+          .addProperty('appointmentSeriesId', 15)
+          .addMeasurement('journeyTimeSec', 60),
+      )
+      expect(req.session.journeyMetrics).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
     })
 
@@ -219,6 +240,14 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
       await handler.POST(req, res)
 
       expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('journeySource', 'startLink')
+          .addProperty('appointmentSeriesId', 15)
+          .addProperty('originalId', 789)
+          .addMeasurement('journeyTimeSec', 60),
+      )
       expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
     })
 
@@ -247,6 +276,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     let expectedResponse: AppointmentSet
 
     beforeEach(() => {
+      req.session.journeyMetrics.source = null
       req.journeyData.appointmentJourney.type = AppointmentType.SET
 
       req.journeyData.appointmentSetJourney = {
@@ -372,6 +402,13 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
       await handler.POST(req, res)
 
       expect(activitiesService.createAppointmentSet).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentSetId', 14)
+          .addMeasurement('journeyTimeSec', 60),
+      )
+      expect(req.session.journeyMetrics).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('set-confirmation/14')
     })
 

@@ -75,6 +75,17 @@ describe('enhanceAppointment', () => {
 })
 
 describe('getAttendanceDataTitle', () => {
+  it.each([
+    [AttendanceStatus.ATTENDED, null, false, 'All attended'],
+    [AttendanceStatus.NOT_ATTENDED, null, false, 'All not attended'],
+    [AttendanceStatus.CANCELLED, null, false, 'All cancelled appointments'],
+    [AttendanceStatus.EVENT_TIER, EventTier.TIER_1, false, 'Tier 1 appointments'],
+    [AttendanceStatus.EVENT_TIER, EventTier.TIER_2, false, 'Tier 2 appointments'],
+    [AttendanceStatus.EVENT_TIER, EventTier.FOUNDATION, false, 'Routine (also called ’foundational’) appointments'],
+  ])('returns the expected title for %s / %s', (status, tier, isOlderThanSevenDays, expected) => {
+    expect(getAttendanceDataTitle(status, tier, isOlderThanSevenDays)).toEqual(expected)
+  })
+
   it('should return "All not recorded yet" when isOlderThanSevenDays is false', () => {
     expect(getAttendanceDataTitle(AttendanceStatus.NOT_RECORDED, null, false)).toEqual('All not recorded yet')
   })
@@ -89,6 +100,29 @@ describe('getAttendanceDataTitle', () => {
 })
 
 describe('getAttendanceDataSubTitle', () => {
+  it.each([
+    [AttendanceStatus.ATTENDED, null, 5, 3, false, '5 attended'],
+    [AttendanceStatus.NOT_ATTENDED, null, 5, 3, false, '5 not attended'],
+    [AttendanceStatus.CANCELLED, null, 5, 3, false, '5 cancelled appointments'],
+    [AttendanceStatus.EVENT_TIER, EventTier.TIER_1, 5, 3, false, '5 attendances recorded at 3 Tier 1 appointments'],
+    [AttendanceStatus.EVENT_TIER, EventTier.TIER_2, 5, 3, false, '5 attendances recorded at 3 Tier 2 appointments'],
+    [
+      AttendanceStatus.EVENT_TIER,
+      EventTier.FOUNDATION,
+      5,
+      3,
+      false,
+      '5 attendances recorded at 3 routine appointments',
+    ],
+  ])(
+    'returns the expected subtitle for %s / %s',
+    (status, tier, attendanceCount, appointmentCount, isOlderThanSevenDays, expected) => {
+      expect(getAttendanceDataSubTitle(status, tier, attendanceCount, appointmentCount, isOlderThanSevenDays)).toEqual(
+        expected,
+      )
+    },
+  )
+
   it('should return "X not recorded yet" when isOlderThanSevenDays is false', () => {
     expect(getAttendanceDataSubTitle(AttendanceStatus.NOT_RECORDED, null, 5, 3, false)).toEqual('5 not recorded yet')
   })

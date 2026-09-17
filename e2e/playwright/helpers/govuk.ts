@@ -15,7 +15,9 @@ export const clickLink = (scope: RoleScope, name: string | RegExp): Promise<void
 export const expectHeading = (scope: RoleScope, name: string | RegExp, level?: number): Promise<void> =>
   expect(scope.getByRole('heading', { name, level })).toBeVisible()
 
-export const expectSummaryRow = (scope: RoleScope, key: string | RegExp, value: string | RegExp): Promise<void> =>
-  expect(scope.locator('.govuk-summary-list__row').filter({ hasText: key })).toContainText(value)
+export const expectSummaryRow = (scope: RoleScope, key: string | RegExp, value: string | RegExp): Promise<void> => {
+  const summaryKey = scope.locator('.govuk-summary-list__key').and(scope.getByText(key, { exact: true }))
+  return expect(scope.locator('.govuk-summary-list__row').filter({ has: summaryKey })).toContainText(value)
+}
 
 export const successBanner = (page: Page) => page.locator('.govuk-notification-banner--success')

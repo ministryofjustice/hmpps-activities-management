@@ -12,7 +12,12 @@
 
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) + " - Appointments - DPS" %}
 {% set pageId = 'appointment-details-page' %}
-{% set jsBackLink = true %}
+{% if returnUrl %}
+    {% set hardBackLinkText = "Back to appointments dashboard" %}
+    {% set hardBackLinkHref = returnUrl %}
+{% else %}
+    {% set jsBackLink = true %}
+{% endif %}
 
 {% set appointmentLink = '/appointments/' + appointment.id  %}
 
@@ -47,7 +52,7 @@
 
             {% if appointment.appointmentSet %}
                 {{ govukInsetText({
-                    html: 'This appointment was scheduled in a <strong>set of ' + appointment.appointmentSet.appointmentCount + '</strong>. You can <a href="/appointments/set/' + appointment.appointmentSet.id + '">view the set</a> to print all movement slips at once.'
+                    html: 'This appointment was scheduled in a <strong>set of ' + appointment.appointmentSet.appointmentCount + '</strong>. You can <a href="/appointments/set/' + appointment.appointmentSet.id + ('?returnUrl=' + (returnUrl | urlencode) if returnUrl else '') + '">view the set</a> to print all movement slips at once.'
                 }) }}
             {% endif %}
 
@@ -60,7 +65,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/appointments/series/" + appointment.appointmentSeries.id,
+                                    href: "/appointments/series/" + appointment.appointmentSeries.id + ('?returnUrl=' + (returnUrl | urlencode) if returnUrl else ''),
                                     text: "View series",
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { 'data-qa': 'view-series' }

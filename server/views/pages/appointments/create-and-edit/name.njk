@@ -8,7 +8,9 @@
 
 {% set pageTitle = appointmentJourneyTitle("Appointment name set - Appointments - DPS" if appointmentJourney.type == AppointmentType.SET else "Appointment name - Appointments - DPS", appointmentJourney) %}
 {% set pageId = 'appointment-name-page' %}
-{% set jsBackLink = true %}
+{% set jsBackLink = not backLink %}
+{% set hardBackLinkHref = backLink.href if backLink %}
+{% set hardBackLinkText = backLink.text if backLink %}
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for category in categories %}
@@ -17,6 +19,9 @@
 
 {% block meta %}
     <meta name="autocompleteElements" content="categoryCode"/>
+    {% if backLink %}
+        <meta name="browserBackRedirect" content="{{ backLink.href }}"/>
+    {% endif %}
 {% endblock %}
 
 {% block content %}

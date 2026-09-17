@@ -38,6 +38,7 @@ const setupRecordNonAttendanceScenario = async (): Promise<void> => {
   await stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
 
   await stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
+  await stubEndpoint('POST', '/scheduled-instances', [getScheduledInstance])
 
   await stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
 

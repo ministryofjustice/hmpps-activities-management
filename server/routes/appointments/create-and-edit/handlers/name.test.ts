@@ -93,6 +93,23 @@ describe('Route Handlers - Create Appointment - Name', () => {
         categories: filteredCategories,
       })
     })
+
+    it('should link back to review attendees when started from an appointment confirmation', async () => {
+      req.journeyData.appointmentJourney.type = AppointmentType.GROUP
+      req.journeyData.appointmentJourney.fromAppointmentConfirmation = true
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
+        categories,
+        backLink: {
+          href: '/appointments/create/journeyId/review-prisoners',
+          text: 'Review and edit attendees',
+        },
+      })
+    })
   })
 
   describe('POST', () => {

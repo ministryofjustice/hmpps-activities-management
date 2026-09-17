@@ -5,7 +5,6 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
-{% from "partials/attendance/activityTypeFilters.njk" import activityTypeFilters %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "partials/searchInput.njk" import searchInput %}
@@ -89,17 +88,10 @@
     <input type="hidden" name="isAbsencesFilter" value="true" />
   {% endif %}
 
-  {{
-    activityTypeFilters(
-        attendanceSummaryJourney.activityTypeFilters,
-        user.externalActivitiesRolledOut
-    )
-  }}
-
   {# Categories filter #}
   {% set categoryFilters = [] %}
     {% for category in uniqueCategories %}
-      {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
+      {% set categoryFilters = (categoryFilters.push({value: category.value, text: category.text, checked: category.value in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
     {% endfor %}
 
     {{
