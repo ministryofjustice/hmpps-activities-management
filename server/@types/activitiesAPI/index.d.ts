@@ -3776,10 +3776,10 @@ export interface components {
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       /** Format: int32 */
       size?: number
       content?: components['schemas']['WaitingListApplication'][]
@@ -5100,6 +5100,8 @@ export interface components {
       plannedSuspension?: components['schemas']['PlannedSuspension'] | null
       /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
       exclusions: components['schemas']['Slot'][]
+      /** @description Details of the most recent activity schedule amendment that actually affected this allocation. For a schedule spanning multiple weeks, contains one entry per week that has an amendment - e.g. up to 2 entries for a bi-weekly schedule. */
+      scheduleLastChanged?: components['schemas']['ScheduleLastChanged'][] | null
       /**
        * @deprecated
        * @description The name of the prisoner. Included only if includePrisonerSummary = true
@@ -5275,6 +5277,50 @@ export interface components {
       prisonerNumber: string
       /** @description The list of allocations for the prisoner */
       allocations: components['schemas']['Allocation'][]
+    }
+    /** @description Details of the most recent activity schedule change that affected this allocation for a specific week of the schedule */
+    ScheduleLastChanged: {
+      /**
+       * Format: int32
+       * @description The week of the activity schedule this change relates to
+       * @example 1
+       */
+      weekNumber: number
+      /**
+       * Format: date-time
+       * @description When the activity schedule amendment affecting this allocation was made
+       */
+      changedAt: string
+      /**
+       * @description Who made the activity schedule amendment
+       * @example Mrs Blogs
+       */
+      changedBy: string
+      /** @description The sessions added to the schedule as part of this amendment that the prisoner is now attending */
+      addedSessions: components['schemas']['ScheduleSession'][]
+      /** @description The sessions removed from the schedule as part of this amendment that the prisoner was attending */
+      removedSessions: components['schemas']['ScheduleSession'][]
+    }
+    /** @description A single day/time-slot session that was added or removed by an activity schedule amendment */
+    ScheduleSession: {
+      /**
+       * Format: int32
+       * @description The week of the activity schedule this session relates to
+       * @example 1
+       */
+      weekNumber: number
+      /**
+       * @description The time slot of the session
+       * @example AM
+       * @enum {string}
+       */
+      timeSlot: 'AM' | 'PM' | 'ED'
+      /**
+       * @description The day of the week the session runs on
+       * @example Monday
+       * @enum {string}
+       */
+      dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
     }
     /** @description The create request with the new pay band details */
     PrisonPayBandCreateRequest: {

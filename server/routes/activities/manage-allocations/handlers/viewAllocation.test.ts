@@ -59,7 +59,7 @@ describe('ViewAllocationRoutes', () => {
       revisionType: 'ADDED',
       revision: 1,
       updatedBy: 'OLDER_USER',
-      updatedDateTime: '2024-05-06T09:15:00',
+      updatedDateTime: '2026-05-06T09:15:00',
     },
     {
       weekNumber: 1,
@@ -68,7 +68,7 @@ describe('ViewAllocationRoutes', () => {
       revisionType: 'REMOVED',
       revision: 2,
       updatedBy: 'LATEST_USER',
-      updatedDateTime: '2024-05-09T10:30:00',
+      updatedDateTime: '2026-09-15T10:30:00',
     },
     {
       weekNumber: 2,
@@ -77,7 +77,7 @@ describe('ViewAllocationRoutes', () => {
       revisionType: 'ADDED',
       revision: 2,
       updatedBy: 'LATEST_USER',
-      updatedDateTime: '2024-05-09T10:30:00',
+      updatedDateTime: '2026-09-15T10:30:00',
     },
   ]
 
@@ -148,6 +148,45 @@ describe('ViewAllocationRoutes', () => {
           plannedBy: 'joebloggs',
           dpsCaseNoteId: 'note-id',
         },
+        scheduleLastChanged: [
+          {
+            weekNumber: 1,
+            changedAt: '2026-09-11T15:20:11',
+            changedBy: 'DTHOMAS_GEN',
+            addedSessions: [
+              {
+                weekNumber: 1,
+                timeSlot: 'ED',
+                dayOfWeek: 'THURSDAY',
+              },
+            ],
+            removedSessions: [
+              {
+                weekNumber: 1,
+                timeSlot: 'AM',
+                dayOfWeek: 'MONDAY',
+              },
+              {
+                weekNumber: 1,
+                timeSlot: 'AM',
+                dayOfWeek: 'WEDNESDAY',
+              },
+            ],
+          },
+          {
+            weekNumber: 2,
+            changedAt: '2026-09-14T17:43:19',
+            changedBy: 'DTHOMAS_GEN',
+            addedSessions: [],
+            removedSessions: [
+              {
+                weekNumber: 2,
+                timeSlot: 'PM',
+                dayOfWeek: 'SATURDAY',
+              },
+            ],
+          },
+        ],
         ...overrides,
       } as Allocation)
   }
@@ -169,7 +208,7 @@ describe('ViewAllocationRoutes', () => {
   }
 
   describe('GET', () => {
-    it('should render multiple latest exclusion changes that were Added and Removed', async () => {
+    it('should render latest prisoner schedule Changes ', async () => {
       mockAllocation()
 
       when(activitiesService.getAllocationExclusionsHistory).calledWith(1, user).mockResolvedValue(exclusionHistory)
@@ -182,11 +221,123 @@ describe('ViewAllocationRoutes', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/manage-allocations/view-allocation',
         expect.objectContaining({
-          updatedBy: 'LATEST_USER',
-          latestUpdatedDateTime: '2024-05-09T10:30:00',
-          removedFromScheduleHistory: [exclusionHistory[2]],
-          addedToScheduleHistory: [exclusionHistory[1]],
-          showWeekNumber: true,
+          twoWeekSchedule: true,
+          latestScheduleChanges: {
+            week1: {
+              type: 'PRISONER',
+              weekNumber: 1,
+              changedAt: '2026-09-15T10:30:00',
+              changedBy: 'LATEST_USER',
+              added: [],
+              removed: [
+                {
+                  weekNumber: 1,
+                  dayOfWeek: 'TUESDAY',
+                  timeSlots: ['PM'],
+                },
+              ],
+            },
+            week2: {
+              type: 'PRISONER',
+              weekNumber: 2,
+              changedAt: '2026-09-15T10:30:00',
+              changedBy: 'LATEST_USER',
+              added: [
+                {
+                  weekNumber: 2,
+                  dayOfWeek: 'WEDNESDAY',
+                  timeSlots: ['AM'],
+                },
+              ],
+              removed: [],
+            },
+          },
+        }),
+      )
+    })
+
+    it('should render latest prisoner and activity schedule Changes for a 2 week schedule', async () => {
+      mockAllocation({
+        scheduleLastChanged: [
+          {
+            weekNumber: 1,
+            changedAt: '2026-09-16T15:20:11',
+            changedBy: 'DTHOMAS_GEN',
+            addedSessions: [
+              {
+                weekNumber: 1,
+                timeSlot: 'ED',
+                dayOfWeek: 'THURSDAY',
+              },
+            ],
+            removedSessions: [
+              {
+                weekNumber: 1,
+                timeSlot: 'AM',
+                dayOfWeek: 'MONDAY',
+              },
+              {
+                weekNumber: 1,
+                timeSlot: 'AM',
+                dayOfWeek: 'WEDNESDAY',
+              },
+            ],
+          },
+        ],
+      })
+
+      when(activitiesService.getAllocationExclusionsHistory).calledWith(1, user).mockResolvedValue(exclusionHistory)
+
+      mockUserMap(['joebloggs', 'LATEST_USER'])
+      mockUserMap(['GEOFFT'])
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/view-allocation',
+        expect.objectContaining({
+          twoWeekSchedule: true,
+          latestScheduleChanges: {
+            week1: {
+              type: 'ACTIVITY',
+              weekNumber: 1,
+              changedAt: '2026-09-16T15:20:11',
+              changedBy: 'DTHOMAS_GEN',
+              added: [
+                {
+                  dayOfWeek: 'THURSDAY',
+                  timeSlots: ['ED'],
+                  weekNumber: 1,
+                },
+              ],
+              removed: [
+                {
+                  dayOfWeek: 'MONDAY',
+                  timeSlots: ['AM'],
+                  weekNumber: 1,
+                },
+                {
+                  dayOfWeek: 'WEDNESDAY',
+                  timeSlots: ['AM'],
+                  weekNumber: 1,
+                },
+              ],
+            },
+            week2: {
+              type: 'PRISONER',
+              weekNumber: 2,
+              changedAt: '2026-09-15T10:30:00',
+              changedBy: 'LATEST_USER',
+              added: [
+                {
+                  dayOfWeek: 'WEDNESDAY',
+                  timeSlots: ['AM'],
+                  weekNumber: 2,
+                },
+              ],
+              removed: [],
+            },
+          },
         }),
       )
     })
@@ -209,15 +360,25 @@ describe('ViewAllocationRoutes', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/manage-allocations/view-allocation',
         expect.objectContaining({
-          updatedBy: 'LATEST_USER',
-          latestUpdatedDateTime: '2024-05-09T10:30:00',
-          removedFromScheduleHistory: [exclusionHistory[2]],
-          addedToScheduleHistory: [exclusionHistory[1]],
+          latestScheduleChanges: expect.objectContaining({
+            week1: expect.objectContaining({
+              type: 'PRISONER',
+              weekNumber: 1,
+              changedAt: '2026-09-15T10:30:00',
+              changedBy: 'LATEST_USER',
+            }),
+            week2: expect.objectContaining({
+              type: 'PRISONER',
+              weekNumber: 2,
+              changedAt: '2026-09-15T10:30:00',
+              changedBy: 'LATEST_USER',
+            }),
+          }),
         }),
       )
     })
 
-    it('should handle updatedBy user not found', async () => {
+    it('should handle changedBy user not found', async () => {
       mockAllocation({
         allocatedBy: 'MIGRATION',
       })
@@ -234,31 +395,20 @@ describe('ViewAllocationRoutes', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/manage-allocations/view-allocation',
         expect.objectContaining({
-          updatedBy: 'LATEST_USER',
-          latestUpdatedDateTime: '2024-05-09T10:30:00',
-          removedFromScheduleHistory: [exclusionHistory[2]],
-          addedToScheduleHistory: [exclusionHistory[1]],
-        }),
-      )
-    })
-
-    it('should return empty exclusion changes when no history exists after allocation', async () => {
-      mockAllocation({
-        allocatedTime: '2024-06-01T00:00:00',
-      })
-
-      when(activitiesService.getAllocationExclusionsHistory).calledWith(1, user).mockResolvedValue(exclusionHistory)
-
-      mockUserMap(['joebloggs'])
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/manage-allocations/view-allocation',
-        expect.objectContaining({
-          latestUpdatedDateTime: undefined,
-          removedFromScheduleHistory: [],
-          addedToScheduleHistory: [],
+          latestScheduleChanges: expect.objectContaining({
+            week1: expect.objectContaining({
+              type: 'PRISONER',
+              weekNumber: 1,
+              changedAt: '2026-09-15T10:30:00',
+              changedBy: 'LATEST_USER',
+            }),
+            week2: expect.objectContaining({
+              type: 'PRISONER',
+              weekNumber: 2,
+              changedAt: '2026-09-15T10:30:00',
+              changedBy: 'LATEST_USER',
+            }),
+          }),
         }),
       )
     })
