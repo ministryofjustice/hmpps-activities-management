@@ -86,7 +86,7 @@
     "superagent": "^10.3.0"
   },
   "devDependencies": {
-    "@jgoz/esbuild-plugin-typecheck": "^4.0.5",
+    "@jgoz/esbuild-plugin-typecheck": "^5.0.0",
     "@ministryofjustice/eslint-config-hmpps": "1.0.3",
     "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.6",
     "@playwright/test": "1.63.0",
