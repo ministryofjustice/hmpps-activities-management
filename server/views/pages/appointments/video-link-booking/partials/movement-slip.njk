@@ -1,0 +1,56 @@
+{% macro movementSlip(user, preAppointment, mainAppointment, postAppointment, prisoner, printedAt) %}
+    {% macro labelAndValue(label, value, rowClasses, valueClasses) %}
+        <div class="movement-slip__summary__row {{ rowClasses }}">
+            <dt class="movement-slip__summary__row__key">{{ label }}</dt>
+            <dd class="movement-slip__summary__row__value {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dd>
+        </div>
+    {% endmacro %}
+
+    {% macro appointment(label, value, rowClasses, valueClasses) %}
+      <div class="movement-slip__summary__row {{ rowClasses }}">
+        <dt>{{ label }}</dt>
+        <dd class="movement-slip__summary__row__value--override {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dd>
+      </div>
+    {% endmacro %}
+
+    {% macro appointmentTime(appointment) -%}
+        {{ appointment.startTime }}{% if appointment.endTime %} to {{ appointment.endTime }}{% endif %}
+    {%- endmacro %}
+    <div class="movement-slip">
+        <div class="govuk-heading-s"><span class="govuk-!-font-weight-regular">Movement authorisation slip</span></div>
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-2" data-qa="prisoner-name-and-number">
+            {% if prisoner | fullName %}{{ prisoner | fullName | toTitleCase }}, {% endif %}{{ prisoner.prisonerNumber }}
+        </h2>
+        <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="cell-location">
+            {% if prisoner.cellLocation == "UNKNOWN"%}
+                No matching cell location
+            {% else %}
+                {{ mainAppointment.prisonCode + '-' + prisoner.cellLocation }}
+            {% endif %}
+        </span>
+
+        <dl class='movement-slip__summary'>
+            {{ labelAndValue('Date', '<span>' + (mainAppointment.appointmentDate | toDate | formatDate) + '</span>') }}
+            {{ labelAndValue('Appointment', '<span><span class="movement-slip__summary__row-heading">Time</span></span><span><span class="movement-slip__summary__row-heading">Location</span></span>', 'movement-slip__summary__row--no-border') }}
+
+            {% if preAppointment %}
+              {{ appointment('Pre-court hearing', '<span><span class="movement-slip__summary__row__value">' + appointmentTime(preAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + preAppointment.locationDescription +'</span></span>', 'movement-slip__summary__row--no-border') }}
+            {% endif %}
+
+            {% if postAppointment %}
+              {{ appointment('Court hearing - ' + mainAppointment.hearingTypeDescription, '<span><span class="movement-slip__summary__row__value">' + appointmentTime(mainAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + mainAppointment.locationDescription +'</span></span>', 'movement-slip__summary__row--no-border') }}
+              {{ appointment('Post-court hearing', '<span><span class="movement-slip__summary__row__value">' + appointmentTime(postAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + postAppointment.locationDescription +'</span></span>') }}
+            {% else %}
+              {{ appointment('Court hearing - ' + mainAppointment.hearingTypeDescription, '<span><span class="movement-slip__summary__row__value">' + appointmentTime(mainAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + mainAppointment.locationDescription +'</span></span>') }}
+            {% endif %}
+
+            {% if not prisonerExtraInformationEnabled %}
+              {{ labelAndValue('Notes', '<span>' + (mainAppointment.notesForStaff | escape) + '</span>', 'movement-slip__summary__row--no-border', 'preserve-line-breaks') if mainAppointment.notesForStaff }}
+            {% else %}
+              {{ labelAndValue('Notes', '<span>' + (mainAppointment.notesForPrisoners | escape) + '</span>', 'movement-slip__summary__row--no-border', 'preserve-line-breaks') if mainAppointment.notesForPrisoners }}
+            {% endif %}
+        </dl>
+
+        <p class="govuk-body-s movement-slip-footer">Printed at {{ printedAt | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}</p>
+    </div>
+{% endmacro %}
