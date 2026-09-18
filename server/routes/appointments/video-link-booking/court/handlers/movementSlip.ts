@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Location, PrisonAppointment, VideoLinkBooking } from '../../../../../@types/bookAVideoLinkApi/types'
+import { VideoLinkBooking } from '../../../../../@types/bookAVideoLinkApi/types'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../../services/prisonService'
 
@@ -17,63 +17,29 @@ export default class MovementSlipRoutes {
     const { preAppointment, mainAppointment, postAppointment } = this.fetchAppointments(videoBooking)
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
     const rooms = await this.bookAVideoLinkService.getAppointmentLocations(mainAppointment.prisonCode, user)
-    const { preLocDesc, mainLocDesc, postLocDesc } = this.getLocationDescriptions(
-      preAppointment,
-      mainAppointment,
-      postAppointment,
-      rooms,
-    )
 
     res.render('pages/appointments/video-link-booking/court/movement-slip', {
       preAppointment: preAppointment
         ? {
             ...preAppointment,
-            locationDescription: preLocDesc,
+            locationDescription: rooms.find(r => r.dpsLocationId === preAppointment?.dpsLocationId)?.description,
           }
         : undefined,
       mainAppointment: mainAppointment
         ? {
             ...mainAppointment,
-            locationDescription: mainLocDesc,
+            locationDescription: rooms.find(r => r.dpsLocationId === mainAppointment.dpsLocationId).description,
             hearingTypeDescription: videoBooking.courtHearingTypeDescription,
           }
         : undefined,
       postAppointment: postAppointment
         ? {
             ...postAppointment,
-            locationDescription: postLocDesc,
+            locationDescription: rooms.find(r => r.dpsLocationId === postAppointment?.dpsLocationId)?.description,
           }
         : undefined,
       prisoner,
     })
-  }
-
-  private getLocationDescriptions = (
-    pre: PrisonAppointment,
-    main: PrisonAppointment,
-    post: PrisonAppointment,
-    rooms: Location[],
-  ) => {
-    const preLocDesc = rooms.find(r => r.dpsLocationId === pre?.dpsLocationId)?.description
-    let mainLocDesc = rooms.find(r => r.dpsLocationId === main.dpsLocationId).description
-    let postLocDesc = rooms.find(r => r.dpsLocationId === post?.dpsLocationId)?.description
-
-    if (preLocDesc && postLocDesc) {
-      if (preLocDesc === mainLocDesc && postLocDesc === mainLocDesc) {
-        mainLocDesc = 'Same location'
-        postLocDesc = 'Same location'
-      }
-    } else if (preLocDesc && preLocDesc === mainLocDesc) {
-      mainLocDesc = 'Same location'
-    } else if (postLocDesc && postLocDesc === mainLocDesc) {
-      postLocDesc = 'Same location'
-    }
-
-    return {
-      preLocDesc,
-      mainLocDesc,
-      postLocDesc,
-    }
   }
 
   private fetchAppointments = (videoLinkBooking: VideoLinkBooking) => {
