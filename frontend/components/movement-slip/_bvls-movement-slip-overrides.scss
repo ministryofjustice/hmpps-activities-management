@@ -1,9 +1,17 @@
+.movement-slip__summary__row-heading {
+  @extend .movement-slip__summary__row__key;
+  padding: 10px 0 0 0;
+}
+
 .movement-slip__summary__row__key-override {
   @extend .movement-slip__summary__row__key;
   font-weight: normal;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-.movement-slip__summary__row-key-override {
-  @extend .movement-slip__summary__row__key;
-  padding: 10px 0 10px 0;
+.movement-slip__summary__row__value--override {
+  @extend .movement-slip__summary__row__value;
+  padding-top: 0;
+  padding-bottom: 5px;
 }
