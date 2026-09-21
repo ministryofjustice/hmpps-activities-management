@@ -9,15 +9,15 @@
     {% macro appointment(label, value, rowClasses, valueClasses) %}
       <div class="movement-slip__summary__row {{ rowClasses }}">
         <dt class="movement-slip__summary__row__key-override">{{ label }}</dt>
-        <dd class="movement-slip__summary__row__value--override {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dd>
+        <dd class="movement-slip__summary__row__value--override {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dd>
       </div>
     {% endmacro %}
 
     {% macro appointmentTime(appointment) -%}
-        {{ appointment.startTime }}{% if appointment.endTime %} to {{ appointment.endTime }}{% endif %}
+        {{ appointment.startTime }} to {{ appointment.endTime }}
     {%- endmacro %}
     <div class="movement-slip">
-        <div class="govuk-heading-s"><span class="govuk-!-font-weight-regular">Movement authorisation slip</span></div>
+        <div class="govuk-heading-s" data-qa="movement-slip-heading"><span class="govuk-!-font-weight-regular">Movement authorisation slip</span></div>
         <h2 class="govuk-heading-m govuk-!-margin-bottom-2" data-qa="prisoner-name-and-number">
             {% if prisoner | fullName %}{{ prisoner | fullName | toTitleCase }}, {% endif %}{{ prisoner.prisonerNumber }}
         </h2>
