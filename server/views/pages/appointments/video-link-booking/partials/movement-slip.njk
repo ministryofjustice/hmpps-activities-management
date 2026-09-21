@@ -34,14 +34,14 @@
             {{ labelAndValue('Appointment', '<span><span class="movement-slip__summary__row-heading">Time</span></span><span><span class="movement-slip__summary__row-heading">Location</span></span>', 'movement-slip__summary__row--no-border') }}
 
             {% if preAppointment %}
-              {{ appointment('Pre-court hearing', '<span><span class="movement-slip__summary__row__value">' + appointmentTime(preAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + preAppointment.locationDescription +'</span></span>', 'movement-slip__summary__row--no-border') }}
+              {{ appointment('Pre-court hearing', '<span><span class="movement-slip__summary__row__value">' + appointmentTime(preAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + (preAppointment.locationDescription | escape)+'</span></span>', 'movement-slip__summary__row--no-border') }}
             {% endif %}
 
             {% if postAppointment %}
-              {{ appointment('Court hearing - ' + (mainAppointment.hearingTypeDescription | escape), '<span><span class="movement-slip__summary__row__value">' + appointmentTime(mainAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + mainAppointment.locationDescription +'</span></span>', 'movement-slip__summary__row--no-border') }}
-              {{ appointment('Post-court hearing', '<span><span class="movement-slip__summary__row__value">' + appointmentTime(postAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + postAppointment.locationDescription +'</span></span>') }}
+              {{ appointment('Court hearing - ' + (mainAppointment.hearingTypeDescription | escape), '<span><span class="movement-slip__summary__row__value">' + appointmentTime(mainAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + (mainAppointment.locationDescription | escape) +'</span></span>', 'movement-slip__summary__row--no-border') }}
+              {{ appointment('Post-court hearing', '<span><span class="movement-slip__summary__row__value">' + appointmentTime(postAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + (postAppointment.locationDescription | escape)+'</span></span>') }}
             {% else %}
-              {{ appointment('Court hearing - ' + (mainAppointment.hearingTypeDescription | escape), '<span><span class="movement-slip__summary__row__value">' + appointmentTime(mainAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + mainAppointment.locationDescription +'</span></span>') }}
+              {{ appointment('Court hearing - ' + (mainAppointment.hearingTypeDescription | escape), '<span><span class="movement-slip__summary__row__value">' + appointmentTime(mainAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + (mainAppointment.locationDescription | escape) +'</span></span>') }}
             {% endif %}
 
             {% if not prisonerExtraInformationEnabled %}

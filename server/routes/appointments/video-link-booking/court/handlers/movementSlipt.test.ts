@@ -56,7 +56,7 @@ describe('MovementSlipRoutes', () => {
       startTime: '10:00',
       endTime: '10:30',
       dpsLocationId: 'LOCATION_ID_1',
-      prisonLocKey: '',
+      prisonLocKey: 'loc-key-1',
       timeSlot: 'AM',
     }
 
@@ -69,7 +69,7 @@ describe('MovementSlipRoutes', () => {
       startTime: '10:30',
       endTime: '11:00',
       dpsLocationId: 'LOCATION_ID_2',
-      prisonLocKey: '',
+      prisonLocKey: 'loc-key-2',
       timeSlot: 'AM',
     }
     postCourtHearing = {
@@ -81,7 +81,7 @@ describe('MovementSlipRoutes', () => {
       startTime: '11:00',
       endTime: '11:30',
       dpsLocationId: 'LOCATION_ID_3',
-      prisonLocKey: '',
+      prisonLocKey: 'loc-key-3',
       timeSlot: 'AM',
     }
 
@@ -126,6 +126,45 @@ describe('MovementSlipRoutes', () => {
           postAppointment: {
             ...videoLinkBooking.prisonAppointments[2],
             locationDescription: 'Room 3',
+          },
+          prisoner: {
+            prisonerNumber: 'A1234BC',
+            firstName: 'John',
+            lastName: 'Doe',
+            dateOfBirth: '1980-01-01',
+            prisonId: 'PRISON1',
+          },
+        }),
+      )
+    })
+
+    it('should render the movement slip page for pre, main and post hearing falling back on the location key', async () => {
+      videoLinkBooking = {
+        ...videoLinkBooking,
+        prisonAppointments: [preCourtHearing, mainCourtHearing, postCourtHearing],
+      }
+
+      bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([] as unknown as Location[])
+
+      bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
+
+      await movementSlipRoutes.GET(req as Request, res as Response, next)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/video-link-booking/court/movement-slip',
+        expect.objectContaining({
+          preAppointment: {
+            ...videoLinkBooking.prisonAppointments[0],
+            locationDescription: 'loc-key-1',
+          },
+          mainAppointment: {
+            ...videoLinkBooking.prisonAppointments[1],
+            locationDescription: 'loc-key-2',
+            hearingTypeDescription: 'Appeal',
+          },
+          postAppointment: {
+            ...videoLinkBooking.prisonAppointments[2],
+            locationDescription: 'loc-key-3',
           },
           prisoner: {
             prisonerNumber: 'A1234BC',

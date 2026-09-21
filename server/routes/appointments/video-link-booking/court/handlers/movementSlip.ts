@@ -28,20 +28,26 @@ export default class MovementSlipRoutes {
       preAppointment: preAppointment
         ? {
             ...preAppointment,
-            locationDescription: rooms.find(r => r.dpsLocationId === preAppointment?.dpsLocationId)?.description,
+            locationDescription:
+              rooms.find(r => r.dpsLocationId === preAppointment?.dpsLocationId)?.description ??
+              preAppointment.prisonLocKey,
           }
         : undefined,
       mainAppointment: mainAppointment
         ? {
             ...mainAppointment,
-            locationDescription: rooms.find(r => r.dpsLocationId === mainAppointment.dpsLocationId).description,
+            locationDescription:
+              rooms.find(r => r.dpsLocationId === mainAppointment.dpsLocationId)?.description ??
+              mainAppointment.prisonLocKey,
             hearingTypeDescription: videoBooking.courtHearingTypeDescription,
           }
         : undefined,
       postAppointment: postAppointment
         ? {
             ...postAppointment,
-            locationDescription: rooms.find(r => r.dpsLocationId === postAppointment?.dpsLocationId)?.description,
+            locationDescription:
+              rooms.find(r => r.dpsLocationId === postAppointment?.dpsLocationId)?.description ??
+              postAppointment.prisonLocKey,
           }
         : undefined,
       prisoner,
