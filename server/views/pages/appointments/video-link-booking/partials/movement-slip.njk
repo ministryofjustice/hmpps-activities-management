@@ -8,7 +8,7 @@
 
     {% macro appointment(label, value, rowClasses, valueClasses) %}
       <div class="movement-slip__summary__row {{ rowClasses }}">
-        <dt>{{ label }}</dt>
+        <dt class="movement-slip__summary__row__key-override">{{ label }}</dt>
         <dd class="movement-slip__summary__row__value--override {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dd>
       </div>
     {% endmacro %}
@@ -38,10 +38,10 @@
             {% endif %}
 
             {% if postAppointment %}
-              {{ appointment('Court hearing - ' + mainAppointment.hearingTypeDescription, '<span><span class="movement-slip__summary__row__value">' + appointmentTime(mainAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + mainAppointment.locationDescription +'</span></span>', 'movement-slip__summary__row--no-border') }}
+              {{ appointment('Court hearing - ' + (mainAppointment.hearingTypeDescription | escape), '<span><span class="movement-slip__summary__row__value">' + appointmentTime(mainAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + mainAppointment.locationDescription +'</span></span>', 'movement-slip__summary__row--no-border') }}
               {{ appointment('Post-court hearing', '<span><span class="movement-slip__summary__row__value">' + appointmentTime(postAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + postAppointment.locationDescription +'</span></span>') }}
             {% else %}
-              {{ appointment('Court hearing - ' + mainAppointment.hearingTypeDescription, '<span><span class="movement-slip__summary__row__value">' + appointmentTime(mainAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + mainAppointment.locationDescription +'</span></span>') }}
+              {{ appointment('Court hearing - ' + (mainAppointment.hearingTypeDescription | escape), '<span><span class="movement-slip__summary__row__value">' + appointmentTime(mainAppointment) + '</span></span><span><span class="movement-slip__summary__row__value">' + mainAppointment.locationDescription +'</span></span>') }}
             {% endif %}
 
             {% if not prisonerExtraInformationEnabled %}

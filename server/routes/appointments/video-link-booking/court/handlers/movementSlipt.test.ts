@@ -1,4 +1,5 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
+import createHttpError from 'http-errors'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../../services/prisonService'
 import MovementSlipRoutes from './movementSlip'
@@ -11,6 +12,7 @@ jest.mock('../../../../../services/prisonService')
 describe('MovementSlipRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
+  let next: NextFunction
   let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
   let prisonService: jest.Mocked<PrisonService>
   let movementSlipRoutes: MovementSlipRoutes
@@ -27,6 +29,7 @@ describe('MovementSlipRoutes', () => {
       locals: { user: {} },
       render: jest.fn(),
     } as unknown as Response
+    next = jest.fn()
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
     prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
@@ -106,7 +109,7 @@ describe('MovementSlipRoutes', () => {
 
       bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
 
-      await movementSlipRoutes.GET(req as Request, res as Response)
+      await movementSlipRoutes.GET(req as Request, res as Response, next)
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/appointments/video-link-booking/court/movement-slip',
@@ -143,7 +146,7 @@ describe('MovementSlipRoutes', () => {
 
       bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
 
-      await movementSlipRoutes.GET(req as Request, res as Response)
+      await movementSlipRoutes.GET(req as Request, res as Response, next)
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/appointments/video-link-booking/court/movement-slip',
@@ -177,7 +180,7 @@ describe('MovementSlipRoutes', () => {
 
     bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
 
-    await movementSlipRoutes.GET(req as Request, res as Response)
+    await movementSlipRoutes.GET(req as Request, res as Response, next)
 
     expect(res.render).toHaveBeenCalledWith(
       'pages/appointments/video-link-booking/court/movement-slip',
@@ -210,7 +213,7 @@ describe('MovementSlipRoutes', () => {
 
     bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
 
-    await movementSlipRoutes.GET(req as Request, res as Response)
+    await movementSlipRoutes.GET(req as Request, res as Response, next)
 
     expect(res.render).toHaveBeenCalledWith(
       'pages/appointments/video-link-booking/court/movement-slip',
@@ -229,5 +232,13 @@ describe('MovementSlipRoutes', () => {
         },
       }),
     )
+  })
+
+  it('should throw a 404 error if the main appointment is not found', async () => {
+    bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoLinkBooking)
+
+    await movementSlipRoutes.GET(req as Request, res as Response, next)
+
+    expect(next).toHaveBeenCalledWith(createHttpError.NotFound())
   })
 })

@@ -1,4 +1,5 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
+import createHttpError from 'http-errors'
 import { VideoLinkBooking } from '../../../../../@types/bookAVideoLinkApi/types'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../../services/prisonService'
@@ -9,16 +10,21 @@ export default class MovementSlipRoutes {
     private readonly prisonService: PrisonService,
   ) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
+  GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { vlbId } = req.params
     const { user } = res.locals
 
     const videoBooking = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId, user)
     const { preAppointment, mainAppointment, postAppointment } = this.fetchAppointments(videoBooking)
+
+    if (!mainAppointment) {
+      return next(createHttpError.NotFound())
+    }
+
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
     const rooms = await this.bookAVideoLinkService.getAppointmentLocations(mainAppointment.prisonCode, user)
 
-    res.render('pages/appointments/video-link-booking/court/movement-slip', {
+    return res.render('pages/appointments/video-link-booking/court/movement-slip', {
       preAppointment: preAppointment
         ? {
             ...preAppointment,

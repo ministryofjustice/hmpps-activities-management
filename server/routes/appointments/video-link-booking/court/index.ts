@@ -8,6 +8,7 @@ import insertRouteContext from '../../../../middleware/routeContext'
 import insertJourneyIdentifier from '../../../../middleware/insertJourneyIdentifier'
 import initialiseJourney from './middleware/initialiseJourney'
 import MovementSlipRoutes from './handlers/movementSlip'
+import config from '../../../../config'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -21,10 +22,13 @@ export default function Index(services: Services): Router {
     services.userService,
   )
 
-  const movementSlipRoutes = new MovementSlipRoutes(services.bookAVideoLinkService, services.prisonService)
-
   get('/:vlbId', videoLinkDetailsRoutes.GET)
-  get('/:vlbId/movement-slip', movementSlipRoutes.GET)
+
+  if (config.showVideoCourtHearingMovementSlip) {
+    const movementSlipRoutes = new MovementSlipRoutes(services.bookAVideoLinkService, services.prisonService)
+
+    get('/:vlbId/movement-slip', movementSlipRoutes.GET)
+  }
 
   router.use('/create/:journeyId', insertRouteContext('create'), createRoutes(services))
 
