@@ -256,6 +256,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
 
   njkEnv.addGlobal('prisonerExtraInformationEnabled', config.prisonerExtraInformationEnabled)
   njkEnv.addGlobal('videoConferenceRoomAvailabilityPrisons', config.videoConferenceRoomAvailabilityPrisons)
+  njkEnv.addGlobal('showVideoCourtHearingMovementSlip', config.showVideoCourtHearingMovementSlip)
 
   for (const [name, filter] of Object.entries(mojFilters())) {
     njkEnv.addFilter(name, filter as (...args: any[]) => any)
