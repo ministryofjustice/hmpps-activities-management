@@ -29,6 +29,7 @@
     "pw-test": "playwright test",
     "pw-test-ui": "playwright test --ui",
     "pw-test:local": "npm run deps:down && npm run deps:pull && npm run deps:up && npm run build && concurrently -k --success first -n ui,playwright \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run pw-test\"",
+    "pw-test:local:no-pull": "npm run deps:down && npm run deps:up -- --pull never && npm run build && concurrently -k --success first -n ui,playwright \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run pw-test\"",
     "pw-test-ui:local": "npm run deps:down && npm run deps:pull && npm run deps:up && npm run build && concurrently -k -n ui,playwright \"npm run start-feature\" \"npm run wait:ui && npm run wait:wiremock && npm run pw-test-ui\""
   },
   "engines": {
@@ -81,6 +82,7 @@
     "nunjucks": "^3.2.4",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",
+    "playwright": "1.63.0",
     "redis": "^6.2.1",
     "reflect-metadata": "^0.2.2",
     "superagent": "^10.3.0"

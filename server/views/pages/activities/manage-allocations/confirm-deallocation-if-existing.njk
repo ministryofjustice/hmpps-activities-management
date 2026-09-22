@@ -37,13 +37,13 @@
             <h1 class='govuk-heading-l'>{{ pageHeading }}</h1>
             {% if selectedPrisoners | length == 1 and selectedPrisoners[0] %}
                 <div class="govuk-inset-text">
-                    {{ selectedPrisoners[0].prisonerName | safe }}'s allocation is already set to end on {{ selectedPrisoners[0].endDate | formatDate }}.
+                    {{ selectedPrisoners[0].prisonerName }}'s allocation is already set to end on {{ selectedPrisoners[0].endDate | formatDate }}.
                 </div>
             {% else %}
                 <p class='govuk-body'>Three people you have selected already have end dates set:</p>
                 <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
                     {% for inmate in selectedPrisoners %}
-                        <li>{{ inmate.prisonerName | safe }} - {{ inmate.endDate | formatDate('d MMMM yyyy', false) }}</li>
+                        <li>{{ inmate.prisonerName }} - {{ inmate.endDate | formatDate('d MMMM yyyy', false) }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
