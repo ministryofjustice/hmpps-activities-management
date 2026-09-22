@@ -270,4 +270,5 @@ export default {
   defaultCourtVideoUrl: get('DEFAULT_COURT_VIDEO_URL', 'meet.video.justice.gov.uk'),
   prisonerExtraInformationEnabled: toBoolean(get('PRISONER_EXTRA_INFORMATION_ENABLED', 'false')),
   videoConferenceRoomAvailabilityPrisons: get('VIDEO_CONFERENCE_ROOM_AVAILABILITY_PRISONS', 'XXX'),
+  showVideoCourtHearingMovementSlip: toBoolean(get('SHOW_VIDEO_COURT_HEARING_MOVEMENT_SLIP', 'false')),
 }
