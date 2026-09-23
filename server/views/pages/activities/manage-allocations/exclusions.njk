@@ -13,14 +13,14 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ allocateJourney.activity.name | safe }}</span>
+            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
 
-                <h1 class="govuk-heading-l">Change {{ prisonerName | safe }}'s scheduled sessions for this activity</h1>
+                <h1 class="govuk-heading-l">Change {{ prisonerName }}'s scheduled sessions for this activity</h1>
 
             {% if session.req.routeContext.mode == 'create' %}
-                <p class='govuk-body'>Unselect a session to modify {{ prisonerName | safe }} out.</p>
+                <p class='govuk-body'>Unselect a session to modify {{ prisonerName }} out.</p>
             {% else %}
-                <p class='govuk-body'>Unselect a session to modify {{ prisonerName | safe }} out.</p>
+                <p class='govuk-body'>Unselect a session to modify {{ prisonerName }} out.</p>
                 <p class='govuk-body'>If they are already modified out of a session, select it to add them back in.</p>
             {% endif %}
 

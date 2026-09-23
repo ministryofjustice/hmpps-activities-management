@@ -28,7 +28,7 @@
 
 {% set pageHeading %}
     {% if allocateJourney.inmates | length == 1 and allocateJourney.inmate %}
-        When do you want {{ allocateJourney.inmate.prisonerName | safe }}'s allocation to end?
+        When do you want {{ allocateJourney.inmate.prisonerName }}'s allocation to end?
     {% else %}
         When do you want {{ allocateJourney.inmates | length }} {% if allocateJourney.inmates | length == 1 %}person{% else %}people{% endif %}'s allocations to end?
     {% endif %}
@@ -44,7 +44,7 @@
                     name: "deallocateTodayOption",
                     fieldset: {
                         legend: {
-                            text: pageHeading,
+                            html: pageHeading,
                             classes: "govuk-fieldset__legend--l",
                             isPageHeading: true
                         }

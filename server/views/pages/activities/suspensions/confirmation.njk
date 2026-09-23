@@ -19,9 +19,9 @@
             {% if session.req.routeContext.mode == 'suspend' %}
                 {% if suspendJourney.suspendFrom == now | toDateString %}
                     {% set subText %}
-                        {{ suspendJourney.inmate.prisonerName | safe }} ({{ suspendJourney.inmate.prisonerNumber }}) is now suspended from
+                        {{ suspendJourney.inmate.prisonerName }} ({{ suspendJourney.inmate.prisonerNumber }}) is now suspended from
                         {% if allocationCount == 1 %}
-                            {{ suspendJourney.allocations[0].activityName | safe }}
+                            {{ suspendJourney.allocations[0].activityName }}
                         {% else %}
                             {{ allocationCount }} activities
                         {% endif %}
@@ -29,14 +29,14 @@
 
                     {{ govukPanel({
                         titleText: "Suspension started",
-                        text: subText
+                        html: subText
                     }) }}
                     <p class='govuk-body'>While they are suspended, their attendance for {{ 'this activity' if allocationCount == 1 else 'these activities' }} will be recorded as 'Suspended'.</p>
                     {% if allocationCount == 1 %}
                         <p class='govuk-body'>If they were due to attend a session that has already started, attendance for that session will need to be recorded.</p>
                         {% if user.externalActivitiesRolledOut and suspendJourney.allocations[0].outsideWork %}
                             <p class='govuk-body'>
-                                Temporary absences for {{ suspendJourney.inmate.prisonerName | safe }} to go out to this activity should be cancelled.
+                                Temporary absences for {{ suspendJourney.inmate.prisonerName }} to go out to this activity should be cancelled.
                                 Unlock and movement lists for today may need to be printed again.
                             </p>
                         {% else %}
@@ -47,9 +47,9 @@
                     {% endif %}
                 {% else %}
                     {% set subText %}
-                        {{ suspendJourney.inmate.prisonerName | safe }} ({{ suspendJourney.inmate.prisonerNumber }}) will be suspended from
+                        {{ suspendJourney.inmate.prisonerName }} ({{ suspendJourney.inmate.prisonerNumber }}) will be suspended from
                         {% if allocationCount == 1 %}
-                            {{ suspendJourney.allocations[0].activityName | safe }}
+                            {{ suspendJourney.allocations[0].activityName }}
                         {% else %}
                             {{ allocationCount }} activities
                         {% endif %}
@@ -58,11 +58,11 @@
 
                     {{ govukPanel({
                         titleText: "Suspension added",
-                        text: subText
+                        html: subText
                     }) }}
                     <p class='govuk-body'>From {{ suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}, their attendance for {{ 'this activity' if allocationCount == 1 else 'these activities' }} will be recorded as 'Suspended'.</p>
                     {% if allocationCount == 1 and user.externalActivitiesRolledOut and suspendJourney.allocations[0].outsideWork %}
-                        <p class='govuk-body'>Temporary absences for {{ suspendJourney.inmate.prisonerName | safe }} to go out to this activity should be cancelled.</p>
+                        <p class='govuk-body'>Temporary absences for {{ suspendJourney.inmate.prisonerName }} to go out to this activity should be cancelled.</p>
                     {% endif %}
                 {% endif %}
             {% endif %}
@@ -70,9 +70,9 @@
             {% if session.req.routeContext.mode == 'unsuspend' %}
                 {% if suspendJourney.suspendUntil == now | toDateString %}
                     {% set subText %}
-                        {{ suspendJourney.inmate.prisonerName | safe }} ({{ suspendJourney.inmate.prisonerNumber }}) is no longer suspended from
+                        {{ suspendJourney.inmate.prisonerName }} ({{ suspendJourney.inmate.prisonerNumber }}) is no longer suspended from
                         {% if allocationCount == 1 %}
-                            {{ suspendJourney.allocations[0].activityName | safe }}
+                            {{ suspendJourney.allocations[0].activityName }}
                         {% else %}
                             {{ allocationCount }} activities
                         {% endif %}
@@ -80,7 +80,7 @@
 
                     {{ govukPanel({
                         titleText: "Suspension ended",
-                        text: subText
+                        html: subText
                     }) }}
 
                     {{ govukWarningText({
@@ -89,9 +89,9 @@
                     }) }}
                 {% else %}
                     {% set subText %}
-                        {{ suspendJourney.inmate.prisonerName | safe }} ({{ suspendJourney.inmate.prisonerNumber }}) will be due to attend
+                        {{ suspendJourney.inmate.prisonerName }} ({{ suspendJourney.inmate.prisonerNumber }}) will be due to attend
                         {% if allocationCount == 1 %}
-                            {{ suspendJourney.allocations[0].activityName | safe }} again
+                            {{ suspendJourney.allocations[0].activityName }} again
                         {% else %}
                             {{ allocationCount }} activities again
                         {% endif %}
@@ -100,7 +100,7 @@
 
                     {{ govukPanel({
                         titleText: "Suspension set to end",
-                        text: subText
+                        html: subText
                     }) }}
                 {% endif %}
             {% endif %}
@@ -111,14 +111,14 @@
                 <ul class='govuk-list govuk-list--bullet'>
                     {% if suspendJourney.allocations | length == 1 %}
                         <li>
-                            <a href="/activities/allocation-dashboard/{{ suspendJourney.allocations[0].activityId  }}" class='govuk-link govuk-link--no-visited-state'>view current allocations for {{ suspendJourney.allocations[0].activityName | safe }}</a>
+                            <a href="/activities/allocation-dashboard/{{ suspendJourney.allocations[0].activityId  }}" class='govuk-link govuk-link--no-visited-state'>view current allocations for {{ suspendJourney.allocations[0].activityName }}</a>
                         </li>
                     {% endif %}
                         <li>
-                            <a href="/activities/prisoner-allocations/{{ suspendJourney.inmate.prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>check and manage {{ suspendJourney.inmate.prisonerName | safe }}'s allocations</a>
+                            <a href="/activities/prisoner-allocations/{{ suspendJourney.inmate.prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>check and manage {{ suspendJourney.inmate.prisonerName }}'s allocations</a>
                         </li>
                         <li>
-                            <a href="/activities/suspensions/prisoner/{{ suspendJourney.inmate.prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>manage {{ suspendJourney.inmate.prisonerName | safe }}'s suspensions</a>
+                            <a href="/activities/suspensions/prisoner/{{ suspendJourney.inmate.prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>manage {{ suspendJourney.inmate.prisonerName }}'s suspensions</a>
                         </li>
                         <li>
                             <a href="/activities/suspensions/select-prisoner" class='govuk-link govuk-link--no-visited-state'>find another prisoner</a> to suspend them, or end a suspension
