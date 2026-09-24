@@ -164,9 +164,14 @@
                         </a>
                     </dd>
                 </div>
-                {{ scheduleChangeSummary("Week 1 schedule last changed", latestScheduleChangeHistory.week1) }}
                 {% if twoWeekSchedule %}
-                    {{ scheduleChangeSummary( "Week 2 schedule last changed", latestScheduleChangeHistory.week2) }}
+                    {{ scheduleChangeSummary("Week 1 schedule last changed", 
+                    latestScheduleChangeHistory.week1) }}  
+                    {{ scheduleChangeSummary( "Week 2 schedule last changed", 
+                    latestScheduleChangeHistory.week2) }}
+                {% else %}
+                    {{ scheduleChangeSummary("Schedule last changed", 
+                    latestScheduleChangeHistory.week1) }}  
                 {% endif %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -210,9 +215,7 @@
         {% if change %}
 
             {% if change.type == 'ACTIVITY' %}
-                <div class="govuk-body-s">
-                    Activity schedule changed
-                </div>
+                Activity schedule changed on
             {% endif %}
 
             {{ change.changedAt

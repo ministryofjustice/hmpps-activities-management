@@ -112,7 +112,7 @@ describe('Views - Change allocation details', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__key').text().trim()).toContain(
-      'Week 1 schedule last changed',
+      'Schedule last changed',
     )
 
     expect(
@@ -169,7 +169,7 @@ describe('Views - Change allocation details', () => {
   })
 
   it('should display "No changes made" when there is no schedule change history', () => {
-    viewContext.latestScheduleChangeHistory = []
+    viewContext.latestScheduleChangeHistory = { week1: null, week2: null }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
