@@ -32,7 +32,10 @@ jobs:
           fi
 
       - name: Request Copilot Review
-        if: steps.size_check.outputs.trigger_review == 'true'
+        if: >
+          steps.size_check.outputs.trigger_review == 'true' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.actor != 'dependabot[bot]'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
