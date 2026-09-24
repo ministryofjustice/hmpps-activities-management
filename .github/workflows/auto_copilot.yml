@@ -1,0 +1,36 @@
+name: Trigger automatic Copilot Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  check-size:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR Size
+        id: size_check
+        run: |
+          # Count lines added and deleted (excluding renames/empty lines if needed)
+          CHANGES=$(git diff --shortstat origin/${{ github.base_ref }}...origin/${{ github.head_ref }} | awk '{print $4+$6}')
+          echo "Total line changes: $CHANGES"
+          
+          # Set threshold (e.g., 30 lines)
+          if [ "$CHANGES" -gt 30 ]; then
+            echo "trigger_review=true" >> $GITHUB_OUTPUT
+          else
+            echo "trigger_review=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Request Copilot Review
+        if: steps.size_check.outputs.trigger_review == 'true'
+        run: |
+          # Use GitHub CLI to add Copilot as a reviewer
+          gh pr edit ${{ github.event.pull_request.number }} --add-reviewer github-copilot[bot]
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
