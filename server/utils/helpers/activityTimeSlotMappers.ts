@@ -237,7 +237,7 @@ export function activitySlotsMinusExclusions(
   })
 }
 
-const getFullDayFromAbbreviation = (abbrDay: string): DayOfWeek => {
+export const getFullDayFromAbbreviation = (abbrDay: string): DayOfWeek => {
   const daysMap: { [abbr: string]: string } = {
     Mon: 'MONDAY',
     Tue: 'TUESDAY',
