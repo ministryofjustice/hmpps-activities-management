@@ -21,6 +21,16 @@ Keep changes focused on the requested behaviour.
   equivalents.
 - Follow the repository's ESLint, Prettier and TypeScript configuration.
 
+# Scope of investigation and review
+
+- Start with the requested change and the directly affected code and tests.
+- Expand investigation only when there is a concrete dependency, changed contract or plausible regression caused by the change.
+- For shared code, inspect relevant consumers; do not audit every consumer unless the change could affect them.
+- Compare new tests with existing coverage for the affected behaviour. Do not perform a repository-wide coverage audit.
+- Apply defensive-coding and testing guidance to the current change. Do not turn it into an unrelated hardening or refactoring exercise.
+- In code reviews, report issues introduced or materially worsened by the change. Mention pre-existing issues only when they block its correctness, and clearly identify them as pre-existing.
+- Scale verification to the change's impact. Run broader suites when shared behaviour, integration boundaries or focused-test failures justify it.
+
 # Forms and journeys
 
 - Follow the feature's existing class-transformer/class-validator models
@@ -169,6 +179,15 @@ When reporting verification:
 - Report the checks actually run and their results.
 - State any checks not run, blockers and remaining coverage gaps.
 - Do not claim tests passed unless they were executed successfully.
+
+# Technical debt and improvement opportunities
+
+- Identify worthwhile improvements only in files changed by the current task. Do not expand investigation solely to find technical debt.
+- Highlight concrete maintainability, reliability, accessibility or testing problems. Avoid subjective preferences and speculative abstractions.
+- Suggest improvements only when their benefit is clear. There is no requirement to find an opportunity in every change.
+- Keep suggestions separate from defects introduced by the current change. Label them as optional follow-ups, not blocking review findings.
+- Briefly describe the problem, its practical impact and a proportionate improvement. Prefer a few high-value observations over a long list.
+- Do not implement unrelated improvements unless requested.
 
 # Code review
 

@@ -1,45 +1,44 @@
-name: Trigger automatic Copilot Review
+name: Automatic Copilot Review
 
 on:
-  pull_request:
-    types: [opened, synchronize]
+  workflow_run:
+    workflows: ["Copilot Review Trigger"]
+    types: [completed]
 
 permissions:
-  contents: read
   pull-requests: write
 
 jobs:
-  check-size:
+  request-review:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.pull_requests[0] != null
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
 
-      - name: Check PR Size
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+
+    steps:
+      - name: Check PR size
         id: size_check
         run: |
-          # Count lines added and deleted (excluding renames/empty lines if needed)
-          CHANGES=$(git diff --shortstat "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" | awk '{print $4+$6}')
+          CHANGES=$(gh api \
+            "repos/${{ github.repository }}/pulls/$PR_NUMBER" \
+            --jq '.additions + .deletions')
+
           echo "Total line changes: $CHANGES"
-          
-          # Set threshold (e.g., 30 lines)
+
           if [ "$CHANGES" -gt 30 ]; then
-            echo "trigger_review=true" >> $GITHUB_OUTPUT
+            echo "trigger_review=true" >> "$GITHUB_OUTPUT"
           else
-            echo "trigger_review=false" >> $GITHUB_OUTPUT
+            echo "trigger_review=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Request Copilot Review
-        if: >
-          steps.size_check.outputs.trigger_review == 'true' &&
-          github.event.pull_request.head.repo.full_name == github.repository &&
-          github.actor != 'dependabot[bot]'
-        env:
-          GH_TOKEN: ${{ github.token }}
+        if: steps.size_check.outputs.trigger_review == 'true'
         run: |
           gh api \
             --method POST \
-            repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
+            "repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers" \
             -f 'reviewers[]=copilot-pull-request-reviewer[bot]'
