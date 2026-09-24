@@ -222,34 +222,34 @@ describe('ViewAllocationRoutes', () => {
         'pages/activities/manage-allocations/view-allocation',
         expect.objectContaining({
           twoWeekSchedule: true,
-          latestScheduleChanges: {
+          latestScheduleChangeHistory: {
             week1: {
-              type: 'PRISONER',
+              type: 'EXCLUSION',
               weekNumber: 1,
               changedAt: '2026-09-15T10:30:00',
               changedBy: 'LATEST_USER',
-              added: [],
-              removed: [
+              addedToSchedule: [
                 {
                   weekNumber: 1,
                   dayOfWeek: 'TUESDAY',
                   timeSlots: ['PM'],
                 },
               ],
+              removedFromSchedule: [],
             },
             week2: {
-              type: 'PRISONER',
+              type: 'EXCLUSION',
               weekNumber: 2,
               changedAt: '2026-09-15T10:30:00',
               changedBy: 'LATEST_USER',
-              added: [
+              addedToSchedule: [],
+              removedFromSchedule: [
                 {
                   weekNumber: 2,
                   dayOfWeek: 'WEDNESDAY',
                   timeSlots: ['AM'],
                 },
               ],
-              removed: [],
             },
           },
         }),
@@ -297,20 +297,20 @@ describe('ViewAllocationRoutes', () => {
         'pages/activities/manage-allocations/view-allocation',
         expect.objectContaining({
           twoWeekSchedule: true,
-          latestScheduleChanges: {
+          latestScheduleChangeHistory: {
             week1: {
               type: 'ACTIVITY',
               weekNumber: 1,
               changedAt: '2026-09-16T15:20:11',
               changedBy: 'DTHOMAS_GEN',
-              added: [
+              addedToSchedule: [
                 {
                   dayOfWeek: 'THURSDAY',
                   timeSlots: ['ED'],
                   weekNumber: 1,
                 },
               ],
-              removed: [
+              removedFromSchedule: [
                 {
                   dayOfWeek: 'MONDAY',
                   timeSlots: ['AM'],
@@ -324,22 +324,91 @@ describe('ViewAllocationRoutes', () => {
               ],
             },
             week2: {
-              type: 'PRISONER',
+              type: 'EXCLUSION',
               weekNumber: 2,
               changedAt: '2026-09-15T10:30:00',
               changedBy: 'LATEST_USER',
-              added: [
+              addedToSchedule: [],
+              removedFromSchedule: [
                 {
                   dayOfWeek: 'WEDNESDAY',
                   timeSlots: ['AM'],
                   weekNumber: 2,
                 },
               ],
-              removed: [],
             },
           },
         }),
       )
+    })
+
+    it('should filter exclusion removal events for one week schedules when the session is not on the activity schedule', async () => {
+      mockAllocation({
+        scheduleLastChanged: [],
+      })
+
+      activitiesService.getActivity.mockResolvedValueOnce({
+        id: 1,
+        category: {
+          code: 'EDUCATION',
+          id: 1,
+          name: 'Education',
+        },
+        paid: true,
+        pay: [],
+        schedules: [
+          {
+            ...activityScheduleBiWeekly,
+            scheduleWeeks: 1,
+            slots: [
+              {
+                id: 1,
+                weekNumber: 1,
+                timeSlot: 'AM',
+                startTime: '09:00',
+                endTime: '11:00',
+                daysOfWeek: ['Mon'],
+                mondayFlag: true,
+                tuesdayFlag: false,
+                wednesdayFlag: false,
+                thursdayFlag: false,
+                fridayFlag: false,
+                saturdayFlag: false,
+                sundayFlag: false,
+              },
+            ],
+          },
+        ],
+        startDate: '2022-01-01',
+      } as unknown as Activity)
+
+      when(activitiesService.getAllocationExclusionsHistory)
+        .calledWith(1, user)
+        .mockResolvedValue([
+          {
+            weekNumber: 1,
+            timeSlots: ['PM'],
+            dayOfWeek: 'SUNDAY',
+            revisionType: 'REMOVED',
+            revision: 1,
+            updatedBy: 'LATEST_USER',
+            updatedDateTime: '2026-09-15T10:30:00',
+          },
+        ])
+
+      mockUserMap(['joebloggs'])
+      mockUserMap(['GEOFFT'])
+
+      await handler.GET(req, res)
+
+      const viewModel = (res.render as jest.Mock).mock.calls[0][1]
+
+      expect(viewModel.twoWeekSchedule).toBe(false)
+
+      expect(viewModel.latestScheduleChangeHistory).toEqual({
+        week1: null,
+        week2: null,
+      })
     })
 
     it('should handle allocated by user not found', async () => {
@@ -360,15 +429,15 @@ describe('ViewAllocationRoutes', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/manage-allocations/view-allocation',
         expect.objectContaining({
-          latestScheduleChanges: expect.objectContaining({
+          latestScheduleChangeHistory: expect.objectContaining({
             week1: expect.objectContaining({
-              type: 'PRISONER',
+              type: 'EXCLUSION',
               weekNumber: 1,
               changedAt: '2026-09-15T10:30:00',
               changedBy: 'LATEST_USER',
             }),
             week2: expect.objectContaining({
-              type: 'PRISONER',
+              type: 'EXCLUSION',
               weekNumber: 2,
               changedAt: '2026-09-15T10:30:00',
               changedBy: 'LATEST_USER',
@@ -395,15 +464,15 @@ describe('ViewAllocationRoutes', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/manage-allocations/view-allocation',
         expect.objectContaining({
-          latestScheduleChanges: expect.objectContaining({
+          latestScheduleChangeHistory: expect.objectContaining({
             week1: expect.objectContaining({
-              type: 'PRISONER',
+              type: 'EXCLUSION',
               weekNumber: 1,
               changedAt: '2026-09-15T10:30:00',
               changedBy: 'LATEST_USER',
             }),
             week2: expect.objectContaining({
-              type: 'PRISONER',
+              type: 'EXCLUSION',
               weekNumber: 2,
               changedAt: '2026-09-15T10:30:00',
               changedBy: 'LATEST_USER',

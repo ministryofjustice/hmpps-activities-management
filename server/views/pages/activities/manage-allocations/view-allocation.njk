@@ -164,9 +164,9 @@
                         </a>
                     </dd>
                 </div>
-                {{ scheduleChangeSummary("Week 1 schedule last changed", latestScheduleChanges.week1) }}
+                {{ scheduleChangeSummary("Week 1 schedule last changed", latestScheduleChangeHistory.week1) }}
                 {% if twoWeekSchedule %}
-                    {{ scheduleChangeSummary( "Week 2 schedule last changed", latestScheduleChanges.week2) }}
+                    {{ scheduleChangeSummary( "Week 2 schedule last changed", latestScheduleChangeHistory.week2) }}
                 {% endif %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -221,9 +221,9 @@
             by
             {{ serviceUserName(userMap.get(change.changedBy)) }}
 
-            {% if change.added.length %}
+            {% if change.addedToSchedule.length %}
                 <div class="govuk-!-margin-top-4">
-                    {% for schedule in change.added %}
+                    {% for schedule in change.addedToSchedule %}
                         <div>
                             Added: {{ scheduleDetails(schedule) }}
                         </div>
@@ -231,9 +231,9 @@
                 </div>
             {% endif %}
 
-            {% if change.removed.length %}
+            {% if change.removedFromSchedule.length %}
                 <div class="govuk-!-margin-top-2">
-                    {% for schedule in change.removed %}
+                    {% for schedule in change.removedFromSchedule %}
                         <div>
                             Removed: {{ scheduleDetails(schedule) }}
                         </div>

@@ -2,9 +2,20 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatFirstLastName, parseDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
-import { Activity, ExclusionRevision, ScheduleLastChanged } from '../../../../@types/activitiesAPI/types'
+
+import {
+  Activity,
+  ActivityScheduleSlot,
+  Allocation,
+  ExclusionRevision,
+  ScheduleLastChanged,
+} from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
+import {
+  activitySlotsMinusExclusions,
+  getFullDayFromAbbreviation,
+  sessionSlotsToSchedule,
+} from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import UserService from '../../../../services/userService'
 import CaseNotesService from '../../../../services/caseNotesService'
@@ -12,12 +23,12 @@ import logger from '../../../../../logger'
 import getCurrentPay from '../../../../utils/helpers/getCurrentPay'
 
 type ExclusionChangeEvent = {
-  type: 'PRISONER'
+  type: 'EXCLUSION'
   weekNumber: number
   changedAt: string
   changedBy: string
-  added: ScheduleDisplayItem[]
-  removed: ScheduleDisplayItem[]
+  addedToSchedule: ScheduleDisplayItem[]
+  removedFromSchedule: ScheduleDisplayItem[]
 }
 
 type ScheduleChangeEvent = {
@@ -25,8 +36,8 @@ type ScheduleChangeEvent = {
   weekNumber: number
   changedAt: string
   changedBy: string
-  added: ScheduleDisplayItem[]
-  removed: ScheduleDisplayItem[]
+  addedToSchedule: ScheduleDisplayItem[]
+  removedFromSchedule: ScheduleDisplayItem[]
 }
 
 type ScheduleDisplayItem = {
@@ -37,6 +48,11 @@ type ScheduleDisplayItem = {
 
 type ChangeEvent = ExclusionChangeEvent | ScheduleChangeEvent
 
+type ScheduleChangeHistory = {
+  week1: ChangeEvent | null
+  week2: ChangeEvent | null
+}
+
 const mapExclusionHistoryToEvents = (exclusionHistory: ExclusionRevision[]): ExclusionChangeEvent[] => {
   return Object.values(
     exclusionHistory.reduce<Record<string, ExclusionChangeEvent>>((accumulator, record) => {
@@ -44,12 +60,12 @@ const mapExclusionHistoryToEvents = (exclusionHistory: ExclusionRevision[]): Exc
 
       if (!accumulator[key]) {
         accumulator[key] = {
-          type: 'PRISONER',
+          type: 'EXCLUSION',
           weekNumber: record.weekNumber,
           changedAt: record.updatedDateTime,
           changedBy: record.updatedBy,
-          added: [],
-          removed: [],
+          addedToSchedule: [],
+          removedFromSchedule: [],
         }
       }
 
@@ -60,11 +76,11 @@ const mapExclusionHistoryToEvents = (exclusionHistory: ExclusionRevision[]): Exc
       }
 
       if (record.revisionType === 'ADDED') {
-        accumulator[key].added.push(displayItem)
+        accumulator[key].removedFromSchedule.push(displayItem)
       }
 
       if (record.revisionType === 'REMOVED') {
-        accumulator[key].removed.push(displayItem)
+        accumulator[key].addedToSchedule.push(displayItem)
       }
 
       return accumulator
@@ -78,12 +94,12 @@ const mapScheduleHistoryToEvents = (scheduleHistory: ScheduleLastChanged[]): Sch
     weekNumber: history.weekNumber,
     changedAt: history.changedAt,
     changedBy: history.changedBy,
-    added: history.addedSessions.map(session => ({
+    addedToSchedule: history.addedSessions.map(session => ({
       weekNumber: session.weekNumber,
       dayOfWeek: session.dayOfWeek,
       timeSlots: [session.timeSlot],
     })),
-    removed: history.removedSessions.map(session => ({
+    removedFromSchedule: history.removedSessions.map(session => ({
       weekNumber: session.weekNumber,
       dayOfWeek: session.dayOfWeek,
       timeSlots: [session.timeSlot],
@@ -91,7 +107,34 @@ const mapScheduleHistoryToEvents = (scheduleHistory: ScheduleLastChanged[]): Sch
   }))
 }
 
-const getLatestForWeek = (events: ChangeEvent[]) => {
+const slotExistsInActivitySchedule = (activitySlots: ActivityScheduleSlot[], item: ScheduleDisplayItem): boolean => {
+  return activitySlots.some(
+    slot =>
+      slot.weekNumber === item.weekNumber &&
+      item.timeSlots.includes(slot.timeSlot) &&
+      slot.daysOfWeek.some(day => getFullDayFromAbbreviation(day) === item.dayOfWeek),
+  )
+}
+
+const filterInvalidExclusionEvents = (
+  event: ChangeEvent,
+  scheduleWeeks: number,
+  activitySlots: ActivityScheduleSlot[],
+): ChangeEvent | null => {
+  // For one-week schedules, hide exclusion-removal events
+  // where the session being added back no longer exists on the activity schedule
+  if (scheduleWeeks !== 1 || event.type !== 'EXCLUSION' || !event.addedToSchedule.length) {
+    return event
+  }
+  return event.addedToSchedule.some(item => slotExistsInActivitySchedule(activitySlots, item)) ? event : null
+}
+
+const buildLatestEventsByWeek = (events: ChangeEvent[]): ScheduleChangeHistory => ({
+  week1: getLatestForWeek(events.filter(event => event.weekNumber === 1)),
+  week2: getLatestForWeek(events.filter(event => event.weekNumber === 2)),
+})
+
+const getLatestForWeek = (events: ChangeEvent[]): ChangeEvent | null => {
   if (!events.length) {
     return null
   }
@@ -103,17 +146,45 @@ const buildScheduleChangeViewModel = (
   allocatedTime: string | null | undefined,
   exclusionHistory: ExclusionRevision[],
   scheduleHistory: ScheduleLastChanged[],
-) => {
+  activitySlots: ActivityScheduleSlot[],
+  scheduleWeeks: number,
+): ScheduleChangeHistory => {
   const events = [...mapExclusionHistoryToEvents(exclusionHistory), ...mapScheduleHistoryToEvents(scheduleHistory)]
 
   const relevantEvents = allocatedTime ? events.filter(event => event.changedAt > allocatedTime) : events
 
-  return {
-    week1: getLatestForWeek(relevantEvents.filter(event => event.weekNumber === 1)),
+  const visibleEvents = relevantEvents
+    .map(event => filterInvalidExclusionEvents(event, scheduleWeeks, activitySlots))
+    .filter((event): event is ChangeEvent => event !== null)
 
-    week2: getLatestForWeek(relevantEvents.filter(event => event.weekNumber === 2)),
-  }
+  return buildLatestEventsByWeek(visibleEvents)
 }
+
+const buildUserMap = async (usernames: string[], user: Express.User, userService: UserService) => {
+  const userMap = new Map<string, unknown>()
+
+  await Promise.allSettled(
+    [...new Set(usernames)].map(async username => {
+      try {
+        const users = await userService.getUserMap([username], user)
+
+        users.forEach((value, key) => userMap.set(key, value))
+      } catch {
+        logger.info(`Failed to load user: ${username}`)
+      }
+    }),
+  )
+
+  return userMap
+}
+
+const getUsernames = (allocation: Allocation, latestScheduleChangeHistory: ScheduleChangeHistory): string[] =>
+  [
+    allocation.plannedSuspension?.plannedBy,
+    allocation.allocatedBy,
+    latestScheduleChangeHistory.week1?.changedBy,
+    latestScheduleChangeHistory.week2?.changedBy,
+  ].filter((username): username is string => username != null)
 
 export default class ViewAllocationRoutes {
   constructor(
@@ -155,26 +226,17 @@ export default class ViewAllocationRoutes {
 
     const isStarted = new Date(allocation.startDate) <= new Date()
 
-    const latestScheduleChanges = buildScheduleChangeViewModel(
+    const latestScheduleChangeHistory = buildScheduleChangeViewModel(
       allocation.allocatedTime,
       exclusionHistory,
-      allocation.scheduleLastChanged,
+      allocation.scheduleLastChanged ?? [],
+      slots,
+      scheduleWeeks,
     )
 
-    const userIds = [
-      allocation.plannedSuspension?.plannedBy,
-      allocation.allocatedBy,
-      latestScheduleChanges.week1?.changedBy,
-      latestScheduleChanges.week2?.changedBy,
-    ].filter(Boolean)
+    const usernames = getUsernames(allocation, latestScheduleChangeHistory)
 
-    let userMap = new Map()
-
-    try {
-      userMap = await this.userService.getUserMap([...new Set(userIds)], user)
-    } catch {
-      logger.info('Failed to load one or more users')
-    }
+    const userMap = await buildUserMap(usernames, user, this.userService)
 
     const suspensionCaseNote = allocation.plannedSuspension?.dpsCaseNoteId
       ? await this.caseNotesService.getCaseNote(
@@ -193,7 +255,7 @@ export default class ViewAllocationRoutes {
       dailySlots,
       currentWeek,
       userMap,
-      latestScheduleChanges,
+      latestScheduleChangeHistory,
       suspensionCaseNote,
       activityIsPaid: activity?.paid,
       twoWeekSchedule,

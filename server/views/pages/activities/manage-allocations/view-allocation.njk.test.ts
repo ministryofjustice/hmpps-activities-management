@@ -34,14 +34,14 @@ describe('Views - Change allocation details', () => {
       },
       prisonerName: 'Billy Fdas',
       userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
-      latestScheduleChanges: {
+      latestScheduleChangeHistory: {
         week1: {
           type: 'ACTIVITY',
           weekNumber: 1,
           changedAt: '2026-09-16T10:30:00',
           changedBy: 'joebloggs',
-          added: [],
-          removed: [
+          addedToSchedule: [],
+          removedFromSchedule: [
             {
               weekNumber: 1,
               dayOfWeek: 'TUESDAY',
@@ -50,18 +50,18 @@ describe('Views - Change allocation details', () => {
           ],
         },
         week2: {
-          type: 'PRISONER',
+          type: 'EXCLUSION',
           weekNumber: 2,
           changedAt: '2026-09-15T10:30:00',
           changedBy: 'joebloggs',
-          added: [
+          addedToSchedule: [
             {
               weekNumber: 2,
               dayOfWeek: 'WEDNESDAY',
               timeSlots: ['AM', 'PM', 'ED'],
             },
           ],
-          removed: [],
+          removedFromSchedule: [],
         },
       },
       twoWeekSchedule: true,
@@ -91,20 +91,20 @@ describe('Views - Change allocation details', () => {
 
   it('should display latest 1 week schedule history details with multiple timeslot formatting', () => {
     viewContext.twoWeekSchedule = false
-    viewContext.latestScheduleChanges = {
+    viewContext.latestScheduleChangeHistory = {
       week1: {
-        type: 'PRISONER',
+        type: 'EXCLUSION',
         weekNumber: 1,
         changedAt: '2026-09-01T10:30:00',
         changedBy: 'joebloggs',
-        added: [
+        addedToSchedule: [
           {
             weekNumber: 1,
             dayOfWeek: 'WEDNESDAY',
             timeSlots: ['AM', 'PM', 'ED'],
           },
         ],
-        removed: [],
+        removedFromSchedule: [],
       },
       week2: null,
     }
@@ -169,7 +169,7 @@ describe('Views - Change allocation details', () => {
   })
 
   it('should display "No changes made" when there is no schedule change history', () => {
-    viewContext.latestScheduleChanges = []
+    viewContext.latestScheduleChangeHistory = []
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
