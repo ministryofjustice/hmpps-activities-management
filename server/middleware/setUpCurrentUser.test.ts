@@ -9,7 +9,6 @@ import auth from '../authentication/auth'
 import { RolloutPrisonPlan } from '../@types/activitiesAPI/types'
 
 jest.mock('../services/activitiesService')
-jest.mock('jwt-decode')
 jest.mock('../authentication/auth')
 
 const username = 'BLOGGSJ'
