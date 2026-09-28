@@ -1,12 +1,12 @@
 import { Router } from 'express'
 import { jwtDecode } from 'jwt-decode'
 import createHttpError from 'http-errors'
+import { UUID } from 'crypto'
 import auth from '../authentication/auth'
 import tokenVerifier from '../data/tokenVerification'
 import { convertToTitleCase } from '../utils/utils'
 import logger from '../../logger'
 import ActivitiesService from '../services/activitiesService'
-import { UUID } from 'crypto'
 
 export default function setUpCurrentUser(activitiesService: ActivitiesService) {
   const router = Router({ mergeParams: true })
