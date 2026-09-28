@@ -134,7 +134,7 @@ const mockWaitlistApprovedPendingApplications = [
 
 describe('Route Handlers - Prisoner Allocations', () => {
   const handler = new PrisonerWaitlistHandler(activitiesService, prisonService)
-  let req: Request
+  let req: Request<{ prisonerNumber: string }>
   let res: Response
 
   beforeEach(() => {
@@ -152,7 +152,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
     req = {
       params: { prisonerNumber: 'ABC123' },
       journeyData: { prisonerAllocationsJourney: {} },
-    } as unknown as Request
+    } as unknown as Request<{ prisonerNumber: string }>
   })
 
   afterEach(() => {

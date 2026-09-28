@@ -85,6 +85,11 @@ export default function createApp(services: Services): express.Application {
     }),
   )
   app.use(setUpCurrentUser(services.activitiesService))
+  app.use(
+    telemetryMiddleware.addUserMetadataToTelemetry({
+      getAttributes: (req: Request) => ({ username: req.user?.username }),
+    }),
+  )
   app.use(trimRequestBody())
   app.use(setUpValidationExtensions())
   app.use(populateJourney())
@@ -94,11 +99,6 @@ export default function createApp(services: Services): express.Application {
   app.use(formValidationErrorHandler)
   app.use((req, res, next) => next(createHttpError.NotFound()))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
-  app.use(
-    telemetryMiddleware.addUserMetadataToTelemetry({
-      getAttributes: (req: Request) => ({ username: req.user?.username }),
-    }),
-  )
 
   return app
 }

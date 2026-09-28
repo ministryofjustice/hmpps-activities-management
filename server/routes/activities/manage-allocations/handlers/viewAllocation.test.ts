@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { format, subDays } from 'date-fns'
 import { when } from 'jest-when'
+import { ServiceUser } from '../../../../@types/express'
 
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
@@ -38,7 +39,7 @@ describe('ViewAllocationRoutes', () => {
     activeCaseLoad: {
       caseLoadId: 'MDI',
     },
-  }
+  } as unknown as ServiceUser
 
   const prisoner: Prisoner = {
     prisonerNumber: 'G4793VF',

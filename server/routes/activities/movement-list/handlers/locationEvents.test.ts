@@ -147,7 +147,7 @@ describe('Movement list routes - location events', () => {
       }
 
       when(activitiesService.getInternalLocationEventsByDpsLocationId)
-        .calledWith(prisonCode, date, [uuid1], res.locals.user, timeSlot as string)
+        .calledWith(prisonCode, date, uuid1, res.locals.user, timeSlot as string)
         .mockResolvedValue(undefined)
 
       await handler.GET(req, res)
