@@ -97,7 +97,7 @@ describe('VideoLinkDetailsRoutes', () => {
         prisonId: 'PRISON1',
       } as Prisoner)
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
-        { dspLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
+        { dpsLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true },
       ] as unknown as Location[])
       userService.getUserMap.mockResolvedValue(
         new Map([
@@ -133,7 +133,7 @@ describe('VideoLinkDetailsRoutes', () => {
             dateOfBirth: '1980-01-01',
             prisonId: 'PRISON1',
           },
-          rooms: [{ dspLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true }],
+          rooms: [{ dpsLocationId: 'LOCATION_ID_1', description: 'Room 1', enabled: true }],
           userMap: new Map([
             ['user1', { username: 'user1', active: true, name: 'User One', authSource: 'auth', userId: 'user1' }],
             ['user2', { username: 'user2', active: true, name: 'User Two', authSource: 'auth', userId: 'user2' }],

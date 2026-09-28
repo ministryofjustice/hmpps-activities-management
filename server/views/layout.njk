@@ -2,7 +2,7 @@
 
 {% block head %}
   <!-- Google Tag Manager -->
-      <script nonce='{{ cspNonce }}'>
+      <script nonce='{{ cspNonce }}' data-gtm-environment="{{ tagManagerEnvironment }}">
         ;(function(w,d,s,l,i) {
           w[l]=w[l]||[];
           w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
@@ -11,7 +11,7 @@
             dl=l!='dataLayer'?'&l='+l:'';
 
           j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+ i + dl +'{{ tagManagerEnvironment | safe }}';
+          'https://www.googletagmanager.com/gtm.js?id='+ i + dl + d.currentScript.getAttribute('data-gtm-environment');
 
           var n=d.querySelector('[nonce]');
           n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));
@@ -30,6 +30,7 @@
 {% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
 
 {% block header %}
+  {# Trusted HTML from the configured DPS frontend components service. #}
   {{ feComponents.header | safe }}
   {% block meta %}{% endblock %}
 {% endblock %}
@@ -50,6 +51,7 @@
 
 
 {% block footer %}
+  {# Trusted HTML from the configured DPS frontend components service. #}
   {{ feComponents.footer | safe }}
 {% endblock %}
 

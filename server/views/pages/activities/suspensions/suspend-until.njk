@@ -16,9 +16,9 @@
             <span class="govuk-caption-xl">Manage suspensions</span>
             <h1 class='govuk-heading-l'>
                 {% if suspendJourney.allocations | length == 1 %}
-                    When should {{ suspendJourney.inmate.prisonerName | safe }}'s suspension from {{ suspendJourney.allocations[0].activityName | safe }} end?
+                    When should {{ suspendJourney.inmate.prisonerName }}'s suspension from {{ suspendJourney.allocations[0].activityName }} end?
                 {% else %}
-                    When should {{ suspendJourney.inmate.prisonerName | safe }}'s suspension from {{ suspendJourney.allocations | length }} activities end?
+                    When should {{ suspendJourney.inmate.prisonerName }}'s suspension from {{ suspendJourney.allocations | length }} activities end?
                 {% endif %}
             </h1>
 

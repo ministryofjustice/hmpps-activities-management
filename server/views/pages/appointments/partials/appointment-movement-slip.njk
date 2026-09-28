@@ -4,7 +4,7 @@
     {% macro labelAndValue(label, value, rowClasses, valueClasses) %}
         <div class="movement-slip__summary__row {{ rowClasses }}">
             <dt class="movement-slip__summary__row__key">{{ label }}</dt>
-            <dd class="movement-slip__summary__row__value {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dd>
+            <dd class="movement-slip__summary__row__value {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value }}</dd>
         </div>
     {% endmacro %}
 
@@ -29,10 +29,10 @@
 
             <dl class='movement-slip__summary'>
                 {{ labelAndValue('Appointment', appointment.appointmentName | escape) }}
-                {{ labelAndValue('Time', '<ul class="govuk-list">' +
-                    '<li>' + appointmentTime(appointment) + '</li>' +
-                    '<li>' + (appointment.startDate | toDate | formatDate) + '</li>' +
-                '</ul>') }}
+                {% macro timeHtml(appointment) -%}
+                    <ul class="govuk-list"><li>{{ appointmentTime(appointment) }}</li><li>{{ appointment.startDate | toDate | formatDate }}</li></ul>
+                {%- endmacro %}
+                {{ labelAndValue('Time', timeHtml(appointment)) }}
                 {{ labelAndValue('Location', showLocation(user.externalActivitiesRolledOut, appointment)) }}
 
                 {# Suppress extra information on movement slip for some video link appointments (may contain personal data) #}

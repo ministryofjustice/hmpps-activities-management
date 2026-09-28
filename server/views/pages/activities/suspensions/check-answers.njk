@@ -28,7 +28,7 @@
 
             {% set activitiesText %}
                 {% if suspendJourney.allocations | length == 1 %}
-                    {{ suspendJourney.allocations[0].activityName | safe }}
+                    {{ suspendJourney.allocations[0].activityName }}
                 {% else %}
                     <ul class="govuk-list">
                         {% for allocation in suspendJourney.allocations | sortBy('activityName') %}

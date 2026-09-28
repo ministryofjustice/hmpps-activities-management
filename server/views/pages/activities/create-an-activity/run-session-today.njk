@@ -14,18 +14,22 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <span class="govuk-caption-xl">{{ createJourney.name | safe }}</span>
+      <span class="govuk-caption-xl">{{ createJourney.name }}</span>
 
-        <h1 class="govuk-heading-l">{{ headingText | safe}}</h1>
+        <h1 class="govuk-heading-l">{{ headingText }}</h1>
 
     </div>
     <div class="govuk-grid-column-full">
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
+        {% set insetHtml %}
+          {% for line in insetText.split("<br>") %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        {% endset %}
+
         {{ govukInsetText({
           classes: "govuk-!-margin-top-0",
-          text: insetText | safe
+          html: insetHtml
         }) }}
 
         {{ govukRadios({
@@ -34,14 +38,14 @@
           items: [
             {
               value: YesNo.YES,
-              html: yesText | safe,
+              text: yesText,
               hint: {
               text: "Unlock, movement and attendance lists may need to be printed again."
               }
             },
             {
               value: YesNo.NO,
-              html: noText | safe
+              text: noText
             }
           ],
           errorMessage: validationErrors | findError('runSessionToday')

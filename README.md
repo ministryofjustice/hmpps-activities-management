@@ -104,6 +104,9 @@ Or for production:
 **Quick start commands**
 
 To run the entire PW suite locally: `npm run pw-test:local`
+
+To run locally using existing Docker images without pulling: `npm run pw-test:local:no-pull` (requires images to already be downloaded).
+
 To run the interactive PW UI locally: `npm run pw-test-ui:local`
 
 Alternativaly, the follow steps allow manual running:
