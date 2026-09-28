@@ -6,6 +6,7 @@ import tokenVerifier from '../data/tokenVerification'
 import { convertToTitleCase } from '../utils/utils'
 import logger from '../../logger'
 import ActivitiesService from '../services/activitiesService'
+import { UUID } from 'crypto'
 
 export default function setUpCurrentUser(activitiesService: ActivitiesService) {
   const router = Router({ mergeParams: true })
@@ -16,10 +17,12 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
       const {
         name,
         user_id: userId,
+        user_uuid: userUuid,
         authorities: roles = [],
       } = jwtDecode(res.locals.user.token) as {
         name?: string
         user_id?: string
+        user_uuid?: UUID
         authorities?: string[]
       }
 
@@ -30,6 +33,7 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
       res.locals.user = {
         ...res.locals.user,
         userId,
+        userUuid,
         name,
         displayName: convertToTitleCase(name),
         roles,
