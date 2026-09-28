@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express'
 import request from 'supertest'
 import { Session, SessionData } from 'express-session'
 import { when } from 'jest-when'
+import { jwtDecode } from 'jwt-decode'
 import setUpCurrentUser from './setUpCurrentUser'
 import ActivitiesService from '../services/activitiesService'
 import auth from '../authentication/auth'
@@ -46,6 +47,43 @@ describe('setUpCurrentUser', () => {
 
   afterEach(() => {
     activitiesServiceMock.getPrisonRolloutPlan.mockReset()
+  })
+
+  it.each([
+    ['valid UUID', '123e4567-e89b-42d3-a456-426614174000', '123e4567-e89b-42d3-a456-426614174000'],
+    ['uppercase UUID', '123E4567-E89B-42D3-A456-426614174000', '123E4567-E89B-42D3-A456-426614174000'],
+    ['missing claim', undefined, undefined],
+    ['invalid UUID', 'not-a-uuid', undefined],
+    ['empty claim', '', undefined],
+    ['null claim', null, undefined],
+    ['numeric claim', 1234, undefined],
+    ['array claim', ['123e4567-e89b-42d3-a456-426614174000'], undefined],
+    ['object claim', {}, undefined],
+  ])('populates userUuid safely for a %s', async (_description, claim, expectedUuid) => {
+    jest.mocked(jwtDecode).mockReturnValueOnce({ user_uuid: claim } as ReturnType<typeof jwtDecode>)
+
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      req.session = { user: { activeCaseLoadId: 'RSI' } } as Session & Partial<SessionData>
+      res.locals.user = {
+        token: 'web-token',
+        authSource: 'nomis',
+        activeCaseLoad: { caseLoadId: 'RSI' },
+        userUuid: 'previous-value',
+      }
+      next()
+    })
+    app.use(setUpCurrentUser(activitiesServiceMock))
+    app.get('/path', (req, res) => {
+      testReq = req
+      testRes = res
+      res.sendStatus(200)
+    })
+
+    const response = await request(app).get('/path')
+
+    expect(response.status).toBe(200)
+    expect(testRes.locals.user.userUuid).toBe(expectedUuid)
+    expect(testReq.session.user.userUuid).toBe(expectedUuid)
   })
 
   it('updates the user details when the active case load has changed', async () => {
