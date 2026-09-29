@@ -1,3 +1,5 @@
+import type { UUID } from 'crypto'
+import { UserDetails } from '../manageUsersApiImport/types'
 import { AllocateToActivityJourney } from '../../routes/activities/manage-allocations/journey'
 import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
 import { AppointmentJourney } from '../../routes/appointments/create-and-edit/appointmentJourney'
@@ -93,6 +95,7 @@ export type JourneyData = {
 
 export type ServiceUser = Express.User &
   UserDetails & {
+    userUuid?: UUID
     displayName: string
     roles: string[]
     activeCaseLoadDescription: string

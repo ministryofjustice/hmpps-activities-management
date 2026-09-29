@@ -17,6 +17,7 @@ import {
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
 import UserService from '../../../../../services/userService'
+import { ServiceUser } from '../../../../../@types/express'
 import { UserDetails } from '../../../../../@types/manageUsersApiImport/types'
 
 export default class ViewApplicationRoutes {
@@ -36,7 +37,7 @@ export default class ViewApplicationRoutes {
   private async getHistoryWithChanges(
     history: WaitingListApplicationHistory[],
     application: WaitingListApplication,
-    user: UserDetails,
+    user: ServiceUser,
     userService: UserService,
   ): Promise<
     (WaitingListApplicationHistory & {

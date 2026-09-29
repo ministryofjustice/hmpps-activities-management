@@ -72,7 +72,7 @@ const mockActivity = {
 
 describe('Route Handlers - Prisoner Activity Allocations', () => {
   const handler = new ActivityAllocationHandler(activitiesService)
-  let req: Request
+  let req: Request<{ prisonerNumber: string }>
   let res: Response
 
   beforeEach(() => {
@@ -88,7 +88,7 @@ describe('Route Handlers - Prisoner Activity Allocations', () => {
     req = {
       body: { activityId: 539 },
       params: { prisonerNumber: 'ABC123' },
-    } as unknown as Request
+    } as unknown as Request<{ prisonerNumber: string }>
   })
 
   afterEach(() => {
