@@ -1,9 +1,10 @@
 import { Router } from 'express'
 import { jwtDecode } from 'jwt-decode'
 import createHttpError from 'http-errors'
+import type { UUID } from 'crypto'
 import auth from '../authentication/auth'
 import tokenVerifier from '../data/tokenVerification'
-import { convertToTitleCase } from '../utils/utils'
+import { convertToTitleCase, validateUuid } from '../utils/utils'
 import logger from '../../logger'
 import ActivitiesService from '../services/activitiesService'
 
@@ -16,10 +17,12 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
       const {
         name,
         user_id: userId,
+        user_uuid: userUuid,
         authorities: roles = [],
       } = jwtDecode(res.locals.user.token) as {
         name?: string
         user_id?: string
+        user_uuid?: string
         authorities?: string[]
       }
 
@@ -30,6 +33,7 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
       res.locals.user = {
         ...res.locals.user,
         userId,
+        userUuid: typeof userUuid === 'string' && validateUuid(userUuid) ? (userUuid as UUID) : undefined,
         name,
         displayName: convertToTitleCase(name),
         roles,

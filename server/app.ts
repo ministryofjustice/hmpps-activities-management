@@ -1,5 +1,6 @@
 import 'reflect-metadata'
-import express from 'express'
+import express, { Request } from 'express'
+import { telemetryMiddleware } from '@ministryofjustice/hmpps-azure-telemetry'
 
 import flash from 'connect-flash'
 import createHttpError from 'http-errors'
@@ -84,6 +85,11 @@ export default function createApp(services: Services): express.Application {
     }),
   )
   app.use(setUpCurrentUser(services.activitiesService))
+  app.use(
+    telemetryMiddleware.addUserMetadataToTelemetry({
+      getAttributes: (req: Request) => ({ username: req.user?.username }),
+    }),
+  )
   app.use(trimRequestBody())
   app.use(setUpValidationExtensions())
   app.use(populateJourney())

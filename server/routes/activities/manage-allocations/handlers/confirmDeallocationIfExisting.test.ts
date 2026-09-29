@@ -3,6 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays, format } from 'date-fns'
 import { when } from 'jest-when'
+import { ServiceUser } from '../../../../@types/express'
 
 import ActivitiesService from '../../../../services/activitiesService'
 import ConfirmDeallocationIfExistingRoutes, { ConfirmDeallocateOptions } from './confirmDeallocationIfExisting'
@@ -19,7 +20,7 @@ describe('Route Handlers - Allocation - Confirm existing deallocation', () => {
   let req: Request
   let res: Response
 
-  const user = { username: 'joebloggs' }
+  const user = { username: 'joebloggs' } as ServiceUser
 
   const allocation = {
     id: 2,
