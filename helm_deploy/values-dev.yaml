@@ -11,8 +11,6 @@ generic-service:
       SecAuditEngine On
       SecRuleEngine DetectionOnly
       SecDefaultAction "phase:2,pass,log,tag:github_team=activities-and-appointments,tag:namespace={{ .Release.Namespace }}"
-      # Default is only GET HEAD POST OPTIONS so need to include PUT.
-      SecAction "id:900200,phase:1,nolog,pass,t:none,setvar:tx.allowed_methods=GET HEAD POST OPTIONS PUT"
 
   env:
     INGRESS_URL: "https://activities-dev.prison.service.justice.gov.uk"
