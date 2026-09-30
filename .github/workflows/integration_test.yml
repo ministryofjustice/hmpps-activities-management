@@ -29,9 +29,9 @@ jobs:
           - name: Journey tests — shard 2/2
             args: --project=journeys --shard=2/2
             report: journeys-2
-          - name: Smoke tests
-            args: --project=smoke
-            report: smoke
+          - name: Accessibility tests
+            args: --project=accessibility
+            report: accessibility
 
     services:
       redis:

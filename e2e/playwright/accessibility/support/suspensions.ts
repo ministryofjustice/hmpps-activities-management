@@ -29,6 +29,6 @@ export const suspensionJourney: JourneyData = {
     suspendFrom: '2030-01-01',
     suspendUntil: '2030-01-02',
     paid: 'Yes',
-    caseNote: { type: 'GEN', text: 'Smoke test suspension' },
+    caseNote: { type: 'GEN', text: 'Accessibility test suspension' },
   },
 }

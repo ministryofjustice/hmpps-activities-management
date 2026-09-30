@@ -8,18 +8,17 @@ import { JourneyData } from '../../../../server/@types/express'
 
 export type Screen = (typeof screens)[number]
 
-export const smokeArea = (
+export const accessibilityArea = (
   area: string,
   setup: (screen: Screen) => Promise<unknown>,
   journey: JourneyData | ((screen: Screen) => JourneyData) = {},
   sessionJourney?: Record<string, unknown>,
-  suiteTest: typeof test = test,
 ): void => {
-  suiteTest.describe(`${area} @smoke`, () => {
+  test.describe(`${area} @accessibility`, () => {
     screens
       .filter(screen => screen.area === area && screen.status === 'covered')
       .forEach(screen => {
-        suiteTest(screen.id, async ({ page }) => {
+        test(screen.id, async ({ page }) => {
           await setup(screen)
           const visit = async (journeyId = '') => {
             await page.goto(

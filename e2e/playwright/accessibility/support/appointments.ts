@@ -39,7 +39,7 @@ export const appointmentJourney: JourneyData = {
     frequency: AppointmentFrequency.DAILY,
     numberOfAppointments: 2,
     originalAppointmentId: 11,
-    extraInformation: 'Smoke appointment',
+    extraInformation: 'Accessibility appointment',
     createJourneyComplete: true,
   },
   appointmentSetJourney: {

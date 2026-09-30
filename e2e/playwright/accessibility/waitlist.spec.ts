@@ -1,4 +1,4 @@
-import { smokeArea } from './support/run'
+import { accessibilityArea } from './support/run'
 import { JourneyData } from '../../../server/@types/express'
 import setupLogWaitlistApplicationScenario from '../helpers/activities/waitlist/logWaitlistApplication'
 import { stubWaitlistDashboard, stubWaitlistApplicationView } from '../helpers/activities/waitlist/stubs'
@@ -17,9 +17,9 @@ const journey: JourneyData = {
     activity: { activityId: 1, scheduleId: 2, activityName: 'Maths level 1' },
     requester: 'PRISONER',
     status: 'PENDING',
-    comment: 'Smoke test',
+    comment: 'Accessibility test',
     createdTime: '2025-06-20T10:00:00',
   },
 }
-smokeArea('activities/waitlist-application', setup, journey)
-smokeArea('activities/waitlist-dashboard', setup)
+accessibilityArea('activities/waitlist-application', setup, journey)
+accessibilityArea('activities/waitlist-dashboard', setup)

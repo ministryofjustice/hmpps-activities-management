@@ -1,4 +1,4 @@
-import { smokeArea } from './support/run'
+import { accessibilityArea } from './support/run'
 import stubVideoLinkAppointmentScenario from '../helpers/appointments/videoLinkAppointment'
 import { stubEndpoint } from '../../../integration_tests/mockApis/wiremock'
 import { BookACourtHearingJourney } from '../../../server/routes/appointments/video-link-booking/court/journey'
@@ -43,8 +43,13 @@ const setup = async (type: 'court' | 'probation') => {
   await stubEndpoint('POST', '/appointments/MDI/search', [])
 }
 // Both booking types currently use sessionDataMap rather than the Redis journey token store.
-smokeArea('appointments/video-link-booking/court', () => setup('court'), {}, { bookACourtHearingJourney: court })
-smokeArea(
+accessibilityArea(
+  'appointments/video-link-booking/court',
+  () => setup('court'),
+  {},
+  { bookACourtHearingJourney: court },
+)
+accessibilityArea(
   'appointments/video-link-booking/probation',
   () => setup('probation'),
   {},

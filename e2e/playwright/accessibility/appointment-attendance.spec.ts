@@ -1,9 +1,9 @@
 import { format } from 'date-fns'
-import { smokeArea } from './support/run'
+import { accessibilityArea } from './support/run'
 import setupRecordAppointmentAttendanceScenario from '../helpers/appointments/recordAttendance'
 import stubAttendanceSummaryScenario from '../helpers/appointments/attendanceSummary'
 
-smokeArea('appointments/attendance', setupRecordAppointmentAttendanceScenario, {
+accessibilityArea('appointments/attendance', setupRecordAppointmentAttendanceScenario, {
   recordAppointmentAttendanceJourney: { date: format(new Date(), 'yyyy-MM-dd'), appointmentIds: [1] },
 })
-smokeArea('appointments/attendance-summary-stats', stubAttendanceSummaryScenario)
+accessibilityArea('appointments/attendance-summary-stats', stubAttendanceSummaryScenario)

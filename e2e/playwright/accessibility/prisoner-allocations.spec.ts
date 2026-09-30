@@ -1,4 +1,4 @@
-import { smokeArea } from './support/run'
+import { accessibilityArea } from './support/run'
 import { stubAllocations } from './support/allocations'
 import { stubEndpoint } from '../../../integration_tests/mockApis/wiremock'
 import activities from '../../../integration_tests/fixtures/activitiesApi/getActivities.json'
@@ -11,7 +11,7 @@ const setup = async () => {
     stubEndpoint('GET', '/prison/MDI/activities.*', activities),
   ])
 }
-smokeArea('activities/prisoner-allocations', setup, {
+accessibilityArea('activities/prisoner-allocations', setup, {
   prisonerAllocationsJourney: {
     activityName: 'English level 1',
     scheduleId: 2,

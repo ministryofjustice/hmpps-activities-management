@@ -1,4 +1,4 @@
-import { smokeArea } from './support/run'
+import { accessibilityArea } from './support/run'
 import { stubEndpoint } from '../../../integration_tests/mockApis/wiremock'
 import setupOutsideMovementList from '../helpers/activities/unlockAndMovementLists/unlockAndMovementLists'
 import locations from '../../../integration_tests/fixtures/activitiesApi/getLocationGroups.json'
@@ -14,5 +14,7 @@ const setup = async () => {
     stubEndpoint('GET', '/prison/MDI/prisoners\\?.*', { content: [], totalElements: 0 }),
   ])
 }
-smokeArea('activities/movement-list', setup, { movementListJourney: {} })
-smokeArea('activities/unlock-list', setup, { unlockListJourney: { locationKey: locations[0].key, timeSlot: 'AM' } })
+accessibilityArea('activities/movement-list', setup, { movementListJourney: {} })
+accessibilityArea('activities/unlock-list', setup, {
+  unlockListJourney: { locationKey: locations[0].key, timeSlot: 'AM' },
+})

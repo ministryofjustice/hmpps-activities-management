@@ -44,7 +44,7 @@ export const allocationJourney: JourneyData = {
     exclusions: [],
     updatedExclusions: [],
     futureSameDaySlots: activityJourney.createJourney.baselineSlots,
-    deallocationCaseNote: { type: 'GEN', text: 'Smoke allocation' },
+    deallocationCaseNote: { type: 'GEN', text: 'Accessibility allocation' },
     otherAllocations: allocations[0].allocations as unknown as Allocation[],
     activitiesToDeallocate: [{ ...journeyActivity, schedule: schedule as unknown as ActivitySchedule }],
     withoutMatchingIncentiveLevelInmates: [],

@@ -11,7 +11,7 @@
     "id": "404",
     "area": "general",
     "view": "pages/404",
-    "route": "/smoke-page-does-not-exist",
+    "route": "/accessibility-page-does-not-exist",
     "heading": "Page not found",
     "status": "covered"
   },
@@ -2208,11 +2208,12 @@
   },
   {
     "id": "error",
-    "area": "production-error",
+    "area": "general",
     "view": "pages/error",
     "route": "/activities/dashboard",
     "heading": "Sorry, there is a problem with the service",
-    "status": "covered"
+    "status": "excluded",
+    "reason": "The feature application deliberately displays diagnostic stack traces. Testing the production variant would require a separate production-mode server."
   },
   {
     "id": "home/activities-accessibility-statement",

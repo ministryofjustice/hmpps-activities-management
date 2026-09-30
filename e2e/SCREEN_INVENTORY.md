@@ -1,13 +1,13 @@
 # Application screen inventory
 
-Generated from `e2e/playwright/smoke/screens.json`. Edit that file and run `node e2e/scripts/screen-inventory.mjs`.
+Generated from `e2e/playwright/accessibility/screens.json`. Edit that file and run `node e2e/scripts/screen-inventory.mjs`.
 Headings are the expected stable text in the page’s accessible level-one heading. Dynamic date suffixes are omitted.
 Each row represents a page template. Shared create/edit templates use one representative route and state;
 journey tests cover the other behaviours. Partials and layouts are checked through their owning screens.
 
 ## activities/administration
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/administration/add-prison-pay-band | `/activities/admin/add-prison-pay-band` | Create a prison pay band | covered |
 | activities/administration/admin | `/activities/admin` | Activities Administration | covered |
@@ -19,21 +19,21 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## activities/allocation-dashboard
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/allocation-dashboard/activities | `/activities/allocation-dashboard/` | Allocation dashboard | covered |
 | activities/allocation-dashboard/allocation-dashboard | `/activities/allocation-dashboard/2` | Entry level English 1 | covered |
 
 ## activities/change-of-circumstances
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/change-of-circumstances/select-period | `/activities/change-of-circumstances/select-period` | Select a date to review changes | covered |
 | activities/change-of-circumstances/view-events | `/activities/change-of-circumstances/view-changes?date=2023-05-16` | Changes in circumstances | covered |
 
 ## activities/create-an-activity
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/create-an-activity/activity-type | `/activities/create/:journeyId/activity-type` | Does the activity take place inside or outside the prison grounds? | covered |
 | activities/create-an-activity/attendance-required | `/activities/create/:journeyId/attendance-required` | Should attendance be recorded for this activity? | covered |
@@ -75,7 +75,7 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## activities/daily-attendance-summary
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/daily-attendance-summary/attendances | `/activities/attendance-summary/:journeyId/attendance?date=2023-05-16&status=Attended` | All attended Tuesday, 16 May 2023 | covered |
 | activities/daily-attendance-summary/cancelled-sessions | `/activities/attendance-summary/:journeyId/cancelled-sessions?date=2023-05-16&status=Attended` | Cancelled sessions Tuesday, 16 May 2023 | covered |
@@ -86,27 +86,27 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## activities/exclusions
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/exclusions/select-prisoner | `/activities/exclusions/select-prisoner` | Find whose schedule you want to change | covered |
 | activities/exclusions/view-allocations | `/activities/exclusions/prisoner/A5015DY` | Alfonso Cholak's activities | covered |
 
 ## activities/home
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/home/home | `/activities/` | Activities, unlock and attendance | covered |
 
 ## activities/manage-activities
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/manage-activities/activities-dashboard | `/activities/dashboard` | Activities dashboard | covered |
 | activities/manage-activities/view-activity | `/activities/view/2` | Edit activity details | covered |
 
 ## activities/manage-allocations
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/manage-allocations/addToSessionsToday | `/activities/allocations/edit/1/:journeyId/addToToday` | Do you want to add Alfonso Cholak to today's AM session? | covered |
 | activities/manage-allocations/allocateMultiplePeople/activityRequirementsReview | `/activities/allocations/create/:journeyId/multiple/activity-requirements-review` | Review 1 person who does not meet activity requirements | covered |
@@ -147,7 +147,7 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## activities/movement-list
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/movement-list/choose-details | `/activities/movement-list/:journeyId/choose-details` | Choose movement list details | covered |
 | activities/movement-list/location-events | `/activities/movement-list/:journeyId/location-events?dateOption=today&timeSlot=AM&isOutside=true` | Outside - movement list | covered |
@@ -155,13 +155,13 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## activities/non-associations
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/non-associations/nonAssociations | `/activities/non-associations/2/A5015DY` | Alfonso Cholak’s non-associations | covered |
 
 ## activities/prisoner-allocations
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/prisoner-allocations/activity-search | `/activities/prisoner-allocations/A5015DY/select-activity` | Search for the activity | covered |
 | activities/prisoner-allocations/dashboard | `/activities/prisoner-allocations/A5015DY` | Alfonso Cholak's activity allocations | covered |
@@ -171,7 +171,7 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## activities/record-attendance
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/record-attendance/activities | `/activities/attendance/:journeyId/activities` | Find an activity to record or edit attendance | covered |
 | activities/record-attendance/advance-attendance-change-pay | `/activities/attendance/:journeyId/activities/93/advance-attendance-details/1/change-pay` | Confirm that Booking Andy should not be paid for this session? | covered |
@@ -218,7 +218,7 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## activities/suspensions
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/suspensions/case-note | `/activities/suspensions/suspend/G0995GW/:journeyId/case-note` | Add a case note for Stephen Gregs | covered |
 | activities/suspensions/case-note-question | `/activities/suspensions/suspend/G0995GW/:journeyId/case-note-question` | Do you want to add a case note about why Stephen Gregs is being suspended? | covered |
@@ -233,7 +233,7 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## activities/unlock-list
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/unlock-list/home | `/activities/unlock-list/` | Manage unlock and movement lists | covered |
 | activities/unlock-list/planned-events | `/activities/unlock-list/:journeyId/planned-events` | Houseblock 1 - Unlock list | covered |
@@ -241,7 +241,7 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## activities/waitlist-application
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/waitlist-application/activity | `/activities/waitlist/:journeyId/activity` | Search for the activity | covered |
 | activities/waitlist-application/check-answers | `/activities/waitlist/:journeyId/check-answers` | Check and confirm application details | covered |
@@ -259,13 +259,13 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## activities/waitlist-dashboard
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | activities/waitlist-dashboard/dashboard | `/activities/waitlist-dashboard/` | Manage applications and waitlists | covered |
 
 ## appointments/appointment
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | appointments/appointment/copy | `/appointments/11/copy` | Copying an appointment | covered |
 | appointments/appointment/details | `/appointments/11/` | Chaplain Meeting (Chaplaincy) | covered |
@@ -273,20 +273,20 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## appointments/appointment-series
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | appointments/appointment-series/details | `/appointments/series/10/` | Chaplain Meeting (Chaplaincy) – series overview | covered |
 
 ## appointments/appointment-set
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | appointments/appointment-set/details | `/appointments/set/1/` | Chaplain Meeting (Chaplaincy) – set overview | covered |
 | appointments/appointment-set/movement-slip | `/appointments/set/1/movement-slip` | Print movement slip | covered |
 
 ## appointments/attendance
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | appointments/attendance/attendance-details | `/appointments/attendance/:journeyId/attendees/1/G0256VF` | Attendance record for Izrmonntas Adalie | covered |
 | appointments/attendance/attendees | `/appointments/attendance/:journeyId/attendees` | Record attendance at 2 appointments | covered |
@@ -296,7 +296,7 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## appointments/attendance-summary-stats
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | appointments/attendance-summary-stats/attendanceData | `/appointments/attendance-summary/attendance-data?date=:today&attendanceState=ATTENDED` | All attended | covered |
 | appointments/attendance-summary-stats/dashboard | `/appointments/attendance-summary/dashboard?date=:today&status=ATTENDED` | Appointments attendance summary | covered |
@@ -304,7 +304,7 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## appointments/create-and-edit
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | appointments/create-and-edit/apply-to | `/appointments/11/edit/:journeyId/cancel/apply-to` | This appointment is in a series: select which appointments you want to cancel | covered |
 | appointments/create-and-edit/appointment-set/add-extra-information | `/appointments/create/:journeyId/appointment-set-extra-information/A8644DY` | Add extra information to Stephen Gregs's appointment (optional) | covered |
@@ -338,20 +338,20 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## appointments/home
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | appointments/home/index | `/appointments/` | Appointments | covered |
 
 ## appointments/search
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | appointments/search/results | `/appointments/search/` | Appointments dashboard | covered |
 | appointments/search/select-date | `/appointments/search/select-date` | What date do you want to view appointments for? | covered |
 
 ## appointments/video-link-booking/court
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | appointments/video-link-booking/court/booking-cancelled | `/appointments/video-link-booking/court/cancel/1234/:journeyId/confirmation` | This video link booking has been cancelled | covered |
 | appointments/video-link-booking/court/check-booking | `/appointments/video-link-booking/court/create/:journeyId/check-answers` | Check and confirm appointment details | covered |
@@ -369,7 +369,7 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## appointments/video-link-booking/probation
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | appointments/video-link-booking/probation/booking-cancelled | `/appointments/video-link-booking/probation/cancel/1234/:journeyId/confirmation` | This video link booking has been cancelled | covered |
 | appointments/video-link-booking/probation/check-booking | `/appointments/video-link-booking/probation/create/:journeyId/check-answers` | Check and confirm appointment details | covered |
@@ -385,19 +385,14 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 
 ## general
 
-| Screen | Smoke route | Expected heading | Status |
+| Screen | Accessibility route | Expected heading | Status |
 | --- | --- | --- | --- |
 | 403 | `/activities/dashboard` | You do not have permission to access this page | covered |
-| 404 | `/smoke-page-does-not-exist` | Page not found | covered |
+| 404 | `/accessibility-page-does-not-exist` | Page not found | covered |
 | autherror | `/autherror` | Authorisation Error | covered |
+| error | `/activities/dashboard` | Sorry, there is a problem with the service | excluded: The feature application deliberately displays diagnostic stack traces. Testing the production variant would require a separate production-mode server. |
 | home/activities-accessibility-statement | `/activities-accessibility-statement` | Accessibility statement for Activities, unlock and attendance | covered |
 | home/appointments-accessibility-statement | `/appointments-accessibility-statement` | Accessibility statement for Appointments | covered |
 | home/index | `/` | Select service | covered |
 | not-rolled-out | `/` | Select service | covered |
-
-## production-error
-
-| Screen | Smoke route | Expected heading | Status |
-| --- | --- | --- | --- |
-| error | `/activities/dashboard` | Sorry, there is a problem with the service | covered |
 

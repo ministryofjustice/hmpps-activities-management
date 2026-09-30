@@ -1,4 +1,4 @@
-import { smokeArea } from './support/run'
+import { accessibilityArea } from './support/run'
 import { stubEndpoint } from '../../../integration_tests/mockApis/wiremock'
 import categories from '../../../integration_tests/fixtures/activitiesApi/getCategoriesIncludingRotl.json'
 import getChangeEvents from '../../../integration_tests/fixtures/activitiesApi/getChangeEvents.json'
@@ -13,5 +13,5 @@ const setup = () =>
     stubEndpoint('POST', '/prisoner-search/prisoner-numbers', []),
     stubEndpoint('GET', '/event-review/prison/MDI.*', getChangeEvents),
   ])
-smokeArea('activities/daily-attendance-summary', setup, { attendanceSummaryJourney: {} })
-smokeArea('activities/change-of-circumstances', setup)
+accessibilityArea('activities/daily-attendance-summary', setup, { attendanceSummaryJourney: {} })
+accessibilityArea('activities/change-of-circumstances', setup)

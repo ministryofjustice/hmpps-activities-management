@@ -1,4 +1,4 @@
-import { smokeArea } from './support/run'
+import { accessibilityArea } from './support/run'
 import { stubEndpoint } from '../../../integration_tests/mockApis/wiremock'
 import stubCreateActivity from '../helpers/activities/createActivityStubs'
 import activityFixture from '../../../integration_tests/fixtures/activitiesApi/getActivity.json'
@@ -16,5 +16,5 @@ const setup = async () => {
     stubEndpoint('GET', '/schedules/2/candidates.*', candidates),
   ])
 }
-smokeArea('activities/manage-activities', setup)
-smokeArea('activities/allocation-dashboard', setup)
+accessibilityArea('activities/manage-activities', setup)
+accessibilityArea('activities/allocation-dashboard', setup)

@@ -131,8 +131,8 @@ OR
 
 `$ npm run pw-test-ui` - to run tests interactively
 
-Screen smoke coverage and inventory maintenance are documented in the
-[smoke testing guide](e2e/playwright/smoke/README.md). Run only the screen suite with `npm run pw-test -- --project=smoke`.
+Screen accessibility coverage and inventory maintenance are documented in the
+[accessibility testing guide](e2e/playwright/accessibility/README.md). Run only the screen suite with `npm run pw-test -- --project=accessibility`.
 
 ## Running locally (against DEV auth & APIs)
 

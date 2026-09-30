@@ -7,8 +7,8 @@ export default defineConfig({
   workers: 1,
 
   projects: [
-    { name: 'journeys', testIgnore: '**/smoke/**' },
-    { name: 'smoke', testMatch: '**/smoke/**/*.spec.ts' },
+    { name: 'journeys', testIgnore: '**/accessibility/**' },
+    { name: 'accessibility', testMatch: '**/accessibility/**/*.spec.ts' },
   ],
 
   forbidOnly: !!process.env.CI,
