@@ -81,7 +81,7 @@ const productionTest = smokeTest.extend({
       await api.dispose()
       child.kill('SIGTERM')
       await new Promise<void>(resolve => {
-        if (child.exitCode !== null) resolve()
+        if (child.exitCode !== null || child.signalCode !== null) resolve()
         else child.once('exit', () => resolve())
       })
     }
