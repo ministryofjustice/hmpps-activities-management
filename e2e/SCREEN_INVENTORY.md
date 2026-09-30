@@ -1,6 +1,6 @@
 # Application screen inventory
 
-Generated from `playwright/smoke/screens.json`. Edit that file and run `node e2e/scripts/screen-inventory.mjs`.
+Generated from `e2e/playwright/smoke/screens.json`. Edit that file and run `node e2e/scripts/screen-inventory.mjs`.
 Headings are the expected stable text in the page’s accessible level-one heading. Dynamic date suffixes are omitted.
 Each row represents a page template. Shared create/edit templates use one representative route and state;
 journey tests cover the other behaviours. Partials and layouts are checked through their owning screens.
