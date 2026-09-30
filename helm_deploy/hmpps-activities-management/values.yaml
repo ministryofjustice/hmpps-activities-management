@@ -15,6 +15,11 @@ generic-service:
     v0_47_enabled: false
     host: app-hostname.local # override per environment
     tlsSecretName: activities-cert
+    modsecurity_enabled: true
+    modsecurity_snippet: |
+      SecAuditEngine On
+      SecRuleEngine DetectionOnly
+      SecDefaultAction "phase:2,pass,log,tag:github_team=activities-and-appointments,tag:namespace={{ .Release.Namespace }}"
 
   livenessProbe:
     httpGet:
