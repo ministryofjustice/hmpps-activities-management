@@ -394,5 +394,5 @@ journey tests cover the other behaviours. Partials and layouts are checked throu
 | home/activities-accessibility-statement | `/activities-accessibility-statement` | Accessibility statement for Activities, unlock and attendance | covered |
 | home/appointments-accessibility-statement | `/appointments-accessibility-statement` | Accessibility statement for Appointments | covered |
 | home/index | `/` | Select service | covered |
-| not-rolled-out | `/` | Select service | covered |
+| not-rolled-out | `/` | The Activities and Appointments service is not available at Moorland (HMP) yet | covered |
 
