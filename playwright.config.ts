@@ -19,7 +19,7 @@ export default defineConfig({
     [
       'html',
       {
-        outputFolder: process.env.PLAYWRIGHT_HTML_OUTPUT_DIR || 'playwright-report',
+        outputFolder: 'playwright-report',
         open: 'never',
       },
     ],

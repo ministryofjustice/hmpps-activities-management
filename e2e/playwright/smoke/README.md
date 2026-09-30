@@ -39,7 +39,7 @@ npm run pw-test -- --project=smoke smoke/administration.spec.ts
 
 ## CI
 
-The pipeline handles sharding automatically across two jobs, each with its own services. Each job runs its share of the journey tests followed by its share of the smoke tests. The suites are sharded independently to keep the longer journey tests spread across both jobs. Separate report folders preserve both results, and smoke tests still run if journey tests fail.
+The pipeline runs three jobs in parallel: two journey shards and one complete smoke suite. Each job has its own application, Redis and WireMock services and uploads a separate Playwright report. A failure in one job does not cancel the others. All three must pass before deployment. Local runs do not need sharding.
 
 ## Maintaining coverage
 

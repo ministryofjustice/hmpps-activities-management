@@ -16,13 +16,22 @@ on:
 
 jobs:
   playwright-test:
-    name: Run Playwright tests
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2]
+        include:
+          - name: Journey tests — shard 1/2
+            args: --project=journeys --shard=1/2
+            report: journeys-1
+          - name: Journey tests — shard 2/2
+            args: --project=journeys --shard=2/2
+            report: journeys-2
+          - name: Smoke tests
+            args: --project=smoke
+            report: smoke
 
     services:
       redis:
@@ -78,22 +87,14 @@ jobs:
           npm run wait:wiremock
           npm run wait:ui
 
-      - name: Run Playwright journey tests
-        run: npm run pw-test -- --project=journeys --shard=${{ matrix.shard }}/2 --output=playwright-test-results/journeys
-        env:
-          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/journeys
-
-      - name: Run Playwright smoke tests
-        if: ${{ !cancelled() }}
-        run: npm run pw-test -- --project=smoke --shard=${{ matrix.shard }}/2 --output=playwright-test-results/smoke
-        env:
-          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/smoke
+      - name: Run Playwright tests
+        run: npm run pw-test -- ${{ matrix.args }}
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: playwright-report-${{ matrix.shard }}
+          name: playwright-report-${{ matrix.report }}
           path: |
             playwright-report/
             playwright-test-results/
