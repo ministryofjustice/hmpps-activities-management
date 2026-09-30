@@ -6,7 +6,6 @@ generic-service:
 
   ingress:
     host: activities-preprod.prison.service.justice.gov.uk
-    contextColour: green
 
   env:
     INGRESS_URL: "https://activities-preprod.prison.service.justice.gov.uk"
