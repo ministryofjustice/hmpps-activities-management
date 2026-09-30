@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatFirstLastName, parseDate } from '../../../../utils/utils'
+import type { ServiceUser } from '../../../../@types/express'
 import PrisonService from '../../../../services/prisonService'
 
 import { Activity, Allocation, ExclusionRevision } from '../../../../@types/activitiesAPI/types'
@@ -15,7 +16,7 @@ import { buildScheduleChangeViewModel, ScheduleChangeHistory } from '../../../..
 
 type UserMap = Awaited<ReturnType<UserService['getUserMap']>>
 
-const buildUserMap = async (usernames: string[], user: Express.User, userService: UserService): Promise<UserMap> => {
+const buildUserMap = async (usernames: string[], user: ServiceUser, userService: UserService): Promise<UserMap> => {
   const userMap: UserMap = new Map()
 
   await Promise.allSettled(
