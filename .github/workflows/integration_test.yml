@@ -78,8 +78,16 @@ jobs:
           npm run wait:wiremock
           npm run wait:ui
 
-      - name: Run Playwright tests
-        run: npm run pw-test -- --shard=${{ matrix.shard }}/2
+      - name: Run Playwright journey tests
+        run: npm run pw-test -- --project=journeys --shard=${{ matrix.shard }}/2 --output=playwright-test-results/journeys
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/journeys
+
+      - name: Run Playwright smoke tests
+        if: ${{ !cancelled() }}
+        run: npm run pw-test -- --project=smoke --shard=${{ matrix.shard }}/2 --output=playwright-test-results/smoke
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/smoke
 
       - name: Upload Playwright report
         if: always()

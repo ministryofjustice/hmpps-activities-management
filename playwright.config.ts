@@ -6,16 +6,20 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
 
+  projects: [
+    { name: 'journeys', testIgnore: '**/smoke/**' },
+    { name: 'smoke', testMatch: '**/smoke/**/*.spec.ts' },
+  ],
+
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
 
   reporter: [
-    ['./e2e/playwright/smoke/support/runtimeReporter.ts'],
     ['list'],
     [
       'html',
       {
-        outputFolder: 'playwright-report',
+        outputFolder: process.env.PLAYWRIGHT_HTML_OUTPUT_DIR || 'playwright-report',
         open: 'never',
       },
     ],
