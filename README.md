@@ -131,6 +131,9 @@ OR
 
 `$ npm run pw-test-ui` - to run tests interactively
 
+Screen smoke coverage, inventory maintenance and runtime reporting are documented in the
+[smoke testing guide](e2e/playwright/smoke/README.md). Run only the screen suite with `npm run pw-test -- smoke`.
+
 ## Running locally (against DEV auth & APIs)
 
 The essential local containers are - `redis` and `postgres`. All other dependent services

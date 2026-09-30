@@ -10,6 +10,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
 
   reporter: [
+    ['./e2e/playwright/smoke/support/runtimeReporter.ts'],
     ['list'],
     [
       'html',
