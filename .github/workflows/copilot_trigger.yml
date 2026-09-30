@@ -1,0 +1,15 @@
+name: Copilot Review Trigger
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger trusted Copilot review workflow
+        run: echo "PR opened or updated"
