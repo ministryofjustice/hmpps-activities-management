@@ -6,7 +6,7 @@ generic-service:
 
   ingress:
     host: activities-dev.prison.service.justice.gov.uk
-    
+
   env:
     INGRESS_URL: "https://activities-dev.prison.service.justice.gov.uk"
     DPS_URL: "https://digital-dev.prison.service.justice.gov.uk"
