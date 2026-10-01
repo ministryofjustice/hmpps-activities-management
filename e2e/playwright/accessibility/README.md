@@ -1,6 +1,6 @@
 # Screen accessibility coverage
 
-The [screen inventory](../../SCREEN_INVENTORY.md) records application pages by functional area, representative route, expected heading and coverage status. Its source, [screens.json](screens.json), drives 250 screen accessibility tests and documents the generic server error page exclusion. The inventory is a review aid: adding a template does not automatically require an inventory entry or an accessibility test. The existing detailed Playwright journeys remain separate.
+The [screen inventory](../../SCREEN_INVENTORY.md) records application pages by functional area, representative route, expected heading and coverage status. Its source, [screens.json](screens.json), drives the screen accessibility tests and documents the generic server error page exclusion. The inventory is a review aid: adding a template does not automatically require an inventory entry or an accessibility test. The existing detailed Playwright journeys remain separate.
 
 ## Scope and exclusions
 
