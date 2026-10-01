@@ -23,15 +23,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Journey tests — shard 1/2
+          - name: Playwright Journey tests - 1/2
             script: pw-test
             args: --shard=1/2
             report: journeys-1
-          - name: Journey tests — shard 2/2
+          - name: Playwright Journey tests - 2/2
             script: pw-test
             args: --shard=2/2
             report: journeys-2
-          - name: Accessibility tests
+          - name: Playwright Accessibility tests
             script: pw-test:accessibility
             args: ''
             report: accessibility
