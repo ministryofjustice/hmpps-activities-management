@@ -2409,7 +2409,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/event-review/prison/{prisonCode}': {
+  '/event-review/v2/prison/{prisonCode}': {
     parameters: {
       query?: never
       header?: never
@@ -2425,6 +2425,31 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     get: operations['getEventsForReview']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/event-review/prison/{prisonCode}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get events for a prison which may indicate that a change of circumstances affecting allocations had occurred
+     * @deprecated
+     * @description Returns events in the prison which match the search criteria provided.
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_HUB
+     *     * ACTIVITY_ADMIN
+     */
+    get: operations['getEventsForReviewLegacy']
     put?: never
     post?: never
     delete?: never
@@ -3190,11 +3215,13 @@ export interface components {
        */
       startDate: string
       /**
+       * Format: partial-time
        * @description The starting time of this appointment
        * @example 13:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time of this appointment
        * @example 13:30
        */
@@ -3402,11 +3429,13 @@ export interface components {
        */
       startDate: string
       /**
+       * Format: partial-time
        * @description The starting time of the appointment or appointments in the series
        * @example 09:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time of the appointment or appointments in the series
        * @example 10:30
        */
@@ -3767,19 +3796,19 @@ export interface components {
     PageableObject: {
       /** Format: int64 */
       offset?: number
-      sort?: components['schemas']['SortObject']
-      /** Format: int32 */
-      pageSize?: number
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
+      /** Format: int32 */
+      pageSize?: number
+      sort?: components['schemas']['SortObject']
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       /** Format: int32 */
       size?: number
       content?: components['schemas']['WaitingListApplication'][]
@@ -4026,7 +4055,9 @@ export interface components {
       friday: boolean
       saturday: boolean
       sunday: boolean
+      /** Format: partial-time */
       customStartTime?: string | null
+      /** Format: partial-time */
       customEndTime?: string | null
       daysOfWeek: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[]
     }
@@ -4205,11 +4236,13 @@ export interface components {
        */
       date: string
       /**
+       * Format: partial-time
        * @description The start time for this scheduled instance
        * @example 09:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time for this scheduled instance
        * @example 10:00
        */
@@ -4357,11 +4390,13 @@ export interface components {
        */
       weekNumber: number
       /**
+       * Format: partial-time
        * @description The time that any instances of this schedule slot will start
        * @example 9:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The time that any instances of this schedule slot will finish
        * @example 11:30
        */
@@ -4851,11 +4886,13 @@ export interface components {
        */
       date?: string | null
       /**
+       * Format: partial-time
        * @description The start time for this scheduled instance
        * @example 09:00
        */
       startTime?: string | null
       /**
+       * Format: partial-time
        * @description The end time for this scheduled instance
        * @example 10:00
        */
@@ -4871,6 +4908,7 @@ export interface components {
        */
       appointmentSeriesCancellationStartDate?: string | null
       /**
+       * Format: partial-time
        * @description The start time of the first appointment cancelled in the series
        * @example 10:30
        */
@@ -4952,11 +4990,17 @@ export interface components {
     PrisonRegimeSlot: {
       /** @enum {string} */
       dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+      /** Format: partial-time */
       amStart: string
+      /** Format: partial-time */
       amFinish: string
+      /** Format: partial-time */
       pmStart: string
+      /** Format: partial-time */
       pmFinish: string
+      /** Format: partial-time */
       edStart: string
+      /** Format: partial-time */
       edFinish: string
     }
     /** @description Describes a top-level activity */
@@ -4973,31 +5017,37 @@ export interface components {
        */
       prisonCode: string
       /**
+       * Format: partial-time
        * @description The start time for the am slot
        * @example 09:00
        */
       amStart: string
       /**
+       * Format: partial-time
        * @description The end time for the am slot
        * @example 12:00
        */
       amFinish: string
       /**
+       * Format: partial-time
        * @description The start time for the pm slot
        * @example 13:00
        */
       pmStart: string
       /**
+       * Format: partial-time
        * @description The end time for the pm slot
        * @example 16:30
        */
       pmFinish: string
       /**
+       * Format: partial-time
        * @description The start time for the ed slot
        * @example 18:00
        */
       edStart: string
       /**
+       * Format: partial-time
        * @description The end time for the ed slot
        * @example 20:00
        */
@@ -5100,6 +5150,8 @@ export interface components {
       plannedSuspension?: components['schemas']['PlannedSuspension'] | null
       /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
       exclusions: components['schemas']['Slot'][]
+      /** @description Details of the most recent activity schedule amendment that actually affected this allocation. For a schedule spanning multiple weeks, contains one entry per week that has an amendment - e.g. up to 2 entries for a bi-weekly schedule. */
+      scheduleLastChanged?: components['schemas']['ScheduleLastChanged'][] | null
       /**
        * @deprecated
        * @description The name of the prisoner. Included only if includePrisonerSummary = true
@@ -5275,6 +5327,50 @@ export interface components {
       prisonerNumber: string
       /** @description The list of allocations for the prisoner */
       allocations: components['schemas']['Allocation'][]
+    }
+    /** @description Details of the most recent activity schedule change that affected this allocation for a specific week of the schedule */
+    ScheduleLastChanged: {
+      /**
+       * Format: int32
+       * @description The week of the activity schedule this change relates to
+       * @example 1
+       */
+      weekNumber: number
+      /**
+       * Format: date-time
+       * @description When the activity schedule amendment affecting this allocation was made
+       */
+      changedAt: string
+      /**
+       * @description Who made the activity schedule amendment
+       * @example Mrs Blogs
+       */
+      changedBy: string
+      /** @description The sessions added to the schedule as part of this amendment that the prisoner is now attending */
+      addedSessions: components['schemas']['ScheduleSession'][]
+      /** @description The sessions removed from the schedule as part of this amendment that the prisoner was attending */
+      removedSessions: components['schemas']['ScheduleSession'][]
+    }
+    /** @description A single day/time-slot session that was added or removed by an activity schedule amendment */
+    ScheduleSession: {
+      /**
+       * Format: int32
+       * @description The week of the activity schedule this session relates to
+       * @example 1
+       */
+      weekNumber: number
+      /**
+       * @description The time slot of the session
+       * @example AM
+       * @enum {string}
+       */
+      timeSlot: 'AM' | 'PM' | 'ED'
+      /**
+       * @description The day of the week the session runs on
+       * @example Monday
+       * @enum {string}
+       */
+      dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
     }
     /** @description The create request with the new pay band details */
     PrisonPayBandCreateRequest: {
@@ -5465,11 +5561,13 @@ export interface components {
     /** @description The scheduling rules in Nomis. At least one day and time must be specified. */
     NomisScheduleRule: {
       /**
+       * Format: partial-time
        * @description Start time on the day
        * @example 10:45
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description End time on the day
        * @example 11:45
        */
@@ -5557,11 +5655,13 @@ export interface components {
        */
       startDate: string | null
       /**
+       * Format: partial-time
        * @description The starting time of the appointment
        * @example 09:00
        */
       startTime: string | null
       /**
+       * Format: partial-time
        * @description The end time of the appointment
        * @example 10:30
        */
@@ -5693,11 +5793,13 @@ export interface components {
        */
       appointmentDate: string
       /**
+       * Format: partial-time
        * @description The starting time of the appointment instance
        * @example 09:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time of the appointment instance
        * @example 10:30
        */
@@ -5973,11 +6075,13 @@ export interface components {
        */
       startDate: string
       /**
+       * Format: partial-time
        * @description The starting time of this appointment
        * @example 13:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time of this appointment
        * @example 13:30
        */
@@ -6361,11 +6465,13 @@ export interface components {
        */
       startDate: string
       /**
+       * Format: partial-time
        * @description The starting time of this appointment
        * @example 13:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time of this appointment
        * @example 13:30
        */
@@ -6545,11 +6651,13 @@ export interface components {
        */
       prisonerNumber: string | null
       /**
+       * Format: partial-time
        * @description The starting time of the appointment
        * @example 09:00
        */
       startTime: string | null
       /**
+       * Format: partial-time
        * @description The end time of the appointment
        * @example 10:30
        */
@@ -6763,11 +6871,13 @@ export interface components {
        */
       startDate: string | null
       /**
+       * Format: partial-time
        * @description The starting time of the appointment or appointments in the series
        * @example 09:00
        */
       startTime: string | null
       /**
+       * Format: partial-time
        * @description The end time of the appointment or appointments in the series
        * @example 10:30
        */
@@ -7489,11 +7599,13 @@ export interface components {
        */
       date: string
       /**
+       * Format: partial-time
        * @description The start time for this scheduled instance
        * @example 09:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time for this scheduled instance
        * @example 10:00
        */
@@ -7629,11 +7741,13 @@ export interface components {
        */
       startDate?: string | null
       /**
+       * Format: partial-time
        * @description The updated starting time
        * @example 09:00
        */
       startTime?: string | null
       /**
+       * Format: partial-time
        * @description The updated end time
        * @example 10:30
        */
@@ -7953,11 +8067,13 @@ export interface components {
        */
       sessionDate: string
       /**
+       * Format: partial-time
        * @description The scheduled instance start time
        * @example 10:00
        */
       sessionStartTime: string
       /**
+       * Format: partial-time
        * @description The scheduled instance end time
        * @example 11:00
        */
@@ -8408,11 +8524,13 @@ export interface components {
        */
       sessionDate: string
       /**
+       * Format: partial-time
        * @description The start time of the scheduled instance
        * @example 09:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time of the scheduled instance
        * @example 12:00
        */
@@ -8694,11 +8812,13 @@ export interface components {
        */
       sessionDate: string
       /**
+       * Format: partial-time
        * @description The start time for this scheduled instance
        * @example 09:00
        */
       startTime?: string | null
       /**
+       * Format: partial-time
        * @description The end time for this scheduled instance
        * @example 10:00
        */
@@ -8957,11 +9077,13 @@ export interface components {
        */
       timeSlot: string
       /**
+       * Format: partial-time
        * @description The start time
        * @example 9:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time
        * @example 11:30
        */
@@ -9039,9 +9161,15 @@ export interface components {
     }
     /** @description suspended prisoner activity attendance */
     SuspendedPrisonerActivityAttendance: {
-      /** @description the activity start time */
+      /**
+       * Format: partial-time
+       * @description the activity start time
+       */
       startTime: string
-      /** @description the activity end time */
+      /**
+       * Format: partial-time
+       * @description the activity end time
+       */
       endTime: string
       /** @description internal location description */
       internalLocation?: string | null
@@ -9097,7 +9225,9 @@ export interface components {
       appointmentName: string
       /** Format: date */
       startDate: string
+      /** Format: partial-time */
       startTime: string
+      /** Format: partial-time */
       endTime: string
     }
     /**
@@ -9134,11 +9264,13 @@ export interface components {
        */
       startDate: string
       /**
+       * Format: partial-time
        * @description The starting time of this appointment
        * @example 13:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time of this appointment
        * @example 13:30
        */
@@ -9309,11 +9441,13 @@ export interface components {
        */
       startDate: string
       /**
+       * Format: partial-time
        * @description The starting time of the appointment or appointments in the series
        * @example 09:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time of the appointment or appointments in the series
        * @example 10:30
        */
@@ -9394,11 +9528,13 @@ export interface components {
        */
       startDate: string
       /**
+       * Format: partial-time
        * @description The starting time of this appointment
        * @example 13:00
        */
       startTime: string
       /**
+       * Format: partial-time
        * @description The end time of this appointment
        * @example 13:30
        */
@@ -14672,13 +14808,71 @@ export interface operations {
       query: {
         /** @description The date for which to request events, format YYYY-MM-DD, e.g. 2023-10-01 */
         date: string
-        /** @description The prisoner number, eg. A9999AA (optional). Default is all prisoner numbers. */
-        prisonerNumber?: string
-        /** @description Whether to include acknowledged events (optional). Default is false. */
-        includeAcknowledged?: boolean
+        /** @description The prisoner numbers, eg. A9999AA,A8888AA (optional). Default is all prisoner numbers. */
+        prisonerNumbers?: string[]
+        /** @description The events, eg. EVENT_CODE1,EVENT_CODE2 (optional). Default is all events. */
+        eventCodes?: string[]
+        /** @description Whether to filter to acknowledged events only. When false, acknowledged events are excluded. Default is false. */
+        filterAcknowledged?: boolean
         /** @description The page number to return (optional). Default is page zero. */
         page?: number
         /** @description The maximum number of items to return in each page (optional). Default is 10. */
+        size?: number
+        /** @description The sort direction based on the time the events occurred. Default is ascending. */
+        sortDirection?: string
+      }
+      header?: never
+      path: {
+        /** @description The prison code e.g. MDI */
+        prisonCode: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Search performed successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EventReviewSearchResults']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getEventsForReviewLegacy: {
+    parameters: {
+      query: {
+        /** @description The date for which to request events, format YYYY-MM-DD, e.g. 2023-10-01 */
+        date: string
+        /** @description The prisoner number, eg. A9999AA (optional). Default is all prisoner numbers. */
+        prisonerNumber?: string
+        /** @description The events, eg. EVENT_CODE1,EVENT_CODE2 (optional). Default is all events. */
+        eventCodes?: string[]
+        /** @description Legacy compatibility: true includes acknowledged events, false excludes them. */
+        includeAcknowledged?: boolean
+        /** @description The page number to return (optional). Default is page zero. */
+        page?: number
+        /** @description The maximum number of items to return in each page (optional). Default is 100000. */
         size?: number
         /** @description The sort direction based on the time the events occurred. Default is ascending. */
         sortDirection?: string
