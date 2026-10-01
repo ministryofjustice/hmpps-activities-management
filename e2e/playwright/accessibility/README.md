@@ -19,7 +19,7 @@ Review these boundaries when adding routes. They are documented scope decisions,
 
 ## Running locally
 
-Build the application and start Redis, WireMock and the feature application as described in the [root README](../../../README.md). Run all Playwright tests with:
+Build the application and start Redis, WireMock and the feature application as described in the [root README](../../../README.md). The standard Playwright commands run only journey tests:
 
 ```sh
 npm run pw-test
@@ -28,13 +28,13 @@ npm run pw-test
 To run only the accessibility suite:
 
 ```sh
-npm run pw-test -- --project=accessibility
+npm run pw-test:accessibility
 ```
 
 To run one functional area:
 
 ```sh
-npm run pw-test -- --project=accessibility accessibility/administration.spec.ts
+npm run pw-test:accessibility -- accessibility/administration.spec.ts
 ```
 
 ## CI

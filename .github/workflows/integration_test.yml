@@ -24,13 +24,16 @@ jobs:
       matrix:
         include:
           - name: Journey tests — shard 1/2
-            args: --project=journeys --shard=1/2
+            script: pw-test
+            args: --shard=1/2
             report: journeys-1
           - name: Journey tests — shard 2/2
-            args: --project=journeys --shard=2/2
+            script: pw-test
+            args: --shard=2/2
             report: journeys-2
           - name: Accessibility tests
-            args: --project=accessibility
+            script: pw-test:accessibility
+            args: ''
             report: accessibility
 
     services:
@@ -88,7 +91,7 @@ jobs:
           npm run wait:ui
 
       - name: Run Playwright tests
-        run: npm run pw-test -- ${{ matrix.args }}
+        run: npm run ${{ matrix.script }} -- ${{ matrix.args }}
 
       - name: Upload Playwright report
         if: always()
