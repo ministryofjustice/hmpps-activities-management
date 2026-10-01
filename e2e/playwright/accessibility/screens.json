@@ -2246,6 +2246,7 @@
     "view": "pages/not-rolled-out",
     "route": "/",
     "heading": "The Activities and Appointments service is not available at Moorland (HMP) yet",
-    "status": "covered"
+    "status": "excluded",
+    "reason": "A&A is fully rolled out!"
   }
 ]
