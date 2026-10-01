@@ -7,7 +7,7 @@ const accessiblePage = `
   <html lang="en">
     <head><title>Test page</title></head>
     <body>
-      <main id="main-content"><h1>Test page</h1></main>
+      <main id="main-content"><h1>Test page</h1><h2>About Test page</h2></main>
     </body>
   </html>
 `
@@ -15,7 +15,7 @@ const accessiblePage = `
 test('runs the accessibility check when enabled', async ({ page }) => {
   await page.setContent(accessiblePage)
 
-  await expectPage(page, 'Test page', true)
+  await expectPage(page, 'Test page', true, 1)
 
   const axeType = await page.evaluate(() => {
     const browser = globalThis as unknown as { axe?: unknown }
@@ -28,7 +28,7 @@ test('runs the accessibility check when enabled', async ({ page }) => {
 test('skips the accessibility check when disabled', async ({ page }) => {
   await page.setContent(accessiblePage)
 
-  await expectPage(page, 'Test page', false)
+  await expectPage(page, 'Test page', false, 1)
 
   const axeType = await page.evaluate(() => {
     const browser = globalThis as unknown as { axe?: unknown }

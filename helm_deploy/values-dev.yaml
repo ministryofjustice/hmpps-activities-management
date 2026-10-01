@@ -6,11 +6,6 @@ generic-service:
 
   ingress:
     host: activities-dev.prison.service.justice.gov.uk
-    modsecurity_enabled: true
-    modsecurity_snippet: |
-      SecAuditEngine On
-      SecRuleEngine DetectionOnly
-      SecDefaultAction "phase:2,pass,log,tag:github_team=activities-and-appointments,tag:namespace={{ .Release.Namespace }}"
 
   env:
     INGRESS_URL: "https://activities-dev.prison.service.justice.gov.uk"
@@ -38,7 +33,6 @@ generic-service:
     IN_SERVICE_REPORTING_ENABLED: "true"
     PRISONER_EXTRA_INFORMATION_ENABLED: "true"
     VIDEO_CONFERENCE_ROOM_AVAILABILITY_PRISONS: "RSI,MDI"
-    SHOW_VIDEO_COURT_HEARING_MOVEMENT_SLIP: "true"
 
     LIVE_ISSUE_OUTAGE_BANNER_ENABLED: "false"
     PLANNED_DOWNTIME_OUTAGE_BANNER_ENABLED: "false"

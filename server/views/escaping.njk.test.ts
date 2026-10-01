@@ -134,30 +134,36 @@ describe('Template HTML escaping', () => {
     expect($('.govuk-radios__label').last().text().trim()).toBe(payload)
   })
 
-  it('preserves movement slip markup while escaping appointment data', () => {
-    const $ = cheerio.load(
-      env.renderString(
-        '{% from "pages/appointments/partials/appointment-movement-slip.njk" import appointmentMovementSlip %}{{ appointmentMovementSlip(appointment, "Prison", printedAt) }}',
-        {
-          printedAt: new Date('2026-09-22T12:00:00Z'),
-          appointment: {
-            appointmentName: payload,
-            extraInformation: payload,
-            internalLocation: { description: payload },
-            startDate: '2026-09-22',
-            startTime: payload,
-            endTime: '14:00',
-            category: { code: 'MEOT' },
-            attendees: [{ prisoner: { prisonerNumber: 'A1234BC' } }],
+  it.each([true, false])(
+    'preserves movement slip markup while escaping appointment data with prisoner extra information enabled set to %s',
+    prisonerExtraInformationEnabled => {
+      const movementSlipEnv = registerNunjucks()
+      movementSlipEnv.addGlobal('prisonerExtraInformationEnabled', prisonerExtraInformationEnabled)
+      const $ = cheerio.load(
+        movementSlipEnv.renderString(
+          '{% from "pages/appointments/partials/appointment-movement-slip.njk" import appointmentMovementSlip %}{{ appointmentMovementSlip(appointment, "Prison", printedAt) }}',
+          {
+            printedAt: new Date('2026-09-22T12:00:00Z'),
+            appointment: {
+              appointmentName: payload,
+              extraInformation: prisonerExtraInformationEnabled ? 'Staff-only information' : payload,
+              prisonerExtraInformation: prisonerExtraInformationEnabled ? payload : 'Prisoner information',
+              internalLocation: { description: payload },
+              startDate: '2026-09-22',
+              startTime: payload,
+              endTime: '14:00',
+              category: { code: 'MEOT' },
+              attendees: [{ prisoner: { prisonerNumber: 'A1234BC' } }],
+            },
           },
-        },
-      ),
-    )
-    expect($('.movement-slip img')).toHaveLength(0)
-    expect($('[data-qa="appointment"]').text()).toBe(payload)
-    expect($('[data-qa="extra-information"]').text()).toBe(payload)
-    expect($('[data-qa="location"]').text().trim()).toBe(payload)
-    expect($('[data-qa="time"] li')).toHaveLength(2)
-    expect($('[data-qa="time"] li').first().text()).toContain(payload)
-  })
+        ),
+      )
+      expect($('.movement-slip img')).toHaveLength(0)
+      expect($('[data-qa="appointment"]').text()).toBe(payload)
+      expect($('[data-qa="extra-information"]').text()).toBe(payload)
+      expect($('[data-qa="location"]').text().trim()).toBe(payload)
+      expect($('[data-qa="time"] li')).toHaveLength(2)
+      expect($('[data-qa="time"] li').first().text()).toContain(payload)
+    },
+  )
 })

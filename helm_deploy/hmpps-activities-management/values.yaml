@@ -11,10 +11,35 @@ generic-service:
 
   ingress:
     enabled: true
-    v1_2_enabled: true
-    v0_47_enabled: false
     host: app-hostname.local # override per environment
     tlsSecretName: activities-cert
+    modsecurity_enabled: true
+    modsecurity_snippet: |
+      # Evaluate and log rule matches but never block requests
+      SecRuleEngine DetectionOnly
+      # Tag every logged match so it can be filtered by team/namespace in the modsec logs
+      SecDefaultAction "phase:2,pass,log,tag:github_team=activities-and-appointments,tag:namespace={{ .Release.Namespace }}"
+      # Each suspicious match adds points to the request score; 949110 (request) and 959100 (response) block once the total passes a threshold.
+      # Blocked requests get a 406 rather than the default 403; no effect until SecRuleEngine is On
+      SecRuleUpdateActionById 949110 "t:none,deny,status:406,logdata:%{SERVER_NAME}"
+      SecRuleUpdateActionById 959100 "t:none,deny,status:406,logdata:%{SERVER_NAME}"
+      # Exclude opaque session/OAuth/CSRF tokens from SQL-injection rules that false-positive on random strings
+      SecRuleUpdateTargetById 942100 "!REQUEST_COOKIES:connect.sid"
+      SecRuleUpdateTargetById 942440 "!REQUEST_COOKIES:connect.sid"
+      SecRuleUpdateTargetById 942100 "!ARGS:code"
+      SecRuleUpdateTargetById 942440 "!ARGS:code"
+      SecRuleUpdateTargetById 942100 "!ARGS:state"
+      SecRuleUpdateTargetById 942440 "!ARGS:state"
+      SecRuleUpdateTargetById 942100 "!ARGS:_csrf"
+      SecRuleUpdateTargetById 942440 "!ARGS:_csrf"
+      # CRS paranoia level 2: enables stricter rules than the default level 1, so expect more false positives
+      SecAction \
+        "id:900000,\
+         phase:1,\
+         nolog,\
+         pass,\
+         t:none,\
+         setvar:tx.paranoia_level=2"
 
   livenessProbe:
     httpGet:
@@ -36,7 +61,7 @@ generic-service:
     NODE_USE_ENV_PROXY: "1"
     APPLICATION_INSIGHTS_NO_STATSBEAT: "true"
     VIDEO_CONFERENCE_ROOM_AVAILABILITY_PRISONS: "PVI,PNI,WWI,WSI,WCI,HOI,NMI,NHI,CDI,HEI,HHI"
-    SHOW_VIDEO_COURT_HEARING_MOVEMENT_SLIP: "false"
+    SHOW_VIDEO_COURT_HEARING_MOVEMENT_SLIP: "true"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
