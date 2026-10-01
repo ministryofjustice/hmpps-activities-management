@@ -34,31 +34,37 @@ describe('Views - Change allocation details', () => {
       },
       prisonerName: 'Billy Fdas',
       userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
-      updatedBy: 'Joe Bloggs',
-      latestUpdatedDateTime: '2024-05-09T10:30:00',
-      removedFromScheduleHistory: [
-        {
+      latestScheduleChangeHistory: {
+        week1: {
+          type: 'ACTIVITY',
           weekNumber: 1,
-          timeSlots: ['AM', 'PM'],
-          dayOfWeek: 'MONDAY',
-          revisionType: 'ADDED',
-          revision: 1,
-          updatedBy: 'Joe Bloggs',
-          updatedDateTime: '2024-05-09T10:30:00',
+          changedAt: '2026-09-16T10:30:00',
+          changedBy: 'joebloggs',
+          addedToSchedule: [],
+          removedFromSchedule: [
+            {
+              weekNumber: 1,
+              dayOfWeek: 'TUESDAY',
+              timeSlots: ['AM', 'PM'],
+            },
+          ],
         },
-      ],
-      addedToScheduleHistory: [
-        {
+        week2: {
+          type: 'EXCLUSION',
           weekNumber: 2,
-          timeSlots: ['AM', 'PM', 'ED'],
-          dayOfWeek: 'WEDNESDAY',
-          revisionType: 'ADDED',
-          revision: 2,
-          updatedBy: 'Joe Bloggs',
-          updatedDateTime: '2024-05-09T10:30:00',
+          changedAt: '2026-09-15T10:30:00',
+          changedBy: 'joebloggs',
+          addedToSchedule: [
+            {
+              weekNumber: 2,
+              dayOfWeek: 'WEDNESDAY',
+              timeSlots: ['AM', 'PM', 'ED'],
+            },
+          ],
+          removedFromSchedule: [],
         },
-      ],
-      showWeekNumber: true,
+      },
+      twoWeekSchedule: true,
     }
   })
 
@@ -83,23 +89,74 @@ describe('Views - Change allocation details', () => {
     )
   })
 
-  it('should display last schedule history details with multiple timeslot formatting', () => {
+  it('should display latest 1 week schedule history details with multiple timeslot formatting', () => {
+    viewContext.twoWeekSchedule = false
+    viewContext.latestScheduleChangeHistory = {
+      week1: {
+        type: 'EXCLUSION',
+        weekNumber: 1,
+        changedAt: '2026-09-01T10:30:00',
+        changedBy: 'joebloggs',
+        addedToSchedule: [
+          {
+            weekNumber: 1,
+            dayOfWeek: 'WEDNESDAY',
+            timeSlots: ['AM', 'PM', 'ED'],
+          },
+        ],
+        removedFromSchedule: [],
+      },
+      week2: null,
+    }
+
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__key').text().trim()).toContain(
       'Schedule last changed',
     )
 
+    expect(
+      $('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim(),
+    ).not.toContain('No changes made')
+
     expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
-      'on 2 April 2025 at 14:40',
+      '1 September 2026 at 10:30',
     )
 
     expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
-      'Removed from:',
+      'Added:',
+    )
+
+    expect(
+      $('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim(),
+    ).not.toContain('Removed:')
+
+    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text()).toContain(
+      'AM, PM and ED',
+    )
+  })
+
+  it('should display latest 2 week schedule history details with multiple timeslot formatting', () => {
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
+      'Activity schedule changed',
     )
 
     expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
-      'Added to:',
+      '16 September 2026 at 10:30',
+    )
+
+    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
+      '15 September 2026 at 10:30',
+    )
+
+    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
+      'Removed:',
+    )
+
+    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
+      'Added:',
     )
 
     expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text()).toContain(
@@ -111,44 +168,12 @@ describe('Views - Change allocation details', () => {
     )
   })
 
-  it('should show the week number when only one week is affected by a schedule change', () => {
-    viewContext.removedFromScheduleHistory = []
-    viewContext.addedToScheduleHistory = [
-      {
-        weekNumber: 2,
-        timeSlots: ['AM', 'PM', 'ED'],
-        dayOfWeek: 'WEDNESDAY',
-        revisionType: 'ADDED',
-        revision: 2,
-        updatedBy: 'Joe Bloggs',
-        updatedDateTime: '2024-05-09T10:30:00',
-      },
-    ]
+  it('should display "No changes made" when there is no schedule change history', () => {
+    viewContext.latestScheduleChangeHistory = { week1: null, week2: null }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
-      'Added to:',
-    )
-
-    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
-      'Week 2',
-    )
-
-    expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text()).toContain(
-      'AM, PM and ED',
-    )
-
-    expect($('.govuk-summary-list').text()).not.toContain('Removed from:')
-  })
-
-  it('should hide the latest schedule history section when there is no schedule history', () => {
-    viewContext.removedFromScheduleHistory = []
-    viewContext.addedToScheduleHistory = []
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('.govuk-summary-list').text()).not.toContain('Schedule last changed')
+    expect($('.govuk-summary-list').text()).toContain('No changes made')
 
     expect($('.govuk-summary-list').text()).not.toContain('Removed from:')
 
