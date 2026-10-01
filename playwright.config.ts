@@ -6,6 +6,11 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
 
+  projects: [
+    { name: 'journeys', testIgnore: '**/accessibility/**' },
+    { name: 'accessibility', testMatch: '**/accessibility/**/*.spec.ts' },
+  ],
+
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
 

@@ -56,7 +56,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
             <span class="govuk-caption-xl">Take {{ allocateJourney.inmate.prisonerName }} off {{ activityName }}</span>
-            <h1 class="govuk-heading-l">When do you want them to be taken off {% if multipleActivitiesToRemove %} {{allocateJourney.activitiesToDeallocate | length }} activities {% endif %}?</h1>
+            <h1 class="govuk-heading-l">When do you want them to be taken off {% if multipleActivitiesToRemove %} {{allocateJourney.activitiesToDeallocate | length }} activities {% else %}{{ activityName }}{% endif %}?</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 {% if multipleActivitiesToRemove %}
