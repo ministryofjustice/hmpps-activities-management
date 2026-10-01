@@ -103,7 +103,7 @@ Or for production:
 
 **Quick start commands**
 
-To run the entire PW suite locally: `npm run pw-test:local`
+To run the PW journey suite locally: `npm run pw-test:local`
 
 To run locally using existing Docker images without pulling: `npm run pw-test:local:no-pull` (requires images to already be downloaded).
 
@@ -125,11 +125,14 @@ In a different terminal:
 
 In a third terminal:
 
-`$ npm run pw-test` - to run PW tests in the background
+`$ npm run pw-test` - to run PW journey tests in the background
 
 OR
 
-`$ npm run pw-test-ui` - to run tests interactively
+`$ npm run pw-test-ui` - to run journey tests interactively
+
+Screen accessibility coverage and inventory maintenance are documented in the
+[accessibility testing guide](e2e/playwright/accessibility/README.md). The standard Playwright commands, including the local and UI variants, run only journey tests. With the feature-test services running, run the accessibility suite separately with `npm run pw-test:accessibility`.
 
 ## Running locally (against DEV auth & APIs)
 

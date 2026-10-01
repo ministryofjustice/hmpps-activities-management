@@ -13,7 +13,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-l">Set up appointments to be deleted</h2>
+            <h1 class="govuk-heading-l">Set up appointments to be deleted</h1>
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -30,7 +30,7 @@
                         legend: {
                             text: "Enter the first day of migrated appointments to be deleted",
                             classes: "govuk-fieldset__legend--m",
-                            isPageHeading: true
+                            isPageHeading: false
                         }
                     },
                     items: [

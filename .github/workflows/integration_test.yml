@@ -16,13 +16,25 @@ on:
 
 jobs:
   playwright-test:
-    name: Run Playwright tests
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2]
+        include:
+          - name: Playwright Journey tests - 1/2
+            script: pw-test
+            args: --shard=1/2
+            report: journeys-1
+          - name: Playwright Journey tests - 2/2
+            script: pw-test
+            args: --shard=2/2
+            report: journeys-2
+          - name: Playwright Accessibility tests
+            script: pw-test:accessibility
+            args: ''
+            report: accessibility
 
     services:
       redis:
@@ -79,13 +91,13 @@ jobs:
           npm run wait:ui
 
       - name: Run Playwright tests
-        run: npm run pw-test -- --shard=${{ matrix.shard }}/2
+        run: npm run ${{ matrix.script }} -- ${{ matrix.args }}
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: playwright-report-${{ matrix.shard }}
+          name: playwright-report-${{ matrix.report }}
           path: |
             playwright-report/
             playwright-test-results/
