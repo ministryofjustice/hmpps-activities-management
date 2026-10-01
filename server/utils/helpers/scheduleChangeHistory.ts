@@ -73,25 +73,46 @@ const mapScheduleHistoryToEvents = (scheduleHistory: ScheduleLastChanged[]): Sch
     weekNumber: history.weekNumber,
     changedAt: history.changedAt,
     changedBy: history.changedBy,
-    addedToSchedule: history.addedSessions.map(session => ({
-      weekNumber: session.weekNumber,
-      dayOfWeek: session.dayOfWeek,
-      timeSlots: [session.timeSlot],
-    })),
-    removedFromSchedule: history.removedSessions.map(session => ({
-      weekNumber: session.weekNumber,
-      dayOfWeek: session.dayOfWeek,
-      timeSlots: [session.timeSlot],
-    })),
+    addedToSchedule: groupSessionsByDay(history.addedSessions),
+    removedFromSchedule: groupSessionsByDay(history.removedSessions),
   }))
 }
 
-const slotExistsInActivitySchedule = (activitySlots: ActivityScheduleSlot[], item: ScheduleDisplayItem): boolean => {
+const groupSessionsByDay = (
+  sessions: {
+    weekNumber: number
+    dayOfWeek: string
+    timeSlot: string
+  }[],
+): ScheduleDisplayItem[] => {
+  const grouped = new Map<string, ScheduleDisplayItem>()
+
+  sessions.forEach(session => {
+    const key = `${session.weekNumber}-${session.dayOfWeek}`
+
+    if (!grouped.has(key)) {
+      grouped.set(key, {
+        weekNumber: session.weekNumber,
+        dayOfWeek: session.dayOfWeek,
+        timeSlots: [],
+      })
+    }
+
+    grouped.get(key)!.timeSlots.push(session.timeSlot)
+  })
+
+  return [...grouped.values()]
+}
+
+const slotExistsInActivitySchedule = (
+  activitySlots: ActivityScheduleSlot[],
+  exclusionEvent: ScheduleDisplayItem,
+): boolean => {
   return activitySlots.some(
     slot =>
-      slot.weekNumber === item.weekNumber &&
-      item.timeSlots.includes(slot.timeSlot) &&
-      slot.daysOfWeek.some(day => getFullDayFromAbbreviation(day) === item.dayOfWeek),
+      slot.weekNumber === exclusionEvent.weekNumber &&
+      exclusionEvent.timeSlots.includes(slot.timeSlot) &&
+      slot.daysOfWeek.some(day => getFullDayFromAbbreviation(day) === exclusionEvent.dayOfWeek),
   )
 }
 
@@ -105,16 +126,16 @@ const filterInvalidExclusionEvents = (
   }
 
   const addedToSchedule = event.addedToSchedule
-    .map(item => ({
-      ...item,
-      timeSlots: item.timeSlots.filter(timeSlot =>
+    .map(exclusionEvent => ({
+      ...exclusionEvent,
+      timeSlots: exclusionEvent.timeSlots.filter(timeSlot =>
         slotExistsInActivitySchedule(activitySlots, {
-          ...item,
+          ...exclusionEvent,
           timeSlots: [timeSlot],
         }),
       ),
     }))
-    .filter(item => item.timeSlots.length > 0)
+    .filter(exclusionEvent => exclusionEvent.timeSlots.length > 0)
 
   if (!addedToSchedule.length && !event.removedFromSchedule.length) {
     return null
