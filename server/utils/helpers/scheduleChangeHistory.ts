@@ -104,7 +104,7 @@ const groupSessionsByDay = (
   return [...grouped.values()]
 }
 
-const slotExistsInActivitySchedule = (
+const exclusionSessionExistsInActivitySchedule = (
   activitySlots: ActivityScheduleSlot[],
   exclusionEvent: ScheduleDisplayItem,
 ): boolean => {
@@ -118,10 +118,9 @@ const slotExistsInActivitySchedule = (
 
 const filterInvalidExclusionEvents = (
   event: ChangeEvent,
-  scheduleWeeks: number,
   activitySlots: ActivityScheduleSlot[],
 ): ChangeEvent | null => {
-  if (scheduleWeeks !== 1 || event.type !== 'EXCLUSION' || !event.addedToSchedule.length) {
+  if (event.type !== 'EXCLUSION' || !event.addedToSchedule.length) {
     return event
   }
 
@@ -129,7 +128,7 @@ const filterInvalidExclusionEvents = (
     .map(exclusionEvent => ({
       ...exclusionEvent,
       timeSlots: exclusionEvent.timeSlots.filter(timeSlot =>
-        slotExistsInActivitySchedule(activitySlots, {
+        exclusionSessionExistsInActivitySchedule(activitySlots, {
           ...exclusionEvent,
           timeSlots: [timeSlot],
         }),
@@ -165,14 +164,13 @@ export const buildScheduleChangeViewModel = (
   exclusionHistory: ExclusionRevision[],
   scheduleHistory: ScheduleLastChanged[],
   activitySlots: ActivityScheduleSlot[],
-  scheduleWeeks: number,
 ): ScheduleChangeHistory => {
   const events = [...mapExclusionHistoryToEvents(exclusionHistory), ...mapScheduleHistoryToEvents(scheduleHistory)]
 
   const relevantEvents = allocatedTime ? events.filter(event => event.changedAt > allocatedTime) : events
 
   const visibleEvents = relevantEvents
-    .map(event => filterInvalidExclusionEvents(event, scheduleWeeks, activitySlots))
+    .map(event => filterInvalidExclusionEvents(event, activitySlots))
     .filter((event): event is ChangeEvent => event !== null)
 
   return buildLatestEventsByWeek(visibleEvents)

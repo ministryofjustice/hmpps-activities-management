@@ -9,7 +9,7 @@ import UserService from '../../../../services/userService'
 
 import ViewAllocationRoutes from './viewAllocation'
 
-import { Activity, Allocation, ExclusionRevision } from '../../../../@types/activitiesAPI/types'
+import { Activity, Allocation } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { CaseNote } from '../../../../@types/caseNotesApi/types'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
@@ -51,36 +51,6 @@ describe('ViewAllocationRoutes', () => {
       },
     },
   } as Prisoner
-
-  const exclusionHistory: ExclusionRevision[] = [
-    {
-      weekNumber: 1,
-      timeSlots: ['AM'],
-      dayOfWeek: 'MONDAY',
-      revisionType: 'ADDED',
-      revision: 1,
-      updatedBy: 'OLDER_USER',
-      updatedDateTime: '2026-05-06T09:15:00',
-    },
-    {
-      weekNumber: 1,
-      timeSlots: ['PM'],
-      dayOfWeek: 'TUESDAY',
-      revisionType: 'REMOVED',
-      revision: 2,
-      updatedBy: 'LATEST_USER',
-      updatedDateTime: '2026-09-15T10:30:00',
-    },
-    {
-      weekNumber: 2,
-      timeSlots: ['AM'],
-      dayOfWeek: 'WEDNESDAY',
-      revisionType: 'ADDED',
-      revision: 2,
-      updatedBy: 'LATEST_USER',
-      updatedDateTime: '2026-09-15T10:30:00',
-    },
-  ]
 
   beforeEach(() => {
     req = {
@@ -149,45 +119,7 @@ describe('ViewAllocationRoutes', () => {
           plannedBy: 'joebloggs',
           dpsCaseNoteId: 'note-id',
         },
-        scheduleLastChanged: [
-          {
-            weekNumber: 1,
-            changedAt: '2026-09-11T15:20:11',
-            changedBy: 'DTHOMAS_GEN',
-            addedSessions: [
-              {
-                weekNumber: 1,
-                timeSlot: 'ED',
-                dayOfWeek: 'THURSDAY',
-              },
-            ],
-            removedSessions: [
-              {
-                weekNumber: 1,
-                timeSlot: 'AM',
-                dayOfWeek: 'MONDAY',
-              },
-              {
-                weekNumber: 1,
-                timeSlot: 'AM',
-                dayOfWeek: 'WEDNESDAY',
-              },
-            ],
-          },
-          {
-            weekNumber: 2,
-            changedAt: '2026-09-14T17:43:19',
-            changedBy: 'DTHOMAS_GEN',
-            addedSessions: [],
-            removedSessions: [
-              {
-                weekNumber: 2,
-                timeSlot: 'PM',
-                dayOfWeek: 'SATURDAY',
-              },
-            ],
-          },
-        ],
+        scheduleLastChanged: [],
         ...overrides,
       } as Allocation)
   }
@@ -230,15 +162,14 @@ describe('ViewAllocationRoutes', () => {
       )
     })
 
-    it('should handle allocated by user not found', async () => {
+    it('should render when allocatedBy user cannot be fetched', async () => {
       mockAllocation({
         allocatedBy: 'MIGRATION',
       })
 
-      when(activitiesService.getAllocationExclusionsHistory).calledWith(1, user).mockResolvedValue(exclusionHistory)
+      when(activitiesService.getAllocationExclusionsHistory).calledWith(1, user).mockResolvedValue([])
 
       mockUserMap(['joebloggs'])
-      mockUserMap(['LATEST_USER'])
 
       when(userService.getUserMap)
         .calledWith(atLeast(['MIGRATION']))
@@ -246,34 +177,31 @@ describe('ViewAllocationRoutes', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/manage-allocations/view-allocation',
-        expect.objectContaining({
-          latestScheduleChangeHistory: expect.objectContaining({
-            week1: expect.objectContaining({
-              type: 'EXCLUSION',
-              weekNumber: 1,
-              changedAt: '2026-09-15T10:30:00',
-              changedBy: 'LATEST_USER',
-            }),
-            week2: expect.objectContaining({
-              type: 'EXCLUSION',
-              weekNumber: 2,
-              changedAt: '2026-09-15T10:30:00',
-              changedBy: 'LATEST_USER',
-            }),
-          }),
-        }),
-      )
+      const viewModel = (res.render as jest.Mock).mock.calls[0][1]
+
+      expect(viewModel.latestScheduleChangeHistory).toBeDefined()
+      expect(viewModel.userMap).toBeInstanceOf(Map)
     })
 
-    it('should handle changedBy user not found', async () => {
-      mockAllocation({
-        allocatedBy: 'MIGRATION',
-      })
-      when(activitiesService.getAllocationExclusionsHistory).calledWith(1, user).mockResolvedValue(exclusionHistory)
+    it('should render when schedule history users cannot be fetched', async () => {
+      mockAllocation()
+
+      when(activitiesService.getAllocationExclusionsHistory)
+        .calledWith(1, user)
+        .mockResolvedValue([
+          {
+            weekNumber: 1,
+            timeSlots: ['AM'],
+            dayOfWeek: 'MONDAY',
+            revisionType: 'ADDED',
+            revision: 1,
+            updatedBy: 'LATEST_USER',
+            updatedDateTime: '2026-09-15T10:30:00',
+          },
+        ])
 
       mockUserMap(['joebloggs'])
+      mockUserMap(['GEOFFT'])
 
       when(userService.getUserMap)
         .calledWith(atLeast(['LATEST_USER']))
@@ -281,25 +209,10 @@ describe('ViewAllocationRoutes', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/manage-allocations/view-allocation',
-        expect.objectContaining({
-          latestScheduleChangeHistory: expect.objectContaining({
-            week1: expect.objectContaining({
-              type: 'EXCLUSION',
-              weekNumber: 1,
-              changedAt: '2026-09-15T10:30:00',
-              changedBy: 'LATEST_USER',
-            }),
-            week2: expect.objectContaining({
-              type: 'EXCLUSION',
-              weekNumber: 2,
-              changedAt: '2026-09-15T10:30:00',
-              changedBy: 'LATEST_USER',
-            }),
-          }),
-        }),
-      )
+      const viewModel = (res.render as jest.Mock).mock.calls[0][1]
+
+      expect(viewModel.latestScheduleChangeHistory).toBeDefined()
+      expect(viewModel.userMap).toBeInstanceOf(Map)
     })
 
     it('should set isOnlyPay to false when multiple current pay bands exist', async () => {

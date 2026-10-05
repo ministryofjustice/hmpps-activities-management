@@ -19,7 +19,6 @@ describe('buildScheduleChangeViewModel', () => {
         ] as ExclusionRevision[],
         [],
         [],
-        1,
       )
 
       expect(result.week1?.removedFromSchedule).toEqual([
@@ -46,8 +45,13 @@ describe('buildScheduleChangeViewModel', () => {
           },
         ] as ExclusionRevision[],
         [],
-        [],
-        2,
+        [
+          {
+            weekNumber: 1,
+            timeSlot: 'AM',
+            daysOfWeek: ['Mon'],
+          },
+        ] as ActivityScheduleSlot[],
       )
 
       expect(result.week1?.addedToSchedule).toEqual([
@@ -81,7 +85,6 @@ describe('buildScheduleChangeViewModel', () => {
           },
         ] as ScheduleLastChanged[],
         [],
-        2,
       )
 
       expect(result.week1?.type).toBe('ACTIVITY')
@@ -117,7 +120,6 @@ describe('buildScheduleChangeViewModel', () => {
           },
         ] as ScheduleLastChanged[],
         [],
-        2,
       )
 
       expect(result.week1?.addedToSchedule).toEqual([
@@ -154,7 +156,6 @@ describe('buildScheduleChangeViewModel', () => {
           },
         ] as ScheduleLastChanged[],
         [],
-        2,
       )
 
       expect(result.week1?.removedFromSchedule).toEqual([
@@ -193,7 +194,6 @@ describe('buildScheduleChangeViewModel', () => {
         ] as ExclusionRevision[],
         [],
         [],
-        2,
       )
 
       expect(result.week1?.changedBy).toBe('LATEST_USER')
@@ -229,7 +229,6 @@ describe('buildScheduleChangeViewModel', () => {
           },
         ] as ScheduleLastChanged[],
         [],
-        2,
       )
 
       expect(result.week1).toEqual({
@@ -266,7 +265,6 @@ describe('buildScheduleChangeViewModel', () => {
         ] as ExclusionRevision[],
         [],
         [],
-        2,
       )
 
       expect(result.week1).toBeNull()
@@ -312,7 +310,6 @@ describe('buildScheduleChangeViewModel', () => {
         ] as ExclusionRevision[],
         [],
         activitySlots,
-        1,
       )
 
       expect(result.week1).toEqual({
@@ -353,7 +350,6 @@ describe('buildScheduleChangeViewModel', () => {
         ] as ExclusionRevision[],
         [],
         [],
-        1,
       )
 
       expect(result.week1).toBeNull()
@@ -413,11 +409,52 @@ describe('buildScheduleChangeViewModel', () => {
           },
         ] as ScheduleLastChanged[],
         [],
-        2,
       )
 
       expect(result.week1?.changedBy).toBe('ACTIVITY_WEEK1')
       expect(result.week2?.changedBy).toBe('ACTIVITY_WEEK2')
+    })
+
+    it('filters invalid exclusion added sessions on a two-week schedule and retains valid sessions', () => {
+      const activitySlots: ActivityScheduleSlot[] = [
+        {
+          weekNumber: 2,
+          timeSlot: 'PM',
+          daysOfWeek: ['Mon'],
+        },
+      ] as ActivityScheduleSlot[]
+
+      const result = buildScheduleChangeViewModel(
+        null,
+        [
+          {
+            weekNumber: 2,
+            dayOfWeek: 'MONDAY',
+            timeSlots: ['AM', 'PM'],
+            revisionType: 'REMOVED',
+            revision: 1,
+            updatedBy: 'USER_1',
+            updatedDateTime: '2026-09-15T10:30:00',
+          },
+        ] as ExclusionRevision[],
+        [],
+        activitySlots,
+      )
+
+      expect(result.week2).toEqual({
+        type: 'EXCLUSION',
+        weekNumber: 2,
+        changedAt: '2026-09-15T10:30:00',
+        changedBy: 'USER_1',
+        addedToSchedule: [
+          {
+            weekNumber: 2,
+            dayOfWeek: 'MONDAY',
+            timeSlots: ['PM'],
+          },
+        ],
+        removedFromSchedule: [],
+      })
     })
 
     it('should return a week 2 event when no week 1 event exists', () => {
@@ -436,7 +473,6 @@ describe('buildScheduleChangeViewModel', () => {
         ] as ExclusionRevision[],
         [],
         [],
-        2,
       )
 
       expect(result).toEqual({

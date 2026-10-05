@@ -87,7 +87,6 @@ export default class ViewAllocationRoutes {
       exclusionHistory,
       allocation.scheduleLastChanged ?? [],
       slots,
-      scheduleWeeks,
     )
 
     const usernames = getUsernames(allocation, latestScheduleChangeHistory)

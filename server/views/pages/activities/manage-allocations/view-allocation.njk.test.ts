@@ -89,7 +89,34 @@ describe('Views - Change allocation details', () => {
     )
   })
 
-  it('should display latest 1 week schedule history details with multiple timeslot formatting', () => {
+  it('should display grouped activity sessions as a single day entry', () => {
+    viewContext.latestScheduleChangeHistory = {
+      week1: {
+        type: 'ACTIVITY',
+        weekNumber: 1,
+        changedAt: '2026-09-16T10:30:00',
+        changedBy: 'joebloggs',
+        addedToSchedule: [
+          {
+            weekNumber: 1,
+            dayOfWeek: 'MONDAY',
+            timeSlots: ['AM', 'PM', 'ED'],
+          },
+        ],
+        removedFromSchedule: [],
+      },
+      week2: null,
+    }
+
+    viewContext.twoWeekSchedule = false
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('.govuk-summary-list').text()).toContain('AM, PM and ED')
+    expect($('.govuk-summary-list').text()).toContain('Monday')
+  })
+
+  it('should display one-week schedule history', () => {
     viewContext.twoWeekSchedule = false
     viewContext.latestScheduleChangeHistory = {
       week1: {
@@ -136,7 +163,7 @@ describe('Views - Change allocation details', () => {
     )
   })
 
-  it('should display latest 2 week schedule history details with multiple timeslot formatting', () => {
+  it('should display two-week schedule history', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('.govuk-summary-list > .govuk-summary-list__row > .govuk-summary-list__value').text().trim()).toContain(
