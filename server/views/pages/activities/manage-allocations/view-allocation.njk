@@ -164,42 +164,15 @@
                         </a>
                     </dd>
                 </div>
-
-            {% if removedFromScheduleHistory.length or addedToScheduleHistory.length %} 
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Schedule last changed
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                            {{ latestUpdatedDateTime
-                                    | parseDate("yyyy-MM-dd'T'HH:mm:ss")
-                                    | formatDate("d MMMM yyyy 'at' HH:mm") }}
-                            by - 
-                            {{ serviceUserName(userMap.get(updatedBy)) }}
-                        {% if removedFromScheduleHistory.length %}      
-                            <div class='govuk-!-margin-top-6'>
-                                Removed from:
-                                {% for schedule in removedFromScheduleHistory %}
-                                    <div class='govuk-summary-list__key--normal-key-weight'> 
-                                        {{ exclusionDetails(schedule) }}
-                                    </div> 
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        {% if addedToScheduleHistory.length %}
-                            <div class='govuk-!-margin-top-6'>
-                                Added to:
-                                {% for schedule in addedToScheduleHistory %}
-                                    <div class='govuk-summary-list__key--normal-key-weight'>
-                                        {{ exclusionDetails(schedule) }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </dd>
-                </div>
-            {% endif %}
-        
+                {% if twoWeekSchedule %}
+                    {{ scheduleChangeSummary("Week 1 schedule last changed", 
+                    latestScheduleChangeHistory.week1) }}  
+                    {{ scheduleChangeSummary( "Week 2 schedule last changed", 
+                    latestScheduleChangeHistory.week2) }}
+                {% else %}
+                    {{ scheduleChangeSummary("Schedule last changed", 
+                    latestScheduleChangeHistory.week1) }}  
+                {% endif %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Allocated by
@@ -209,6 +182,7 @@
                     </dd>
                 </div>
             </dl>
+
             <div class="govuk-body">
                 <a href="/activities/allocation-dashboard/{{ allocation.activityId }}" class="govuk-link--no-visited-state">
                     Go to current allocations for {{ allocation.activitySummary }}
@@ -232,10 +206,52 @@
     {% endif %}
 {% endmacro %}
 
-{% macro exclusionDetails(schedule) %}
-    {% if showWeekNumber %} 
-        Week {{ schedule.weekNumber }} -
-    {% endif %}
+{% macro scheduleChangeSummary(title, change) %}
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+        {{ title }}
+    </dt>
+    <dd class="govuk-summary-list__value">
+        {% if change %}
+
+            {% if change.type == 'ACTIVITY' %}
+                Activity schedule changed on
+            {% endif %}
+
+            {{ change.changedAt
+                | parseDate("yyyy-MM-dd'T'HH:mm:ss")
+                | formatDate("d MMMM yyyy 'at' HH:mm") }}
+            by
+            {{ serviceUserName(userMap.get(change.changedBy)) }}
+
+            {% if change.addedToSchedule.length %}
+                <div class="govuk-!-margin-top-4">
+                    {% for schedule in change.addedToSchedule %}
+                        <div>
+                            Added: {{ scheduleDetails(schedule) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if change.removedFromSchedule.length %}
+                <div class="govuk-!-margin-top-2">
+                    {% for schedule in change.removedFromSchedule %}
+                        <div>
+                            Removed: {{ scheduleDetails(schedule) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        {% else %}
+            No changes made.
+        {% endif %}
+    </dd>
+</div>
+{% endmacro %}
+
+{% macro scheduleDetails(schedule) %}
     {{ schedule.dayOfWeek | title }} 
     {% if schedule.timeSlots.length == 1 %}
     {{ schedule.timeSlots[0] }}
