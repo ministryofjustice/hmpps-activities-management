@@ -19,7 +19,7 @@ describe('MeetingDetailsRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookAProbationMeetingJourney: {},
       },
       body: {},
@@ -62,12 +62,12 @@ describe('MeetingDetailsRoutes', () => {
       req.body.probationTeamCode = 'TEAM1'
       req.body.meetingTypeCode = 'TYPE1'
       req.routeContext = { mode: 'amend' }
-      req.session.bookAProbationMeetingJourney.bookingId = 1
+      req.journeyData.bookAProbationMeetingJourney.bookingId = 1
 
       await meetingDetailsRoutes.POST(req as Request, res as Response)
 
       expect(probationBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        req.session.bookAProbationMeetingJourney,
+        req.journeyData.bookAProbationMeetingJourney,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(

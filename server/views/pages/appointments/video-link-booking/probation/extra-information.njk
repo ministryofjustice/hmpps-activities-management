@@ -25,7 +25,7 @@
                 id: "notesForStaff",
                 name: "notesForStaff",
                 errorMessage: validationErrors | findError("notesForStaff"),
-                value: formResponses.notesForStaff or session.bookAProbationMeetingJourney.notesForStaff,
+                value: formResponses.notesForStaff or bookAProbationMeetingJourney.notesForStaff,
                 label: {
                   text: "Notes for prison staff (optional)",
                   classes: 'govuk-fieldset__legend--s'
@@ -43,7 +43,7 @@
                 id: "notesForPrisoners",
                 name: "notesForPrisoners",
                 errorMessage: validationErrors | findError("notesForPrisoners"),
-                value: formResponses.notesForPrisoners or session.bookAProbationMeetingJourney.notesForPrisoners,
+                value: formResponses.notesForPrisoners or bookAProbationMeetingJourney.notesForPrisoners,
                 label: {
                   text: "Notes for prisoner (optional)",
                   classes: 'govuk-fieldset__legend--s'

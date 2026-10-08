@@ -32,11 +32,11 @@
                             },
                             value: {
                                 html: showProfileLink({
-                                    firstName: session.bookAProbationMeetingJourney.prisoner.firstName,
-                                    middleNames: session.bookAProbationMeetingJourney.prisoner.middleNames,
-                                    lastName: session.bookAProbationMeetingJourney.prisoner.lastName,
-                                    prisonerNumber: session.bookAProbationMeetingJourney.prisoner.number,
-                                    cellLocation: session.bookAProbationMeetingJourney.prisoner.cellLocation
+                                    firstName: bookAProbationMeetingJourney.prisoner.firstName,
+                                    middleNames: bookAProbationMeetingJourney.prisoner.middleNames,
+                                    lastName: bookAProbationMeetingJourney.prisoner.lastName,
+                                    prisonerNumber: bookAProbationMeetingJourney.prisoner.number,
+                                    cellLocation: bookAProbationMeetingJourney.prisoner.cellLocation
                                 })
                             }
                         },
@@ -45,7 +45,7 @@
                                 text: "Probation team"
                             },
                             value: {
-                                text: (probationTeams | find('code', session.bookAProbationMeetingJourney.probationTeamCode)).description
+                                text: (probationTeams | find('code', bookAProbationMeetingJourney.probationTeamCode)).description
                             },
                             actions: {
                                 items: [
@@ -63,7 +63,7 @@
                                 text: "Meeting type"
                             },
                             value: {
-                                text: (meetingTypes | find('code', session.bookAProbationMeetingJourney.meetingTypeCode)).description
+                                text: (meetingTypes | find('code', bookAProbationMeetingJourney.meetingTypeCode)).description
                             },
                             actions: {
                                 items: [
@@ -93,7 +93,7 @@
                                 text: "Probation officer's full name"
                             },
                             value: {
-                                text: session.bookAProbationMeetingJourney.officer.fullName or "Not yet known"
+                                text: bookAProbationMeetingJourney.officer.fullName or "Not yet known"
                             },
                             actions: {
                                 items: [
@@ -111,7 +111,7 @@
                                 text: "Email address"
                             },
                             value: {
-                                text: session.bookAProbationMeetingJourney.officer.email or "Not yet known"
+                                text: bookAProbationMeetingJourney.officer.email or "Not yet known"
                             },
                             actions: {
                                 items: [
@@ -129,7 +129,7 @@
                                 text: "UK phone number"
                             },
                             value: {
-                                text: session.bookAProbationMeetingJourney.officer.telephone or "Not yet known"
+                                text: bookAProbationMeetingJourney.officer.telephone or "Not yet known"
                             },
                             actions: {
                                 items: [
@@ -147,7 +147,7 @@
                                 text: "Location"
                             },
                             value: {
-                                text: (rooms | find('dpsLocationId', session.bookAProbationMeetingJourney.locationId)).description
+                                text: (rooms | find('dpsLocationId', bookAProbationMeetingJourney.locationId)).description
                             },
                             actions: {
                                 items: [
@@ -165,7 +165,7 @@
                                 text: "Date"
                             },
                             value: {
-                                text: session.bookAProbationMeetingJourney.date | parseISODate | formatDate
+                                text: bookAProbationMeetingJourney.date | parseISODate | formatDate
                             },
                             actions: {
                                 items: [
@@ -183,7 +183,7 @@
                                 text: "Start time"
                             },
                             value: {
-                                text: session.bookAProbationMeetingJourney.startTime | parseISODate | formatDate('HH:mm')
+                                text: bookAProbationMeetingJourney.startTime | parseISODate | formatDate('HH:mm')
                             },
                             actions: {
                                 items: [
@@ -201,7 +201,7 @@
                                 text: "End time"
                             },
                             value: {
-                                text: session.bookAProbationMeetingJourney.endTime | parseISODate | formatDate('HH:mm')
+                                text: bookAProbationMeetingJourney.endTime | parseISODate | formatDate('HH:mm')
                             },
                             actions: {
                                 items: [
@@ -219,7 +219,7 @@
                                 text: "Prison video link (PVL)"
                             },
                             value: {
-                                text: (rooms | find('dpsLocationId', session.bookAProbationMeetingJourney.locationId)).extraAttributes.prisonVideoUrl or "None entered"
+                                text: (rooms | find('dpsLocationId', bookAProbationMeetingJourney.locationId)).extraAttributes.prisonVideoUrl or "None entered"
                             }
                         }
                     ],
@@ -249,7 +249,7 @@
                                 text: 'Notes for prison staff'
                             },
                             value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.notesForStaff or 'None entered' | escape) + '</span>'
+                                html: '<span class="preserve-line-breaks">' + (bookAProbationMeetingJourney.notesForStaff or 'None entered' | escape) + '</span>'
                             }
                         },
                         {
@@ -257,7 +257,7 @@
                                 text: "Notes for prisoner"
                             },
                             value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.notesForPrisoners or 'None entered' | escape) + '</span>'
+                                html: '<span class="preserve-line-breaks">' + (bookAProbationMeetingJourney.notesForPrisoners or 'None entered' | escape) + '</span>'
                             }
                         }
                     ],

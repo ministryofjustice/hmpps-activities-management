@@ -83,8 +83,8 @@ export default class ProbationMeetingDetailsRoutes {
     const { mode } = req.routeContext
     const { user } = res.locals
 
-    req.session.bookAProbationMeetingJourney = {
-      ...req.session.bookAProbationMeetingJourney,
+    req.journeyData.bookAProbationMeetingJourney = {
+      ...req.journeyData.bookAProbationMeetingJourney,
       probationTeamRequired: probationTeamRequired === YesNo.YES,
       probationTeamCode: probationTeamRequired === YesNo.YES ? probationTeamCode : 'TEAM_NOT_LISTED',
       meetingTypeCode,
@@ -102,11 +102,11 @@ export default class ProbationMeetingDetailsRoutes {
     }
 
     if (mode === 'amend') {
-      await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
+      await this.probationBookingService.amendVideoLinkBooking(req.journeyData.bookAProbationMeetingJourney, user)
 
       const successHeading = "You've changed the details for this probation meeting"
       return res.redirectWithSuccess(
-        `/appointments/video-link-booking/probation/${req.session.bookAProbationMeetingJourney.bookingId}`,
+        `/appointments/video-link-booking/probation/${req.journeyData.bookAProbationMeetingJourney.bookingId}`,
         successHeading,
       )
     }

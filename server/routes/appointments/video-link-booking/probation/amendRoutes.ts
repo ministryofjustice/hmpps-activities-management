@@ -8,17 +8,19 @@ import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
 import ScheduleRoutes from './handlers/schedule'
 import ProbationMeetingDetailsRoutes, { ProbationMeetingDetails } from './handlers/probationMeetingDetails'
+import setUpJourneyData from '../../../../middleware/setUpJourneyData'
 
 export default function AmendRoutes({
   bookAVideoLinkService,
   activitiesService,
   probationBookingService,
+  tokenStore,
 }: Services): Router {
   const router = Router({ mergeParams: true })
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
+  const get = (path: string, handler: RequestHandler) => router.get(path, setUpJourneyData(tokenStore), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), handler)
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
@@ -27,13 +29,13 @@ export default function AmendRoutes({
 
   // Book a probation meeting journey is required in session for the following routes
   router.use((req, res, next) => {
-    if (!req.session.bookAProbationMeetingJourney) return res.redirect('/appointments')
+    if (!req.journeyData.bookAProbationMeetingJourney) return res.redirect('/appointments')
     return next()
   })
 
   // Booking needs to be amendable for the following routes
   router.use((req, res, next) => {
-    const { date, startTime, bookingStatus } = req.session.bookAProbationMeetingJourney
+    const { date, startTime, bookingStatus } = req.journeyData.bookAProbationMeetingJourney
     if (!bookAVideoLinkService.bookingIsAmendable(parseISO(date), parseISO(startTime), bookingStatus)) {
       return next(createHttpError.NotFound())
     }

@@ -52,6 +52,6 @@ accessibilityArea(
 accessibilityArea(
   'appointments/video-link-booking/probation',
   () => setup('probation'),
-  {},
   { bookAProbationMeetingJourney: probation },
+  {},
 )

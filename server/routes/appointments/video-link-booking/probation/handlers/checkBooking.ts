@@ -10,7 +10,7 @@ export default class CheckBookingRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisoner } = req.session.bookAProbationMeetingJourney
+    const { prisoner } = req.journeyData.bookAProbationMeetingJourney
 
     const [rooms, probationTeams, meetingTypes] = await Promise.all([
       this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonCode, user),
@@ -27,7 +27,10 @@ export default class CheckBookingRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const id = await this.probationBookingService.createVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
+    const id = await this.probationBookingService.createVideoLinkBooking(
+      req.journeyData.bookAProbationMeetingJourney,
+      user,
+    )
     return res.redirect(`confirmation/${id}`)
   }
 }

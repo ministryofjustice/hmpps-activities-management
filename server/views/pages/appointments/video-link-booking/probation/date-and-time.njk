@@ -37,7 +37,7 @@
                     },
                     errorMessage: validationErrors | findError('date'),
                     classes: 'moj-datepicker--fixed-width',
-                    value: formResponses.date or (session.bookAProbationMeetingJourney.date | isoDateToDatePickerDate)
+                    value: formResponses.date or (bookAProbationMeetingJourney.date | isoDateToDatePickerDate)
                 }) }}
 
                 {{ timePicker({
@@ -49,7 +49,7 @@
                     },
                     renderedErrorMessage: validationErrors | findError('startTime'),
                     validationErrors: validationErrors,
-                    formResponses: formResponses.startTime or session.bookAProbationMeetingJourney.startTime | isoDateToTimePicker
+                    formResponses: formResponses.startTime or bookAProbationMeetingJourney.startTime | isoDateToTimePicker
                 }) }}
 
                 {{ timePicker({
@@ -61,7 +61,7 @@
                     },
                     renderedErrorMessage: validationErrors | findError('endTime'),
                     validationErrors: validationErrors,
-                    formResponses: formResponses.endTime or session.bookAProbationMeetingJourney.endTime | isoDateToTimePicker
+                    formResponses: formResponses.endTime or bookAProbationMeetingJourney.endTime | isoDateToTimePicker
                 }) }}
 
                 {{ govukButton({

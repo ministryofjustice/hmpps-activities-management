@@ -5,7 +5,7 @@ import { SessionDatum } from '../@types/express'
 // and the session data map can be removed when all journeys have been migrated
 // The journeyData object is populated by the setUpJourneyData middleware
 
-const journeys = ['bookACourtHearingJourney', 'bookAProbationMeetingJourney', 'journeyMetrics']
+const journeys = ['bookACourtHearingJourney', 'journeyMetrics']
 const MAX_CONCURRENT_JOURNEYS = 100
 
 export default function populateJourney(): RequestHandler {

@@ -8,7 +8,7 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
     const { bookingId } = req.params
     const { user } = res.locals
 
-    if (bookingId === req.session.bookAProbationMeetingJourney?.bookingId?.toString()) return next()
+    if (bookingId === req.journeyData.bookAProbationMeetingJourney?.bookingId?.toString()) return next()
 
     const booking = await bookAVideoLinkService.getVideoLinkBookingById(Number(bookingId), user)
 
@@ -45,7 +45,7 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
         ),
       )
 
-    req.session.bookAProbationMeetingJourney = {
+    req.journeyData.bookAProbationMeetingJourney = {
       bookingId: Number(bookingId),
       appointmentId: existingVlbAppointment.appointmentId,
       bookingStatus: booking.statusCode,
