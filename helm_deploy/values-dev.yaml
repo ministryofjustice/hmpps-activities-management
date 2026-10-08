@@ -41,7 +41,8 @@ generic-service:
     PLANNED_DOWNTIME_END_TIME: "11am"
     JOURNEY_DATA_TOKEN_DURATION_HOURS: 8
 
-  allowlist: null
+  allowlist:
+    accessibility-audit: 5.181.59.114/32
 
 generic-prometheus-alerts:
   alertSeverity: hmpps-activities-management-dev
