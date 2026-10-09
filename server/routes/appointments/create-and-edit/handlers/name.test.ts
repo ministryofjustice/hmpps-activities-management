@@ -6,7 +6,7 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import NameRoutes, { Name } from './name'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentCategorySummary } from '../../../../@types/activitiesAPI/types'
-import { AppointmentType } from '../appointmentJourney'
+import { AppointmentJourney, AppointmentType } from '../appointmentJourney'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -149,6 +149,42 @@ describe('Route Handlers - Create Appointment - Name', () => {
       })
       expect(req.journeyData.appointmentJourney.customName).toEqual('Bible studies')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
+    })
+
+    it('should hand off to the probation meeting journey when VLPM is selected', async () => {
+      req.body = {
+        categoryCode: 'VLPM',
+      }
+
+      req.journeyData.appointmentJourney = {
+        prisoners: [
+          {
+            prisonerNumber: 'A1234AA',
+          },
+          {
+            prisonerNumber: 'B1234BB',
+          },
+        ],
+      } as unknown as AppointmentJourney
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.bookAProbationMeetingJourney).toEqual({
+        prisoners: [
+          {
+            prisonerNumber: 'A1234AA',
+          },
+          {
+            prisonerNumber: 'B1234BB',
+          },
+        ],
+      })
+
+      expect(req.journeyData.appointmentJourney).toBeNull()
+
+      expect(res.redirect).toHaveBeenCalledWith('../../video-link-booking/probation/create/journeyId/select-prisoner')
     })
 
     it('should trim custom name', async () => {
