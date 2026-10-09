@@ -11,7 +11,7 @@ export default class ConfirmationRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { vlbId } = req.params
     const { user } = res.locals
-    req.session.bookAProbationMeetingJourney = null
+    req.journeyData.bookAProbationMeetingJourney = null
 
     const vlb = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId, user)
     const [probationTeam, prisoner] = await Promise.all([

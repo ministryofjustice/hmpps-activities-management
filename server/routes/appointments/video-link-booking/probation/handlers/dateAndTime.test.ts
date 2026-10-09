@@ -17,7 +17,7 @@ describe('DateAndTimeRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookAProbationMeetingJourney: {
           prisoner: { prisonCode: 'PRISON1' },
         },

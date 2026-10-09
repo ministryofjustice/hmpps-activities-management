@@ -77,7 +77,7 @@ export default class NameRoutes {
     }
 
     if (category.code === 'VLPM') {
-      req.session.bookAProbationMeetingJourney = {
+      req.journeyData.bookAProbationMeetingJourney = {
         prisoners: req.journeyData.appointmentJourney.prisoners,
       }
       req.journeyData.appointmentJourney = null

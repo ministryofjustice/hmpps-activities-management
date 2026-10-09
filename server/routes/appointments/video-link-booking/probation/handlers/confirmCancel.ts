@@ -9,7 +9,7 @@ export default class ConfirmCancelRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    await this.probationBookingService.cancelVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
+    await this.probationBookingService.cancelVideoLinkBooking(req.journeyData.bookAProbationMeetingJourney, user)
 
     return res.redirectOrReturn('confirmation')
   }
