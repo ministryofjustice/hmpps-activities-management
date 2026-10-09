@@ -8,7 +8,6 @@ import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInform
 import ScheduleRoutes from './handlers/schedule'
 import CheckBookingRoutes from './handlers/checkBooking'
 import ConfirmationRoutes from './handlers/confirmation'
-import setUpJourneyData from '../../../../middleware/setUpJourneyData'
 import ProbationMeetingDetailsRoutes, { ProbationMeetingDetails } from './handlers/probationMeetingDetails'
 
 export default function CreateRoutes({
@@ -16,13 +15,12 @@ export default function CreateRoutes({
   probationBookingService,
   activitiesService,
   prisonService,
-  tokenStore,
 }: Services): Router {
   const router = Router({ mergeParams: true })
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, setUpJourneyData(tokenStore), handler)
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
+    router.post(path, validationMiddleware(type), handler)
 
   const selectPrisoner = new SelectPrisonerRoutes()
   const location = new LocationRoutes(bookAVideoLinkService)

@@ -79,6 +79,8 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
       notesForPrisoners: booking.notesForPrisoners,
     }
 
+    res.locals.bookAProbationMeetingJourney = req.journeyData.bookAProbationMeetingJourney
+
     return next()
   }
 }

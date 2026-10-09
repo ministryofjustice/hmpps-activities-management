@@ -8,19 +8,17 @@ import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
 import ScheduleRoutes from './handlers/schedule'
 import ProbationMeetingDetailsRoutes, { ProbationMeetingDetails } from './handlers/probationMeetingDetails'
-import setUpJourneyData from '../../../../middleware/setUpJourneyData'
 
 export default function AmendRoutes({
   bookAVideoLinkService,
   activitiesService,
   probationBookingService,
-  tokenStore,
 }: Services): Router {
   const router = Router({ mergeParams: true })
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, setUpJourneyData(tokenStore), handler)
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
+    router.post(path, validationMiddleware(type), handler)
 
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
