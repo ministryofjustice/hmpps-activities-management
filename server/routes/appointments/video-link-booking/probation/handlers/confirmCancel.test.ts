@@ -12,7 +12,7 @@ describe('ConfirmCancelRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookAProbationMeetingJourney: {
           prisoner: { prisonCode: 'PRISON1' },
           date: '2024-09-09',

@@ -39,12 +39,12 @@
                         },
                         value: {
                             html: showProfileLink({
-                                firstName: session.bookAProbationMeetingJourney.prisoner.firstName,
-                                middleNames: session.bookAProbationMeetingJourney.prisoner.middleNames,
-                                lastName: session.bookAProbationMeetingJourney.prisoner.lastName,
-                                prisonerNumber: session.bookAProbationMeetingJourney.prisoner.number,
-                                cellLocation: statusBasedCellLocation(session.bookAProbationMeetingJourney.prisoner.cellLocation, session.bookAProbationMeetingJourney.prisoner.status, session.bookAProbationMeetingJourney.prisoner.prisonCode == user.activeCaseLoadId),
-                                inCaseLoad: session.bookAProbationMeetingJourney.prisoner.prisonCode == user.activeCaseLoadId
+                                firstName: bookAProbationMeetingJourney.prisoner.firstName,
+                                middleNames: bookAProbationMeetingJourney.prisoner.middleNames,
+                                lastName: bookAProbationMeetingJourney.prisoner.lastName,
+                                prisonerNumber: bookAProbationMeetingJourney.prisoner.number,
+                                cellLocation: statusBasedCellLocation(bookAProbationMeetingJourney.prisoner.cellLocation, bookAProbationMeetingJourney.prisoner.status, bookAProbationMeetingJourney.prisoner.prisonCode == user.activeCaseLoadId),
+                                inCaseLoad: bookAProbationMeetingJourney.prisoner.prisonCode == user.activeCaseLoadId
                             })
                         }
                     },
@@ -53,7 +53,7 @@
                             text: "Date"
                         },
                         value: {
-                            text: session.bookAProbationMeetingJourney.date | parseISODate | formatDate
+                            text: bookAProbationMeetingJourney.date | parseISODate | formatDate
                         },
                         actions: {
                             items: [
@@ -71,7 +71,7 @@
                             text: "Meeting time"
                         },
                         value: {
-                            text: (session.bookAProbationMeetingJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookAProbationMeetingJourney.endTime | parseISODate | formatDate('HH:mm'))
+                            text: (bookAProbationMeetingJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + bookAProbationMeetingJourney.endTime | parseISODate | formatDate('HH:mm'))
                         },
                         actions: {
                             items: [
@@ -89,7 +89,7 @@
                             text: "Meeting room"
                         },
                         value: {
-                            text: (rooms | find('dpsLocationId', session.bookAProbationMeetingJourney.locationId)).description
+                            text: (rooms | find('dpsLocationId', bookAProbationMeetingJourney.locationId)).description
                         },
                         actions: {
                             items: [
@@ -109,13 +109,13 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">Attendee events on {{ session.bookAProbationMeetingJourney.date | parseISODate | formatDate }}</h2>
+            <h2 class="govuk-heading-m">Attendee events on {{ bookAProbationMeetingJourney.date | parseISODate | formatDate }}</h2>
             <div class="govuk-summary-card appointment-schedule">
                 <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title">{{ session.bookAProbationMeetingJourney.prisoner.name | toTitleCase}}, {{ session.bookAProbationMeetingJourney.prisoner.number }}</h3>
+                    <h3 class="govuk-summary-card__title">{{ bookAProbationMeetingJourney.prisoner.name | toTitleCase}}, {{ bookAProbationMeetingJourney.prisoner.number }}</h3>
                 </div>
                 <div class="govuk-summary-card__content">
-                    {% set events = prisonerScheduledEvents | filter('cancelled', false) | filterNot('appointmentId', session.bookAProbationMeetingJourney.appointmentId)%}
+                    {% set events = prisonerScheduledEvents | filter('cancelled', false) | filterNot('appointmentId', bookAProbationMeetingJourney.appointmentId)%}
                     {% if events.length > 0 %}
                         {% set scheduledEventRows = [] %}
                         {% for scheduledEvent in events %}
@@ -175,13 +175,13 @@
 
     <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-              <h2 class="govuk-heading-m">Room schedules on {{ session.bookAProbationMeetingJourney.date | parseISODate | formatDate }}</h2>
+              <h2 class="govuk-heading-m">Room schedules on {{ bookAProbationMeetingJourney.date | parseISODate | formatDate }}</h2>
               <div class="govuk-summary-card appointment-schedule">
                 <div class="govuk-summary-card__title-wrapper">
                   <h3 class="govuk-summary-card__title">{{ internalLocationEvents.description }}</h3>
                 </div>
                 <div class="govuk-summary-card__content">
-                  {% set events = internalLocationEvents.events | filter('cancelled', false) | filterNot('appointmentId', session.bookAProbationMeetingJourney.appointmentId) %}
+                  {% set events = internalLocationEvents.events | filter('cancelled', false) | filterNot('appointmentId', bookAProbationMeetingJourney.appointmentId) %}
                   {% if events.length > 0 %}
                     {% set scheduledEventRows = [] %}
                     {% for scheduledEvent in events %}

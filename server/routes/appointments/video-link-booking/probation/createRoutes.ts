@@ -32,7 +32,7 @@ export default function CreateRoutes({
 
   // Book a video link journey is required in session for the following routes
   router.use((req, res, next) => {
-    if (!req.session.bookAProbationMeetingJourney) return res.redirect('/appointments')
+    if (!req.journeyData.bookAProbationMeetingJourney) return res.redirect('/appointments')
     return next()
   })
 

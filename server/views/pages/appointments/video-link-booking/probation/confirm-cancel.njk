@@ -4,7 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = "Are you sure you want to cancel this booking?" %}
-{% set pageHeading = "Are you sure you want to cancel " + (session.bookAProbationMeetingJourney.prisoner.name | toTitleCase) + "'s booking?" %}
+{% set pageHeading = "Are you sure you want to cancel " + (bookAProbationMeetingJourney.prisoner.name | toTitleCase) + "'s booking?" %}
 
 {% block content %}
     <div class="govuk-grid-row">
