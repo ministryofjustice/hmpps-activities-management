@@ -32,7 +32,6 @@ declare module 'express-session' {
     // That middleware redirects the getter and setter to use the sessionDataMap below. As a result,
     // these properties are virtual and are not directly set. They exist to allow pre-existing access
     // as if there was only one journey per session e.g. req.session.journeyMetrics
-    bookACourtHearingJourney: BookACourtHearingJourney
     journeyMetrics: JourneyMetrics
     // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
     // middlewares and the appointment routes in index.ts
@@ -85,6 +84,7 @@ export type JourneyData = {
   unlockListJourney?: UnlockListJourney
   recordAttendanceJourney?: RecordAttendanceJourney
   allocateJourney?: AllocateToActivityJourney
+  bookACourtHearingJourney?: BookACourtHearingJourney
   bookAProbationMeetingJourney?: BookAProbationMeetingJourney
   recordAppointmentAttendanceJourney?: RecordAppointmentAttendanceJourney
   appointmentJourney?: AppointmentJourney

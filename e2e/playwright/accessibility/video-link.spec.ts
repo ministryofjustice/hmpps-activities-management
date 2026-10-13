@@ -42,12 +42,12 @@ const setup = async (type: 'court' | 'probation') => {
   await stubEndpoint('GET', '/users/.*', { username: 'jsmith', name: 'John Smith', authSource: 'nomis' })
   await stubEndpoint('POST', '/appointments/MDI/search', [])
 }
-// Only the court journey remains session-backed and is next in line to be migrated to the redis journey
+
 accessibilityArea(
   'appointments/video-link-booking/court',
   () => setup('court'),
-  {},
   { bookACourtHearingJourney: court },
+  {},
 )
 accessibilityArea(
   'appointments/video-link-booking/probation',

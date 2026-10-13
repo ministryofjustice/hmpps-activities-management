@@ -10,7 +10,7 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
     const { bookingId } = req.params
     const { user } = res.locals
 
-    if (bookingId === req.session.bookACourtHearingJourney?.bookingId?.toString()) return next()
+    if (bookingId === req.journeyData.bookACourtHearingJourney?.bookingId?.toString()) return next()
 
     const booking = await bookAVideoLinkService.getVideoLinkBookingById(Number(bookingId), user)
 
@@ -58,7 +58,7 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
         ),
       )
 
-    req.session.bookACourtHearingJourney = {
+    req.journeyData.bookACourtHearingJourney = {
       bookingId: Number(bookingId),
       appointmentIds: existingVlbAppointments.map(a => a.appointmentId),
       bookingStatus: booking.statusCode,
@@ -92,6 +92,8 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
       guestPinRequired: isNotEmpty(booking.guestPin),
       cvpRequired: isNotEmpty(booking.videoLinkUrl) || isNotEmpty(booking.hmctsNumber),
     }
+
+    res.locals.bookACourtHearingJourney = req.journeyData.bookACourtHearingJourney
 
     return next()
   }

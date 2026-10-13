@@ -39,12 +39,12 @@
                         },
                         value: {
                             html: showProfileLink({
-                                firstName: session.bookACourtHearingJourney.prisoner.firstName,
-                                middleNames: session.bookACourtHearingJourney.prisoner.middleNames,
-                                lastName: session.bookACourtHearingJourney.prisoner.lastName,
-                                prisonerNumber: session.bookACourtHearingJourney.prisoner.number,
-                                cellLocation: statusBasedCellLocation(session.bookACourtHearingJourney.prisoner.cellLocation, session.bookACourtHearingJourney.prisoner.status, session.bookACourtHearingJourney.prisoner.prisonCode == user.activeCaseLoadId),
-                                inCaseLoad: session.bookACourtHearingJourney.prisoner.prisonCode == user.activeCaseLoadId
+                                firstName: bookACourtHearingJourney.prisoner.firstName,
+                                middleNames: bookACourtHearingJourney.prisoner.middleNames,
+                                lastName: bookACourtHearingJourney.prisoner.lastName,
+                                prisonerNumber: bookACourtHearingJourney.prisoner.number,
+                                cellLocation: statusBasedCellLocation(bookACourtHearingJourney.prisoner.cellLocation, bookACourtHearingJourney.prisoner.status, bookACourtHearingJourney.prisoner.prisonCode == user.activeCaseLoadId),
+                                inCaseLoad: bookACourtHearingJourney.prisoner.prisonCode == user.activeCaseLoadId
                             })
                         }
                     },
@@ -53,7 +53,7 @@
                             text: "Date"
                         },
                         value: {
-                            text: session.bookACourtHearingJourney.date | parseISODate | formatDate
+                            text: bookACourtHearingJourney.date | parseISODate | formatDate
                         },
                         actions: {
                             items: [
@@ -71,15 +71,15 @@
                             text: "Pre-court hearing time"
                         },
                         value: {
-                            text: (session.bookACourtHearingJourney.preHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.preHearingEndTime | parseISODate | formatDate('HH:mm'))
+                            text: (bookACourtHearingJourney.preHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + bookACourtHearingJourney.preHearingEndTime | parseISODate | formatDate('HH:mm'))
                         }
-                    } if session.bookACourtHearingJourney.preLocationId,
+                    } if bookACourtHearingJourney.preLocationId,
                     {
                         key: {
                             text: "Pre-court hearing room"
                         },
                         value: {
-                            text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.preLocationId)).description
+                            text: (rooms | find('dpsLocationId', bookACourtHearingJourney.preLocationId)).description
                         },
                         actions: {
                             items: [
@@ -91,13 +91,13 @@
                                 }
                             ]
                         }
-                    } if session.bookACourtHearingJourney.preLocationId,
+                    } if bookACourtHearingJourney.preLocationId,
                     {
                         key: {
                             text: "Main hearing time"
                         },
                         value: {
-                            text: (session.bookACourtHearingJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.endTime | parseISODate | formatDate('HH:mm'))
+                            text: (bookACourtHearingJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + bookACourtHearingJourney.endTime | parseISODate | formatDate('HH:mm'))
                         },
                         actions: {
                             items: [
@@ -115,7 +115,7 @@
                             text: "Main hearing room"
                         },
                         value: {
-                            text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.locationId)).description
+                            text: (rooms | find('dpsLocationId', bookACourtHearingJourney.locationId)).description
                         },
                         actions: {
                             items: [
@@ -133,15 +133,15 @@
                             text: "Post-court hearing time"
                         },
                         value: {
-                            text: (session.bookACourtHearingJourney.postHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.postHearingEndTime | parseISODate | formatDate('HH:mm'))
+                            text: (bookACourtHearingJourney.postHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + bookACourtHearingJourney.postHearingEndTime | parseISODate | formatDate('HH:mm'))
                         }
-                    } if session.bookACourtHearingJourney.postLocationId,
+                    } if bookACourtHearingJourney.postLocationId,
                     {
                         key: {
                             text: "Post-court hearing room"
                         },
                         value: {
-                            text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.postLocationId)).description
+                            text: (rooms | find('dpsLocationId', bookACourtHearingJourney.postLocationId)).description
                         },
                         actions: {
                             items: [
@@ -153,7 +153,7 @@
                                 }
                             ]
                         }
-                    } if session.bookACourtHearingJourney.postLocationId
+                    } if bookACourtHearingJourney.postLocationId
                 ]
             }) }}
         </div>
@@ -161,14 +161,14 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">Attendee events on {{ session.bookACourtHearingJourney.date | parseISODate | formatDate }}</h2>
+            <h2 class="govuk-heading-m">Attendee events on {{ bookACourtHearingJourney.date | parseISODate | formatDate }}</h2>
             <div class="govuk-summary-card appointment-schedule">
                 <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title">{{ session.bookACourtHearingJourney.prisoner.name | toTitleCase}}, {{ session.bookACourtHearingJourney.prisoner.number }}</h3>
+                    <h3 class="govuk-summary-card__title">{{ bookACourtHearingJourney.prisoner.name | toTitleCase}}, {{ bookACourtHearingJourney.prisoner.number }}</h3>
                 </div>
                 <div class="govuk-summary-card__content">
                     {% set events = prisonerScheduledEvents | filter('cancelled', false) %}
-                    {% for appointmentId in session.bookACourtHearingJourney.appointmentIds %}
+                    {% for appointmentId in bookACourtHearingJourney.appointmentIds %}
                         {% set events = events | filterNot('appointmentId', appointmentId) %}
                     {% endfor %}
                     {% if events.length > 0 %}
@@ -230,7 +230,7 @@
 
     <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">Room schedules on {{ session.bookACourtHearingJourney.date | parseISODate | formatDate }}</h2>
+                <h2 class="govuk-heading-m">Room schedules on {{ bookACourtHearingJourney.date | parseISODate | formatDate }}</h2>
 
                 {% for location in internalLocationEvents %}
                     <div class="govuk-summary-card appointment-schedule">
@@ -239,7 +239,7 @@
                         </div>
                         <div class="govuk-summary-card__content">
                             {% set events = location.events | filter('cancelled', false) %}
-                            {% for appointmentId in session.bookACourtHearingJourney.appointmentIds %}
+                            {% for appointmentId in bookACourtHearingJourney.appointmentIds %}
                                 {% set events = events | filterNot('appointmentId', appointmentId) %}
                             {% endfor %}
                             {% if events.length > 0 %}

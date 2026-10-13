@@ -16,7 +16,7 @@ describe('LocationRoutes', () => {
   beforeEach(() => {
     req = {
       routeContext: { mode: 'create' },
-      session: {
+      journeyData: {
         bookACourtHearingJourney: {
           prisoner: { prisonCode: 'PRISON1' },
         },
