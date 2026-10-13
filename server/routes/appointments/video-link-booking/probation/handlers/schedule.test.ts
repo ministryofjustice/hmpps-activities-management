@@ -22,7 +22,7 @@ describe('ScheduleRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookAProbationMeetingJourney: {
           prisoner: { number: 'A1234BC' },
           date: '2023-10-01',
@@ -117,12 +117,12 @@ describe('ScheduleRoutes', () => {
   describe('POST', () => {
     it('redirects with success message when mode is amend', async () => {
       req.routeContext = { mode: 'amend' }
-      req.session.bookAProbationMeetingJourney.bookingId = 1
+      req.journeyData.bookAProbationMeetingJourney.bookingId = 1
 
       await scheduleRoutes.POST(req as Request, res as Response)
 
       expect(probationBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        req.session.bookAProbationMeetingJourney,
+        req.journeyData.bookAProbationMeetingJourney,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(

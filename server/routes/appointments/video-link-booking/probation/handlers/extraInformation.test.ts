@@ -16,7 +16,7 @@ describe('ExtraInformationRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookAProbationMeetingJourney: {},
       },
       body: {},
@@ -79,7 +79,7 @@ describe('ExtraInformationRoutes', () => {
       req.body.notesForStaff = 'Notes for staff'
       req.body.notesForPrisoners = 'Notes for prisoners'
       req.routeContext = { mode: 'amend' }
-      req.session.bookAProbationMeetingJourney.bookingId = 1
+      req.journeyData.bookAProbationMeetingJourney.bookingId = 1
 
       await extraInformationRoutes.POST(req as Request, res as Response)
 

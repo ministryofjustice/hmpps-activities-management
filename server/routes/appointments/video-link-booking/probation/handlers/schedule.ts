@@ -13,7 +13,7 @@ export default class ScheduleRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisoner, prisonCode, date, locationId } = req.session.bookAProbationMeetingJourney
+    const { prisoner, prisonCode, date, locationId } = req.journeyData.bookAProbationMeetingJourney
 
     const [prisonerScheduledEvents, internalLocationEvents, rooms] = await Promise.all([
       this.activitiesService
@@ -47,11 +47,11 @@ export default class ScheduleRoutes {
     const { mode } = req.routeContext
 
     if (mode === 'amend') {
-      await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
+      await this.probationBookingService.amendVideoLinkBooking(req.journeyData.bookAProbationMeetingJourney, user)
 
       const successHeading = "You've changed the schedule for this probation meeting"
       return res.redirectWithSuccess(
-        `/appointments/video-link-booking/probation/${req.session.bookAProbationMeetingJourney.bookingId}`,
+        `/appointments/video-link-booking/probation/${req.journeyData.bookAProbationMeetingJourney.bookingId}`,
         successHeading,
       )
     }

@@ -11,7 +11,7 @@ describe('SelectPrisonerRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookAProbationMeetingJourney: {
           prisoners: [
             { number: 'A1234BC', name: 'John Doe', prisonCode: 'MDI' },
@@ -35,7 +35,7 @@ describe('SelectPrisonerRoutes', () => {
     })
 
     it('redirects to hearing-details if only one prisoner', async () => {
-      req.session.bookAProbationMeetingJourney.prisoners = [
+      req.journeyData.bookAProbationMeetingJourney.prisoners = [
         { number: 'A1234BC', name: 'John Doe', prisonCode: 'MDI' },
       ] as AppointmentPrisonerDetails[]
       await selectPrisonerRoutes.GET(req as Request, res as Response)
@@ -48,12 +48,12 @@ describe('SelectPrisonerRoutes', () => {
       req.body = { prisonerNumber: 'A1234BC' }
       await selectPrisonerRoutes.POST(req as Request, res as Response)
       expect(res.redirect).toHaveBeenCalledWith('location')
-      expect(req.session.bookAProbationMeetingJourney.prisoner).toEqual({
+      expect(req.journeyData.bookAProbationMeetingJourney.prisoner).toEqual({
         number: 'A1234BC',
         name: 'John Doe',
         prisonCode: 'MDI',
       })
-      expect(req.session.bookAProbationMeetingJourney.prisonCode).toEqual('MDI')
+      expect(req.journeyData.bookAProbationMeetingJourney.prisonCode).toEqual('MDI')
     })
   })
 
