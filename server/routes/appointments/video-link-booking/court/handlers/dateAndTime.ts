@@ -65,7 +65,7 @@ export default class DateAndTimeRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisonCode } = req.session.bookACourtHearingJourney
+    const { prisonCode } = req.journeyData.bookACourtHearingJourney
 
     const rooms = await this.bookAVideoLinkService.getAppointmentLocations(prisonCode, user)
 
@@ -76,8 +76,8 @@ export default class DateAndTimeRoutes {
     const { preserveHistory } = req.query
     const { date, startTime, endTime, preRequired, postRequired, preLocation, postLocation } = req.body
 
-    req.session.bookACourtHearingJourney = {
-      ...req.session.bookACourtHearingJourney,
+    req.journeyData.bookACourtHearingJourney = {
+      ...req.journeyData.bookACourtHearingJourney,
       date: date.toISOString(),
       startTime: startTime.toISOString(),
       endTime: endTime.toISOString(),

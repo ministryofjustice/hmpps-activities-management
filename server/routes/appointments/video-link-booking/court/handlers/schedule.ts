@@ -15,7 +15,7 @@ export default class ScheduleRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { prisoner, prisonCode, date, locationId, preLocationId, postLocationId } =
-      req.session.bookACourtHearingJourney
+      req.journeyData.bookACourtHearingJourney
 
     const uniqueLocationIds = _.uniq([locationId, preLocationId, postLocationId].filter(Boolean))
 
@@ -55,11 +55,11 @@ export default class ScheduleRoutes {
     const { user } = res.locals
 
     if (mode === 'amend') {
-      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+      await this.courtBookingService.amendVideoLinkBooking(req.journeyData.bookACourtHearingJourney, user)
 
       const successHeading = "You've changed the schedule for this court hearing"
       return res.redirectWithSuccess(
-        `/appointments/video-link-booking/court/${req.session.bookACourtHearingJourney.bookingId}`,
+        `/appointments/video-link-booking/court/${req.journeyData.bookACourtHearingJourney.bookingId}`,
         successHeading,
       )
     }

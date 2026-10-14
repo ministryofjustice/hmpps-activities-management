@@ -37,7 +37,7 @@
                     },
                     errorMessage: validationErrors | findError('date'),
                     classes: 'moj-datepicker--fixed-width',
-                    value: formResponses.date or (session.bookACourtHearingJourney.date | isoDateToDatePickerDate)
+                    value: formResponses.date or (bookACourtHearingJourney.date | isoDateToDatePickerDate)
                 }) }}
 
                 {{ timePicker({
@@ -49,7 +49,7 @@
                     },
                     renderedErrorMessage: validationErrors | findError('startTime'),
                     validationErrors: validationErrors,
-                    formResponses: formResponses.startTime or session.bookACourtHearingJourney.startTime | isoDateToTimePicker
+                    formResponses: formResponses.startTime or bookACourtHearingJourney.startTime | isoDateToTimePicker
                 }) }}
 
                 {{ timePicker({
@@ -61,7 +61,7 @@
                     },
                     renderedErrorMessage: validationErrors | findError('endTime'),
                     validationErrors: validationErrors,
-                    formResponses: formResponses.endTime or session.bookACourtHearingJourney.endTime | isoDateToTimePicker
+                    formResponses: formResponses.endTime or bookACourtHearingJourney.endTime | isoDateToTimePicker
                 }) }}
 
                 {% set items = [{ text: "Select prison room", value: "" }] %}
@@ -69,7 +69,7 @@
                     {% set items = (items.push({
                         value: room.dpsLocationId,
                         text: room.description,
-                        selected: formResponses.preLocation == room.dpsLocationId or session.bookACourtHearingJourney.preLocationId == room.dpsLocationId
+                        selected: formResponses.preLocation == room.dpsLocationId or bookACourtHearingJourney.preLocationId == room.dpsLocationId
                     }), items) %}
                 {% endfor %}
 
@@ -104,7 +104,7 @@
                         {
                             value: YesNo.YES,
                             text: "Yes",
-                            checked: formResponses.preRequired == YesNo.YES or (session.bookACourtHearingJourney.preLocationId and not formResponses.preRequired),
+                            checked: formResponses.preRequired == YesNo.YES or (bookACourtHearingJourney.preLocationId and not formResponses.preRequired),
                             conditional: {
                                 html: preLocationsHtml
                             }
@@ -112,7 +112,7 @@
                         {
                             value: YesNo.NO,
                             text: "No",
-                            checked: formResponses.preRequired == YesNo.NO or (session.bookACourtHearingJourney.date and not session.bookACourtHearingJourney.preLocationId and not formResponses.preRequired)
+                            checked: formResponses.preRequired == YesNo.NO or (bookACourtHearingJourney.date and not bookACourtHearingJourney.preLocationId and not formResponses.preRequired)
                         }
                     ]
                 }) }}
@@ -122,7 +122,7 @@
                     {% set items = (items.push({
                         value: room.dpsLocationId,
                         text: room.description,
-                        selected: formResponses.postLocation == room.dpsLocationId or session.bookACourtHearingJourney.postLocationId == room.dpsLocationId
+                        selected: formResponses.postLocation == room.dpsLocationId or bookACourtHearingJourney.postLocationId == room.dpsLocationId
                     }), items) %}
                 {% endfor %}
                 {% set postLocationsHtml %}
@@ -156,7 +156,7 @@
                         {
                             value: YesNo.YES,
                             text: "Yes",
-                            checked: formResponses.postRequired == YesNo.YES or (session.bookACourtHearingJourney.postLocationId and not formResponses.postRequired),
+                            checked: formResponses.postRequired == YesNo.YES or (bookACourtHearingJourney.postLocationId and not formResponses.postRequired),
                             conditional: {
                                 html: postLocationsHtml
                             }
@@ -164,7 +164,7 @@
                         {
                             value: YesNo.NO,
                             text: "No",
-                            checked: formResponses.postRequired == YesNo.NO or (session.bookACourtHearingJourney.date and not session.bookACourtHearingJourney.postLocationId and not formResponses.postRequired)
+                            checked: formResponses.postRequired == YesNo.NO or (bookACourtHearingJourney.date and not bookACourtHearingJourney.postLocationId and not formResponses.postRequired)
                         }
                     ]
                 }) }}

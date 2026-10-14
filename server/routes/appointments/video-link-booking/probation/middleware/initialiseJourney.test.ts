@@ -61,6 +61,8 @@ describe('initialiseJourney', () => {
         probationMeetingType: 'INITIAL',
         notesForStaff: 'Staff notes',
         notesForPrisoners: 'Prisoner notes',
+        courtHearingType: 'APPEAL',
+
         prisonAppointments: [
           {
             appointmentType: 'VLB_PROBATION',

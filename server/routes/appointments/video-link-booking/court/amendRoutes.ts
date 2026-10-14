@@ -30,13 +30,13 @@ export default function AmendRoutes({
 
   // Book a court hearing journey is required in session for the following routes
   router.use((req, res, next) => {
-    if (!req.session.bookACourtHearingJourney) return res.redirect('/appointments')
+    if (!req.journeyData.bookACourtHearingJourney) return res.redirect('/appointments')
     return next()
   })
 
   // Booking needs to be amendable for the following routes
   router.use((req, res, next) => {
-    const { date, preHearingStartTime, startTime, bookingStatus } = req.session.bookACourtHearingJourney
+    const { date, preHearingStartTime, startTime, bookingStatus } = req.journeyData.bookACourtHearingJourney
     if (
       !bookAVideoLinkService.bookingIsAmendable(
         parseISO(date),

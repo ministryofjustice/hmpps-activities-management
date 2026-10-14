@@ -68,7 +68,7 @@ export default class NameRoutes {
     }
 
     if (category.code === 'VLB') {
-      req.session.bookACourtHearingJourney = {
+      req.journeyData.bookACourtHearingJourney = {
         prisoners: req.journeyData.appointmentJourney.prisoners,
       }
       req.journeyData.appointmentJourney = null

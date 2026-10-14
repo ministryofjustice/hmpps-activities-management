@@ -14,7 +14,7 @@ export default class LocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisonCode } = req.session.bookACourtHearingJourney
+    const { prisonCode } = req.journeyData.bookACourtHearingJourney
 
     const rooms = await this.bookAVideoLinkService.getAppointmentLocations(prisonCode, user)
 
@@ -26,7 +26,7 @@ export default class LocationRoutes {
     const { mode } = req.routeContext
     const { preserveHistory } = req.query
 
-    req.session.bookACourtHearingJourney.locationId = location
+    req.journeyData.bookACourtHearingJourney.locationId = location
 
     if (mode === 'amend' || preserveHistory) {
       return res.redirect(`schedule${preserveHistory ? '?preserveHistory=true' : ''}`)

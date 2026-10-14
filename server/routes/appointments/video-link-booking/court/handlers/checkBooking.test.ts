@@ -21,7 +21,7 @@ describe('CheckBookingRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookACourtHearingJourney: {
           prisoner: { prisonCode: 'PRISON1' },
         },
@@ -88,7 +88,7 @@ describe('CheckBookingRoutes', () => {
       await checkBookingRoutes.POST(req as Request, res as Response)
 
       expect(courtBookingService.createVideoLinkBooking).toHaveBeenCalledWith(
-        req.session.bookACourtHearingJourney,
+        req.journeyData.bookACourtHearingJourney,
         res.locals.user,
       )
       expect(res.redirect).toHaveBeenCalledWith('confirmation/123')

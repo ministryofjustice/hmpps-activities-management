@@ -33,11 +33,11 @@
                             },
                             value: {
                                 html: showProfileLink({
-                                    firstName: session.bookACourtHearingJourney.prisoner.firstName,
-                                    middleNames: session.bookACourtHearingJourney.prisoner.middleNames,
-                                    lastName: session.bookACourtHearingJourney.prisoner.lastName,
-                                    prisonerNumber: session.bookACourtHearingJourney.prisoner.number,
-                                    cellLocation: session.bookACourtHearingJourney.prisoner.cellLocation
+                                    firstName: bookACourtHearingJourney.prisoner.firstName,
+                                    middleNames: bookACourtHearingJourney.prisoner.middleNames,
+                                    lastName: bookACourtHearingJourney.prisoner.lastName,
+                                    prisonerNumber: bookACourtHearingJourney.prisoner.number,
+                                    cellLocation: bookACourtHearingJourney.prisoner.cellLocation
                                 })
                             }
                         },
@@ -46,7 +46,7 @@
                                 text: "Court"
                             },
                             value: {
-                                text: (courts | find('code', session.bookACourtHearingJourney.courtCode)).description
+                                text: (courts | find('code', bookACourtHearingJourney.courtCode)).description
                             },
                             actions: {
                                 items: [
@@ -65,7 +65,7 @@
                                 text: "Hearing type"
                             },
                             value: {
-                                text: (hearingTypes | find('code', session.bookACourtHearingJourney.hearingTypeCode)).description
+                                text: (hearingTypes | find('code', bookACourtHearingJourney.hearingTypeCode)).description
                             },
                             actions: {
                                 items: [
@@ -84,7 +84,7 @@
                                 text: "Court hearing link"
                             },
                             value: {
-                                text: formatCvpLink(session.bookACourtHearingJourney.hmctsNumber, session.bookACourtHearingJourney.videoLinkUrl)
+                                text: formatCvpLink(bookACourtHearingJourney.hmctsNumber, bookACourtHearingJourney.videoLinkUrl)
                             },
                             actions: {
                                 items: [
@@ -102,7 +102,7 @@
                                 text: "Guest pin"
                             },
                             value: {
-                                text: session.bookACourtHearingJourney.guestPin or "Not required"
+                                text: bookACourtHearingJourney.guestPin or "Not required"
                             },
                             actions: {
                                 items: [
@@ -142,7 +142,7 @@
                                 text: "Location"
                             },
                             value: {
-                                text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.preLocationId)).description
+                                text: (rooms | find('dpsLocationId', bookACourtHearingJourney.preLocationId)).description
                             }
                         },
                         {
@@ -150,7 +150,7 @@
                                 text: "Start time"
                             },
                             value: {
-                                text: session.bookACourtHearingJourney.preHearingStartTime | parseISODate | formatDate('HH:mm')
+                                text: bookACourtHearingJourney.preHearingStartTime | parseISODate | formatDate('HH:mm')
                             }
                         },
                         {
@@ -158,11 +158,11 @@
                                 text: "End time"
                             },
                             value: {
-                                text: session.bookACourtHearingJourney.preHearingEndTime | parseISODate | formatDate('HH:mm')
+                                text: bookACourtHearingJourney.preHearingEndTime | parseISODate | formatDate('HH:mm')
                             }
                         }
-                    ] if session.bookACourtHearingJourney.preLocationId else [{ value: { text: "No pre-court hearing" } }],
-                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookACourtHearingJourney.preLocationId,
+                    ] if bookACourtHearingJourney.preLocationId else [{ value: { text: "No pre-court hearing" } }],
+                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not bookACourtHearingJourney.preLocationId,
                     attributes: { 'data-qa': 'pre-scheduling-information' }
                 }) }}
 
@@ -178,7 +178,7 @@
                                 text: "Location"
                             },
                             value: {
-                                text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.locationId)).description
+                                text: (rooms | find('dpsLocationId', bookACourtHearingJourney.locationId)).description
                             },
                             actions: {
                                 items: [
@@ -197,7 +197,7 @@
                                 text: "Date"
                             },
                             value: {
-                                text: session.bookACourtHearingJourney.date | parseISODate | formatDate
+                                text: bookACourtHearingJourney.date | parseISODate | formatDate
                             },
                             actions: {
                                 items: [
@@ -216,7 +216,7 @@
                                 text: "Start time"
                             },
                             value: {
-                                text: session.bookACourtHearingJourney.startTime | parseISODate | formatDate('HH:mm')
+                                text: bookACourtHearingJourney.startTime | parseISODate | formatDate('HH:mm')
                             },
                             actions: {
                                 items: [
@@ -235,7 +235,7 @@
                                 text: "End time"
                             },
                             value: {
-                                text: session.bookACourtHearingJourney.endTime | parseISODate | formatDate('HH:mm')
+                                text: bookACourtHearingJourney.endTime | parseISODate | formatDate('HH:mm')
                             },
                             actions: {
                                 items: [
@@ -275,7 +275,7 @@
                                 text: "Location"
                             },
                             value: {
-                                text: (rooms | find('dpsLocationId', session.bookACourtHearingJourney.postLocationId)).description
+                                text: (rooms | find('dpsLocationId', bookACourtHearingJourney.postLocationId)).description
                             }
                         },
                         {
@@ -283,7 +283,7 @@
                                 text: "Start time"
                             },
                             value: {
-                                text: session.bookACourtHearingJourney.postHearingStartTime | parseISODate | formatDate('HH:mm')
+                                text: bookACourtHearingJourney.postHearingStartTime | parseISODate | formatDate('HH:mm')
                             }
                         },
                         {
@@ -291,11 +291,11 @@
                                 text: "End time"
                             },
                             value: {
-                                text: session.bookACourtHearingJourney.postHearingEndTime | parseISODate | formatDate('HH:mm')
+                                text: bookACourtHearingJourney.postHearingEndTime | parseISODate | formatDate('HH:mm')
                             }
                         }
-                    ] if session.bookACourtHearingJourney.postLocationId else [{ value: { text: "No post-court hearing" } }],
-                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookACourtHearingJourney.postLocationId,
+                    ] if bookACourtHearingJourney.postLocationId else [{ value: { text: "No post-court hearing" } }],
+                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not bookACourtHearingJourney.postLocationId,
                     attributes: { 'data-qa': 'post-scheduling-information' }
                 }) }}
 
@@ -322,7 +322,7 @@
                                 text: 'Notes for prison staff'
                             },
                             value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookACourtHearingJourney.notesForStaff or 'None entered' | escape) + '</span>'
+                                html: '<span class="preserve-line-breaks">' + (bookACourtHearingJourney.notesForStaff or 'None entered' | escape) + '</span>'
                             }
                         },
                         {
@@ -330,7 +330,7 @@
                                 text: "Notes for prisoner"
                             },
                             value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookACourtHearingJourney.notesForPrisoners or 'None entered' | escape) + '</span>'
+                                html: '<span class="preserve-line-breaks">' + (bookACourtHearingJourney.notesForPrisoners or 'None entered' | escape) + '</span>'
                             }
                         }
                     ],

@@ -57,8 +57,8 @@ export default class CourtHearingLinkRoutes {
     const { user } = res.locals
     const { cvpRequired, videoLinkUrl, hmctsNumber, guestPinRequired, guestPin } = req.body
 
-    req.session.bookACourtHearingJourney = {
-      ...req.session.bookACourtHearingJourney,
+    req.journeyData.bookACourtHearingJourney = {
+      ...req.journeyData.bookACourtHearingJourney,
       cvpRequired: cvpRequired === 'yes',
       videoLinkUrl: isNotEmpty(videoLinkUrl) ? videoLinkUrl : null,
       hmctsNumber: isNotEmpty(hmctsNumber) ? hmctsNumber : null,
@@ -67,12 +67,12 @@ export default class CourtHearingLinkRoutes {
     }
 
     if (mode === 'amend') {
-      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+      await this.courtBookingService.amendVideoLinkBooking(req.journeyData.bookACourtHearingJourney, user)
 
       const successHeading = "You've changed the hearing link for this court hearing"
 
       return res.redirectWithSuccess(
-        `/appointments/video-link-booking/court/${req.session.bookACourtHearingJourney.bookingId}`,
+        `/appointments/video-link-booking/court/${req.journeyData.bookACourtHearingJourney.bookingId}`,
         successHeading,
       )
     }

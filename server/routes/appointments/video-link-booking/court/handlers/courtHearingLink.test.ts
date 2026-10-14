@@ -16,7 +16,7 @@ describe('CourtHearingLinkRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookACourtHearingJourney: {
           prisoner: { prisonCode: 'PRISON1' },
         },
@@ -50,12 +50,12 @@ describe('CourtHearingLinkRoutes', () => {
     it(`redirects with success message when mode is amend`, async () => {
       req.body.videoLinkUrl = 'URL'
       req.routeContext = { mode: 'amend' }
-      req.session.bookACourtHearingJourney.bookingId = 1
+      req.journeyData.bookACourtHearingJourney.bookingId = 1
 
       await courtHearingLinkRoutes.POST(req as Request, res as Response)
 
       expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        req.session.bookACourtHearingJourney,
+        req.journeyData.bookACourtHearingJourney,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
