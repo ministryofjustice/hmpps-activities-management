@@ -221,6 +221,48 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
       expect(req.journeyData.appointmentJourney).toBeDefined()
     })
 
+    it.each([
+      ['SMITH', 'John Smith’s'],
+      ['JONES', 'John Jones’'],
+    ])('should use the possessive name in the profile link for %s', async (lastName, possessiveName) => {
+      req.appointment.attendees = [
+        {
+          prisoner: { prisonerNumber: 'A1234BC', firstName: 'JOHN', lastName },
+        },
+      ] as AppointmentDetails['attendees']
+
+      await handler.GET(req, res)
+
+      expect((res.render as jest.Mock).mock.calls[0][1].actions).toContainEqual({
+        href: 'https://prisoner-dev.digital.prison.service.justice.gov.uk/prisoner/A1234BC',
+        text: `Go to ${possessiveName} prisoner profile`,
+        dataQa: 'prisoner-profile-link',
+      })
+    })
+
+    it('should link to attendance for a retrospective appointment with multiple attendees', async () => {
+      req.journeyData.appointmentJourney.retrospective = YesNo.YES
+      req.appointment.attendees = [
+        { prisoner: { prisonerNumber: 'A1234BC' } },
+        { prisoner: { prisonerNumber: 'B2345CD' } },
+      ] as AppointmentDetails['attendees']
+
+      await handler.GET(req, res)
+
+      expect((res.render as jest.Mock).mock.calls[0][1].actions).toEqual([
+        {
+          href: '/appointments',
+          text: 'Schedule an appointment',
+          dataQa: 'create-another-link',
+        },
+        {
+          href: '/appointments/attendance/1/attendees',
+          text: 'Record appointment attendance',
+          dataQa: 'record-attendance-link',
+        },
+      ])
+    })
+
     it('should not change the completed journey or its metrics', async () => {
       const completedJourney = req.journeyData.appointmentJourney
       const completedMetrics = req.session.journeyMetrics
@@ -278,7 +320,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
           dataQa: 'prisoner-profile-link',
         },
         {
-          href: '/appointments/attendance/11/select-appointment',
+          href: '/appointments/attendance/11/attendees',
           text: 'Record appointment attendance',
           dataQa: 'record-attendance-link',
         },
@@ -364,6 +406,32 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
       expect(req.journeyData.appointmentJourney).toBe(completedJourney)
       expect(req.journeyData.appointmentSetJourney).toBe(completedSetJourney)
     })
+
+    it.each([YesNo.YES, YesNo.NO])(
+      'should offer set navigation without prisoner links for multiple attendees when retrospective is %s',
+      async retrospective => {
+        req.journeyData.appointmentJourney.retrospective = retrospective
+        req.appointmentSet.appointments = [
+          { attendees: [{ prisoner: { prisonerNumber: 'A1234BC' } }] },
+          { attendees: [{ prisoner: { prisonerNumber: 'B2345CD' } }] },
+        ] as AppointmentSetDetails['appointments']
+
+        await handler.GET_SET(req, res)
+
+        expect((res.render as jest.Mock).mock.calls[0][1].actions).toEqual([
+          {
+            href: '/appointments',
+            text: 'Schedule an appointment',
+            dataQa: 'create-another-link',
+          },
+          {
+            href: '/appointments/set/3',
+            text: 'View, manage and print movement slips for this set of appointments',
+            dataQa: 'view-appointment-link',
+          },
+        ])
+      },
+    )
 
     it('should not change the completed journeys or their metrics', async () => {
       const completedJourney = req.journeyData.appointmentJourney
