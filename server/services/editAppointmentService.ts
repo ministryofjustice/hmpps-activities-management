@@ -232,7 +232,7 @@ export default class EditAppointmentService {
   private clearSession(req: Request) {
     req.journeyData.editAppointmentJourney = null
     req.journeyData.appointmentJourney = null
-    req.session.journeyMetrics = null
+    req.journeyData.journeyMetrics = null
   }
 
   private getAppointmentDetailsUrl(appointmentId: string, returnUrl?: string) {

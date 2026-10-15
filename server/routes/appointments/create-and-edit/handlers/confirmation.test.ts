@@ -23,12 +23,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     } as unknown as Response
 
     req = {
-      session: {
-        journeyMetrics: {
-          journeyStartTime: Date.now() - 60000,
-          source: 'startLink',
-        },
-      },
+      session: {},
       journeyData: {
         appointmentJourney: {
           prisoner: {
@@ -62,6 +57,10 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
           },
         },
         appointmentSetJourney: {},
+        journeyMetrics: {
+          journeyStartTime: Date.now() - 60000,
+          source: 'startLink',
+        },
       },
       appointment: {
         id: 1,
@@ -69,6 +68,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
         attendees: [],
       } as AppointmentDetails,
       appointmentSet: { id: 3, appointments: [] } as AppointmentSetDetails,
+
       params: {
         journeyId,
         id: '1',
@@ -223,12 +223,12 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
     it('should not change the completed journey or its metrics', async () => {
       const completedJourney = req.journeyData.appointmentJourney
-      const completedMetrics = req.session.journeyMetrics
+      const completedMetrics = req.journeyData.journeyMetrics
 
       await handler.GET(req, res)
 
       expect(req.journeyData.appointmentJourney).toBe(completedJourney)
-      expect(req.session.journeyMetrics).toBe(completedMetrics)
+      expect(req.journeyData.journeyMetrics).toBe(completedMetrics)
     })
 
     it('should render a retrospective confirmation consistently on refresh', async () => {
@@ -251,14 +251,14 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
       } as AppointmentDetails
 
       const completedJourney = req.journeyData.appointmentJourney
-      const completedMetrics = req.session.journeyMetrics
+      const completedMetrics = req.journeyData.journeyMetrics
 
       await handler.GET(req, res)
       await handler.GET(req, res)
 
       expect(req.journeyData.appointmentJourney).toBe(completedJourney)
       expect(req.journeyData.appointmentJourney.retrospective).toEqual(YesNo.YES)
-      expect(req.session.journeyMetrics).toBe(completedMetrics)
+      expect(req.journeyData.journeyMetrics).toBe(completedMetrics)
       expect(res.render).toHaveBeenCalledTimes(2)
       expect((res.render as jest.Mock).mock.calls[0][1]).toEqual((res.render as jest.Mock).mock.calls[1][1])
       expect((res.render as jest.Mock).mock.calls[1][1].actions).toEqual([
@@ -288,7 +288,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
   describe('GET_SET', () => {
     it('should render the confirmation page with appointment set details', async () => {
-      req.session.journeyMetrics.source = null
+      req.journeyData.journeyMetrics.source = null
 
       await handler.GET_SET(req, res)
 
@@ -311,7 +311,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     })
 
     it('should offer prisoner actions without changing the completed journey for a one-person appointment set', async () => {
-      req.session.journeyMetrics.source = null
+      req.journeyData.journeyMetrics.source = null
       req.appointmentSet = {
         id: 3,
         appointments: [
@@ -368,13 +368,13 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should not change the completed journeys or their metrics', async () => {
       const completedJourney = req.journeyData.appointmentJourney
       const completedSetJourney = req.journeyData.appointmentSetJourney
-      const completedMetrics = req.session.journeyMetrics
+      const completedMetrics = req.journeyData.journeyMetrics
 
       await handler.GET_SET(req, res)
 
       expect(req.journeyData.appointmentJourney).toBe(completedJourney)
       expect(req.journeyData.appointmentSetJourney).toBe(completedSetJourney)
-      expect(req.session.journeyMetrics).toBe(completedMetrics)
+      expect(req.journeyData.journeyMetrics).toBe(completedMetrics)
     })
   })
 })

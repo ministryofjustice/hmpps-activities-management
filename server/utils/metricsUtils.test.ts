@@ -7,24 +7,24 @@ describe('Metrics Utils', () => {
 
     beforeEach(() => {
       req = {
-        session: {},
+        journeyData: {},
       } as unknown as Request
     })
 
     it('initialises journey metrics session data with source', () => {
       initJourneyMetrics(req, 'theSource')
 
-      expect(req.session.journeyMetrics).not.toBeNull()
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toEqual('theSource')
+      expect(req.journeyData.journeyMetrics).not.toBeNull()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toEqual('theSource')
     })
 
     it('initialises journey metrics session data without source', () => {
       initJourneyMetrics(req)
 
-      expect(req.session.journeyMetrics).not.toBeNull()
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(req.journeyData.journeyMetrics).not.toBeNull()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
     })
   })
 })

@@ -48,7 +48,7 @@ export default class CheckAnswersRoutes {
       this.metricsService.trackEvent(
         MetricsEvent.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED(response.id, req, res.locals.user),
       )
-      req.session.journeyMetrics = null
+      req.journeyData.journeyMetrics = null
 
       res.redirect(`set-confirmation/${response.id}`)
     } else {
@@ -58,7 +58,7 @@ export default class CheckAnswersRoutes {
       this.metricsService.trackEvent(
         MetricsEvent.CREATE_APPOINTMENT_JOURNEY_COMPLETED(response.id, req, res.locals.user, appointmentJourney),
       )
-      req.session.journeyMetrics = null
+      req.journeyData.journeyMetrics = null
 
       res.redirect(`confirmation/${response.appointments[0].id}`)
     }
