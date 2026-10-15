@@ -224,7 +224,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it.each([
       ['SMITH', 'John Smith’s'],
       ['JONES', 'John Jones’'],
-    ])('should use the possessive name in the profile link for %s', async (lastName, possessiveName) => {
+    ])('should use the name in the profile link for %s', async (lastName, possessiveName) => {
       req.appointment.attendees = [
         {
           prisoner: { prisonerNumber: 'A1234BC', firstName: 'JOHN', lastName },
