@@ -31,11 +31,6 @@ declare module 'express-session' {
   }
 }
 
-export type SessionDatum = {
-  instanceUnixEpoch: number
-  journeyMetrics: JourneyMetrics
-}
-
 declare module 'express-serve-static-core' {
   interface Response {
     redirectWithSuccess?(path: string, successHeading: string, message?: string): void
