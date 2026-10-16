@@ -25,7 +25,7 @@ export default function AmendRoutes({
   const schedule = new ScheduleRoutes(activitiesService, bookAVideoLinkService, probationBookingService)
   const extraInformation = new ExtraInformationRoutes(probationBookingService)
 
-  // Book a probation meeting journey is required in session for the following routes
+  // Book a probation meeting journey is required in journeyData for the following routes
   router.use((req, res, next) => {
     if (!req.journeyData.bookAProbationMeetingJourney) return res.redirect('/appointments')
     return next()

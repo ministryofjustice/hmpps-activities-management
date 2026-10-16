@@ -28,7 +28,7 @@ export default function AmendRoutes({
   const courtHearingLink = new CourtHearingLinkRoutes(courtBookingService)
   const extraInformation = new ExtraInformationRoutes(courtBookingService)
 
-  // Book a court hearing journey is required in session for the following routes
+  // Book a court hearing journey is required in journeyData for the following routes
   router.use((req, res, next) => {
     if (!req.journeyData.bookACourtHearingJourney) return res.redirect('/appointments')
     return next()

@@ -47,12 +47,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     } as unknown as Response
 
     req = {
-      session: {
-        journeyMetrics: {
-          journeyStartTime: Date.now() - 60000,
-          source: 'startLink',
-        },
-      },
+      session: {},
       params: { journeyId },
       journeyData: {
         appointmentJourney: {
@@ -90,6 +85,10 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
           repeat: YesNo.NO,
         },
         appointmentSetJourney: {},
+        journeyMetrics: {
+          journeyStartTime: Date.now() - 60000,
+          source: 'startLink',
+        },
       },
     } as unknown as Request
   })
@@ -190,7 +189,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
           .addProperty('appointmentSeriesId', 15)
           .addMeasurement('journeyTimeSec', 60),
       )
-      expect(req.session.journeyMetrics).toBeNull()
+      expect(req.journeyData.journeyMetrics).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
     })
 
@@ -276,7 +275,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     let expectedResponse: AppointmentSet
 
     beforeEach(() => {
-      req.session.journeyMetrics.source = null
+      req.journeyData.journeyMetrics.source = null
       req.journeyData.appointmentJourney.type = AppointmentType.SET
 
       req.journeyData.appointmentSetJourney = {
@@ -408,7 +407,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
           .addProperty('appointmentSetId', 14)
           .addMeasurement('journeyTimeSec', 60),
       )
-      expect(req.session.journeyMetrics).toBeNull()
+      expect(req.journeyData.journeyMetrics).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('set-confirmation/14')
     })
 

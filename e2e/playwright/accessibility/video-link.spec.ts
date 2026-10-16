@@ -43,15 +43,7 @@ const setup = async (type: 'court' | 'probation') => {
   await stubEndpoint('POST', '/appointments/MDI/search', [])
 }
 
-accessibilityArea(
-  'appointments/video-link-booking/court',
-  () => setup('court'),
-  { bookACourtHearingJourney: court },
-  {},
-)
-accessibilityArea(
-  'appointments/video-link-booking/probation',
-  () => setup('probation'),
-  { bookAProbationMeetingJourney: probation },
-  {},
-)
+accessibilityArea('appointments/video-link-booking/court', () => setup('court'), { bookACourtHearingJourney: court })
+accessibilityArea('appointments/video-link-booking/probation', () => setup('probation'), {
+  bookAProbationMeetingJourney: probation,
+})
