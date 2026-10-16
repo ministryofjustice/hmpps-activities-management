@@ -11,7 +11,7 @@ describe('Metrics Utils', () => {
       } as unknown as Request
     })
 
-    it('initialises journey metrics session data with source', () => {
+    it('initialises journey metrics journeyData with source', () => {
       initJourneyMetrics(req, 'theSource')
 
       expect(req.journeyData.journeyMetrics).not.toBeNull()
