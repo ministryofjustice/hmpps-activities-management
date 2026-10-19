@@ -42,16 +42,8 @@ const setup = async (type: 'court' | 'probation') => {
   await stubEndpoint('GET', '/users/.*', { username: 'jsmith', name: 'John Smith', authSource: 'nomis' })
   await stubEndpoint('POST', '/appointments/MDI/search', [])
 }
-// Both booking types currently use sessionDataMap rather than the Redis journey token store.
-accessibilityArea(
-  'appointments/video-link-booking/court',
-  () => setup('court'),
-  {},
-  { bookACourtHearingJourney: court },
-)
-accessibilityArea(
-  'appointments/video-link-booking/probation',
-  () => setup('probation'),
-  {},
-  { bookAProbationMeetingJourney: probation },
-)
+
+accessibilityArea('appointments/video-link-booking/court', () => setup('court'), { bookACourtHearingJourney: court })
+accessibilityArea('appointments/video-link-booking/probation', () => setup('probation'), {
+  bookAProbationMeetingJourney: probation,
+})

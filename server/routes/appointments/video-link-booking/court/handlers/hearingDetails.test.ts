@@ -16,7 +16,7 @@ describe('HearingDetailsRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookACourtHearingJourney: {},
       },
       body: {},
@@ -55,12 +55,12 @@ describe('HearingDetailsRoutes', () => {
       req.body.courtCode = 'COURT1'
       req.body.hearingTypeCode = 'TYPE1'
       req.routeContext = { mode: 'amend' }
-      req.session.bookACourtHearingJourney.bookingId = 1
+      req.journeyData.bookACourtHearingJourney.bookingId = 1
 
       await hearingDetailsRoutes.POST(req as Request, res as Response)
 
       expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        req.session.bookACourtHearingJourney,
+        req.journeyData.bookACourtHearingJourney,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(

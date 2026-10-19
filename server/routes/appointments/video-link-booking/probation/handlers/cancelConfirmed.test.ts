@@ -13,7 +13,7 @@ describe('CancelConfirmedRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookAProbationMeetingJourney: {
           probationTeamCode: 'code',
           prisoner: { prisonCode: 'PRISON1' },

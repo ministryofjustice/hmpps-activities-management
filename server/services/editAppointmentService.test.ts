@@ -41,11 +41,7 @@ describe('Edit Appointment Service', () => {
 
   beforeEach(() => {
     req = {
-      session: {
-        journeyMetrics: {
-          journeyStartTime: Date.now() - 60000,
-        },
-      },
+      session: {},
       journeyData: {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
@@ -98,6 +94,9 @@ describe('Edit Appointment Service', () => {
           ],
           sequenceNumber: 2,
         } as EditAppointmentJourney,
+        journeyMetrics: {
+          journeyStartTime: Date.now() - 60000,
+        },
       },
       params: {
         journeyId,
@@ -142,7 +141,7 @@ describe('Edit Appointment Service', () => {
       )
       expect(req.journeyData.appointmentJourney).toBeNull()
       expect(req.journeyData.editAppointmentJourney).toBeNull()
-      expect(req.session.journeyMetrics).toBeNull()
+      expect(req.journeyData.journeyMetrics).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
     })
 
@@ -179,7 +178,7 @@ describe('Edit Appointment Service', () => {
       )
       expect(req.journeyData.appointmentJourney).toBeNull()
       expect(req.journeyData.editAppointmentJourney).toBeNull()
-      expect(req.session.journeyMetrics).toBeNull()
+      expect(req.journeyData.journeyMetrics).toBeNull()
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         `/appointments/${appointmentId}`,
         "You've changed the location for this appointment",
@@ -199,7 +198,7 @@ describe('Edit Appointment Service', () => {
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
       expect(req.journeyData.appointmentJourney).not.toBeNull()
       expect(req.journeyData.editAppointmentJourney).not.toBeNull()
-      expect(req.session.journeyMetrics).not.toBeNull()
+      expect(req.journeyData.journeyMetrics).not.toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('location/apply-to')
     })
   })
@@ -276,7 +275,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
@@ -304,7 +303,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've uncancelled this appointment",
@@ -336,7 +335,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
@@ -380,7 +379,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
@@ -413,7 +412,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
@@ -444,7 +443,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for this appointment",
@@ -478,7 +477,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the date for this appointment",
@@ -516,7 +515,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the time for this appointment",
@@ -554,7 +553,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the time for this appointment",
@@ -593,7 +592,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the time for this appointment",
@@ -637,7 +636,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the time for this appointment",
@@ -677,7 +676,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the date and time for this appointment",
@@ -717,7 +716,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the date and time for this appointment",
@@ -763,7 +762,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the date and time for this appointment",
@@ -797,7 +796,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the extra information for this appointment",
@@ -832,7 +831,7 @@ describe('Edit Appointment Service', () => {
       )
       expect(req.journeyData.appointmentJourney).toBeNull()
       expect(req.journeyData.editAppointmentJourney).toBeNull()
-      expect(req.session.journeyMetrics).toBeNull()
+      expect(req.journeyData.journeyMetrics).toBeNull()
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         `/appointments/${appointmentId}`,
         "You've changed the extra information for this appointment",
@@ -860,7 +859,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
@@ -888,7 +887,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've uncancelled 3 appointments in this series",
@@ -914,7 +913,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
@@ -939,7 +938,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 2 to 4 in the series",
@@ -984,7 +983,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 2 to 3 in the series",
@@ -1013,7 +1012,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
@@ -1041,7 +1040,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've uncancelled 4 appointments in this series",
@@ -1067,7 +1066,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
@@ -1092,7 +1091,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 1 to 4 in the series",
@@ -1133,7 +1132,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 3 to 4 in the series",
@@ -1178,7 +1177,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 1 to 3 in the series",
@@ -1218,7 +1217,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(req.journeyData.appointmentJourney).toBeNull()
         expect(req.journeyData.editAppointmentJourney).toBeNull()
-        expect(req.session.journeyMetrics).toBeNull()
+        expect(req.journeyData.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've added these people to appointments 1 to 4 in the series",
@@ -1261,7 +1260,7 @@ describe('Edit Appointment Service', () => {
         expect(metricsService.trackEvent).not.toHaveBeenCalled()
         expect(req.journeyData.appointmentJourney).not.toBeNull()
         expect(req.journeyData.editAppointmentJourney).not.toBeNull()
-        expect(req.session.journeyMetrics).not.toBeNull()
+        expect(req.journeyData.journeyMetrics).not.toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledTimes(0)
       })
     })

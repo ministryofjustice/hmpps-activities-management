@@ -19,7 +19,7 @@
     </div>
 
     {% set items = [] %}
-    {% for prisoner in session.bookACourtHearingJourney.prisoners %}
+    {% for prisoner in bookACourtHearingJourney.prisoners %}
         {% set items = (items.push({
             value: prisoner.number,
             text: prisoner.name | toTitleCase + " (" + prisoner.number + ")"

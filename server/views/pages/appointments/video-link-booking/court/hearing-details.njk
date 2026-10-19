@@ -36,7 +36,7 @@
                     {% set items = (items.push({
                         value: court.code,
                         text: court.description,
-                        selected: formResponses.courtCode == court.code or session.bookACourtHearingJourney.courtCode == court.code
+                        selected: formResponses.courtCode == court.code or bookACourtHearingJourney.courtCode == court.code
                     }), items) %}
                 {% endfor %}
 
@@ -52,7 +52,7 @@
                         errorMessage: validationErrors | findError("courtCode")
                     }) }}
                 {% else %}
-                    <input type="hidden" name="courtCode" value="{{ session.bookACourtHearingJourney.courtCode }}">
+                    <input type="hidden" name="courtCode" value="{{ bookACourtHearingJourney.courtCode }}">
                 {% endif %}
 
                 {% set items = [{ text: "", value: "" }] %}
@@ -60,7 +60,7 @@
                     {% set items = (items.push({
                         value: hearingType.code,
                         text: hearingType.description,
-                        selected: formResponses.hearingTypeCode == hearingType.code or session.bookACourtHearingJourney.hearingTypeCode == hearingType.code
+                        selected: formResponses.hearingTypeCode == hearingType.code or bookACourtHearingJourney.hearingTypeCode == hearingType.code
                     }), items) %}
                 {% endfor %}
 

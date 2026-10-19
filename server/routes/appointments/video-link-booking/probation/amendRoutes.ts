@@ -25,15 +25,15 @@ export default function AmendRoutes({
   const schedule = new ScheduleRoutes(activitiesService, bookAVideoLinkService, probationBookingService)
   const extraInformation = new ExtraInformationRoutes(probationBookingService)
 
-  // Book a probation meeting journey is required in session for the following routes
+  // Book a probation meeting journey is required in journeyData for the following routes
   router.use((req, res, next) => {
-    if (!req.session.bookAProbationMeetingJourney) return res.redirect('/appointments')
+    if (!req.journeyData.bookAProbationMeetingJourney) return res.redirect('/appointments')
     return next()
   })
 
   // Booking needs to be amendable for the following routes
   router.use((req, res, next) => {
-    const { date, startTime, bookingStatus } = req.session.bookAProbationMeetingJourney
+    const { date, startTime, bookingStatus } = req.journeyData.bookAProbationMeetingJourney
     if (!bookAVideoLinkService.bookingIsAmendable(parseISO(date), parseISO(startTime), bookingStatus)) {
       return next(createHttpError.NotFound())
     }

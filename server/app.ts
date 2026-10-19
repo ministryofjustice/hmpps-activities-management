@@ -26,7 +26,6 @@ import setUpChangeLinks from './middleware/setUpChangeLinks'
 import trimRequestBody from './middleware/trimBodyMiddleware'
 import setUpValidationExtensions from './middleware/setUpValidationExtensions'
 import formValidationErrorHandler from './middleware/formValidationErrorHandler'
-import populateJourney from './middleware/populateJourney'
 import logger from '../logger'
 import redirectInterceptor from './middleware/redirectInterceptor'
 import renderInterceptor from './middleware/renderInterceptor'
@@ -92,7 +91,6 @@ export default function createApp(services: Services): express.Application {
   )
   app.use(trimRequestBody())
   app.use(setUpValidationExtensions())
-  app.use(populateJourney())
   app.use(renderInterceptor(services.tokenStore))
   app.use(redirectInterceptor(services.tokenStore))
   app.use(routes(services))

@@ -47,7 +47,7 @@ export default class MetricsEvent {
   }
 
   addJourneyStartedMetrics(req: Request) {
-    const { journeyMetrics } = req.session
+    const { journeyMetrics } = req.journeyData
     const { journeyId } = req.params as { journeyId: string }
 
     if (journeyId) this.addProperty('journeyId', journeyId)
@@ -56,10 +56,10 @@ export default class MetricsEvent {
   }
 
   addJourneyCompletedMetrics(req: Request) {
-    if (!req.session.journeyMetrics) return this
+    if (!req.journeyData.journeyMetrics) return this
 
     const { journeyId } = req.params as { journeyId: string }
-    const { journeyStartTime, source } = req.session.journeyMetrics
+    const { journeyStartTime, source } = req.journeyData.journeyMetrics
 
     if (journeyId) this.addProperty('journeyId', journeyId)
     if (source) this.addProperty('journeySource', source)

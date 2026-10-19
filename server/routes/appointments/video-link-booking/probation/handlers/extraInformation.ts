@@ -29,18 +29,18 @@ export default class ExtraInformationRoutes {
     const { user } = res.locals
     const { notesForStaff, notesForPrisoners } = req.body
 
-    req.session.bookAProbationMeetingJourney = {
-      ...req.session.bookAProbationMeetingJourney,
+    req.journeyData.bookAProbationMeetingJourney = {
+      ...req.journeyData.bookAProbationMeetingJourney,
       notesForStaff,
       notesForPrisoners,
     }
 
     if (mode === 'amend') {
-      await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
+      await this.probationBookingService.amendVideoLinkBooking(req.journeyData.bookAProbationMeetingJourney, user)
 
       const successHeading = "You've changed the extra information for this probation meeting"
       return res.redirectWithSuccess(
-        `/appointments/video-link-booking/probation/${req.session.bookAProbationMeetingJourney.bookingId}`,
+        `/appointments/video-link-booking/probation/${req.journeyData.bookAProbationMeetingJourney.bookingId}`,
         successHeading,
       )
     }

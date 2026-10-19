@@ -78,7 +78,7 @@ export default class ConfirmationRoutes {
       })
     } else if (appointmentJourney.retrospective === YesNo.YES) {
       actions.push({
-        href: `/appointments/attendance/${appointment.id}/select-appointment`,
+        href: `/appointments/attendance/${appointment.id}/attendees`,
         text: 'Record appointment attendance',
         dataQa: 'record-attendance-link',
       })

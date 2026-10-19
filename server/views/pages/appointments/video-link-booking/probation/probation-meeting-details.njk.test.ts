@@ -26,16 +26,16 @@ describe('Video link booking - Probation - Meeting details page', () => {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
       },
+      bookAProbationMeetingJourney: {
+        probationTeamRequired: false,
+        probationOfficerDetailsKnown: false,
+        officer: {},
+      },
       probationTeams: [{ code: 'TEAM_1', description: 'Barking' }],
       meetingTypes: types,
       formResponses,
       session: {
         req: { routeContext: { mode: 'create' } },
-        bookAProbationMeetingJourney: {
-          probationTeamRequired: false,
-          probationOfficerDetailsKnown: false,
-          officer: {},
-        },
       },
     }
 

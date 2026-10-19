@@ -11,7 +11,7 @@ describe('SelectPrisonerRoutes', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         bookACourtHearingJourney: {
           prisoners: [
             { number: 'A1234BC', name: 'John Doe', prisonCode: 'MDI' },
@@ -35,16 +35,16 @@ describe('SelectPrisonerRoutes', () => {
     })
 
     it('redirects to hearing-details if only one prisoner', async () => {
-      req.session.bookACourtHearingJourney.prisoners = [
+      req.journeyData.bookACourtHearingJourney.prisoners = [
         { number: 'A1234BC', name: 'John Doe', prisonCode: 'MDI' },
       ] as AppointmentPrisonerDetails[]
       await selectPrisonerRoutes.GET(req as Request, res as Response)
-      expect(req.session.bookACourtHearingJourney.prisoner).toEqual({
+      expect(req.journeyData.bookACourtHearingJourney.prisoner).toEqual({
         number: 'A1234BC',
         name: 'John Doe',
         prisonCode: 'MDI',
       })
-      expect(req.session.bookACourtHearingJourney.prisonCode).toEqual('MDI')
+      expect(req.journeyData.bookACourtHearingJourney.prisonCode).toEqual('MDI')
       expect(res.redirect).toHaveBeenCalledWith('hearing-details')
     })
   })
@@ -54,12 +54,12 @@ describe('SelectPrisonerRoutes', () => {
       req.body = { prisonerNumber: 'A1234BC' }
       await selectPrisonerRoutes.POST(req as Request, res as Response)
       expect(res.redirect).toHaveBeenCalledWith('hearing-details')
-      expect(req.session.bookACourtHearingJourney.prisoner).toEqual({
+      expect(req.journeyData.bookACourtHearingJourney.prisoner).toEqual({
         number: 'A1234BC',
         name: 'John Doe',
         prisonCode: 'MDI',
       })
-      expect(req.session.bookACourtHearingJourney.prisonCode).toEqual('MDI')
+      expect(req.journeyData.bookACourtHearingJourney.prisonCode).toEqual('MDI')
     })
   })
 

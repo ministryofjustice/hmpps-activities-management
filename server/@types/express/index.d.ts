@@ -28,22 +28,7 @@ declare module 'express-session' {
     prisonerSearchBackLinkHref?: string
     nowInMinutes: number
     user: ServiceUser
-    // The following session data properties are overridden by the populateJourney middleware.
-    // That middleware redirects the getter and setter to use the sessionDataMap below. As a result,
-    // these properties are virtual and are not directly set. They exist to allow pre-existing access
-    // as if there was only one journey per session e.g. req.session.journeyMetrics
-    bookACourtHearingJourney: BookACourtHearingJourney
-    bookAProbationMeetingJourney: BookAProbationMeetingJourney
-    journeyMetrics: JourneyMetrics
-    // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
-    // middlewares and the appointment routes in index.ts
-    sessionDataMap: Map<string, SessionDatum>
   }
-}
-
-export type SessionDatum = {
-  instanceUnixEpoch: number
-  journeyMetrics: JourneyMetrics
 }
 
 declare module 'express-serve-static-core' {
@@ -86,11 +71,14 @@ export type JourneyData = {
   unlockListJourney?: UnlockListJourney
   recordAttendanceJourney?: RecordAttendanceJourney
   allocateJourney?: AllocateToActivityJourney
+  bookACourtHearingJourney?: BookACourtHearingJourney
+  bookAProbationMeetingJourney?: BookAProbationMeetingJourney
   recordAppointmentAttendanceJourney?: RecordAppointmentAttendanceJourney
   appointmentJourney?: AppointmentJourney
   editAppointmentJourney?: EditAppointmentJourney
   appointmentSetJourney?: AppointmentSetJourney
   suspendJourney?: SuspendJourney
+  journeyMetrics?: JourneyMetrics
 }
 
 export type ServiceUser = Express.User &

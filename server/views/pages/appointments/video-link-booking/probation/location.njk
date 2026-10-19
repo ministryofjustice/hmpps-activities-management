@@ -30,7 +30,7 @@
                     {% set items = (items.push({
                         value: room.dpsLocationId,
                         text: room.description,
-                        selected: formResponses.location == room.dpsLocationId or session.bookAProbationMeetingJourney.locationId == room.dpsLocationId
+                        selected: formResponses.location == room.dpsLocationId or bookAProbationMeetingJourney.locationId == room.dpsLocationId
                     }), items) %}
                 {% endfor %}
 

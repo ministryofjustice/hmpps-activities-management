@@ -34,15 +34,15 @@ export default class HearingDetailsRoutes {
     const { mode } = req.routeContext
     const { user } = res.locals
 
-    req.session.bookACourtHearingJourney.courtCode = courtCode
-    req.session.bookACourtHearingJourney.hearingTypeCode = hearingTypeCode
+    req.journeyData.bookACourtHearingJourney.courtCode = courtCode
+    req.journeyData.bookACourtHearingJourney.hearingTypeCode = hearingTypeCode
 
     if (mode === 'amend') {
-      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+      await this.courtBookingService.amendVideoLinkBooking(req.journeyData.bookACourtHearingJourney, user)
 
       const successHeading = "You've changed the hearing type for this court hearing"
       return res.redirectWithSuccess(
-        `/appointments/video-link-booking/court/${req.session.bookACourtHearingJourney.bookingId}`,
+        `/appointments/video-link-booking/court/${req.journeyData.bookACourtHearingJourney.bookingId}`,
         successHeading,
       )
     }
