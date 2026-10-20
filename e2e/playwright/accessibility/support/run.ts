@@ -3,7 +3,7 @@ import { format } from 'date-fns'
 import screens from '../screens.json'
 import test from './fixtures'
 import { expectPage } from '../../helpers/page'
-import { withJourney, withSessionJourney } from './journey'
+import { withJourney } from './journey'
 import { JourneyData } from '../../../../server/@types/express'
 
 export type Screen = (typeof screens)[number]
@@ -12,7 +12,6 @@ export const accessibilityArea = (
   area: string,
   setup: (screen: Screen) => Promise<unknown>,
   journey: JourneyData | ((screen: Screen) => JourneyData) = {},
-  sessionJourney?: Record<string, unknown>,
 ): void => {
   test.describe(`${area} @accessibility`, () => {
     screens
@@ -33,8 +32,7 @@ export const accessibilityArea = (
             return
           }
           await withJourney(typeof journey === 'function' ? journey(screen) : journey, async journeyId => {
-            if (sessionJourney) await withSessionJourney(page, journeyId, sessionJourney, () => visit(journeyId))
-            else await visit(journeyId)
+            await visit(journeyId)
           })
         })
       })

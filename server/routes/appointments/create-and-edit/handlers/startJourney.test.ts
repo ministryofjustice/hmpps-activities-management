@@ -137,8 +137,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toEqual('startLink')
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toEqual('startLink')
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
@@ -164,8 +164,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
         appointments: [],
       })
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_STARTED, res.locals.user).addProperty(
@@ -193,8 +193,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       )
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user).addProperty(
@@ -221,8 +221,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       )
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user).addProperty(
@@ -247,8 +247,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user).addProperty(
@@ -273,8 +273,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user).addProperty(
@@ -305,8 +305,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toEqual('prisonerProfile')
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toEqual('prisonerProfile')
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
@@ -348,8 +348,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toEqual('prisonerProfile')
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toEqual('prisonerProfile')
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
@@ -378,7 +378,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         prisoners: [],
         fromAppointmentConfirmation: true,
       })
-      expect(req.session.journeyMetrics.source).toEqual('appointmentConfirmation')
+      expect(req.journeyData.journeyMetrics.source).toEqual('appointmentConfirmation')
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
           .addProperty('journeyId', journeyId)
@@ -420,7 +420,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
           },
         ],
       })
-      expect(req.session.journeyMetrics.source).toEqual('appointmentConfirmation')
+      expect(req.journeyData.journeyMetrics.source).toEqual('appointmentConfirmation')
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
           .addProperty('journeyId', journeyId)
@@ -514,7 +514,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.appointmentJourney).toBeUndefined()
       expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
-      expect(req.session.journeyMetrics).toBeUndefined()
+      expect(req.journeyData.journeyMetrics).toBeUndefined()
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith('/')
     })
@@ -529,7 +529,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.appointmentJourney).toBeUndefined()
       expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
-      expect(req.session.journeyMetrics).toBeUndefined()
+      expect(req.journeyData.journeyMetrics).toBeUndefined()
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith('/')
     })
@@ -565,8 +565,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
@@ -628,7 +628,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.appointmentJourney).toBeUndefined()
       expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
-      expect(req.session.journeyMetrics).toBeUndefined()
+      expect(req.journeyData.journeyMetrics).toBeUndefined()
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith('/')
     })
@@ -670,8 +670,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
@@ -727,8 +727,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
@@ -779,8 +779,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
@@ -829,8 +829,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
@@ -878,8 +878,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.journeyData.appointmentSetJourney).toBeUndefined()
 
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toBeUndefined()
+      expect(Date.now() - req.journeyData.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.journeyData.journeyMetrics.source).toBeUndefined()
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_STARTED, res.locals.user)

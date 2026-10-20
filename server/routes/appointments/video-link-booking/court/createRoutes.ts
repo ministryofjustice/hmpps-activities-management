@@ -33,7 +33,7 @@ export default function CreateRoutes({
   const checkBooking = new CheckBookingRoutes(bookAVideoLinkService, courtBookingService)
   const confirmation = new ConfirmationRoutes(bookAVideoLinkService, prisonService)
 
-  // Book a video link journey is required in session for the following routes
+  // Book a video link journey is required in journeyData for the following routes
   router.use((req, res, next) => {
     if (!req.journeyData.bookACourtHearingJourney) return res.redirect('/appointments')
     return next()
