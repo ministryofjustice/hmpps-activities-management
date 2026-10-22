@@ -7,7 +7,7 @@ export default class StartJourneyRoutes {
   constructor(private readonly metricsService: MetricsService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    req.session.journeyMetrics = {}
+    req.journeyData.journeyMetrics = {}
     req.journeyData.createJourney = {}
     initJourneyMetrics(req)
     this.metricsService.trackEvent(
