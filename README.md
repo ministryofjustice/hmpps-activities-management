@@ -63,6 +63,13 @@ Then install dependencies:
 
 Using the `.env-template` file as a template, copy to a new `.env` file `cp .env-template .env`
 
+Navigation uses `DPS_HOME_PAGE_URL` for the DPS homepage, prisoner search and change-caseload,
+and `PRISONER_URL` for prisoner profiles and case notes. `PRISONER_WORK_ACTIVITIES_URL`
+is the legacy DPS origin, used only for `/prisoner/:prisonerNumber/work-activities`
+(the last 12 months of allocations), which has not migrated to the prisoner-profile service.
+The legacy origin also remains allowed by CSP because the shared frontend header
+still submits its search form there.
+
 The following values can be extracted from the cluster:
 
 ```

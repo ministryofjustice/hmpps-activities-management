@@ -21,7 +21,7 @@ export default class ReviewPrisonerRoutes {
     let backLinkHref =
       appointmentJourney.type === AppointmentType.SET ? 'upload-appointment-set' : 'how-to-add-prisoners'
     if (appointmentJourney.fromPrisonNumberProfile) {
-      backLinkHref = `${config.dpsUrl}/prisoner/${appointmentJourney.fromPrisonNumberProfile}`
+      backLinkHref = `${config.prisonerUrl}/prisoner/${appointmentJourney.fromPrisonNumberProfile}`
     }
 
     if (appointmentJourney.mode === AppointmentJourneyMode.EDIT) {

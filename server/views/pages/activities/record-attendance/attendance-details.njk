@@ -11,7 +11,7 @@
 {% set outsideWork = user.externalActivitiesRolledOut and instance.activitySchedule.activity.outsideWork %}
 {% set caseNoteHref %}
     <p>
-        <a href='{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}/case-notes' class='govuk-link govuk-link--no-visited-state' target='_blank' rel='noopener noreferrer'>
+        <a href='{{ prisonerUrl }}/prisoner/{{ attendee.prisonerNumber }}/case-notes' class='govuk-link govuk-link--no-visited-state' target='_blank' rel='noopener noreferrer'>
             Go to {{ attendee.name | toTitleCase | possessive }} case notes to add more details (opens in new tab)
         </a>
     </p>
@@ -314,7 +314,7 @@
 
                 {% if attendee.prisonId == user.activeCaseLoadId %}
                     <p class="govuk-body govuk-!-display-none-print no-js-hidden">
-                        <a href="{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">
+                        <a href="{{ prisonerUrl }}/prisoner/{{ attendee.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">
                             View the prisoner's profile
                         </a>
                     </p>
