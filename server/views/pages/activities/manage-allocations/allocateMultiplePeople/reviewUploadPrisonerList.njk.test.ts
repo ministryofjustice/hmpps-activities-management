@@ -72,7 +72,7 @@ describe('Views - Review uploaded prisoner list', () => {
         user: {
           activeCaseLoadId: 'MDI',
         },
-        dpsUrl: '',
+        prisonerUrl: '',
       }),
     )
 
@@ -152,7 +152,7 @@ describe('Views - Review uploaded prisoner list', () => {
         user: {
           activeCaseLoadId: 'MDI',
         },
-        dpsUrl: '',
+        prisonerUrl: '',
       }),
     )
 
