@@ -277,8 +277,13 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAppointmentCategories(user)
   }
 
-  async getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<AppointmentLocationSummary[]> {
-    return this.activitiesApiClient.getAppointmentLocations(prisonCode, user)
+  // Only filter parent locations when offering locations for selection, not when displaying existing appointments
+  async getAppointmentLocations(
+    prisonCode: string,
+    user: ServiceUser,
+    filterParents = false,
+  ): Promise<AppointmentLocationSummary[]> {
+    return this.activitiesApiClient.getAppointmentLocations(prisonCode, user, filterParents)
   }
 
   createAppointmentSeries(request: AppointmentSeriesCreateRequest, user: ServiceUser): Promise<AppointmentSeries> {
