@@ -62,9 +62,7 @@ describe('locationsInsidePrisonApiClient', () => {
       const response = { data: 'data' }
 
       fakeLocationsInsidePrisonApi
-        .get(
-          '/locations/non-residential/prison/RSI/service/PROGRAMMES_AND_ACTIVITIES?formatLocalName=true&filterParents=false',
-        )
+        .get('/locations/non-residential/prison/RSI/service/PROGRAMMES_AND_ACTIVITIES?formatLocalName=true')
         .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 

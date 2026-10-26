@@ -28,7 +28,7 @@ export default class LocationsInsidePrisonApiClient extends RestClient {
   public fetchLocationsByServiceType(prisonCode: string, serviceType: string, user: ServiceUser): Promise<Location[]> {
     return this.get(
       {
-        path: `/locations/non-residential/prison/${prisonCode}/service/${serviceType}?formatLocalName=true&filterParents=false`,
+        path: `/locations/non-residential/prison/${prisonCode}/service/${serviceType}?formatLocalName=true`,
       },
       asSystem(user.username),
     )

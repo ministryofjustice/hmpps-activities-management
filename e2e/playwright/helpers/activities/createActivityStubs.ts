@@ -23,7 +23,7 @@ const stubCreateActivity = async (): Promise<void> => {
     stubEndpoint('GET', '/api/reference-domains/domains/STUDY_AREA/codes', studyAreas),
     stubEndpoint(
       'GET',
-      '/locations/non-residential/prison/MDI/service/PROGRAMMES_AND_ACTIVITIES\\?formatLocalName=true&filterParents=false',
+      '/locations/non-residential/prison/MDI/service/PROGRAMMES_AND_ACTIVITIES\\?formatLocalName=true',
       getNonResidentialActivityLocations,
     ),
     stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile),
