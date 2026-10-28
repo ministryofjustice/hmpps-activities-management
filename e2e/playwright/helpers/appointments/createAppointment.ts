@@ -90,7 +90,7 @@ const stubCreateAppointmentScenario = async ({
   await stubEndpoint('GET', '/prisoner/A1351DZ', getPrisonerA1351DZ)
   await stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getPrisonersFromCsv)
   await stubEndpoint('GET', '/appointment-categories', getCategories)
-  await stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
+  await stubEndpoint('GET', '/appointment-locations/MDI(\\?filterParents=true)?', getAppointmentLocations)
   await stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${appointmentDate}`, scheduledEvents)
   await stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
   await stubEndpoint('GET', '/appointment-series/10/details', seriesDetails)

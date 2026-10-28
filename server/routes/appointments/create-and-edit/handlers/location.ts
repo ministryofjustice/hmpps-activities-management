@@ -30,7 +30,7 @@ export default class LocationRoutes {
     const { user } = res.locals
     const { appointmentJourney, editAppointmentJourney } = req.journeyData
 
-    const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
+    const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user, true)
 
     const isEditMode = appointmentJourney.mode === AppointmentJourneyMode.EDIT
 
@@ -115,7 +115,7 @@ export default class LocationRoutes {
     const { locationId } = req.body
     const { user } = res.locals
 
-    const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
+    const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user, true)
     const location = locations.find(candidate => candidate.dpsLocationId === locationId)
 
     if (!location) {
