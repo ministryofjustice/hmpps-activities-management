@@ -73,6 +73,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.GET(req, res)
 
+      expect(activitiesService.getAppointmentLocations).toHaveBeenCalledWith('TPR', res.locals.user, true)
       expect(res.render).toHaveBeenCalledWith(
         'pages/appointments/create-and-edit/location',
         expect.objectContaining({
@@ -118,6 +119,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
         description: 'Gym',
       })
       expect(req.journeyData.appointmentJourney.inCell).toEqual(false)
+      expect(activitiesService.getAppointmentLocations).toHaveBeenCalledWith('TPR', res.locals.user, true)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
     })
 
@@ -188,6 +190,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
         description: 'Gym',
       })
       expect(req.journeyData.editAppointmentJourney.inCell).toEqual(false)
+      expect(activitiesService.getAppointmentLocations).toHaveBeenCalledWith('TPR', res.locals.user, true)
       expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'location')
     })
 
