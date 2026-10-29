@@ -104,7 +104,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners-alerts', {
         appointmentId,
-        backLinkHref: 'https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC',
+        backLinkHref: 'https://prisoner-dev.digital.prison.service.justice.gov.uk/prisoner/A1234BC',
         preserveHistory,
         alertsDetails,
       })

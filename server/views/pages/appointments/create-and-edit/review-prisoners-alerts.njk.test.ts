@@ -23,7 +23,7 @@ describe('Views - Appointments Management - Review prisoner alerts', () => {
           mode: AppointmentJourneyMode.CREATE,
           type: AppointmentType.GROUP,
         },
-        dpsUrl: 'https://digital-dev.prison.service.justice.gov.uk',
+        prisonerUrl: 'https://prisoner.example.test',
         alertsDetails: {
           numPrisonersWithAlerts: 1,
           prisoners: [
@@ -53,5 +53,6 @@ describe('Views - Appointments Management - Review prisoner alerts', () => {
     expect($('.alerts-list').text()).toContain('TACT')
     expect($('[data-qa="alert-descriptions"]').text()).toContain('Arsonist')
     expect($('[data-qa="alert-descriptions"]').text()).toContain('Terrorism Act or Related Offence')
+    expect($('a[href="https://prisoner.example.test/prisoner/A1234BC"]')).toHaveLength(1)
   })
 })

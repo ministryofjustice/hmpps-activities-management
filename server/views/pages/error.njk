@@ -12,7 +12,7 @@
 
     <p class="govuk-body">You can report a fault by calling 0800 917 5148 or #6598 from inside an establishment.</p>
 
-    <a href="{{ dpsUrl }}" class="govuk-button">Go to Digital Prison Services</a>
+    <a href="{{ dpsHomePageUrl }}" class="govuk-button">Go to Digital Prison Services</a>
   {% else %}
     {% if status %}<h2>{{ status }}</h2>{% endif %}
     {% if stack %}<pre class="stacktrace">{{ stack }}</pre>{% endif %}

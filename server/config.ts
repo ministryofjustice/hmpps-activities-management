@@ -206,7 +206,12 @@ export default {
     tagManagerContainerId: get('TAG_MANAGER_CONTAINER_ID', ''),
     tagManagerEnvironment: get('TAG_MANAGER_ENVIRONMENT', ''),
   },
-  dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
+  dpsHomePageUrl: get('DPS_HOME_PAGE_URL', 'https://dps-dev.prison.service.justice.gov.uk', requiredInProduction),
+  prisonerWorkActivitiesUrl: get(
+    'PRISONER_WORK_ACTIVITIES_URL',
+    'https://digital-dev.prison.service.justice.gov.uk',
+    requiredInProduction,
+  ),
   prisonerUrl: get('PRISONER_URL', 'https://prisoner-dev.digital.prison.service.justice.gov.uk', requiredInProduction),
   incentivesUrl: get('INCENTIVES_URL', 'https://incentives-ui-dev.hmpps.service.justice.gov.uk', requiredInProduction),
   videoConferenceScheduleUrl: get(

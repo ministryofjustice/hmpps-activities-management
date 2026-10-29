@@ -32,6 +32,19 @@ describe('Views - Waitlist application - Confirmation', () => {
     compiledTemplate = compile(view.toString(), njkEnv)
   })
 
+  it('links directly to the new DPS prisoner search', () => {
+    const $ = cheerio.load(
+      compiledTemplate.render({
+        ...viewContext('APPROVED'),
+        dpsHomePageUrl: 'https://dps.example.test',
+      }),
+    )
+
+    expect($('a[href="https://dps.example.test/prisoner-search"]').text()).toBe(
+      'log an activity application for someone else',
+    )
+  })
+
   it('should display an approved application status', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext('APPROVED')))
 
