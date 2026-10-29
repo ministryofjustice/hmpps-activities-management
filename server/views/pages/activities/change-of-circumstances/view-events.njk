@@ -33,6 +33,7 @@
                             middleNames: event.middleNames,
                             lastName: event.lastName,
                             prisonerNumber: event.prisonerNumber,
+                            cellLocation: statusBasedCellLocation(event.cellLocation, event.prisonerStatus, event.prisonerPrisonCode == user.activeCaseLoadId),
                             inCaseLoad: event.prisonerPrisonCode == user.activeCaseLoadId
                         }),
                         attributes: {
@@ -40,14 +41,11 @@
                         }
                     },
                     {
-                        text: statusBasedCellLocation(event.cellLocation, event.prisonerStatus, event.prisonerPrisonCode == user.activeCaseLoadId)
+                        html: renderEventTypeTag(event),
+                        classes: 'govuk-!-display-none-print'
                     },
                     {
                         text: event.eventTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMMM yyyy hh:mm a', false)
-                    },
-                    {
-                        html: renderEventTypeTag(event),
-                        classes: 'govuk-!-display-none-print'
                     }
                 ]
             }), rows) %}
@@ -86,13 +84,10 @@
                             text: "Name"
                         },
                         {
-                            text: "Cell location"
+                            text: "Change"
                         },
                         {
-                            text: "Event time"
-                        },
-                        {
-                            text: "Event type"
+                            text: "Time"
                         }
                     ],
                     rows: rows,
@@ -115,17 +110,20 @@
 
 {% macro renderEventTypeTag(event) %}
     {% set options = 
-        ({ text: "Alert updated", classes: "govuk-tag--red" } if 'alerts-updated' in event.eventType) or
+        ({ text: "Alert added", classes: "govuk-tag--grey" } if 'alerts-updated' in event.eventType and event.eventDescription === 'ALERT_ADDED') or
+        ({ text: "Alert closed", classes: "govuk-tag--grey" } if 'alerts-updated' in event.eventType and event.eventDescription === 'ALERT_CLOSED') or
+        ({ text: "Alerts have been added and removed", classes: "govuk-tag--grey" } if 'alerts-updated' in event.eventType and event.eventDescription === 'ALERTS_ADDED_AND_CLOSED') or
         ({ text: "Non-association", classes: "govuk-tag--orange" } if 'non-association' in event.eventType) or
-        ({ text: "Prisoner received", classes: "govuk-tag--green" } if 'prisoner.received' in event.eventType) or
-        ({ text: "IEP status", classes: "govuk-tag--green" } if 'iep-review' in event.eventType) or
-        ({ text: "Activities suspended", classes: "govuk-tag--green" } if ('activities-changed' in event.eventType and event.eventDescription === 'ACTIVITY_SUSPENDED')) or
-        ({ text: "Activities ended", classes: "govuk-tag--green" } if ('activities-changed' in event.eventType and event.eventDescription === 'ACTIVITY_ENDED')) or
-        ({ text: "Temporary release", classes: "govuk-tag--green" } if ('prisoner.released' in event.eventType and event.eventDescription === 'TEMPORARY_RELEASE')) or
-        ({ text: "Permanent release", classes: "govuk-tag--green" } if ('prisoner.released' in event.eventType and event.eventDescription === 'PERMANENT_RELEASE')) or
-        ({ text: "Release", classes: "govuk-tag--green" } if 'prisoner.released' in event.eventType) or
-        ({ text: "Appointments cancelled", classes: "govuk-tag--green" } if 'appointments-changed' in event.eventType) or
+        ({ text: "Arrival or Return", classes: "govuk-tag--green" } if 'prisoner.received' in event.eventType) or
+        ({ text: "Incentive level changed", classes: "govuk-tag--yellow" } if 'iep-review' in event.eventType) or
+        ({ text: "Temporary absence", classes: "govuk-tag--blue" } if ('activities-changed' in event.eventType and event.eventDescription === 'ACTIVITY_SUSPENDED')) or
+        ({ text: "Temporary absence", classes: "govuk-tag--blue" } if ('activities-changed' in event.eventType and event.eventDescription === 'ACTIVITY_ENDED')) or
+        ({ text: "Release", classes: "govuk-tag--blue" } if ('prisoner.released' in event.eventType and event.eventDescription === 'RELEASED')) or
+        ({ text: "Transfer out", classes: "govuk-tag--blue" } if ('prisoner.released' in event.eventType and event.eventDescription === 'TRANSFER_OUT')) or
+        ({ text: "Release", classes: "govuk-tag--blue" } if 'prisoner.released' in event.eventType) or
+        ({ text: "Temporary absence ", classes: "govuk-tag--green" } if 'appointments-changed' in event.eventType) or
         ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'cell.move' in event.eventType) or
+        ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'prisoner.updated' in event.eventType and 'Cell move' in event.eventData) or
         ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'prisoner.updated' in event.eventType and 'Cell move' in event.eventData) or
         { text: "Unknown-event", classes: "govuk-tag--yellow"} %}
 
