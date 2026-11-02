@@ -36,6 +36,7 @@ import {
   DeallocationReason,
   EventAcknowledgeRequest,
   EventReviewSearchResults,
+  GetChangeEventsParams,
   GetAllocationsParams,
   InternalLocationEvents,
   InternalLocationEventsSummary,
@@ -725,16 +726,18 @@ export default class ActivitiesApiClient extends RestClient {
 
   async getChangeEvents(
     prison: string,
-    date: string,
-    page: number,
-    pageSize: number,
+    query: GetChangeEventsParams,
     user: ServiceUser,
   ): Promise<EventReviewSearchResults> {
     return this.get(
       {
-        path: `/event-review/prison/${prison}`,
+        path: `/event-review/v2/prison/${prison}`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
-        query: { date, page, size: pageSize },
+        query: {
+          ...query,
+          ...(query.prisonerNumbers && { prisonerNumbers: query.prisonerNumbers.join(',') }),
+          ...(query.eventCodes && { eventCodes: query.eventCodes.join(',') }),
+        },
       },
       asUser(user.token),
     )

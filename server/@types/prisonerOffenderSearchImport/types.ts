@@ -6,3 +6,6 @@ export type PagePrisoner = components['schemas']['PagePrisoner']
 export type PrisonerSearchCriteria = components['schemas']['SearchCriteria']
 export type PrisonerSearchQuery = operations['search']['parameters']['query']
 export type PrisonerNumbers = components['schemas']['PrisonerNumbers']
+
+export type PrisonerKeywordSearchRequest = components['schemas']['KeywordRequest']
+export type PrisonerKeywordSearchResponse = components['schemas']['KeywordResponse']

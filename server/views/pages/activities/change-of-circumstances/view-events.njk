@@ -9,6 +9,9 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
 {% set pageTitle = "Changes in circumstances - Activities - DPS" %}
 {% set pageId = 'change-of-circumstance-page' %}
 {% set jsBackLink = true %}
@@ -17,6 +20,27 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <h1 class="govuk-heading-xl">Changes in circumstances</h1>
+
+        <form method="GET" class="change-filters">
+            <input type="hidden" name="date" value="{{ date }}">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Filter by</h2>
+            <div class="change-filters__fields">
+                {{ govukInput({
+                    id: 'searchTerm', name: 'searchTerm', value: searchTerm,
+                    label: { text: 'Name or prison number' }
+                }) }}
+                {{ govukCheckboxes({
+                    name: 'changeTypes', idPrefix: 'changeTypes',
+                    classes: 'govuk-checkboxes--small change-filters__checkboxes',
+                    fieldset: { legend: { text: 'Changes to show' } },
+                    items: filterItems
+                }) }}
+                <div class="change-filters__actions">
+                    {{ govukButton({ text: 'Apply filters', classes: 'govuk-!-margin-bottom-0' }) }}
+                    <a class="govuk-link" href="view-changes?date={{ date | urlencode }}">Clear</a>
+                </div>
+            </div>
+        </form>
 
         {% set rows = [] %}
 
@@ -56,7 +80,9 @@
 
         {% if rows.length == 0 %}
             <div class="govuk-body" data-qa="no-data-p">
-                {% if isToday %}
+                {% if searchTerm or selectedFilters.length %}
+                <p>There are no changes matching your filters.</p>
+                {% elif isToday %}
                 <p>There are no changes to show for today.</p>
                 {% elif isYesterday %}
                 <p>There are no changes to show for yesterday.</p>
@@ -71,6 +97,10 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
                 <input type="hidden" name="date" value="{{ date }}">
                 <input type="hidden" name="page" value="{{ page }}">
+                <input type="hidden" name="searchTerm" value="{{ searchTerm }}">
+                {% for filter in selectedFilters %}
+                    <input type="hidden" name="changeTypes" value="{{ filter }}">
+                {% endfor %}
 
                 {{ mojPagination(pagination) }}
 

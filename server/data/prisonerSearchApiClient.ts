@@ -7,6 +7,8 @@ import {
   Prisoner,
   PrisonerNumbers,
   PrisonerSearchQuery,
+  PrisonerKeywordSearchRequest,
+  PrisonerKeywordSearchResponse,
 } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 
@@ -46,6 +48,17 @@ export default class PrisonerSearchApiClient extends RestClient {
       },
       asSystem(user.username),
     )
+  }
+
+  async searchPrisoners(searchTerm: string, page: number, user: ServiceUser): Promise<PrisonerKeywordSearchResponse> {
+    const data: PrisonerKeywordSearchRequest = {
+      andWords: searchTerm,
+      prisonIds: [],
+      type: 'ESTABLISHMENT',
+      // Keyword search caps each response at 200; a larger size skips matches between pages.
+      pagination: { page, size: 200 },
+    }
+    return this.post({ path: '/keyword', data }, asSystem(user.username))
   }
 
   async searchPrisonersByLocationPrefix(

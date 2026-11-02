@@ -928,15 +928,44 @@ describe('activitiesApiClient', () => {
       ]
       const response = { content, pageNumber: 1, totalElements: 1, totalPages: 1 } as EventReviewSearchResults
       fakeActivitiesApi
-        .get('/event-review/prison/MDI')
+        .get('/event-review/v2/prison/MDI')
         .query({ date: '2023-01-01', page: 0, size: 10 })
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
-      const output = await activitiesApiClient.getChangeEvents('MDI', '2023-01-01', 0, 10, user)
+      const output = await activitiesApiClient.getChangeEvents('MDI', { date: '2023-01-01', page: 0, size: 10 }, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
+  })
+
+  it('sends event and prisoner filters to v2 as comma-separated lists', async () => {
+    fakeActivitiesApi
+      .get('/event-review/v2/prison/MDI')
+      .query({
+        date: '2023-01-01',
+        page: 1,
+        size: 10,
+        prisonerNumbers: 'A1234AA,B1234BB',
+        eventCodes: 'event.one,event.two',
+        filterAcknowledged: true,
+      })
+      .matchHeader('authorization', 'Bearer token')
+      .matchHeader('Caseload-Id', 'MDI')
+      .reply(200, { content: [], totalElements: 0, totalPages: 0, pageNumber: 1 })
+    await activitiesApiClient.getChangeEvents(
+      'MDI',
+      {
+        date: '2023-01-01',
+        page: 1,
+        size: 10,
+        prisonerNumbers: ['A1234AA', 'B1234BB'],
+        eventCodes: ['event.one', 'event.two'],
+        filterAcknowledged: true,
+      },
+      user,
+    )
+    expect(nock.isDone()).toBe(true)
   })
 
   describe('acknowledgeChangeEvents', () => {

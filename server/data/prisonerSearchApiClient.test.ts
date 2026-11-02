@@ -59,6 +59,20 @@ describe('prisonerSearchApiClient', () => {
     })
   })
 
+  it('searches names across all prisons and outside prison using paginated keyword search', async () => {
+    fakePrisonerSearchApi
+      .post('/keyword', {
+        andWords: 'joe smith',
+        prisonIds: [],
+        type: 'ESTABLISHMENT',
+        pagination: { page: 1, size: 200 },
+      })
+      .matchHeader('authorization', 'Bearer test-system-token')
+      .reply(200, { content: [], totalPages: 0 })
+    expect(await prisonerSearchApiClient.searchPrisoners('joe smith', 1, user)).toEqual({ content: [], totalPages: 0 })
+    expect(nock.isDone()).toBe(true)
+  })
+
   describe('searchPrisonersByLocationPrefix', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }

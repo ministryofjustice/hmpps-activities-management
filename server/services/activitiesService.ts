@@ -34,6 +34,7 @@ import {
   DeallocationReasonCode,
   EventAcknowledgeRequest,
   EventReviewSearchResults,
+  GetChangeEventsParams,
   GetAllocationsParams,
   LocationGroup,
   MultipleAppointmentAttendanceRequest,
@@ -378,12 +379,10 @@ export default class ActivitiesService {
 
   async getChangeEvents(
     prisonCode: string,
-    requestDate: string,
-    page: number,
-    pageSize: number,
+    query: GetChangeEventsParams,
     user: ServiceUser,
   ): Promise<EventReviewSearchResults> {
-    return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, pageSize, user)
+    return this.activitiesApiClient.getChangeEvents(prisonCode, query, user)
   }
 
   async acknowledgeChangeEvents(prisonCode: string, eventIds: number[], user: ServiceUser) {

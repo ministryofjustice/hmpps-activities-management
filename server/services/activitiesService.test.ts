@@ -713,10 +713,18 @@ describe('Activities Service', () => {
 
       when(activitiesApiClient.getChangeEvents).mockResolvedValue(expectedResult)
 
-      const actualResult = await activitiesService.getChangeEvents('MDI', '2023-10-16', 1, 10, user)
+      const actualResult = await activitiesService.getChangeEvents(
+        'MDI',
+        { date: '2023-10-16', page: 1, size: 10 },
+        user,
+      )
 
       expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getChangeEvents).toHaveBeenCalledWith('MDI', '2023-10-16', 1, 10, user)
+      expect(activitiesApiClient.getChangeEvents).toHaveBeenCalledWith(
+        'MDI',
+        { date: '2023-10-16', page: 1, size: 10 },
+        user,
+      )
     })
   })
 

@@ -30,7 +30,7 @@ test.beforeEach(async ({ page }) => {
   await resetStubs()
   await stubs.stubSignIn()
 
-  await stubEndpoint('GET', '/event-review/prison/MDI\\?date=2023-05-16&page=0&size=10', getChangeEvents)
+  await stubEndpoint('GET', '/event-review/v2/prison/MDI\\?date=2023-05-16&page=0&size=10', getChangeEvents)
 
   await stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
 
