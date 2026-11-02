@@ -736,6 +736,8 @@ export default class ActivitiesApiClient extends RestClient {
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
         query: {
           ...query,
+          filterAcknowledged: query.filterAcknowledged ?? false,
+          sortDirection: query.sortDirection ?? 'ascending',
           ...(query.prisonerNumbers && { prisonerNumbers: query.prisonerNumbers.join(',') }),
           ...(query.eventCodes && { eventCodes: query.eventCodes.join(',') }),
         },

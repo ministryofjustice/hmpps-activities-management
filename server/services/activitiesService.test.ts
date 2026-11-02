@@ -780,6 +780,19 @@ describe('Activities Service', () => {
     })
   })
 
+  it('passes the reviewed tab state to the activities API', async () => {
+    await activitiesService.getChangeEvents(
+      'MDI',
+      { date: '2023-10-16', page: 1, size: 10, filterAcknowledged: true },
+      user,
+    )
+    expect(activitiesApiClient.getChangeEvents).toHaveBeenLastCalledWith(
+      'MDI',
+      { date: '2023-10-16', page: 1, size: 10, filterAcknowledged: true },
+      user,
+    )
+  })
+
   describe('acknowledgeChangeEvents', () => {
     it('should acknowledge a list of change event IDS', async () => {
       const eventReviewIds = [1, 2, 3]

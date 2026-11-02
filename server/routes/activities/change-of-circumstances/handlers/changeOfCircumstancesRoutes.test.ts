@@ -113,6 +113,7 @@ describe('Route Handlers - Changes in circumstances', () => {
           ...item,
           firstName: 'Bob',
           lastName: 'Bobson',
+          middleNames: '',
           cellLocation: '1-12-123',
         }
       })
@@ -124,8 +125,11 @@ describe('Route Handlers - Changes in circumstances', () => {
         page: 0,
         changeEvents: results,
         pagination,
-        isToday: false,
-        isYesterday: false,
+        reviewed: false,
+        hasFilters: false,
+        changesToReviewHref: 'view-changes?date=2023-05-16',
+        reviewedChangesHref: 'view-changes?date=2023-05-16&reviewed=true',
+        clearFiltersHref: 'view-changes?date=2023-05-16',
       }
       expect(res.render).toHaveBeenCalledWith('pages/activities/change-of-circumstances/view-events', viewContext)
     })
@@ -154,6 +158,7 @@ describe('Route Handlers - Changes in circumstances', () => {
           date: '2023-05-16',
           page: 0,
           size: 10,
+          filterAcknowledged: false,
           prisonerNumbers: ['A1234AA', 'B1234BB'],
           eventCodes: ['prison-offender-events.prisoner.non-association-detail.changed'],
         },
@@ -194,6 +199,7 @@ describe('Route Handlers - Changes in circumstances', () => {
           date: '2023-05-16',
           page: 0,
           size: 10,
+          filterAcknowledged: false,
           prisonerNumbers: ['A1234AA'],
         },
         res.locals.user,
@@ -228,6 +234,7 @@ describe('Route Handlers - Changes in circumstances', () => {
           date: '2023-05-16',
           page: 0,
           size: 10,
+          filterAcknowledged: false,
           eventCodes,
         },
         res.locals.user,
@@ -277,8 +284,35 @@ describe('Route Handlers - Changes in circumstances', () => {
           date: '2023-05-16',
           page: 0,
           size: 10,
+          filterAcknowledged: false,
         },
         res.locals.user,
+      )
+    })
+
+    it('applies the prisoner and change filters to reviewed results and retains the tab when clearing', async () => {
+      req.query.reviewed = 'true'
+      req.query.searchTerm = 'a1234aa'
+      req.query.changeTypes = 'cell-moves'
+      await handler.GET(req, res)
+      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
+        'MDI',
+        {
+          date: '2023-05-16',
+          page: 0,
+          size: 10,
+          filterAcknowledged: true,
+          prisonerNumbers: ['A1234AA'],
+          eventCodes: ['prisoner-offender-search.prisoner.updated', 'prison-offender-events.prisoner.cell.move'],
+        },
+        res.locals.user,
+      )
+      expect(res.render).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          clearFiltersHref: 'view-changes?date=2023-05-16&reviewed=true',
+          hasFilters: true,
+        }),
       )
     })
 
@@ -294,6 +328,46 @@ describe('Route Handlers - Changes in circumstances', () => {
       expect(res.redirect).toHaveBeenCalledWith(
         'view-changes?date=2023-05-16&page=0&searchTerm=Bob+%26+Joe&changeTypes=alerts&changeTypes=cell-moves',
       )
+    })
+  })
+
+  describe('review tabs', () => {
+    beforeEach(() => {
+      activitiesService.getChangeEvents.mockResolvedValue({ ...changeEvents, totalPages: 3 })
+      activitiesService.getChangeEventPrisonerNumbers.mockResolvedValue(['A1234AA'])
+      prisonService.searchPrisonerNumbers.mockResolvedValue(['A1234AA'])
+      prisonService.searchInmatesByPrisonerNumbers.mockResolvedValue(prisoners)
+    })
+
+    it.each([
+      ['true', true],
+      ['false', false],
+      [undefined, false],
+    ])('requests the correct review state for %s', async (value, expected) => {
+      req.query.reviewed = value
+      await handler.GET(req, res)
+      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
+        'MDI',
+        { date: '2023-05-16', page: 0, size: 10, filterAcknowledged: expected },
+        res.locals.user,
+      )
+      expect(res.render).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ reviewed: expected }))
+    })
+
+    it('keeps the date, search and filters in tab links while resetting pagination', async () => {
+      req.query.page = '2'
+      req.query.searchTerm = 'Smith & Jones'
+      req.query.changeTypes = ['alerts', 'cell-moves']
+      await handler.GET(req, res)
+      const context = (res.render as jest.Mock).mock.calls[0][1]
+      for (const href of [context.changesToReviewHref, context.reviewedChangesHref]) {
+        const query = new URL(href, 'http://localhost').searchParams
+        expect(query.get('date')).toBe('2023-05-16')
+        expect(query.get('searchTerm')).toBe('Smith & Jones')
+        expect(query.getAll('changeTypes')).toEqual(['alerts', 'cell-moves'])
+        expect(query.has('page')).toBe(false)
+      }
+      expect(context.hasFilters).toBe(true)
     })
   })
 

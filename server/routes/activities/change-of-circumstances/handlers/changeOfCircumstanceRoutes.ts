@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import { isToday, isYesterday } from 'date-fns'
 import { getPagination, PaginationRequest } from '../../../../utils/paginationUtils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
@@ -20,12 +19,28 @@ export default class ChangeOfCircumstanceRoutes {
     const { page, date } = req.query
     const prison = user.activeCaseLoadId
     const queryDate = date as string
-
+    const reviewed = req.query.reviewed === 'true'
     const searchTerm = typeof req.query.searchTerm === 'string' ? req.query.searchTerm.trim() : ''
     const selectedFilters = readFilters(req.query.changeTypes)
+    const navigationQuery = new URLSearchParams({ date: queryDate })
+    if (searchTerm) navigationQuery.set('searchTerm', searchTerm)
+    selectedFilters.forEach(value => navigationQuery.append('changeTypes', value))
+    const changesToReviewHref = `view-changes?${navigationQuery}`
+    navigationQuery.set('reviewed', 'true')
+    const reviewedChangesHref = `view-changes?${navigationQuery}`
+    const clearQuery = new URLSearchParams({ date: queryDate })
+    if (reviewed) clearQuery.set('reviewed', 'true')
+    const clearFiltersHref = `view-changes?${clearQuery}`
+    const hasFilters = Boolean(searchTerm || selectedFilters.length)
+
     const requestedPage = Number(page)
     const pageNo = Number.isSafeInteger(requestedPage) && requestedPage >= 0 ? requestedPage : 0
-    const query: GetChangeEventsParams = { date: queryDate, page: pageNo, size: ITEMS_PER_PAGE }
+    const query: GetChangeEventsParams = {
+      date: queryDate,
+      page: pageNo,
+      size: ITEMS_PER_PAGE,
+      filterAcknowledged: reviewed,
+    }
     if (selectedFilters.length) {
       query.eventCodes = changeFilters
         .filter(filter => selectedFilters.includes(filter.value))
@@ -67,13 +82,14 @@ export default class ChangeOfCircumstanceRoutes {
         ...item,
         firstName: prisoner?.firstName || '',
         lastName: prisoner?.lastName || '',
+        middleNames: prisoner?.middleNames || '',
         prisonerStatus: prisoner?.status,
         prisonerPrisonCode: prisoner?.prisonId,
         cellLocation: prisoner?.cellLocation || '',
       }
     })
 
-    // Paagination settings for this list
+    // Pagination settings for this list
     const totalResults = searchResults.totalElements || 0
     const currentPage = searchResults.pageNumber || 0
     const paginationReq = { totalResults, currentPage, limit: ITEMS_PER_PAGE } as PaginationRequest
@@ -88,8 +104,11 @@ export default class ChangeOfCircumstanceRoutes {
       page: pageNo,
       changeEvents,
       pagination,
-      isToday: isToday(queryDate),
-      isYesterday: isYesterday(queryDate),
+      reviewed,
+      hasFilters,
+      changesToReviewHref,
+      reviewedChangesHref,
+      clearFiltersHref,
     }
     res.render('pages/activities/change-of-circumstances/view-events', viewContext)
   }

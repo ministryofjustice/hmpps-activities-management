@@ -1,0 +1,9 @@
+.change-events {
+  .govuk-table__cell {
+    vertical-align: top;
+  }
+
+  .sticky-select .govuk-table__row:nth-of-type(even) {
+    background-color: govuk-colour('white');
+  }
+}
