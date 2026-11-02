@@ -29,34 +29,23 @@ export default class PrisonService {
     return this.prisonerSearchApiClient.searchPrisonInmates(term, user.activeCaseLoadId, user)
   }
 
-  async searchPrisonerNumbers(searchTerm: string, user: ServiceUser): Promise<string[]> {
-    const term = searchTerm.trim()
-    if (/^[a-z]\d{4}[a-z]{2}$/i.test(term)) return [term.toUpperCase()]
-
-    const words = term
+  async searchPrisonerNumbers(searchTerm: string, prisonerNumbers: string[], user: ServiceUser): Promise<string[]> {
+    const words = searchTerm
       .toLowerCase()
       .split(/[\s,]+/)
       .filter(Boolean)
-    if (!words.length) return []
+    if (!words.length || !prisonerNumbers.length) return []
 
-    const prisonerNumbers = new Set<string>()
-    let page = 0
-    let totalPages = 1
-    do {
-      // eslint-disable-next-line no-await-in-loop
-      const results = await this.prisonerSearchApiClient.searchPrisoners(words.join(' '), page, user)
-      results.content?.forEach(prisoner => {
+    const prisoners = await this.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
+    return prisoners
+      .filter(prisoner => {
         const nameAndNumber = [prisoner.firstName, prisoner.middleNames, prisoner.lastName, prisoner.prisonerNumber]
           .filter(Boolean)
           .join(' ')
           .toLowerCase()
-        if (words.every(word => nameAndNumber.includes(word))) prisonerNumbers.add(prisoner.prisonerNumber)
+        return words.every(word => nameAndNumber.includes(word))
       })
-      totalPages = results.totalPages || 0
-      page += 1
-    } while (page < totalPages)
-
-    return [...prisonerNumbers]
+      .map(prisoner => prisoner.prisonerNumber)
   }
 
   async searchInmatesByPrisonerNumbers(prisonerNumbers: string[], user: ServiceUser): Promise<Prisoner[]> {

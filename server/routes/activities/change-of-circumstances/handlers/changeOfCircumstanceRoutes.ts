@@ -5,7 +5,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { GetChangeEventsParams } from '../../../../@types/activitiesAPI/types'
 import { changeFilters, readFilters } from './changeFilters'
-import { convertToNumberArray } from '../../../../utils/utils'
+import { convertToNumberArray, isPrisonerNumber } from '../../../../utils/utils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -31,7 +31,18 @@ export default class ChangeOfCircumstanceRoutes {
         .filter(filter => selectedFilters.includes(filter.value))
         .flatMap(filter => filter.eventCodes)
     }
-    if (searchTerm) query.prisonerNumbers = await this.prisonService.searchPrisonerNumbers(searchTerm, user)
+    if (searchTerm) {
+      if (isPrisonerNumber(searchTerm)) {
+        query.prisonerNumbers = [searchTerm.toUpperCase()]
+      } else {
+        const candidates = await this.activitiesService.getChangeEventPrisonerNumbers(
+          prison,
+          { date: queryDate, ...(query.eventCodes && { eventCodes: query.eventCodes }) },
+          user,
+        )
+        query.prisonerNumbers = await this.prisonService.searchPrisonerNumbers(searchTerm, candidates, user)
+      }
+    }
 
     const searchResults =
       query.prisonerNumbers?.length === 0

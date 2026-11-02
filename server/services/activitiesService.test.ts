@@ -728,6 +728,40 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('getChangeEventPrisonerNumbers', () => {
+    it('collects unique prisoner numbers across only the filtered prison/date event pages', async () => {
+      const getEvents = jest.mocked(activitiesApiClient.getChangeEvents)
+      getEvents.mockClear()
+      getEvents
+        .mockResolvedValueOnce({
+          content: [{ prisonerNumber: 'A1234AA' }, { prisonerNumber: 'A1234AA' }, { prisonerNumber: null }],
+          totalPages: 2,
+        } as EventReviewSearchResults)
+        .mockResolvedValueOnce({
+          content: [{ prisonerNumber: 'B1234BB' }],
+          totalPages: 2,
+        } as EventReviewSearchResults)
+      const filters = {
+        date: '2023-10-16',
+        eventCodes: ['prisoner-offender-search.prisoner.released'],
+        filterAcknowledged: true,
+      }
+      expect(await activitiesService.getChangeEventPrisonerNumbers('MDI', filters, user)).toEqual([
+        'A1234AA',
+        'B1234BB',
+      ])
+      expect(getEvents).toHaveBeenNthCalledWith(1, 'MDI', { ...filters, page: 0, size: 1000 }, user)
+      expect(getEvents).toHaveBeenNthCalledWith(2, 'MDI', { ...filters, page: 1, size: 1000 }, user)
+    })
+
+    it('returns no candidates when the selected prison/date has no changes', async () => {
+      jest
+        .mocked(activitiesApiClient.getChangeEvents)
+        .mockResolvedValue({ content: [], totalPages: 0 } as EventReviewSearchResults)
+      expect(await activitiesService.getChangeEventPrisonerNumbers('MDI', { date: '2023-10-16' }, user)).toEqual([])
+    })
+  })
+
   describe('acknowledgeChangeEvents', () => {
     it('should acknowledge a list of change event IDS', async () => {
       const eventReviewIds = [1, 2, 3]

@@ -134,6 +134,7 @@ describe('Route Handlers - Changes in circumstances', () => {
   describe('filters', () => {
     beforeEach(() => {
       activitiesService.getChangeEvents.mockResolvedValue({ ...changeEvents, content: [...content] })
+      activitiesService.getChangeEventPrisonerNumbers.mockResolvedValue(['A1234AA', 'B1234BB'])
       prisonService.searchInmatesByPrisonerNumbers.mockResolvedValue(prisoners)
     })
 
@@ -142,7 +143,11 @@ describe('Route Handlers - Changes in circumstances', () => {
       req.query.changeTypes = ['non-associations', 'unknown', 'non-associations']
       prisonService.searchPrisonerNumbers.mockResolvedValue(['A1234AA', 'B1234BB'])
       await handler.GET(req, res)
-      expect(prisonService.searchPrisonerNumbers).toHaveBeenCalledWith('BOBSON', res.locals.user)
+      expect(prisonService.searchPrisonerNumbers).toHaveBeenCalledWith(
+        'BOBSON',
+        ['A1234AA', 'B1234BB'],
+        res.locals.user,
+      )
       expect(activitiesService.getChangeEvents).toHaveBeenCalledWith(
         'MDI',
         {
@@ -163,8 +168,40 @@ describe('Route Handlers - Changes in circumstances', () => {
       )
     })
 
+    it('limits candidate events to the selected prison, date and change types', async () => {
+      req.query.searchTerm = 'Bob'
+      req.query.changeTypes = 'alerts'
+      prisonService.searchPrisonerNumbers.mockResolvedValue(['A1234AA'])
+      await handler.GET(req, res)
+      expect(activitiesService.getChangeEventPrisonerNumbers).toHaveBeenCalledWith(
+        'MDI',
+        {
+          date: '2023-05-16',
+          eventCodes: ['prisoner-offender-search.prisoner.alerts-updated'],
+        },
+        res.locals.user,
+      )
+    })
+
+    it('searches a complete prison number directly without scanning candidate events', async () => {
+      req.query.searchTerm = 'a1234aa'
+      activitiesService.getChangeEventPrisonerNumbers.mockClear()
+      await handler.GET(req, res)
+      expect(activitiesService.getChangeEventPrisonerNumbers).not.toHaveBeenCalled()
+      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
+        'MDI',
+        {
+          date: '2023-05-16',
+          page: 0,
+          size: 10,
+          prisonerNumbers: ['A1234AA'],
+        },
+        res.locals.user,
+      )
+    })
+
     it('does not fetch unfiltered changes when no prisoners match the search', async () => {
-      req.query.searchTerm = 'Z9999ZZ'
+      req.query.searchTerm = 'Nobody'
       prisonService.searchPrisonerNumbers.mockResolvedValue([])
       activitiesService.getChangeEvents.mockClear()
       await handler.GET(req, res)

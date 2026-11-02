@@ -57,58 +57,27 @@ describe('Prison Service', () => {
   })
 
   describe('searchPrisonerNumbers', () => {
-    it('normalises complete prisoner numbers without a global search', async () => {
-      expect(await prisonService.searchPrisonerNumbers(' a1234aa ', user)).toEqual(['A1234AA'])
-      expect(prisonerSearchApiClient.searchPrisoners).not.toHaveBeenCalled()
-    })
+    it.each(['Joe', 'Smith', 'Smith, Joe'])(
+      'matches %s only against event participants, including people outside this prison',
+      async term => {
+        const candidates = ['A1234AA', 'B1234BB', 'C1234CC']
+        jest.mocked(prisonerSearchApiClient.searchByPrisonerNumbers).mockResolvedValue([
+          { prisonerNumber: 'A1234AA', firstName: 'Joe', lastName: 'Smith', prisonId: 'OUT' },
+          { prisonerNumber: 'B1234BB', firstName: 'Unrelated', lastName: 'Person', prisonId: 'MDI' },
+          { prisonerNumber: 'C1234CC', firstName: 'Joe', lastName: 'Smith', prisonId: 'LEI' },
+        ] as Prisoner[])
+        expect(await prisonService.searchPrisonerNumbers(term, candidates, user)).toEqual(['A1234AA', 'C1234CC'])
+        expect(prisonerSearchApiClient.searchByPrisonerNumbers).toHaveBeenCalledWith(
+          { prisonerNumbers: candidates },
+          user,
+        )
+      },
+    )
 
-    it('finds matching names across all result pages, including released and transferred people', async () => {
-      const search = jest.mocked(prisonerSearchApiClient.searchPrisoners)
-      search
-        .mockResolvedValueOnce({
-          totalPages: 2,
-          content: [
-            { prisonerNumber: 'A1234AA', firstName: 'Joe', lastName: 'Smith', prisonId: 'OUT' } as Prisoner,
-            { prisonerNumber: 'B1234BB', firstName: 'Unrelated', lastName: 'Name' } as Prisoner,
-          ],
-        })
-        .mockResolvedValueOnce({
-          totalPages: 2,
-          content: [{ prisonerNumber: 'C1234CC', firstName: 'Joe', lastName: 'Smith', prisonId: 'LEI' } as Prisoner],
-        })
-      expect(await prisonService.searchPrisonerNumbers(' Smith, Joe ', user)).toEqual(['A1234AA', 'C1234CC'])
-      expect(search).toHaveBeenNthCalledWith(1, 'smith joe', 0, user)
-      expect(search).toHaveBeenNthCalledWith(2, 'smith joe', 1, user)
-    })
-
-    it.each(['Joe', 'Smith'])('finds people using only %s, including matches on later pages', async term => {
-      const search = jest.mocked(prisonerSearchApiClient.searchPrisoners)
-      search
-        .mockResolvedValueOnce({
-          totalPages: 2,
-          content: Array.from(
-            { length: 200 },
-            (_, index) =>
-              ({
-                prisonerNumber: `X${index}`,
-                firstName: term === 'Joe' ? 'Joe' : 'Other',
-                lastName: term === 'Smith' ? 'Smith' : 'Other',
-              }) as Prisoner,
-          ),
-        })
-        .mockResolvedValueOnce({
-          totalPages: 2,
-          content: [{ prisonerNumber: 'A1234AA', firstName: 'Joe', lastName: 'Smith', prisonId: 'OUT' } as Prisoner],
-        })
-      const numbers = await prisonService.searchPrisonerNumbers(term, user)
-      expect(numbers).toHaveLength(201)
-      expect(numbers).toContain('A1234AA')
-      expect(search).toHaveBeenLastCalledWith(term.toLowerCase(), 1, user)
-    })
-
-    it('returns no prisoner numbers when a name search has no matches', async () => {
-      jest.mocked(prisonerSearchApiClient.searchPrisoners).mockResolvedValue({ content: [], totalPages: 0 })
-      expect(await prisonService.searchPrisonerNumbers('Nobody', user)).toEqual([])
+    it('does not search for prisoners when there are no event participants', async () => {
+      jest.mocked(prisonerSearchApiClient.searchByPrisonerNumbers).mockClear()
+      expect(await prisonService.searchPrisonerNumbers('Joe', [], user)).toEqual([])
+      expect(prisonerSearchApiClient.searchByPrisonerNumbers).not.toHaveBeenCalled()
     })
   })
 

@@ -385,6 +385,27 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getChangeEvents(prisonCode, query, user)
   }
 
+  async getChangeEventPrisonerNumbers(
+    prisonCode: string,
+    filters: Omit<GetChangeEventsParams, 'page' | 'size' | 'prisonerNumbers'>,
+    user: ServiceUser,
+  ): Promise<string[]> {
+    const prisonerNumbers = new Set<string>()
+    let page = 0
+    let totalPages = 1
+    do {
+      // Only scan events for this prison/date, retaining the selected change and review filters.
+      // eslint-disable-next-line no-await-in-loop
+      const results = await this.activitiesApiClient.getChangeEvents(prisonCode, { ...filters, page, size: 1000 }, user)
+      results.content.forEach(event => {
+        if (event.prisonerNumber) prisonerNumbers.add(event.prisonerNumber)
+      })
+      totalPages = results.totalPages
+      page += 1
+    } while (page < totalPages)
+    return [...prisonerNumbers]
+  }
+
   async acknowledgeChangeEvents(prisonCode: string, eventIds: number[], user: ServiceUser) {
     const request = { eventReviewIds: eventIds } as EventAcknowledgeRequest
     return this.activitiesApiClient.acknowledgeChangeEvents(prisonCode, request, user)
