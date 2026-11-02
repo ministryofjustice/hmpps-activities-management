@@ -968,6 +968,37 @@ describe('activitiesApiClient', () => {
     expect(nock.isDone()).toBe(true)
   })
 
+  describe('getChangeEventCandidates', () => {
+    it('includes acknowledged events when scanning candidates and retains date and event filters', async () => {
+      const response = { content: [], totalElements: 0, totalPages: 0, pageNumber: 1 }
+      fakeActivitiesApi
+        .get('/event-review/prison/MDI')
+        .query({
+          date: '2023-01-01',
+          page: 1,
+          size: 1000,
+          includeAcknowledged: true,
+          eventCodes: 'event.one,event.two',
+        })
+        .matchHeader('authorization', 'Bearer token')
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
+      expect(
+        await activitiesApiClient.getChangeEventCandidates(
+          'MDI',
+          {
+            date: '2023-01-01',
+            page: 1,
+            size: 1000,
+            eventCodes: ['event.one', 'event.two'],
+          },
+          user,
+        ),
+      ).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('acknowledgeChangeEvents', () => {
     it('should acknowledge change events', async () => {
       const request = { eventReviewIds: [1, 2, 3] } as EventAcknowledgeRequest

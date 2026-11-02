@@ -96,3 +96,8 @@ export type ExclusionRevision = components['schemas']['ExclusionRevision']
 export type ScheduleLastChanged = components['schemas']['ScheduleLastChanged']
 
 export type GetChangeEventsParams = operations['getEventsForReview']['parameters']['query']
+
+export type GetChangeEventCandidatesParams = Pick<
+  GetChangeEventsParams,
+  'date' | 'eventCodes' | 'sortDirection' | 'page' | 'size'
+>
