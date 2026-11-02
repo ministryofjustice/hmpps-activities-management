@@ -22,7 +22,7 @@
             <span class="govuk-caption-l">{{ allocateJourney.activity.name }}</span>
             <h1 class="govuk-heading-l">Before you allocate {{ prisonerName }}</h1>
 
-            <p class="govuk-body-l">Use the information on this page to decide if <a href="{{ dpsUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}" class="govuk-link" target="_blank">{{ prisonerName }}<span class="govuk-visually-hidden"> (opens in new tab)</span></a> is suitable for {{ allocateJourney.activity.name }}.</p>
+            <p class="govuk-body-l">Use the information on this page to decide if <a href="{{ prisonerUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}" class="govuk-link" target="_blank">{{ prisonerName }}<span class="govuk-visually-hidden"> (opens in new tab)</span></a> is suitable for {{ allocateJourney.activity.name }}.</p>
             <p class="govuk-body-l">You may need to consult with other departments before making your decision.</p>
 
             {% if allocationSuitability.previousDeallocations | length %}
@@ -209,14 +209,14 @@
                         rows: currentAllocations
                     }) }}
 
-                    <span class="govuk-body"><a href="{{ dpsUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}/work-activities" class="govuk-link" target="_blank">View allocations for the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a></span>
+                    <span class="govuk-body"><a href="{{ prisonerWorkActivitiesUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}/work-activities" class="govuk-link" target="_blank">View allocations for the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a></span>
                 </div>
             {% else %}
                 {{ govukInsetText({
                     text: prisonerName + " is not currently allocated to any activities."
                 }) }}
 
-                <span class="govuk-body"><a href="{{ dpsUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}/work-activities" class="govuk-link" target="_blank">View allocations for the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a></span>
+                <span class="govuk-body"><a href="{{ prisonerWorkActivitiesUrl }}/prisoner/{{ allocateJourney.inmate.prisonerNumber }}/work-activities" class="govuk-link" target="_blank">View allocations for the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a></span>
             {% endif %}
 
             <div class="govuk-!-margin-top-8">

@@ -19,7 +19,7 @@ export default function setUpAuth(): Router {
     getFrontendComponents({
       logger,
       componentApiConfig: config.apis.componentApi,
-      dpsUrl: config.dpsUrl,
+      dpsUrl: config.dpsHomePageUrl,
     }),
     (req, res) => {
       res.status(401)

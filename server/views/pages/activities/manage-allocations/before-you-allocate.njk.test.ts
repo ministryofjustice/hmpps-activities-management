@@ -47,11 +47,19 @@ describe('Views - Manage Allocations - Before you allocate', () => {
       },
     },
     validationErrors: [],
-    dpsUrl: '',
+    prisonerUrl: 'https://prisoner.example.test',
+    prisonerWorkActivitiesUrl: 'https://legacy.example.test',
   }
 
   beforeEach(() => {
     compiledTemplate = compile(view.toString(), njkEnv)
+  })
+
+  it('links directly to the prisoner profile and preserves the legacy work activities destination', () => {
+    const $ = cheerio.load(compiledTemplate.render(baseContext))
+
+    expect($('a[href="https://prisoner.example.test/prisoner/A5015DY"]')).toHaveLength(1)
+    expect($('a[href="https://legacy.example.test/prisoner/A5015DY/work-activities"]')).toHaveLength(1)
   })
 
   it('should show open non-associations and a link to review them', () => {

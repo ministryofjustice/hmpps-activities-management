@@ -94,7 +94,8 @@ export default function nunjucksSetup(app: express.Express, { applicationInfo }:
   app.locals.asset_path = '/assets/'
   app.locals.applicationName = 'Activities and Appointments'
   app.locals.hmppsAuthUrl = config.apis.hmppsAuth.url
-  app.locals.dpsUrl = config.dpsUrl
+  app.locals.dpsHomePageUrl = config.dpsHomePageUrl
+  app.locals.prisonerWorkActivitiesUrl = config.prisonerWorkActivitiesUrl
   app.locals.videoConferenceScheduleUrl = config.videoConferenceScheduleUrl
   app.locals.nonAssociationsUrl = config.nonAssociationsUrl
   app.locals.reportAFaultUrl = config.reportAFaultUrl
@@ -218,7 +219,8 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
   njkEnv.addGlobal('concatArrays', concatArrays)
-  njkEnv.addGlobal('dpsUrl', config.dpsUrl)
+  njkEnv.addGlobal('dpsHomePageUrl', config.dpsHomePageUrl)
+  njkEnv.addGlobal('prisonerWorkActivitiesUrl', config.prisonerWorkActivitiesUrl)
   njkEnv.addGlobal('prisonerUrl', config.prisonerUrl)
   njkEnv.addGlobal('incentivesUrl', config.incentivesUrl)
   njkEnv.addGlobal('nonAssociationsUrl', config.nonAssociationsUrl)
