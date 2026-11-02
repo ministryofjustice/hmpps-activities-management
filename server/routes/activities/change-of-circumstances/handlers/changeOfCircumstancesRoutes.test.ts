@@ -112,6 +112,7 @@ describe('Route Handlers - Select period for changes', () => {
           ...item,
           firstName: 'Bob',
           lastName: 'Bobson',
+          middleNames: '',
           cellLocation: '1-12-123',
         }
       })
@@ -120,10 +121,53 @@ describe('Route Handlers - Select period for changes', () => {
         page: 0,
         changeEvents: results,
         pagination,
-        isToday: false,
-        isYesterday: false,
+        reviewed: false,
+        hasFilters: false,
+        changesToReviewHref: 'view-changes?date=2023-05-16',
+        reviewedChangesHref: 'view-changes?date=2023-05-16&reviewed=true',
       }
       expect(res.render).toHaveBeenCalledWith('pages/activities/change-of-circumstances/view-events', viewContext)
+    })
+  })
+
+  describe('review tabs', () => {
+    beforeEach(() => {
+      activitiesService.getChangeEvents.mockResolvedValue(changeEvents)
+      prisonService.searchInmatesByPrisonerNumbers.mockResolvedValue(prisoners)
+    })
+
+    it.each([
+      ['true', true],
+      ['false', false],
+      [undefined, false],
+    ])('requests the correct review state for %s', async (value, expected) => {
+      req.query.reviewed = value
+      await handler.GET(req, res)
+      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
+        'MDI',
+        '2023-05-16',
+        0,
+        10,
+        res.locals.user,
+        expected,
+      )
+      expect(res.render).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ reviewed: expected }))
+    })
+
+    it('keeps the date, search and filters in tab links while resetting pagination', async () => {
+      req.query.page = '2'
+      req.query.searchTerm = 'Smith & Jones'
+      req.query.changeTypes = ['alerts', 'cell-moves']
+      await handler.GET(req, res)
+      const context = (res.render as jest.Mock).mock.calls[0][1]
+      for (const href of [context.changesToReviewHref, context.reviewedChangesHref]) {
+        const query = new URL(href, 'http://localhost').searchParams
+        expect(query.get('date')).toBe('2023-05-16')
+        expect(query.get('searchTerm')).toBe('Smith & Jones')
+        expect(query.getAll('changeTypes')).toEqual(['alerts', 'cell-moves'])
+        expect(query.has('page')).toBe(false)
+      }
+      expect(context.hasFilters).toBe(true)
     })
   })
 

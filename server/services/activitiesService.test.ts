@@ -716,8 +716,13 @@ describe('Activities Service', () => {
       const actualResult = await activitiesService.getChangeEvents('MDI', '2023-10-16', 1, 10, user)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getChangeEvents).toHaveBeenCalledWith('MDI', '2023-10-16', 1, 10, user)
+      expect(activitiesApiClient.getChangeEvents).toHaveBeenCalledWith('MDI', '2023-10-16', 1, 10, user, false)
     })
+  })
+
+  it('passes the reviewed tab state to the activities API', async () => {
+    await activitiesService.getChangeEvents('MDI', '2023-10-16', 1, 10, user, true)
+    expect(activitiesApiClient.getChangeEvents).toHaveBeenLastCalledWith('MDI', '2023-10-16', 1, 10, user, true)
   })
 
   describe('acknowledgeChangeEvents', () => {

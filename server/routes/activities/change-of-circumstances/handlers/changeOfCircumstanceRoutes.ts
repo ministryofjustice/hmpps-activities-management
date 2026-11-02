@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import { isToday, isYesterday } from 'date-fns'
 import { getPagination, PaginationRequest } from '../../../../utils/paginationUtils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
@@ -18,10 +17,29 @@ export default class ChangeOfCircumstanceRoutes {
     const { page, date } = req.query
     const prison = user.activeCaseLoadId
     const queryDate = date as string
+    const reviewed = req.query.reviewed === 'true'
+    const navigationQuery = new URLSearchParams({ date: queryDate })
+    for (const key of ['searchTerm', 'changeTypes']) {
+      const values = Array.isArray(req.query[key]) ? req.query[key] : [req.query[key]]
+      values.forEach(value => {
+        if (typeof value === 'string' && value.trim()) navigationQuery.append(key, value)
+      })
+    }
+    const changesToReviewHref = `view-changes?${navigationQuery}`
+    navigationQuery.set('reviewed', 'true')
+    const reviewedChangesHref = `view-changes?${navigationQuery}`
+    const hasFilters = navigationQuery.has('searchTerm') || navigationQuery.has('changeTypes')
 
     // Get a page of results and call search for additional details
     const pageNo = +page || 0 // Default to the first page if not set
-    const searchResults = await this.activitiesService.getChangeEvents(prison, queryDate, pageNo, ITEMS_PER_PAGE, user)
+    const searchResults = await this.activitiesService.getChangeEvents(
+      prison,
+      queryDate,
+      pageNo,
+      ITEMS_PER_PAGE,
+      user,
+      reviewed,
+    )
     const prisonerNumbers = searchResults.content.map(e => e.prisonerNumber)
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
@@ -38,6 +56,7 @@ export default class ChangeOfCircumstanceRoutes {
         ...item,
         firstName: prisoner?.firstName || '',
         lastName: prisoner?.lastName || '',
+        middleNames: prisoner?.middleNames || '',
         prisonerStatus: prisoner?.status,
         prisonerPrisonCode: prisoner?.prisonId,
         cellLocation: prisoner?.cellLocation || '',
@@ -50,8 +69,10 @@ export default class ChangeOfCircumstanceRoutes {
       page,
       changeEvents,
       pagination,
-      isToday: isToday(queryDate),
-      isYesterday: isYesterday(queryDate),
+      reviewed,
+      hasFilters,
+      changesToReviewHref,
+      reviewedChangesHref,
     }
     res.render('pages/activities/change-of-circumstances/view-events', viewContext)
   }

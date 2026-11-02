@@ -729,12 +729,13 @@ export default class ActivitiesApiClient extends RestClient {
     page: number,
     pageSize: number,
     user: ServiceUser,
+    filterAcknowledged = false,
   ): Promise<EventReviewSearchResults> {
     return this.get(
       {
-        path: `/event-review/prison/${prison}`,
+        path: `/event-review/v2/prison/${prison}`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
-        query: { date, page, size: pageSize },
+        query: { date, page, size: pageSize, filterAcknowledged, sortDirection: 'ascending' },
       },
       asUser(user.token),
     )

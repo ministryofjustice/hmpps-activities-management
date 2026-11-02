@@ -382,8 +382,9 @@ export default class ActivitiesService {
     page: number,
     pageSize: number,
     user: ServiceUser,
+    filterAcknowledged = false,
   ): Promise<EventReviewSearchResults> {
-    return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, pageSize, user)
+    return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, pageSize, user, filterAcknowledged)
   }
 
   async acknowledgeChangeEvents(prisonCode: string, eventIds: number[], user: ServiceUser) {
