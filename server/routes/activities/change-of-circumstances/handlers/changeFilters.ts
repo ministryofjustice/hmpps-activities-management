@@ -5,7 +5,11 @@ export const changeFilters = [
     text: 'Non-associations',
     eventCodes: ['prison-offender-events.prisoner.non-association-detail.changed'],
   },
-  { value: 'cell-moves', text: 'Cell moves', eventCodes: ['prisoner-offender-search.prisoner.updated'] },
+  {
+    value: 'cell-moves',
+    text: 'Cell moves',
+    eventCodes: ['prisoner-offender-search.prisoner.updated', 'prison-offender-events.prisoner.cell.move'],
+  },
   {
     value: 'releases-and-transfers',
     text: 'Releases and transfers',

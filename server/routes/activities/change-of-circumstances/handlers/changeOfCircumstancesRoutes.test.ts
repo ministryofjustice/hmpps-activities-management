@@ -175,7 +175,7 @@ describe('Route Handlers - Changes in circumstances', () => {
     it.each([
       ['alerts', ['prisoner-offender-search.prisoner.alerts-updated']],
       ['non-associations', ['prison-offender-events.prisoner.non-association-detail.changed']],
-      ['cell-moves', ['prisoner-offender-search.prisoner.updated']],
+      ['cell-moves', ['prisoner-offender-search.prisoner.updated', 'prison-offender-events.prisoner.cell.move']],
       ['releases-and-transfers', ['prisoner-offender-search.prisoner.released']],
       [
         'incentive-levels',
