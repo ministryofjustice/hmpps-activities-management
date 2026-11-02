@@ -44,7 +44,7 @@ const stubManageAppointmentScenario = async (
   prisoners[1].inOutStatus = 'IN'
 
   await stubEndpoint('GET', '/appointment-categories', getCategories)
-  await stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
+  await stubEndpoint('GET', '/appointment-locations/MDI(\\?filterParents=true)?', getAppointmentLocations)
   await stubEndpoint('POST', '/appointments/MDI/search', getAppointmentSearchResults)
   await stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisoners)
   await stubEndpoint('GET', '/users/jsmith', {

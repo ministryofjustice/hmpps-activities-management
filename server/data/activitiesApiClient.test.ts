@@ -680,6 +680,22 @@ describe('activitiesApiClient', () => {
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
+
+    it('should return locations with parent locations filtered from api', async () => {
+      const response = [
+        { id: 1, prisonCode: 'MDI', description: 'Appointment Location 1' },
+      ] as AppointmentLocationSummary[]
+
+      fakeActivitiesApi
+        .get('/appointment-locations/MDI')
+        .query({ filterParents: true })
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getAppointmentLocations('MDI', user, true)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
   })
 
   describe('postCreateAppointmentSeries', () => {

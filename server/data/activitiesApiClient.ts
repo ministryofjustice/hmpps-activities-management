@@ -554,10 +554,15 @@ export default class ActivitiesApiClient extends RestClient {
     )
   }
 
-  async getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<AppointmentLocationSummary[]> {
+  async getAppointmentLocations(
+    prisonCode: string,
+    user: ServiceUser,
+    filterParents = false,
+  ): Promise<AppointmentLocationSummary[]> {
     return this.get(
       {
         path: `/appointment-locations/${prisonCode}`,
+        query: filterParents ? { filterParents: true } : undefined,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
       },
       asUser(user.token),
