@@ -107,7 +107,7 @@
                                     attributes: {
                                         id: 'prisoner-actions'
                                     },
-                                    html: '<a href="' + dpsUrl + '/prisoner/' + prisoner.prisonerNumber + '" class="govuk-link govuk-link--no-visited-state" target="_blank">View <span class="govuk-visually-hidden">' + prisoner | firstNameLastName | toTitleCase + '\'s</span> prisoner profile<span class="govuk-visually-hidden"> (opens in new tab)</span></a>'
+                                    html: '<a href="' + prisonerUrl + '/prisoner/' + prisoner.prisonerNumber + '" class="govuk-link govuk-link--no-visited-state" target="_blank">View <span class="govuk-visually-hidden">' + prisoner | firstNameLastName | toTitleCase + '\'s</span> prisoner profile<span class="govuk-visually-hidden"> (opens in new tab)</span></a>'
                                 }
                             ]), prisonerRows) %}
                         {% endfor %}

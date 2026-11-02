@@ -270,7 +270,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       req.journeyData.appointmentJourney.fromPrisonNumberProfile = 'A1234BC'
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
-        backLinkHref: 'https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC',
+        backLinkHref: 'https://prisoner-dev.digital.prison.service.justice.gov.uk/prisoner/A1234BC',
         prisoners: [],
         notFoundPrisoners: [],
       })
