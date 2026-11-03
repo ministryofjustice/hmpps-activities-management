@@ -6,7 +6,7 @@ import { GetChangeEventsParams } from '../../../../@types/activitiesAPI/types'
 import { changeFilters, readFilters } from './changeFilters'
 import { convertToNumberArray, isPrisonerNumber } from '../../../../utils/utils'
 
-const ITEMS_PER_PAGE = 10
+const ITEMS_PER_PAGE = 25
 
 export default class ChangeOfCircumstanceRoutes {
   constructor(

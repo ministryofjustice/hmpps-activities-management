@@ -189,4 +189,34 @@ describe('Views - Changes in circumstances', () => {
         .get(),
     ).toEqual(['alerts', 'cell-moves'])
   })
+  it.each([
+    [1, 10, 50],
+    [11, 20, 50],
+    [1, 3, 3],
+    [1, 1, 1],
+  ])('shows the range %s–%s of %s changes above and below the table', (from, to, count) => {
+    const $ = cheerio.load(
+      template.render({
+        ...context,
+        changeEvents: [event],
+        pagination: {
+          items:
+            count > 10
+              ? [
+                  { text: '1', href: '?page=0' },
+                  { text: '2', href: '?page=1' },
+                ]
+              : [],
+          results: { from, to, count },
+        },
+      }),
+    )
+    const summaries = $('.moj-pagination__results')
+      .map((_, element) => $(element).text().trim())
+      .get()
+    expect(summaries).toEqual(
+      Array(2).fill(`Showing ${from} to ${to} of ${count} ${count === 1 ? 'change' : 'changes'}`),
+    )
+    expect($('.moj-pagination nav.govuk-pagination')).toHaveLength(count > 10 ? 2 : 0)
+  })
 })
