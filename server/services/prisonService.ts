@@ -29,6 +29,25 @@ export default class PrisonService {
     return this.prisonerSearchApiClient.searchPrisonInmates(term, user.activeCaseLoadId, user)
   }
 
+  async searchPrisonerNumbers(searchTerm: string, prisonerNumbers: string[], user: ServiceUser): Promise<string[]> {
+    const words = searchTerm
+      .toLowerCase()
+      .split(/[\s,]+/)
+      .filter(Boolean)
+    if (!words.length || !prisonerNumbers.length) return []
+
+    const prisoners = await this.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
+    return prisoners
+      .filter(prisoner => {
+        const nameAndNumber = [prisoner.firstName, prisoner.middleNames, prisoner.lastName, prisoner.prisonerNumber]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase()
+        return words.every(word => nameAndNumber.includes(word))
+      })
+      .map(prisoner => prisoner.prisonerNumber)
+  }
+
   async searchInmatesByPrisonerNumbers(prisonerNumbers: string[], user: ServiceUser): Promise<Prisoner[]> {
     // Prisoner search has a maximum number of prisoner numbers allowed of 1000. Therefore, we make multiple
     // batched calls with a max batch size of 1000

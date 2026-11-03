@@ -110,7 +110,16 @@
     "area": "activities/change-of-circumstances",
     "view": "pages/activities/change-of-circumstances/view-events",
     "route": "/activities/change-of-circumstances/view-changes?date=2023-05-16",
-    "heading": "Changes in circumstances",
+    "heading": "Changes to review",
+    "status": "covered",
+    "pageId": "change-of-circumstance-page"
+  },
+  {
+    "id": "activities/change-of-circumstances/reviewed-events",
+    "area": "activities/change-of-circumstances",
+    "view": "pages/activities/change-of-circumstances/view-events",
+    "route": "/activities/change-of-circumstances/view-changes?date=2023-05-16&reviewed=true",
+    "heading": "Changes to review",
     "status": "covered",
     "pageId": "change-of-circumstance-page"
   },
