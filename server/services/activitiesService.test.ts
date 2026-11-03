@@ -713,11 +713,84 @@ describe('Activities Service', () => {
 
       when(activitiesApiClient.getChangeEvents).mockResolvedValue(expectedResult)
 
-      const actualResult = await activitiesService.getChangeEvents('MDI', '2023-10-16', 1, 10, user)
+      const actualResult = await activitiesService.getChangeEvents(
+        'MDI',
+        { date: '2023-10-16', page: 1, size: 10 },
+        user,
+      )
 
       expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getChangeEvents).toHaveBeenCalledWith('MDI', '2023-10-16', 1, 10, user)
+      expect(activitiesApiClient.getChangeEvents).toHaveBeenCalledWith(
+        'MDI',
+        { date: '2023-10-16', page: 1, size: 10 },
+        user,
+      )
     })
+  })
+
+  describe('getChangeEventPrisonerNumbers', () => {
+    it('collects unique prisoner numbers across only the filtered prison/date event pages', async () => {
+      const getEvents = jest.mocked(activitiesApiClient.getChangeEventCandidates)
+      getEvents.mockClear()
+      getEvents
+        .mockResolvedValueOnce({
+          content: [{ prisonerNumber: 'A1234AA' }, { prisonerNumber: 'A1234AA' }, { prisonerNumber: null }],
+          totalPages: 2,
+        } as EventReviewSearchResults)
+        .mockResolvedValueOnce({
+          content: [{ prisonerNumber: 'B1234BB' }],
+          totalPages: 2,
+        } as EventReviewSearchResults)
+      const filters = {
+        date: '2023-10-16',
+        eventCodes: ['prisoner-offender-search.prisoner.released'],
+      }
+      expect(await activitiesService.getChangeEventPrisonerNumbers('MDI', filters, user)).toEqual([
+        'A1234AA',
+        'B1234BB',
+      ])
+      expect(getEvents).toHaveBeenNthCalledWith(1, 'MDI', { ...filters, page: 0, size: 1000 }, user)
+      expect(getEvents).toHaveBeenNthCalledWith(2, 'MDI', { ...filters, page: 1, size: 1000 }, user)
+    })
+
+    it('does not skip an outstanding prisoner when earlier events are acknowledged between pages', async () => {
+      const events = Array.from({ length: 1001 }, (_, index) => ({
+        eventReviewId: index + 1,
+        prisonerNumber: `prisoner-${index}`,
+        acknowledgedBy: null,
+      })) as EventReview[]
+      const getCandidates = jest.mocked(activitiesApiClient.getChangeEventCandidates)
+      getCandidates.mockClear()
+      getCandidates.mockImplementation(async (_prison, query) => {
+        const content = events.slice(query.page * query.size, (query.page + 1) * query.size)
+        if (query.page === 0) events[0].acknowledgedBy = 'another-user'
+        return { content, totalElements: events.length, totalPages: 2, pageNumber: query.page }
+      })
+      const numbers = await activitiesService.getChangeEventPrisonerNumbers('MDI', { date: '2023-10-16' }, user)
+      expect(numbers).toHaveLength(1001)
+      expect(numbers).toContain('prisoner-1000')
+      expect(getCandidates).toHaveBeenCalledTimes(2)
+    })
+
+    it('returns no candidates when the selected prison/date has no changes', async () => {
+      jest
+        .mocked(activitiesApiClient.getChangeEventCandidates)
+        .mockResolvedValue({ content: [], totalPages: 0 } as EventReviewSearchResults)
+      expect(await activitiesService.getChangeEventPrisonerNumbers('MDI', { date: '2023-10-16' }, user)).toEqual([])
+    })
+  })
+
+  it('passes the reviewed tab state to the activities API', async () => {
+    await activitiesService.getChangeEvents(
+      'MDI',
+      { date: '2023-10-16', page: 1, size: 10, filterAcknowledged: true },
+      user,
+    )
+    expect(activitiesApiClient.getChangeEvents).toHaveBeenLastCalledWith(
+      'MDI',
+      { date: '2023-10-16', page: 1, size: 10, filterAcknowledged: true },
+      user,
+    )
   })
 
   describe('acknowledgeChangeEvents', () => {

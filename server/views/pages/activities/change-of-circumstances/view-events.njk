@@ -1,113 +1,169 @@
 {% extends "layout.njk" %}
 
-{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "moj/components/pagination/macro.njk" import mojPagination %}
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
-{% set pageTitle = "Changes in circumstances - Activities - DPS" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{% set pageTitle = "Changes to review - Activities - DPS" %}
 {% set pageId = 'change-of-circumstance-page' %}
 {% set jsBackLink = true %}
 
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <h1 class="govuk-heading-xl">Changes in circumstances</h1>
+    <div class="govuk-grid-column-full change-events">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-three-quarters">
+                <span class="govuk-caption-m">Review changes in circumstances</span>
+                <h1 class="govuk-heading-l govuk-!-margin-bottom-1">Changes to review</h1>
+                <span class="govuk-caption-m govuk-!-margin-bottom-6">{{ date | formatDate('EEEE, d MMMM yyyy') }}</span>
+                <p class="govuk-body">Review changes that may affect people’s allocations. Select ones you’ve reviewed, then mark them as reviewed to update the list.</p>
+            </div>
+        </div>
 
+        {{ mojSubNavigation({
+            label: 'Changes in circumstances',
+            items: [
+                { text: 'Changes to review', href: changesToReviewHref, active: not reviewed },
+                { text: 'Changes that have been reviewed', href: reviewedChangesHref, active: reviewed }
+            ]
+        }) }}
+
+        <form method="GET" class="change-filters">
+            <input type="hidden" name="date" value="{{ date }}">
+            {% if reviewed %}<input type="hidden" name="reviewed" value="true">{% endif %}
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Filter by</h2>
+            <div class="change-filters__fields">
+                {{ govukInput({
+                    id: 'searchTerm', name: 'searchTerm', value: searchTerm,
+                    label: { text: 'Name or prison number' }
+                }) }}
+                {{ govukCheckboxes({
+                    name: 'changeTypes', idPrefix: 'changeTypes',
+                    classes: 'govuk-checkboxes--small change-filters__checkboxes',
+                    fieldset: { legend: { text: 'Changes to show' } },
+                    items: filterItems
+                }) }}
+                <div class="change-filters__actions">
+                    {{ govukButton({ text: 'Apply filters', classes: 'govuk-!-margin-bottom-0' }) }}
+                    <a class="govuk-link" href="{{ clearFiltersHref }}">Clear</a>
+                </div>
+            </div>
+        </form>
+
+        {% set head = [
+            { text: 'Prisoner', attributes: { 'aria-sort': 'none' } },
+            { text: 'Change', attributes: { 'aria-sort': 'none' } },
+            { text: 'Details' },
+            { text: 'Time', attributes: { 'aria-sort': 'ascending' } },
+            { text: 'Allocations' }
+        ] %}
+        {% if reviewed %}
+            {% set head = (head.push({ text: 'Reviewed by' }), head) %}
+        {% endif %}
+        {% set head = (head.push({ html: '<span class="govuk-visually-hidden">Actions</span>' }), head) %}
         {% set rows = [] %}
-
         {% for event in changeEvents %}
-
-            {% set rows = (rows.push({
-                visuallyHiddenText: 'Select ' + event.eventReviewId,
-                value: event.eventReviewId,
-                selectable: event.acknowledgedBy === null,
-                items: [
-                    {
-                        html: showProfileLink({
-                            firstName: event.firstName,
-                            middleNames: event.middleNames,
-                            lastName: event.lastName,
-                            prisonerNumber: event.prisonerNumber,
-                            inCaseLoad: event.prisonerPrisonCode == user.activeCaseLoadId
-                        }),
-                        attributes: {
-                            "data-qa": "prisoner-details"
-                        }
-                    },
-                    {
-                        text: statusBasedCellLocation(event.cellLocation, event.prisonerStatus, event.prisonerPrisonCode == user.activeCaseLoadId)
-                    },
-                    {
-                        text: event.eventTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMMM yyyy hh:mm a', false)
-                    },
-                    {
-                        html: renderEventTypeTag(event),
-                        classes: 'govuk-!-display-none-print'
-                    }
-                ]
-            }), rows) %}
-
+            {% set eventTypeTag = renderEventTypeTag(event) %}
+            {% set allocationsHtml %}
+                {% for allocation in event.activeAllocations %}
+                    {{ allocation }}{% if not loop.last %}<br>{% endif %}
+                {% else %}
+                    None
+                {% endfor %}
+            {% endset %}
+            {% set actionsHtml %}
+                {% if event.activeAllocations.length %}
+                    <a class="govuk-link govuk-link--no-visited-state" href="/activities/prisoner-allocations/{{ event.prisonerNumber }}">Manage allocations<span class="govuk-visually-hidden"> for {{ event | formatName(NameFormatStyle.firstLast) | forceescape }}</span></a>
+                {% endif %}
+            {% endset %}
+            {% set items = [
+                {
+                    html: showProfileLink({
+                        firstName: event.firstName,
+                        middleNames: event.middleNames,
+                        lastName: event.lastName,
+                        prisonerNumber: event.prisonerNumber,
+                        cellLocation: statusBasedCellLocation(event.cellLocation, event.prisonerStatus, event.prisonerPrisonCode == user.activeCaseLoadId),
+                        inCaseLoad: event.prisonerPrisonCode == user.activeCaseLoadId
+                    }),
+                    attributes: { 'data-qa': 'prisoner-details', 'data-sort-value': event | formatName(NameFormatStyle.lastCommaFirstMiddle, false) }
+                },
+                { html: eventTypeTag, attributes: { 'data-sort-value': eventTypeTag | striptags | trim } },
+                { text: event.eventData or '' },
+                {
+                    text: event.eventTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('HH:mm', false),
+                    attributes: { 'data-sort-value': event.eventTime }
+                },
+                { html: allocationsHtml }
+            ] %}
+            {% if reviewed %}
+                {% set items = (items.push({ text: event.acknowledgedBy }), items) %}
+            {% endif %}
+            {% set items = (items.push({ html: actionsHtml, classes: 'govuk-!-text-align-right' }), items) %}
+            {% if reviewed %}
+                {% set rows = (rows.push(items), rows) %}
+            {% else %}
+                {% set rows = (rows.push({
+                    visuallyHiddenText: 'Select change for ' + (event | formatName(NameFormatStyle.firstLast) | forceescape),
+                    value: event.eventReviewId,
+                    selectable: true,
+                    items: items
+                }), rows) %}
+            {% endif %}
         {% endfor %}
 
         {% if rows.length == 0 %}
-            <div class="govuk-body" data-qa="no-data-p">
-                {% if isToday %}
-                <p>There are no changes to show for today.</p>
-                {% elif isYesterday %}
-                <p>There are no changes to show for yesterday.</p>
+            <p class="govuk-body" data-qa="no-data-p">
+                {% if reviewed %}
+                    No changes have been reviewed.{% if hasFilters %} Change your filter or search options.{% endif %}
                 {% else %}
-                <p>There are no changes to show for {{ date | formatDate('d MMMM yyyy') }}.</p>
+                    There are no changes to review.
+                    {% if hasFilters %}Change your filter or search, or {% endif %}<a class="govuk-link" href="/activities/change-of-circumstances/select-period" data-qa="no-data-link">{{ 'select' if hasFilters else 'Select' }} a different date</a>.
                 {% endif %}
-                <p class="govuk-body"><a href="/activities/change-of-circumstances/select-period" data-qa="no-data-link">Select a different date</a></p>
-            </div>
+            </p>
         {% else %}
-
-            <form method='POST'>
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-                <input type="hidden" name="date" value="{{ date }}">
-                <input type="hidden" name="page" value="{{ page }}">
-
-                {{ mojPagination(pagination) }}
-
-                {{ stickySelect({
-                    type: 'check',
-                    selectAllAvailable: true,
-                    id: "changeEvents",
-                    caption: "Change events",
-                    captionClasses: "govuk-visually-hidden",
-                    name: 'selectedEvents',
-                    head: [
-                        {
-                            text: "Name"
-                        },
-                        {
-                            text: "Cell location"
-                        },
-                        {
-                            text: "Event time"
-                        },
-                        {
-                            text: "Event type"
-                        }
-                    ],
-                    rows: rows,
-                    actions: [
-                        {
-                            text: 'Acknowledge',
-                            formAction: 'view-changes'
-                        }
-                    ],
-                    itemsDescription: 'event',
-                    itemsDescriptionPlural: 'events'
+            {{ mojPagination(pagination) }}
+            {% if reviewed %}
+                {{ govukTable({
+                    attributes: { 'data-module': 'moj-sortable-table', id: 'changeEvents' },
+                    caption: 'Changes that have been reviewed',
+                    captionClasses: 'govuk-visually-hidden',
+                    head: head,
+                    rows: rows
                 }) }}
-
-                {{ mojPagination(pagination) }}
-            </form>
+            {% else %}
+                <form method="POST">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                    <input type="hidden" name="date" value="{{ date }}">
+                    <input type="hidden" name="page" value="{{ page }}">
+                    <input type="hidden" name="searchTerm" value="{{ searchTerm }}">
+                    {% for filter in selectedFilters %}
+                        <input type="hidden" name="changeTypes" value="{{ filter }}">
+                    {% endfor %}
+                    {{ stickySelect({
+                        type: 'check',
+                        selectAllAvailable: true,
+                        id: 'changeEvents',
+                        caption: 'Changes to review',
+                        captionClasses: 'govuk-visually-hidden',
+                        name: 'selectedEvents',
+                        head: head,
+                        rows: rows,
+                        actions: [{ text: 'Mark as reviewed', formAction: 'view-changes' }],
+                        itemsDescription: 'change',
+                        itemsDescriptionPlural: 'changes'
+                    }) }}
+                </form>
+            {% endif %}
+            {{ mojPagination(pagination) }}
         {% endif %}
     </div>
 </div>
@@ -125,8 +181,8 @@
         ({ text: "Permanent release", classes: "govuk-tag--green" } if ('prisoner.released' in event.eventType and event.eventDescription === 'PERMANENT_RELEASE')) or
         ({ text: "Release", classes: "govuk-tag--green" } if 'prisoner.released' in event.eventType) or
         ({ text: "Appointments cancelled", classes: "govuk-tag--green" } if 'appointments-changed' in event.eventType) or
-        ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'cell.move' in event.eventType) or
-        ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'prisoner.updated' in event.eventType and 'Cell move' in event.eventData) or
+        ({ text: "Cell move", classes: "govuk-tag--blue" } if 'cell.move' in event.eventType) or
+        ({ text: "Cell move", classes: "govuk-tag--blue" } if 'prisoner.updated' in event.eventType and 'Cell move' in event.eventData) or
         { text: "Unknown-event", classes: "govuk-tag--yellow"} %}
 
     {% set options = options | setAttribute('classes', options.classes + " govuk-!-font-size-16") %}

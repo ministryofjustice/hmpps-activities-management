@@ -45,6 +45,8 @@ export const DAYS_OF_WEEK_UPPERCASE: DaysOfWeek[] = [
 
 export const isBlank = (str: string): boolean => !str || /^\s*$/.test(str)
 
+export const isPrisonerNumber = (value: string): boolean => /^[a-z]\d{4}[a-z]{2}$/i.test(value)
+
 /**
  * Converts an unformatted name string to the format, 'J. Bloggs'.
  * Specifically, this method initialises the first name and appends it by the last name. Any middle names are stripped.

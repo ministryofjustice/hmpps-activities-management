@@ -56,6 +56,31 @@ describe('Prison Service', () => {
     })
   })
 
+  describe('searchPrisonerNumbers', () => {
+    it.each(['Joe', 'Smith', 'Smith, Joe'])(
+      'matches %s only against event participants, including people outside this prison',
+      async term => {
+        const candidates = ['A1234AA', 'B1234BB', 'C1234CC']
+        jest.mocked(prisonerSearchApiClient.searchByPrisonerNumbers).mockResolvedValue([
+          { prisonerNumber: 'A1234AA', firstName: 'Joe', lastName: 'Smith', prisonId: 'OUT' },
+          { prisonerNumber: 'B1234BB', firstName: 'Unrelated', lastName: 'Person', prisonId: 'MDI' },
+          { prisonerNumber: 'C1234CC', firstName: 'Joe', lastName: 'Smith', prisonId: 'LEI' },
+        ] as Prisoner[])
+        expect(await prisonService.searchPrisonerNumbers(term, candidates, user)).toEqual(['A1234AA', 'C1234CC'])
+        expect(prisonerSearchApiClient.searchByPrisonerNumbers).toHaveBeenCalledWith(
+          { prisonerNumbers: candidates },
+          user,
+        )
+      },
+    )
+
+    it('does not search for prisoners when there are no event participants', async () => {
+      jest.mocked(prisonerSearchApiClient.searchByPrisonerNumbers).mockClear()
+      expect(await prisonService.searchPrisonerNumbers('Joe', [], user)).toEqual([])
+      expect(prisonerSearchApiClient.searchByPrisonerNumbers).not.toHaveBeenCalled()
+    })
+  })
+
   describe('searchInmatesByPrisonerNumbers', () => {
     it('should search inmates using prisoner search API', async () => {
       const expectedResult = [{ content: 'response' }] as unknown as Prisoner[]
