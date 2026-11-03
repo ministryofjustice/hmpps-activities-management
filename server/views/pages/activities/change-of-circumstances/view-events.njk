@@ -130,7 +130,7 @@
                 {% endif %}
             </p>
         {% else %}
-            {{ changesPagination(pagination) }}
+            {{ mojPagination(pagination) }}
             {% if reviewed %}
                 {{ govukTable({
                     attributes: { 'data-module': 'moj-sortable-table', id: 'changeEvents' },
@@ -163,27 +163,11 @@
                     }) }}
                 </form>
             {% endif %}
-            {{ changesPagination(pagination) }}
+            {{ mojPagination(pagination) }}
         {% endif %}
     </div>
 </div>
 {% endblock %}
-
-{% macro changesPagination(pagination) %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ mojPagination({
-                items: pagination.items,
-                previous: pagination.previous,
-                next: pagination.next,
-                classes: pagination.classes
-            }) }}
-        </div>
-        <div class="govuk-grid-column-one-third">
-            <p class="moj-pagination__results govuk-!-text-align-right">Showing {{ pagination.results.from }} to {{ pagination.results.to }} of {{ pagination.results.count }} {{ 'change' if pagination.results.count == 1 else 'changes' }}</p>
-        </div>
-    </div>
-{% endmacro %}
 
 {% macro renderEventTypeTag(event) %}
     {% set options = 

@@ -95,6 +95,8 @@ export default class ChangeOfCircumstanceRoutes {
     const paginationReq = { totalResults, currentPage, limit: ITEMS_PER_PAGE } as PaginationRequest
     const pagination = getPagination(paginationReq, new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`))
 
+    pagination.results.text = 'changes'
+
     // Build view context and render the results
     const viewContext = {
       searchTerm,
