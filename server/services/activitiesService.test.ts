@@ -715,14 +715,14 @@ describe('Activities Service', () => {
 
       const actualResult = await activitiesService.getChangeEvents(
         'MDI',
-        { date: '2023-10-16', page: 1, size: 10 },
+        { date: '2023-10-16', page: 1, size: 25 },
         user,
       )
 
       expect(actualResult).toEqual(expectedResult)
       expect(activitiesApiClient.getChangeEvents).toHaveBeenCalledWith(
         'MDI',
-        { date: '2023-10-16', page: 1, size: 10 },
+        { date: '2023-10-16', page: 1, size: 25 },
         user,
       )
     })
@@ -783,12 +783,12 @@ describe('Activities Service', () => {
   it('passes the reviewed tab state to the activities API', async () => {
     await activitiesService.getChangeEvents(
       'MDI',
-      { date: '2023-10-16', page: 1, size: 10, filterAcknowledged: true },
+      { date: '2023-10-16', page: 1, size: 25, filterAcknowledged: true },
       user,
     )
     expect(activitiesApiClient.getChangeEvents).toHaveBeenLastCalledWith(
       'MDI',
-      { date: '2023-10-16', page: 1, size: 10, filterAcknowledged: true },
+      { date: '2023-10-16', page: 1, size: 25, filterAcknowledged: true },
       user,
     )
   })

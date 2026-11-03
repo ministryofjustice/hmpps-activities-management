@@ -189,4 +189,30 @@ describe('Views - Changes in circumstances', () => {
         .get(),
     ).toEqual(['alerts', 'cell-moves'])
   })
+  it.each([
+    [50, 'Showing 1 to 25 of 50 total changes'],
+    [3, '3 total changes'],
+  ])('uses the standard pagination summary for %s changes', (count, expected) => {
+    const $ = cheerio.load(
+      template.render({
+        ...context,
+        changeEvents: [event],
+        pagination: {
+          items:
+            count > 25
+              ? [
+                  { text: '1', href: '?page=0' },
+                  { text: '2', href: '?page=1' },
+                ]
+              : [],
+          results: { from: 1, to: Math.min(25, count), count, text: 'changes' },
+        },
+      }),
+    )
+    expect(
+      $('.moj-pagination__results')
+        .map((_, element) => $(element).text().trim())
+        .get(),
+    ).toEqual([expected, expected])
+  })
 })

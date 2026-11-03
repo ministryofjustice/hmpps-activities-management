@@ -6,7 +6,7 @@ import { GetChangeEventsParams } from '../../../../@types/activitiesAPI/types'
 import { changeFilters, readFilters } from './changeFilters'
 import { convertToNumberArray, isPrisonerNumber } from '../../../../utils/utils'
 
-const ITEMS_PER_PAGE = 10
+const ITEMS_PER_PAGE = 25
 
 export default class ChangeOfCircumstanceRoutes {
   constructor(
@@ -94,6 +94,8 @@ export default class ChangeOfCircumstanceRoutes {
     const currentPage = searchResults.pageNumber || 0
     const paginationReq = { totalResults, currentPage, limit: ITEMS_PER_PAGE } as PaginationRequest
     const pagination = getPagination(paginationReq, new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`))
+
+    pagination.results.text = 'changes'
 
     // Build view context and render the results
     const viewContext = {

@@ -929,11 +929,11 @@ describe('activitiesApiClient', () => {
       const response = { content, pageNumber: 1, totalElements: 1, totalPages: 1 } as EventReviewSearchResults
       fakeActivitiesApi
         .get('/event-review/v2/prison/MDI')
-        .query({ date: '2023-01-01', page: 0, size: 10, filterAcknowledged: false, sortDirection: 'ascending' })
+        .query({ date: '2023-01-01', page: 0, size: 25, filterAcknowledged: false, sortDirection: 'ascending' })
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
-      const output = await activitiesApiClient.getChangeEvents('MDI', { date: '2023-01-01', page: 0, size: 10 }, user)
+      const output = await activitiesApiClient.getChangeEvents('MDI', { date: '2023-01-01', page: 0, size: 25 }, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
@@ -945,7 +945,7 @@ describe('activitiesApiClient', () => {
       .query({
         date: '2023-01-01',
         page: 1,
-        size: 10,
+        size: 25,
         prisonerNumbers: 'A1234AA,B1234BB',
         eventCodes: 'event.one,event.two',
         filterAcknowledged: true,
@@ -959,7 +959,7 @@ describe('activitiesApiClient', () => {
       {
         date: '2023-01-01',
         page: 1,
-        size: 10,
+        size: 25,
         prisonerNumbers: ['A1234AA', 'B1234BB'],
         eventCodes: ['event.one', 'event.two'],
         filterAcknowledged: true,
@@ -1004,11 +1004,11 @@ describe('activitiesApiClient', () => {
   it('requests only reviewed changes in ascending event-time order for the reviewed tab', async () => {
     fakeActivitiesApi
       .get('/event-review/v2/prison/MDI')
-      .query({ date: '2023-01-01', page: 0, size: 10, filterAcknowledged: true, sortDirection: 'ascending' })
+      .query({ date: '2023-01-01', page: 0, size: 25, filterAcknowledged: true, sortDirection: 'ascending' })
       .reply(200, { content: [], totalElements: 0, totalPages: 0, pageNumber: 0 })
     await activitiesApiClient.getChangeEvents(
       'MDI',
-      { date: '2023-01-01', page: 0, size: 10, filterAcknowledged: true },
+      { date: '2023-01-01', page: 0, size: 25, filterAcknowledged: true },
       user,
     )
     expect(nock.isDone()).toBe(true)
