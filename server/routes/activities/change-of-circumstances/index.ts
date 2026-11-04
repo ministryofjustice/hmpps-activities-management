@@ -4,14 +4,18 @@ import SelectPeriodForChangesRoutes, { TimePeriodForChanges } from './handlers/s
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import { Services } from '../../../services'
 
-export default function Index({ activitiesService, prisonService }: Services): Router {
+export default function Index({ activitiesService, activitiesOrchestratorService, prisonService }: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler) => router.get(path, handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), handler)
 
-  const changeOfCircumstanceHandler = new ChangeOfCircumstanceRoutes(activitiesService, prisonService)
+  const changeOfCircumstanceHandler = new ChangeOfCircumstanceRoutes(
+    activitiesService,
+    activitiesOrchestratorService,
+    prisonService,
+  )
   const selectPeriodForChangesHandler = new SelectPeriodForChangesRoutes()
 
   get('/select-period', selectPeriodForChangesHandler.GET)

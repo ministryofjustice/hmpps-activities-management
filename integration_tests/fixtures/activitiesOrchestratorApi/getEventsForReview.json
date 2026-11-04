@@ -9,6 +9,7 @@
       "bookingId": 1,
       "prisonerNumber": "A1234AA",
       "eventData": "Some data",
+      "eventDescription": "NON_ASSOCIATION",
       "acknowledgedTime": null,
       "acknowledgedBy": null
     },
@@ -21,6 +22,7 @@
       "bookingId": 1,
       "prisonerNumber": "A1234AB",
       "eventData": "Cell move",
+      "eventDescription": "CELL_MOVE",
       "acknowledgedTime": null,
       "acknowledgedBy": null
     },
@@ -33,6 +35,7 @@
       "bookingId": 1,
       "prisonerNumber": "A1234AC",
       "eventData": "Cell move",
+      "eventDescription": null,
       "acknowledgedTime": null,
       "acknowledgedBy": null
     }

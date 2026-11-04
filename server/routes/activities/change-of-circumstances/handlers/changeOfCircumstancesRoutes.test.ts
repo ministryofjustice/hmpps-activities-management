@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
+import ActivitiesOrchestratorService from '../../../../services/activitiesOrchestratorService'
 import PrisonService from '../../../../services/prisonService'
 import ChangeOfCircumstanceRoutes from './changeOfCircumstanceRoutes'
 import { EventReview, EventReviewSearchResults } from '../../../../@types/activitiesAPI/types'
@@ -8,13 +9,17 @@ import { PageLink } from '../../../../utils/paginationUtils'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/activitiesOrchestratorService')
 jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const activitiesOrchestratorService = new ActivitiesOrchestratorService(
+  null,
+) as jest.Mocked<ActivitiesOrchestratorService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Select period for changes', () => {
-  const handler = new ChangeOfCircumstanceRoutes(activitiesService, prisonService)
+  const handler = new ChangeOfCircumstanceRoutes(activitiesService, activitiesOrchestratorService, prisonService)
   let req: Request
   let res: Response
 
@@ -104,7 +109,8 @@ describe('Route Handlers - Select period for changes', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      when(activitiesService.getChangeEvents).mockResolvedValue(changeEvents)
+      // when(activitiesService.getChangeEvents).mockResolvedValue(changeEvents
+      when(activitiesOrchestratorService.getEventsForReview).mockResolvedValue(changeEvents)
       when(prisonService.searchInmatesByPrisonerNumbers).mockResolvedValue(prisoners)
       await handler.GET(req, res)
       const results = changeEvents.content.map(item => {

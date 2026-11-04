@@ -116,6 +116,14 @@ export default {
       },
       agent: new AgentConfig(Number(get('ACTIVITIES_API_TIMEOUT_RESPONSE', 30000))),
     },
+    activitiesOrchestratorApi: {
+      url: get('ACTIVITIES_ORCHESTRATOR_API_URL', 'http://localhost:8091', requiredInProduction),
+      timeout: {
+        response: Number(get('ACTIVITIES_ORCHESTRATOR_API_TIMEOUT_RESPONSE', 30000)),
+        deadline: Number(get('ACTIVITIES_ORCHESTRATOR_API_TIMEOUT_DEADLINE', 30000)),
+      },
+      agent: new AgentConfig(Number(get('ACTIVITIES_ORCHESTRATOR_API_TIMEOUT_RESPONSE', 30000))),
+    },
     prisonApi: {
       url: get('PRISON_API_URL', 'http://localhost:8080', requiredInProduction),
       timeout: {

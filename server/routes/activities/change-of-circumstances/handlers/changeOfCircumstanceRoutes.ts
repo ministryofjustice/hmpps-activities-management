@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { isToday, isYesterday } from 'date-fns'
 import { getPagination, PaginationRequest } from '../../../../utils/paginationUtils'
 import ActivitiesService from '../../../../services/activitiesService'
+import ActivitiesOrchestratorService from '../../../../services/activitiesOrchestratorService'
 import PrisonService from '../../../../services/prisonService'
 import { convertToNumberArray } from '../../../../utils/utils'
 
@@ -10,6 +11,7 @@ const ITEMS_PER_PAGE = 10
 export default class ChangeOfCircumstanceRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
+    private readonly activitiesOrchestratorService: ActivitiesOrchestratorService,
     private readonly prisonService: PrisonService,
   ) {}
 
@@ -21,7 +23,13 @@ export default class ChangeOfCircumstanceRoutes {
 
     // Get a page of results and call search for additional details
     const pageNo = +page || 0 // Default to the first page if not set
-    const searchResults = await this.activitiesService.getChangeEvents(prison, queryDate, pageNo, ITEMS_PER_PAGE, user)
+    const searchResults = await this.activitiesOrchestratorService.getEventsForReview(
+      prison,
+      queryDate,
+      pageNo,
+      ITEMS_PER_PAGE,
+      user,
+    )
     const prisonerNumbers = searchResults.content.map(e => e.prisonerNumber)
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 

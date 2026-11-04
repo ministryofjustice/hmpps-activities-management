@@ -10,17 +10,19 @@ import NonAssociationsApiClient from './nonAssociationsApiClient'
 import AlertsApiClient from './alertsApiClient'
 import LocationsInsidePrisonApiClient from './locationsInsidePrisonApiClient'
 import TokenStore from './tokenStore'
+import ActivitiesOrchestratorApiClient from './activitiesOrchestratorApiClient'
 
 describe('DataAccess', () => {
   test('The correct rest clients are instantiated', () => {
     const clients = dataAccess()
-    expect(Object.values(clients).length).toBe(13)
+    expect(Object.values(clients).length).toBe(14)
+    expect(clients.activitiesApiClient).toBeInstanceOf(ActivitiesApiClient)
+    expect(clients.activitiesOrchestratorApiClient).toBeInstanceOf(ActivitiesOrchestratorApiClient)
     expect(clients.manageUsersApiClient).toBeInstanceOf(ManageUsersApiClient)
     expect(clients.caseNotesApiClient).toBeInstanceOf(CaseNotesApiClient)
     expect(clients.prisonApiClient).toBeInstanceOf(PrisonApiClient)
     expect(clients.prisonerSearchApiClient).toBeInstanceOf(PrisonerSearchApiClient)
     expect(clients.incentivesApiClient).toBeInstanceOf(IncentivesApiClient)
-    expect(clients.activitiesApiClient).toBeInstanceOf(ActivitiesApiClient)
     expect(clients.bookAVideoLinkApiClient).toBeInstanceOf(BookAVideoLinkApiClient)
     expect(clients.nonAssociationsApiClient).toBeInstanceOf(NonAssociationsApiClient)
     expect(clients.alertsApiClient).toBeInstanceOf(AlertsApiClient)

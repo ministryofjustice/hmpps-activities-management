@@ -45,7 +45,15 @@
                         classes: 'govuk-!-display-none-print'
                     },
                     {
-                        text: event.eventTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMMM yyyy hh:mm a', false)
+                        text: event.eventTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('HH:mm', false)
+                    },
+                    {
+                        html: renderAllocations(event),
+                        classes: 'govuk-!-display-none-print'
+                    },
+                    {
+                        html: renderEventTypeLink(event),
+                        classes: 'govuk-!-display-none-print'
                     }
                 ]
             }), rows) %}
@@ -88,7 +96,11 @@
                         },
                         {
                             text: "Time"
-                        }
+                        },
+                        {
+                            text: "Allocations"
+                        },
+                        {}
                     ],
                     rows: rows,
                     actions: [
@@ -110,24 +122,65 @@
 
 {% macro renderEventTypeTag(event) %}
     {% set options = 
-        ({ text: "Alert added", classes: "govuk-tag--grey" } if 'alerts-updated' in event.eventType and event.eventDescription === 'ALERT_ADDED') or
-        ({ text: "Alert closed", classes: "govuk-tag--grey" } if 'alerts-updated' in event.eventType and event.eventDescription === 'ALERT_CLOSED') or
-        ({ text: "Alerts have been added and removed", classes: "govuk-tag--grey" } if 'alerts-updated' in event.eventType and event.eventDescription === 'ALERTS_ADDED_AND_CLOSED') or
-        ({ text: "Non-association", classes: "govuk-tag--orange" } if 'non-association' in event.eventType) or
+        ({ text: "Activities ended", classes: "govuk-tag--yellow" } if 'activities-changed' in event.eventType and event.eventDescription == 'ACTIVITY_ENDED') or
+        ({ text: "Activities suspended", classes: "govuk-tag--yellow" } if 'activities-changed' in event.eventType and event.eventDescription == 'ACTIVITY_SUSPENDED') or
+        ({ text: "Appointments kept", classes: "govuk-tag--yellow" } if 'appointments-changed' in event.eventType and event.eventDescription == 'APPOINTMENTS_KEPT') or
+        ({ text: "Appointments cancelled", classes: "govuk-tag--yellow" } if 'appointments-changed' in event.eventType and event.eventDescription == 'APPOINTMENTS_CANCELLED') or
+        ({ text: "Alert added", classes: "govuk-tag--grey" } if 'alerts-updated' in event.eventType and event.eventDescription == 'ALERT_ADDED') or
+        ({ text: "Alert closed", classes: "govuk-tag--grey" } if 'alerts-updated' in event.eventType and event.eventDescription == 'ALERT_CLOSED') or
+        ({ text: "Alerts have been added and removed", classes: "govuk-tag--grey" } if 'alerts-updated' in event.eventType and event.eventDescription == 'ALERTS_ADDED_AND_CLOSED') or
         ({ text: "Arrival or Return", classes: "govuk-tag--green" } if 'prisoner.received' in event.eventType) or
+        ({ text: "Cell-move", classes: "govuk-tag--light-blue" } if 'cell.move' in event.eventType) or
+        ({ text: "Cell-move", classes: "govuk-tag--light-blue" } if 'prisoner.updated' in event.eventType and event.eventDescription == 'CELL_MOVE') or
         ({ text: "Incentive level changed", classes: "govuk-tag--yellow" } if 'iep-review' in event.eventType) or
-        ({ text: "Temporary absence", classes: "govuk-tag--blue" } if ('activities-changed' in event.eventType and event.eventDescription === 'ACTIVITY_SUSPENDED')) or
-        ({ text: "Temporary absence", classes: "govuk-tag--blue" } if ('activities-changed' in event.eventType and event.eventDescription === 'ACTIVITY_ENDED')) or
-        ({ text: "Release", classes: "govuk-tag--blue" } if ('prisoner.released' in event.eventType and event.eventDescription === 'RELEASED')) or
-        ({ text: "Transfer out", classes: "govuk-tag--blue" } if ('prisoner.released' in event.eventType and event.eventDescription === 'TRANSFER_OUT')) or
-        ({ text: "Release", classes: "govuk-tag--blue" } if 'prisoner.released' in event.eventType) or
-        ({ text: "Temporary absence ", classes: "govuk-tag--green" } if 'appointments-changed' in event.eventType) or
-        ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'cell.move' in event.eventType) or
-        ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'prisoner.updated' in event.eventType and 'Cell move' in event.eventData) or
-        ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'prisoner.updated' in event.eventType and 'Cell move' in event.eventData) or
+        ({ text: "Non-association", classes: "govuk-tag--orange" } if 'non-association' in event.eventType) or
+        ({ text: "Release", classes: "govuk-tag--blue" } if ('prisoner.released' in event.eventType and event.eventDescription == 'RELEASED')) or
+        ({ text: "Transfer out", classes: "govuk-tag--blue" } if ('prisoner.released' in event.eventType and event.eventDescription == 'TRANSFER_OUT')) or
         { text: "Unknown-event", classes: "govuk-tag--yellow"} %}
 
     {% set options = options | setAttribute('classes', options.classes + " govuk-!-font-size-16") %}
 
     {{ govukTag(options) }}
+{% endmacro %}
+
+{% macro renderEventTypeLink(event) %}
+    {% set html = '' %}
+
+    {% if 'non-association' in event.eventType %}
+        {% set html = html +
+            '<a href="/activities/prisoner-allocations/' + event.prisonerNumber +
+            '/non-associations" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-16">Non Associations</a><br>'
+        %}
+    {% endif %}
+
+    {% if (
+        'alerts-updated' in event.eventType or
+        'iep-review' in event.eventType or
+        'non-association' in event.eventType or
+        'prisoner.received' in event.eventType or
+        event.eventDescription == 'ACTIVITY_SUSPENDED' or
+        ('prisoner.updated' in event.eventType and event.eventDescription == 'CELL_MOVE')
+    ) and event.activeAllocations and event.activeAllocations.length %}
+        {% set html = html +
+            '<a href="/activities/prisoner-allocations/' + event.prisonerNumber +
+            '" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-16">Manage Allocations</a><br>'
+        %}
+    {% endif %}
+
+    {% if 'alerts-updated' in event.eventType %}
+        {% set html = html +
+            '<a href="/prisoner/' + event.prisonerNumber +
+            '/alerts/active" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-16">View Alert Details</a><br>'
+        %}
+    {% endif %}
+
+    {{ html | safe }}
+{% endmacro %}
+
+{% macro renderAllocations(event) %}
+    {% if event.activeAllocations and event.activeAllocations.length %}
+        {% for allocation in event.activeAllocations %}
+            {{ allocation }}<br>
+        {% endfor %}
+    {% endif %}
 {% endmacro %}
