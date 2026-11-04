@@ -73,7 +73,7 @@ export default function createApp(services: Services): express.Application {
     getFrontendComponents({
       componentApiConfig: config.apis.componentApi,
       requestOptions: { includeSharedData: true },
-      dpsUrl: config.dpsUrl,
+      dpsUrl: config.dpsHomePageUrl,
       logger,
     }),
   )

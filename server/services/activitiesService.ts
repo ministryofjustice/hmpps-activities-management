@@ -34,6 +34,8 @@ import {
   DeallocationReasonCode,
   EventAcknowledgeRequest,
   EventReviewSearchResults,
+  GetChangeEventsParams,
+  GetChangeEventCandidatesParams,
   GetAllocationsParams,
   LocationGroup,
   MultipleAppointmentAttendanceRequest,
@@ -277,8 +279,13 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAppointmentCategories(user)
   }
 
-  async getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<AppointmentLocationSummary[]> {
-    return this.activitiesApiClient.getAppointmentLocations(prisonCode, user)
+  // Only filter parent locations when offering locations for selection, not when displaying existing appointments
+  async getAppointmentLocations(
+    prisonCode: string,
+    user: ServiceUser,
+    filterParents = false,
+  ): Promise<AppointmentLocationSummary[]> {
+    return this.activitiesApiClient.getAppointmentLocations(prisonCode, user, filterParents)
   }
 
   createAppointmentSeries(request: AppointmentSeriesCreateRequest, user: ServiceUser): Promise<AppointmentSeries> {
@@ -373,12 +380,35 @@ export default class ActivitiesService {
 
   async getChangeEvents(
     prisonCode: string,
-    requestDate: string,
-    page: number,
-    pageSize: number,
+    query: GetChangeEventsParams,
     user: ServiceUser,
   ): Promise<EventReviewSearchResults> {
-    return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, pageSize, user)
+    return this.activitiesApiClient.getChangeEvents(prisonCode, query, user)
+  }
+
+  async getChangeEventPrisonerNumbers(
+    prisonCode: string,
+    filters: Omit<GetChangeEventCandidatesParams, 'page' | 'size'>,
+    user: ServiceUser,
+  ): Promise<string[]> {
+    const prisonerNumbers = new Set<string>()
+    let page = 0
+    let totalPages = 1
+    do {
+      // Include reviewed events so acknowledgements do not shift candidate page offsets.
+      // eslint-disable-next-line no-await-in-loop
+      const results = await this.activitiesApiClient.getChangeEventCandidates(
+        prisonCode,
+        { ...filters, page, size: 1000 },
+        user,
+      )
+      results.content.forEach(event => {
+        if (event.prisonerNumber) prisonerNumbers.add(event.prisonerNumber)
+      })
+      totalPages = results.totalPages
+      page += 1
+    } while (page < totalPages)
+    return [...prisonerNumbers]
   }
 
   async acknowledgeChangeEvents(prisonCode: string, eventIds: number[], user: ServiceUser) {

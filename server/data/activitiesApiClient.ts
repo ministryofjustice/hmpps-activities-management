@@ -36,6 +36,8 @@ import {
   DeallocationReason,
   EventAcknowledgeRequest,
   EventReviewSearchResults,
+  GetChangeEventsParams,
+  GetChangeEventCandidatesParams,
   GetAllocationsParams,
   InternalLocationEvents,
   InternalLocationEventsSummary,
@@ -554,10 +556,15 @@ export default class ActivitiesApiClient extends RestClient {
     )
   }
 
-  async getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<AppointmentLocationSummary[]> {
+  async getAppointmentLocations(
+    prisonCode: string,
+    user: ServiceUser,
+    filterParents = false,
+  ): Promise<AppointmentLocationSummary[]> {
     return this.get(
       {
         path: `/appointment-locations/${prisonCode}`,
+        query: filterParents ? { filterParents: true } : undefined,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
       },
       asUser(user.token),
@@ -720,16 +727,41 @@ export default class ActivitiesApiClient extends RestClient {
 
   async getChangeEvents(
     prison: string,
-    date: string,
-    page: number,
-    pageSize: number,
+    query: GetChangeEventsParams,
     user: ServiceUser,
   ): Promise<EventReviewSearchResults> {
     return this.get(
       {
+        path: `/event-review/v2/prison/${prison}`,
+        headers: CASELOAD_HEADER(user.activeCaseLoadId),
+        query: {
+          ...query,
+          filterAcknowledged: query.filterAcknowledged ?? false,
+          sortDirection: query.sortDirection ?? 'ascending',
+          ...(query.prisonerNumbers && { prisonerNumbers: query.prisonerNumbers.join(',') }),
+          ...(query.eventCodes && { eventCodes: query.eventCodes.join(',') }),
+        },
+      },
+      asUser(user.token),
+    )
+  }
+
+  async getChangeEventCandidates(
+    prison: string,
+    query: GetChangeEventCandidatesParams,
+    user: ServiceUser,
+  ): Promise<EventReviewSearchResults> {
+    // v2 can return reviewed OR outstanding events, but not both. The legacy endpoint's
+    // includeAcknowledged option keeps candidate membership stable during acknowledgement.
+    return this.get(
+      {
         path: `/event-review/prison/${prison}`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
-        query: { date, page, size: pageSize },
+        query: {
+          ...query,
+          includeAcknowledged: true,
+          ...(query.eventCodes && { eventCodes: query.eventCodes.join(',') }),
+        },
       },
       asUser(user.token),
     )
