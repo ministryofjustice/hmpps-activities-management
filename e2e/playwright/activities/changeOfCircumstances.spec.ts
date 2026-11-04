@@ -32,7 +32,7 @@ test.beforeEach(async ({ page }) => {
 
   await stubEndpoint(
     'GET',
-    '/event-review/v2/prison/MDI\\?date=2023-05-16&page=0&size=10&filterAcknowledged=false&sortDirection=ascending',
+    '/event-review/v2/prison/MDI\\?date=2023-05-16&page=0&size=25&filterAcknowledged=false&sortDirection=ascending',
     getChangeEvents,
   )
 
@@ -45,6 +45,8 @@ test('a user can review changes in circumstances', async ({ page }) => {
   await page.goto('/activities/change-of-circumstances/view-changes?date=2023-05-16')
 
   await expect(page.getByRole('heading', { name: 'Changes to review', exact: true })).toBeVisible()
+
+  await expect(page.locator('.moj-pagination__results')).toHaveText(['3 total changes', '3 total changes'])
 
   const bob = page.getByRole('row').filter({ hasText: 'Johnson, Joe' })
 
@@ -68,7 +70,7 @@ test('a user can review changes in circumstances', async ({ page }) => {
 test('a user can switch to reviewed changes without selection controls', async ({ page }) => {
   await stubEndpoint(
     'GET',
-    '/event-review/v2/prison/MDI\\?date=2023-05-16&page=0&size=10&filterAcknowledged=true&sortDirection=ascending',
+    '/event-review/v2/prison/MDI\\?date=2023-05-16&page=0&size=25&filterAcknowledged=true&sortDirection=ascending',
     {
       ...getChangeEvents,
       content: getChangeEvents.content.map(event => ({
@@ -144,7 +146,7 @@ test('filters persist across tabs, and Apply and Clear retain the reviewed tab',
   )
   await stubEndpoint(
     'GET',
-    '/event-review/v2/prison/MDI\\?date=2023-05-16&page=0&size=10&filterAcknowledged=true&sortDirection=ascending',
+    '/event-review/v2/prison/MDI\\?date=2023-05-16&page=0&size=25&filterAcknowledged=true&sortDirection=ascending',
     {
       content: [],
       totalElements: 0,

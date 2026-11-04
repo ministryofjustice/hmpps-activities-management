@@ -99,7 +99,7 @@ describe('Route Handlers - Changes in circumstances', () => {
 
   const pagination = {
     items: [] as PageLink[],
-    results: { from: 1, to: 3, count: 3 },
+    results: { from: 1, to: 3, count: 3, text: 'changes' },
     classes: 'govuk-!-font-size-19',
   }
 
@@ -157,7 +157,7 @@ describe('Route Handlers - Changes in circumstances', () => {
         {
           date: '2023-05-16',
           page: 0,
-          size: 10,
+          size: 25,
           filterAcknowledged: false,
           prisonerNumbers: ['A1234AA', 'B1234BB'],
           eventCodes: ['prison-offender-events.prisoner.non-association-detail.changed'],
@@ -198,7 +198,7 @@ describe('Route Handlers - Changes in circumstances', () => {
         {
           date: '2023-05-16',
           page: 0,
-          size: 10,
+          size: 25,
           filterAcknowledged: false,
           prisonerNumbers: ['A1234AA'],
         },
@@ -233,7 +233,7 @@ describe('Route Handlers - Changes in circumstances', () => {
         {
           date: '2023-05-16',
           page: 0,
-          size: 10,
+          size: 25,
           filterAcknowledged: false,
           eventCodes,
         },
@@ -248,14 +248,42 @@ describe('Route Handlers - Changes in circumstances', () => {
       req.originalUrl =
         '/activities/change-of-circumstances/view-changes?date=2023-05-16&searchTerm=Bob+%26+Joe&changeTypes=alerts&changeTypes=cell-moves'
       prisonService.searchPrisonerNumbers.mockResolvedValue(['A1234AA'])
-      activitiesService.getChangeEvents.mockResolvedValue({ ...changeEvents, totalElements: 21, totalPages: 3 })
+      activitiesService.getChangeEvents.mockResolvedValue({ ...changeEvents, totalElements: 51, totalPages: 3 })
       await handler.GET(req, res)
       const context = (res.render as jest.Mock).mock.calls[0][1]
-      expect(context.pagination.results.count).toBe(21)
+      expect(context.pagination.results.count).toBe(51)
       const next = new URL(context.pagination.next.href)
       expect(next.searchParams.getAll('changeTypes')).toEqual(['alerts', 'cell-moves'])
       expect(next.searchParams.get('searchTerm')).toBe('Bob & Joe')
       expect(next.searchParams.get('page')).toBe('1')
+    })
+
+    it.each([
+      [0, 25, 1, 25],
+      [0, 51, 1, 25],
+      [1, 51, 26, 50],
+      [2, 51, 51, 51],
+    ])('calculates 25-row pagination for page %s of %s changes', async (page, total, from, to) => {
+      req.query.page = String(page)
+      activitiesService.getChangeEvents.mockResolvedValue({
+        content: Array.from({ length: to - from + 1 }, (_, index) => ({ ...content[0], eventReviewId: from + index })),
+        totalElements: total,
+        totalPages: Math.ceil(total / 25),
+        pageNumber: page,
+      })
+      await handler.GET(req, res)
+      const context = (res.render as jest.Mock).mock.calls[0][1]
+      expect(context.pagination.results).toEqual({ from, to, count: total, text: 'changes' })
+      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
+        'MDI',
+        {
+          date: '2023-05-16',
+          page,
+          size: 25,
+          filterAcknowledged: false,
+        },
+        res.locals.user,
+      )
     })
 
     it('redirects an empty last page to the last valid page and retains the filters', async () => {
@@ -283,7 +311,7 @@ describe('Route Handlers - Changes in circumstances', () => {
         {
           date: '2023-05-16',
           page: 0,
-          size: 10,
+          size: 25,
           filterAcknowledged: false,
         },
         res.locals.user,
@@ -300,7 +328,7 @@ describe('Route Handlers - Changes in circumstances', () => {
         {
           date: '2023-05-16',
           page: 0,
-          size: 10,
+          size: 25,
           filterAcknowledged: true,
           prisonerNumbers: ['A1234AA'],
           eventCodes: ['prisoner-offender-search.prisoner.updated', 'prison-offender-events.prisoner.cell.move'],
@@ -333,7 +361,7 @@ describe('Route Handlers - Changes in circumstances', () => {
 
   describe('review tabs', () => {
     beforeEach(() => {
-      activitiesService.getChangeEvents.mockResolvedValue({ ...changeEvents, totalPages: 3 })
+      activitiesService.getChangeEvents.mockResolvedValue({ ...changeEvents, totalElements: 75, totalPages: 3 })
       activitiesService.getChangeEventPrisonerNumbers.mockResolvedValue(['A1234AA'])
       prisonService.searchPrisonerNumbers.mockResolvedValue(['A1234AA'])
       prisonService.searchInmatesByPrisonerNumbers.mockResolvedValue(prisoners)
@@ -348,7 +376,7 @@ describe('Route Handlers - Changes in circumstances', () => {
       await handler.GET(req, res)
       expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
         'MDI',
-        { date: '2023-05-16', page: 0, size: 10, filterAcknowledged: expected },
+        { date: '2023-05-16', page: 0, size: 25, filterAcknowledged: expected },
         res.locals.user,
       )
       expect(res.render).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ reviewed: expected }))
