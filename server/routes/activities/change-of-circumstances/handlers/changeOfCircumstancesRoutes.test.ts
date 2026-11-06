@@ -5,7 +5,7 @@ import ActivitiesOrchestratorService from '../../../../services/activitiesOrches
 import PrisonService from '../../../../services/prisonService'
 import ChangeOfCircumstanceRoutes from './changeOfCircumstanceRoutes'
 import { changeFilters } from './changeFilters'
-import { EventReview, EventReviewSearchResults } from '../../../../@types/activitiesAPI/types'
+import { EventReviewSearchResultsDto, EventReviewDto } from '../../../../@types/activitiesOrchestratorAPI/types'
 import { PageLink } from '../../../../utils/paginationUtils'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
@@ -20,7 +20,7 @@ const activitiesOrchestratorService = new ActivitiesOrchestratorService(
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Changes in circumstances', () => {
-  const handler = new ChangeOfCircumstanceRoutes(activitiesService, prisonService)
+  const handler = new ChangeOfCircumstanceRoutes(activitiesService, activitiesOrchestratorService, prisonService)
   let req: Request
   let res: Response
 
@@ -46,7 +46,7 @@ describe('Route Handlers - Changes in circumstances', () => {
     } as unknown as Request
   })
 
-  const content = [
+  const content: EventReviewDto[] = [
     {
       eventReviewId: 1,
       serviceIdentifier: null,
@@ -58,6 +58,7 @@ describe('Route Handlers - Changes in circumstances', () => {
       eventData: 'Some data',
       acknowledgedTime: null,
       acknowledgedBy: null,
+      activeAllocations: [],
     },
     {
       eventReviewId: 2,
@@ -70,6 +71,7 @@ describe('Route Handlers - Changes in circumstances', () => {
       eventData: 'Some data',
       acknowledgedTime: null,
       acknowledgedBy: null,
+      activeAllocations: [],
     },
     {
       eventReviewId: 3,
@@ -82,8 +84,9 @@ describe('Route Handlers - Changes in circumstances', () => {
       eventData: 'Some data',
       acknowledgedTime: null,
       acknowledgedBy: null,
+      activeAllocations: [],
     },
-  ] as EventReview[]
+  ]
 
   const prisoners = [
     {
@@ -100,7 +103,7 @@ describe('Route Handlers - Changes in circumstances', () => {
     totalElements: 3,
     totalPages: 1,
     pageNumber: 0,
-  } as EventReviewSearchResults
+  } as unknown as EventReviewSearchResultsDto
 
   const pagination = {
     items: [] as PageLink[],
@@ -110,7 +113,6 @@ describe('Route Handlers - Changes in circumstances', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      // when(activitiesService.getChangeEvents).mockResolvedValue(changeEvents
       when(activitiesOrchestratorService.getEventsForReview).mockResolvedValue(changeEvents)
       when(prisonService.searchInmatesByPrisonerNumbers).mockResolvedValue(prisoners)
       await handler.GET(req, res)
@@ -143,11 +145,12 @@ describe('Route Handlers - Changes in circumstances', () => {
 
   describe('filters', () => {
     beforeEach(() => {
-      activitiesService.getChangeEvents.mockResolvedValue({ ...changeEvents, content: [...content] })
+      activitiesOrchestratorService.getEventsForReview.mockResolvedValue(changeEvents)
+
       activitiesService.getChangeEventPrisonerNumbers.mockResolvedValue(['A1234AA', 'B1234BB'])
+
       prisonService.searchInmatesByPrisonerNumbers.mockResolvedValue(prisoners)
     })
-
     it('passes matching prisoner numbers and selected event codes to the API', async () => {
       req.query.searchTerm = ' BOBSON '
       req.query.changeTypes = ['non-associations', 'unknown', 'non-associations']
@@ -158,15 +161,15 @@ describe('Route Handlers - Changes in circumstances', () => {
         ['A1234AA', 'B1234BB'],
         res.locals.user,
       )
-      expect(activitiesService.getChangeEvents).toHaveBeenCalledWith(
-        'MDI',
+      expect(activitiesOrchestratorService.getEventsForReview).toHaveBeenCalledWith(
         {
-          date: '2023-05-16',
-          page: 0,
-          size: 25,
           filterAcknowledged: false,
+          filterEventTypes: ['prison-offender-events.prisoner.non-association-detail.changed'],
+          page: 0,
+          pageSize: 25,
+          prisonCode: 'MDI',
           prisonerNumbers: ['A1234AA', 'B1234BB'],
-          eventCodes: ['prison-offender-events.prisoner.non-association-detail.changed'],
+          requestDate: '2023-05-16',
         },
         res.locals.user,
       )
@@ -199,14 +202,14 @@ describe('Route Handlers - Changes in circumstances', () => {
       activitiesService.getChangeEventPrisonerNumbers.mockClear()
       await handler.GET(req, res)
       expect(activitiesService.getChangeEventPrisonerNumbers).not.toHaveBeenCalled()
-      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
-        'MDI',
+      expect(activitiesOrchestratorService.getEventsForReview).toHaveBeenLastCalledWith(
         {
-          date: '2023-05-16',
-          page: 0,
-          size: 25,
           filterAcknowledged: false,
+          page: 0,
+          pageSize: 25,
+          prisonCode: 'MDI',
           prisonerNumbers: ['A1234AA'],
+          requestDate: '2023-05-16',
         },
         res.locals.user,
       )
@@ -231,17 +234,17 @@ describe('Route Handlers - Changes in circumstances', () => {
         ['incentives.iep-review.inserted', 'incentives.iep-review.updated', 'incentives.iep-review.deleted'],
       ],
       ['arrivals-and-returns', ['prisoner-offender-search.prisoner.received']],
-    ])('uses the API event codes for %s', async (filter, eventCodes) => {
+    ])('uses the API event codes for %s', async (filter, filterEventTypes) => {
       req.query.changeTypes = filter
       await handler.GET(req, res)
-      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
-        'MDI',
+      expect(activitiesOrchestratorService.getEventsForReview).toHaveBeenLastCalledWith(
         {
-          date: '2023-05-16',
-          page: 0,
-          size: 25,
           filterAcknowledged: false,
-          eventCodes,
+          filterEventTypes,
+          page: 0,
+          pageSize: 25,
+          prisonCode: 'MDI',
+          requestDate: '2023-05-16',
         },
         res.locals.user,
       )
@@ -254,7 +257,11 @@ describe('Route Handlers - Changes in circumstances', () => {
       req.originalUrl =
         '/activities/change-of-circumstances/view-changes?date=2023-05-16&searchTerm=Bob+%26+Joe&changeTypes=alerts&changeTypes=cell-moves'
       prisonService.searchPrisonerNumbers.mockResolvedValue(['A1234AA'])
-      activitiesService.getChangeEvents.mockResolvedValue({ ...changeEvents, totalElements: 51, totalPages: 3 })
+      activitiesOrchestratorService.getEventsForReview.mockResolvedValue({
+        ...changeEvents,
+        totalElements: 51,
+        totalPages: 3,
+      })
       await handler.GET(req, res)
       const context = (res.render as jest.Mock).mock.calls[0][1]
       expect(context.pagination.results.count).toBe(51)
@@ -271,7 +278,7 @@ describe('Route Handlers - Changes in circumstances', () => {
       [2, 51, 51, 51],
     ])('calculates 25-row pagination for page %s of %s changes', async (page, total, from, to) => {
       req.query.page = String(page)
-      activitiesService.getChangeEvents.mockResolvedValue({
+      activitiesOrchestratorService.getEventsForReview.mockResolvedValue({
         content: Array.from({ length: to - from + 1 }, (_, index) => ({ ...content[0], eventReviewId: from + index })),
         totalElements: total,
         totalPages: Math.ceil(total / 25),
@@ -280,12 +287,12 @@ describe('Route Handlers - Changes in circumstances', () => {
       await handler.GET(req, res)
       const context = (res.render as jest.Mock).mock.calls[0][1]
       expect(context.pagination.results).toEqual({ from, to, count: total, text: 'changes' })
-      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
-        'MDI',
+      expect(activitiesOrchestratorService.getEventsForReview).toHaveBeenLastCalledWith(
         {
-          date: '2023-05-16',
+          prisonCode: 'MDI',
+          requestDate: '2023-05-16',
           page,
-          size: 25,
+          pageSize: 25,
           filterAcknowledged: false,
         },
         res.locals.user,
@@ -312,12 +319,12 @@ describe('Route Handlers - Changes in circumstances', () => {
     it.each(['-1', '1.5', 'invalid'])('defaults an invalid page %s to zero', async page => {
       req.query.page = page
       await handler.GET(req, res)
-      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
-        'MDI',
+      expect(activitiesOrchestratorService.getEventsForReview).toHaveBeenLastCalledWith(
         {
-          date: '2023-05-16',
+          prisonCode: 'MDI',
+          requestDate: '2023-05-16',
           page: 0,
-          size: 25,
+          pageSize: 25,
           filterAcknowledged: false,
         },
         res.locals.user,
@@ -329,15 +336,15 @@ describe('Route Handlers - Changes in circumstances', () => {
       req.query.searchTerm = 'a1234aa'
       req.query.changeTypes = 'cell-moves'
       await handler.GET(req, res)
-      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
-        'MDI',
+      expect(activitiesOrchestratorService.getEventsForReview).toHaveBeenLastCalledWith(
         {
-          date: '2023-05-16',
+          prisonCode: 'MDI',
+          requestDate: '2023-05-16',
           page: 0,
-          size: 25,
-          filterAcknowledged: true,
+          pageSize: 25,
           prisonerNumbers: ['A1234AA'],
-          eventCodes: ['prisoner-offender-search.prisoner.updated', 'prison-offender-events.prisoner.cell.move'],
+          filterEventTypes: ['prisoner-offender-search.prisoner.updated', 'prison-offender-events.prisoner.cell.move'],
+          filterAcknowledged: true,
         },
         res.locals.user,
       )
@@ -367,7 +374,11 @@ describe('Route Handlers - Changes in circumstances', () => {
 
   describe('review tabs', () => {
     beforeEach(() => {
-      activitiesService.getChangeEvents.mockResolvedValue({ ...changeEvents, totalElements: 75, totalPages: 3 })
+      activitiesOrchestratorService.getEventsForReview.mockResolvedValue({
+        ...changeEvents,
+        totalElements: 75,
+        totalPages: 3,
+      })
       activitiesService.getChangeEventPrisonerNumbers.mockResolvedValue(['A1234AA'])
       prisonService.searchPrisonerNumbers.mockResolvedValue(['A1234AA'])
       prisonService.searchInmatesByPrisonerNumbers.mockResolvedValue(prisoners)
@@ -380,9 +391,14 @@ describe('Route Handlers - Changes in circumstances', () => {
     ])('requests the correct review state for %s', async (value, expected) => {
       req.query.reviewed = value
       await handler.GET(req, res)
-      expect(activitiesService.getChangeEvents).toHaveBeenLastCalledWith(
-        'MDI',
-        { date: '2023-05-16', page: 0, size: 25, filterAcknowledged: expected },
+      expect(activitiesOrchestratorService.getEventsForReview).toHaveBeenLastCalledWith(
+        {
+          prisonCode: 'MDI',
+          requestDate: '2023-05-16',
+          page: 0,
+          pageSize: 25,
+          filterAcknowledged: expected,
+        },
         res.locals.user,
       )
       expect(res.render).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ reviewed: expected }))

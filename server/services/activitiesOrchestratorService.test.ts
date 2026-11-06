@@ -1,7 +1,7 @@
 import { when } from 'jest-when'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import ActivitiesOrchestratorApiClient from '../data/activitiesOrchestratorApiClient'
-import { EventReviewSearchResultsDto } from '../@types/activitiesOrchestratorAPI/types'
+import { EventReviewSearchResultsDto, GetEventsForReviewParams } from '../@types/activitiesOrchestratorAPI/types'
 import ActivitiesOrchestratorService from './activitiesOrchestratorService'
 import { ServiceUser } from '../@types/express'
 
@@ -58,12 +58,22 @@ describe('Activities Orchestrator service', () => {
         totalPages: 1,
       } as unknown as EventReviewSearchResultsDto
 
+      const params: GetEventsForReviewParams = {
+        prisonCode: 'MDI',
+        requestDate: '2023-01-01',
+        page: 0,
+        pageSize: 10,
+        prisonerNumbers: ['A1234AA'],
+        filterAcknowledged: false,
+        filterEventTypes: ['prisoner-offender-search.prisoner.alerts-updated'],
+      }
+
       when(activitiesOrchestratorApiClient.getEventsForReview).mockResolvedValue(expectedResult)
 
-      const actualResult = await activitiesOrchestratorService.getEventsForReview('MDI', '2023-10-16', 1, 10, user)
+      const actualResult = await activitiesOrchestratorService.getEventsForReview(params, user)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(activitiesOrchestratorApiClient.getEventsForReview).toHaveBeenCalledWith('MDI', '2023-10-16', 1, 10, user)
+      expect(activitiesOrchestratorApiClient.getEventsForReview).toHaveBeenCalledWith(params, user)
     })
   })
 })

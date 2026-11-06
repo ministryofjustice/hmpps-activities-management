@@ -5,7 +5,7 @@ import config from '../config'
 import ActivitiesOrchestratorApiClient from './activitiesOrchestratorApiClient'
 import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
-import { EventReviewSearchResultsDto } from '../@types/activitiesOrchestratorAPI/types'
+import { EventReviewSearchResultsDto, GetEventsForReviewParams } from '../@types/activitiesOrchestratorAPI/types'
 
 const user = { token: 'token', activeCaseLoadId: 'MDI' } as ServiceUser
 
@@ -41,21 +41,38 @@ describe('activitiesOrchestratorApiClient', () => {
           prisonCode: 'MDI',
           prisonerNumber: 'A1234AA',
           eventData: 'Some data',
-        } as unknown as EventReviewSearchResultsDto,
+        },
       ]
       const response = {
         content,
         pageNumber: 1,
         totalElements: 1,
         totalPages: 1,
-      } as unknown as EventReviewSearchResultsDto
+      } as EventReviewSearchResultsDto
+
+      const params: GetEventsForReviewParams = {
+        prisonCode: 'MDI',
+        requestDate: '2023-01-01',
+        page: 0,
+        pageSize: 10,
+        prisonerNumbers: ['A1234AA'],
+        filterAcknowledged: false,
+        filterEventTypes: ['prisoner-offender-search.prisoner.alerts-updated'],
+      }
       fakeActivitiesOrchestratorApi
         .get('/event-review/prison/MDI')
-        .query({ date: '2023-01-01', page: 0, size: 10 })
+        .query({
+          date: '2023-01-01',
+          prisonerNumbers: 'A1234AA',
+          filterAcknowledged: false,
+          filterEventTypes: 'prisoner-offender-search.prisoner.alerts-updated',
+          page: 0,
+          size: 10,
+        })
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
-      const output = await activitiesOrchestratorApiClient.getEventsForReview('MDI', '2023-01-01', 0, 10, user)
+      const output = await activitiesOrchestratorApiClient.getEventsForReview(params, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
