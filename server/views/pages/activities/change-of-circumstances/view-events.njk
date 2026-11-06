@@ -162,15 +162,19 @@
                     }}
 
                 {% elif event.eventDescription == 'CELL_MOVE' %}
-                    New cell: {{ event.prisonerUpdatedDetails.newCell }}
-                    <br>
-                    Previous Cell: {{ event.prisonerUpdatedDetails.previousCell }}
+                    {% if event.prisonerUpdatedDetails.newCell or event.prisonerUpdatedDetails.previousCell %}
+                         New cell: {{ event.prisonerUpdatedDetails.newCell }}
+                         <br>
+                         Previous Cell: {{ event.prisonerUpdatedDetails.previousCell }}
+                     {% else %}
+                         {{ event.eventData or '' }}
+                     {% endif %}
 
                 {% elif event.eventDescription == 'INCENTIVE_LEVEL_CHANGED' %}
 
-                    Previous Level: {{ event.incentiveDetails.newLevel }}
+                    Previous Level: {{ event.incentiveDetails.previousLevel }}
                     <br>
-                    New Level: {{ event.incentiveDetails.previousLevel }}
+                    New Level: {{ event.incentiveDetails.newLevel }}
 
                 {% elif event.eventDescription == 'ALERT_ADDED' %}
 

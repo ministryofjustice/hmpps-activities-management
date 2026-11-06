@@ -188,36 +188,88 @@ test('Continue from date selection opens the selected date and sortable changes 
 })
 
 test('filters persist across tabs, and Apply and Clear retain the reviewed tab', async ({ page }) => {
-  await Promise.all(
-    [false, true].map(reviewed =>
-      stubFor({
-        request: {
-          method: 'GET',
-          urlPath: '/event-review/prison/MDI',
-          queryParameters: {
-            date: { equalTo: '2023-05-16' },
-            filterAcknowledged: { equalTo: String(reviewed) },
+  // Filtered outstanding changes
+  await stubFor({
+    request: {
+      method: 'GET',
+      urlPath: '/event-review/prison/MDI',
+      queryParameters: {
+        date: { equalTo: '2023-05-16' },
+        prisonerNumbers: { equalTo: 'A1234AA' },
+        filterAcknowledged: { equalTo: 'false' },
+      },
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+      jsonBody: {
+        content: [
+          {
+            ...getEventsForReview.content[1],
+            prisonerNumber: 'A1234AA',
+            acknowledgedBy: null,
           },
-        },
-        response: {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-          jsonBody: {
-            content: [
-              {
-                ...getEventsForReview.content[1],
-                prisonerNumber: 'A1234AA',
-                acknowledgedBy: reviewed ? 'REVIEWER1' : null,
-              },
-            ],
-            totalElements: 1,
-            totalPages: 1,
-            pageNumber: 0,
+        ],
+        totalElements: 1,
+        totalPages: 1,
+        pageNumber: 0,
+      },
+    },
+  })
+
+  // Filtered reviewed changes
+  await stubFor({
+    request: {
+      method: 'GET',
+      urlPath: '/event-review/prison/MDI',
+      queryParameters: {
+        date: { equalTo: '2023-05-16' },
+        prisonerNumbers: { equalTo: 'A1234AA' },
+        filterAcknowledged: { equalTo: 'true' },
+      },
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+      jsonBody: {
+        content: [
+          {
+            ...getEventsForReview.content[1],
+            prisonerNumber: 'A1234AA',
+            acknowledgedBy: 'REVIEWER1',
           },
-        },
-      }),
-    ),
-  )
+        ],
+        totalElements: 1,
+        totalPages: 1,
+        pageNumber: 0,
+      },
+    },
+  })
+
+  // Reviewed tab after Clear
+  await stubFor({
+    priority: 10,
+    request: {
+      method: 'GET',
+      urlPath: '/event-review/prison/MDI',
+      queryParameters: {
+        date: { equalTo: '2023-05-16' },
+        filterAcknowledged: { equalTo: 'true' },
+        page: { equalTo: '0' },
+        size: { equalTo: '25' },
+      },
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+      jsonBody: {
+        content: [],
+        totalElements: 0,
+        totalPages: 0,
+        pageNumber: 0,
+      },
+    },
+  })
 
   await page.goto(
     '/activities/change-of-circumstances/view-changes?date=2023-05-16&searchTerm=A1234AA&changeTypes=cell-moves',
@@ -233,22 +285,19 @@ test('filters persist across tabs, and Apply and Clear retain the reviewed tab',
     .click()
 
   await expect(page.getByLabel('Name or prison number')).toHaveValue('A1234AA')
-
   await expect(page.getByLabel('Cell moves', { exact: true })).toBeChecked()
-
   await expect(page.locator('tbody')).toContainText('REVIEWER1')
 
   await page.getByRole('button', { name: 'Apply filters', exact: true }).click()
 
   await expect(page).toHaveURL(/reviewed=true/)
-
   await expect(page.locator('tbody tr')).toHaveCount(1)
 
   await page.getByRole('link', { name: 'Clear', exact: true }).click()
 
   await expect(page).toHaveURL(/reviewed=true/)
-
   await expect(page.getByLabel('Name or prison number')).toHaveValue('')
-
   await expect(page.getByLabel('Cell moves', { exact: true })).not.toBeChecked()
+
+  await expect(page.getByText('No changes have been reviewed.', { exact: true })).toBeVisible()
 })
