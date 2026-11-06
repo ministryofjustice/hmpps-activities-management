@@ -2,6 +2,7 @@ import dataAccess from '../data'
 import UserService from './userService'
 import PrisonService from './prisonService'
 import ActivitiesService from './activitiesService'
+import ActivitiesOrchestratorService from './activitiesOrchestratorService'
 import BankHolidayService from './bankHolidayService'
 import UnlockListService from './unlockListService'
 import MetricsService from './metricsService'
@@ -22,6 +23,7 @@ export default function services() {
     prisonerSearchApiClient,
     incentivesApiClient,
     activitiesApiClient,
+    activitiesOrchestratorApiClient,
     bookAVideoLinkApiClient,
     caseNotesApiClient,
     nonAssociationsApiClient,
@@ -40,6 +42,7 @@ export default function services() {
     userService: new UserService(manageUsersApiClient),
     prisonService,
     activitiesService: new ActivitiesService(activitiesApiClient),
+    activitiesOrchestratorService: new ActivitiesOrchestratorService(activitiesOrchestratorApiClient),
     bookAVideoLinkService: new BookAVideoLinkService(bookAVideoLinkApiClient),
     courtBookingService: new CourtBookingService(bookAVideoLinkApiClient),
     probationBookingService: new ProbationBookingService(bookAVideoLinkApiClient),

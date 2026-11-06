@@ -4,6 +4,7 @@ import ManageUsersApiClient from './manageUsersApiClient'
 import PrisonApiClient from './prisonApiClient'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
 import ActivitiesApiClient from './activitiesApiClient'
+import ActivitiesOrchestratorApiClient from './activitiesOrchestratorApiClient'
 import IncentivesApiClient from './incentivesApiClient'
 import CaseNotesApiClient from './caseNotesApiClient'
 import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
@@ -35,6 +36,7 @@ export default function dataAccess() {
     prisonerSearchApiClient: new PrisonerSearchApiClient(hmppsAuthClient),
     incentivesApiClient: new IncentivesApiClient(hmppsAuthClient),
     activitiesApiClient: new ActivitiesApiClient(hmppsAuthClient),
+    activitiesOrchestratorApiClient: new ActivitiesOrchestratorApiClient(hmppsAuthClient),
     bookAVideoLinkApiClient: new BookAVideoLinkApiClient(hmppsAuthClient),
     nonAssociationsApiClient: new NonAssociationsApiClient(hmppsAuthClient),
     alertsApiClient: new AlertsApiClient(hmppsAuthClient),

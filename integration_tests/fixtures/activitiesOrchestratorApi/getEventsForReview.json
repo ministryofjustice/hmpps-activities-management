@@ -8,7 +8,9 @@
       "prisonCode": "MDI",
       "bookingId": 1,
       "prisonerNumber": "A1234AA",
-      "eventData": "Some data",
+      "eventData": "New non-association",
+      "eventDescription": "NON_ASSOCIATION",
+      "activeAllocations": [],
       "acknowledgedTime": null,
       "acknowledgedBy": null
     },
@@ -20,7 +22,13 @@
       "prisonCode": "MDI",
       "bookingId": 1,
       "prisonerNumber": "A1234AB",
-      "eventData": "Cell move",
+      "eventData": "B-3-S-019;A-1-N-001",
+      "eventDescription": "CELL_MOVE",
+      "activeAllocations": ["Kitchen AM"],
+      "prisonerUpdatedDetails": {
+        "previousCell": "B-3-S-019",
+        "newCell": "A-1-N-001"
+      },
       "acknowledgedTime": null,
       "acknowledgedBy": null
     },
@@ -33,6 +41,8 @@
       "bookingId": 1,
       "prisonerNumber": "A1234AC",
       "eventData": "Cell move",
+      "eventDescription": null,
+      "activeAllocations": [],
       "acknowledgedTime": null,
       "acknowledgedBy": null
     }

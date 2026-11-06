@@ -1,85 +1,151 @@
 import { Request, Response } from 'express'
 import { getPagination, PaginationRequest } from '../../../../utils/paginationUtils'
 import ActivitiesService from '../../../../services/activitiesService'
+import ActivitiesOrchestratorService from '../../../../services/activitiesOrchestratorService'
 import PrisonService from '../../../../services/prisonService'
-import { GetChangeEventsParams } from '../../../../@types/activitiesAPI/types'
 import { changeFilters, readFilters } from './changeFilters'
 import { convertToNumberArray, isPrisonerNumber } from '../../../../utils/utils'
+import { EventReviewDto, EventReviewSearchResultsDto } from '../../../../@types/activitiesOrchestratorAPI/types'
+
+type ChangeEventViewModel = EventReviewDto & {
+  firstName: string
+  lastName: string
+  middleNames: string
+  prisonerStatus?: string
+  prisonerPrisonCode?: string
+  cellLocation: string
+}
+
+type QueryFilters = {
+  date: string
+  page: number
+  size: number
+  filterAcknowledged: boolean
+  eventCodes?: string[]
+  prisonerNumbers?: string[]
+}
 
 const ITEMS_PER_PAGE = 25
 
 export default class ChangeOfCircumstanceRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
+    private readonly activitiesOrchestratorService: ActivitiesOrchestratorService,
     private readonly prisonService: PrisonService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { page, date } = req.query
+
     const prison = user.activeCaseLoadId
     const queryDate = date as string
     const reviewed = req.query.reviewed === 'true'
+
     const searchTerm = typeof req.query.searchTerm === 'string' ? req.query.searchTerm.trim() : ''
+
     const selectedFilters = readFilters(req.query.changeTypes)
+
     const navigationQuery = new URLSearchParams({ date: queryDate })
-    if (searchTerm) navigationQuery.set('searchTerm', searchTerm)
+
+    if (searchTerm) {
+      navigationQuery.set('searchTerm', searchTerm)
+    }
+
     selectedFilters.forEach(value => navigationQuery.append('changeTypes', value))
+
     const changesToReviewHref = `view-changes?${navigationQuery}`
+
     navigationQuery.set('reviewed', 'true')
+
     const reviewedChangesHref = `view-changes?${navigationQuery}`
+
     const clearQuery = new URLSearchParams({ date: queryDate })
-    if (reviewed) clearQuery.set('reviewed', 'true')
+
+    if (reviewed) {
+      clearQuery.set('reviewed', 'true')
+    }
+
     const clearFiltersHref = `view-changes?${clearQuery}`
+
     const hasFilters = Boolean(searchTerm || selectedFilters.length)
 
     const requestedPage = Number(page)
+
     const pageNo = Number.isSafeInteger(requestedPage) && requestedPage >= 0 ? requestedPage : 0
-    const query: GetChangeEventsParams = {
+
+    const query: QueryFilters = {
       date: queryDate,
       page: pageNo,
       size: ITEMS_PER_PAGE,
       filterAcknowledged: reviewed,
     }
+
     if (selectedFilters.length) {
       query.eventCodes = changeFilters
         .filter(filter => selectedFilters.includes(filter.value))
         .flatMap(filter => filter.eventCodes)
     }
+
     if (searchTerm) {
       if (isPrisonerNumber(searchTerm)) {
         query.prisonerNumbers = [searchTerm.toUpperCase()]
       } else {
         const candidates = await this.activitiesService.getChangeEventPrisonerNumbers(
           prison,
-          { date: queryDate, ...(query.eventCodes && { eventCodes: query.eventCodes }) },
+          {
+            date: queryDate,
+            ...(query.eventCodes && {
+              eventCodes: query.eventCodes,
+            }),
+          },
           user,
         )
+
         query.prisonerNumbers = await this.prisonService.searchPrisonerNumbers(searchTerm, candidates, user)
       }
     }
 
-    const searchResults =
+    const searchResults: EventReviewSearchResultsDto =
       query.prisonerNumbers?.length === 0
-        ? { content: [], totalElements: 0, totalPages: 0, pageNumber: 0 }
-        : await this.activitiesService.getChangeEvents(prison, query, user)
+        ? {
+            content: [],
+            totalElements: 0,
+            totalPages: 0,
+            pageNumber: 0,
+          }
+        : await this.activitiesOrchestratorService.getEventsForReview(
+            {
+              prisonCode: prison,
+              requestDate: queryDate,
+              page: pageNo,
+              pageSize: ITEMS_PER_PAGE,
+              prisonerNumbers: query.prisonerNumbers,
+              filterAcknowledged: query.filterAcknowledged,
+              filterEventTypes: query.eventCodes,
+            },
+            user,
+          )
 
     if (pageNo > 0 && pageNo >= searchResults.totalPages) {
       const redirectQuery = new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`).searchParams
+
       redirectQuery.set('page', String(Math.max(0, searchResults.totalPages - 1)))
+
       res.redirect(`view-changes?${redirectQuery}`)
       return
     }
 
-    const prisonerNumbers = searchResults.content.map(e => e.prisonerNumber)
+    const prisonerNumbers = searchResults.content.map(event => event.prisonerNumber).filter(Boolean)
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
-    // Merge the page of results with the offender search response to obtain extra detail
     const prisonersByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
-    const changeEvents = searchResults.content.map(item => {
-      const prisoner = prisonersByNumber.get(item.prisonerNumber)
+
+    const changeEvents: ChangeEventViewModel[] = searchResults.content.map(event => {
+      const prisoner = prisonersByNumber.get(event.prisonerNumber)
+
       return {
-        ...item,
+        ...event,
         firstName: prisoner?.firstName || '',
         lastName: prisoner?.lastName || '',
         middleNames: prisoner?.middleNames || '',
@@ -89,19 +155,26 @@ export default class ChangeOfCircumstanceRoutes {
       }
     })
 
-    // Pagination settings for this list
-    const totalResults = searchResults.totalElements || 0
-    const currentPage = searchResults.pageNumber || 0
-    const paginationReq = { totalResults, currentPage, limit: ITEMS_PER_PAGE } as PaginationRequest
+    const paginationReq: PaginationRequest = {
+      totalResults: searchResults.totalElements || 0,
+      currentPage: searchResults.pageNumber || 0,
+      limit: ITEMS_PER_PAGE,
+    }
+
     const pagination = getPagination(paginationReq, new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`))
 
     pagination.results.text = 'changes'
 
-    // Build view context and render the results
-    const viewContext = {
+    res.render('pages/activities/change-of-circumstances/view-events', {
       searchTerm,
       selectedFilters,
-      filterItems: changeFilters.map(({ value, text }) => ({ value, text, checked: selectedFilters.includes(value) })),
+
+      filterItems: changeFilters.map(({ value, text }) => ({
+        value,
+        text,
+        checked: selectedFilters.includes(value),
+      })),
+
       date: queryDate,
       page: pageNo,
       changeEvents,
@@ -111,8 +184,7 @@ export default class ChangeOfCircumstanceRoutes {
       changesToReviewHref,
       reviewedChangesHref,
       clearFiltersHref,
-    }
-    res.render('pages/activities/change-of-circumstances/view-events', viewContext)
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

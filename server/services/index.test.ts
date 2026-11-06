@@ -14,16 +14,18 @@ import LocationsService from './locationsService'
 import CourtBookingService from './courtBookingService'
 import ProbationBookingService from './probationBookingService'
 import TokenStore from '../data/tokenStore'
+import ActivitiesOrchestratorService from './activitiesOrchestratorService'
 
 describe('Services', () => {
   test('The correct services are instantiated', () => {
     const servicesList = services()
 
-    expect(Object.values(servicesList).length).toBe(16)
+    expect(Object.values(servicesList).length).toBe(17)
     expect(servicesList.userService).toBeInstanceOf(UserService)
     expect(servicesList.prisonService).toBeInstanceOf(PrisonService)
     expect(servicesList.ukBankHolidayService).toBeInstanceOf(BankHolidayService)
     expect(servicesList.activitiesService).toBeInstanceOf(ActivitiesService)
+    expect(servicesList.activitiesOrchestratorService).toBeInstanceOf(ActivitiesOrchestratorService)
     expect(servicesList.caseNotesService).toBeInstanceOf(CaseNotesService)
     expect(servicesList.unlockListService).toBeInstanceOf(UnlockListService)
     expect(servicesList.alertsFilterService).toBeInstanceOf(AlertsFilterService)
