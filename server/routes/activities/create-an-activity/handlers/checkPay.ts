@@ -17,6 +17,14 @@ export default class CheckPayRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { createJourney } = req.journeyData
+
+    if (req.routeContext.mode === 'edit') {
+      const activity = await this.activitiesService.getActivity(createJourney.activityId, user)
+      req.journeyData.createJourney.allocations = activity.schedules.flatMap(s =>
+        s.allocations.filter(a => a.status !== 'ENDED'),
+      )
+    }
+
     const activityName = createJourney.name
     const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(
       createJourney.pay,
