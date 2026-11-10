@@ -5,7 +5,7 @@ import PrisonService from '../../../../services/prisonService'
 import CheckPayRoutes from './checkPay'
 import ActivitiesService from '../../../../services/activitiesService'
 import activityPayHistory from '../../../../services/fixtures/activity_pay_history_2.json'
-import { ActivityPayHistory } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivityPayHistory, Allocation } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
@@ -107,6 +107,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
 
     it('should render EDIT page correctly', async () => {
       req.routeContext.mode = 'edit'
+      activitiesService.getActivity.mockResolvedValueOnce({ schedules: [] } as Activity)
 
       when(activitiesService.getActivityPayHistory)
         .calledWith(req.journeyData.createJourney.activityId, res.locals.user)
@@ -165,6 +166,19 @@ describe('Route Handlers - Create an activity - Check pay', () => {
           },
         ],
       })
+    })
+
+    it('refreshes allocations in edit mode so stale data is not reused', async () => {
+      req.routeContext.mode = 'edit'
+      req.journeyData.createJourney.allocations = [{ status: 'ACTIVE', prisonPayBand: { id: 99 } }] as Allocation[]
+
+      activitiesService.getActivity.mockResolvedValueOnce({
+        schedules: [{ allocations: [{ status: 'ACTIVE', prisonPayBand: { id: 1 } }] }],
+      } as Activity)
+
+      await handler.GET(req, res)
+
+      expect(req.journeyData.createJourney.allocations).toEqual([{ status: 'ACTIVE', prisonPayBand: { id: 1 } }])
     })
   })
 
