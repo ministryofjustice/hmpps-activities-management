@@ -8,6 +8,7 @@ import { changeFilters } from './changeFilters'
 import { EventReviewSearchResultsDto, EventReviewDto } from '../../../../@types/activitiesOrchestratorAPI/types'
 import { PageLink } from '../../../../utils/paginationUtils'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import UserService from '../../../../services/userService'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/activitiesOrchestratorService')
@@ -18,9 +19,15 @@ const activitiesOrchestratorService = new ActivitiesOrchestratorService(
   null,
 ) as jest.Mocked<ActivitiesOrchestratorService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+const userService = new UserService(null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Changes in circumstances', () => {
-  const handler = new ChangeOfCircumstanceRoutes(activitiesService, activitiesOrchestratorService, prisonService)
+  const handler = new ChangeOfCircumstanceRoutes(
+    activitiesService,
+    activitiesOrchestratorService,
+    prisonService,
+    userService,
+  )
   let req: Request
   let res: Response
 
@@ -57,7 +64,7 @@ describe('Route Handlers - Changes in circumstances', () => {
       prisonerNumber: 'A1234AA',
       eventData: 'Some data',
       acknowledgedTime: null,
-      acknowledgedBy: null,
+      acknowledgedBy: undefined,
       activeAllocations: [],
     },
     {
@@ -70,7 +77,7 @@ describe('Route Handlers - Changes in circumstances', () => {
       prisonerNumber: 'A1234AA',
       eventData: 'Some data',
       acknowledgedTime: null,
-      acknowledgedBy: null,
+      acknowledgedBy: undefined,
       activeAllocations: [],
     },
     {
@@ -83,7 +90,7 @@ describe('Route Handlers - Changes in circumstances', () => {
       prisonerNumber: 'A1234AA',
       eventData: 'Some data',
       acknowledgedTime: null,
-      acknowledgedBy: null,
+      acknowledgedBy: undefined,
       activeAllocations: [],
     },
   ]
@@ -123,6 +130,8 @@ describe('Route Handlers - Changes in circumstances', () => {
           lastName: 'Bobson',
           middleNames: '',
           cellLocation: '1-12-123',
+          alertsAddedFlags: [],
+          alertsClosedFlags: [],
         }
       })
       const viewContext = {

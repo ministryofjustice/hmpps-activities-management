@@ -12,7 +12,7 @@
       "eventDescription": "NON_ASSOCIATION",
       "activeAllocations": [],
       "acknowledgedTime": null,
-      "acknowledgedBy": null
+      "acknowledgedBy": "USER1"
     },
     {
       "eventReviewId": 2,
@@ -30,7 +30,7 @@
         "newCell": "A-1-N-001"
       },
       "acknowledgedTime": null,
-      "acknowledgedBy": null
+      "acknowledgedBy": "USER1"
     },
     {
       "eventReviewId": 3,
@@ -44,10 +44,28 @@
       "eventDescription": null,
       "activeAllocations": [],
       "acknowledgedTime": null,
-      "acknowledgedBy": null
+      "acknowledgedBy": "USER1"
+    },
+    {
+      "eventReviewId": 4,
+      "serviceIdentifier": null,
+      "eventType": "prison-offender-events.prisoner.alert.created",
+      "eventTime": "2023-05-16T16:30:00",
+      "prisonCode": "MDI",
+      "bookingId": 1,
+      "prisonerNumber": "A1234AA",
+      "eventData": "",
+      "eventDescription": "ALERT_ADDED",
+      "alertDetails": {
+        "alertsAdded": ["HA"],
+        "alertsClosed": []
+      },
+      "activeAllocations": [],
+      "acknowledgedTime": null,
+      "acknowledgedBy": "USER1"
     }
   ],
-  "totalElements": 3,
+  "totalElements": 4,
   "totalPages": 1,
   "pageNumber": 0
 }

@@ -1,5 +1,6 @@
 {% extends "layout.njk" %}
 
+{% from "dps/components/alert-flag/macro.njk" import alertFlag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "moj/components/pagination/macro.njk" import mojPagination %}
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
@@ -27,6 +28,7 @@
                 <p class="govuk-body">Review changes that may affect people’s allocations. Select ones you’ve reviewed, then mark them as reviewed to update the list.</p>
             </div>
         </div>
+
 
         {{ mojSubNavigation({
             label: 'Changes in circumstances',
@@ -123,16 +125,16 @@
                     </a>
                 {% endif %}
             {% endset %}
+            
             {% set detailsText %}
                 {% if event.eventDescription in [
                     'ACTIVITY_ENDED',
                     'ACTIVITY_SUSPENDED',
                     'APPOINTMENTS_CANCELLED',
-                    'APPOINTMENTS_KEPT',
-                    'NON_ASSOCIATION'
+                    'APPOINTMENTS_KEPT'
                 ] %}
 
-                    {{ event.eventData }}
+                    {{ '' }}
 
                 {% elif event.eventDescription == 'ARRIVAL_OR_RETURN' %}
 
@@ -177,26 +179,56 @@
                     New Level: {{ event.incentiveDetails.newLevel }}
 
                 {% elif event.eventDescription == 'ALERT_ADDED' %}
-
-                    Alerts added:
-                    {{ event.alertDetails.alertsAdded | join(', ') }}
+                    {% for alert in event.alertsAddedFlags %}
+                        <div class="govuk-!-margin-bottom-1">
+                            {{ alertFlag({
+                                alert: alert
+                            }) }}
+                        </div>
+                    {% endfor %}
 
                 {% elif event.eventDescription == 'ALERT_CLOSED' %}
 
-                    Alerts closed:
-                    {{ event.alertDetails.alertsClosed | join(', ') }}
+                    {% for alert in event.alertsClosedFlags %}
+                        <div class="govuk-!-margin-bottom-1">
+                            {{ alertFlag({
+                                alert: alert
+                            }) }}
+                        </div>
+                    {% endfor %}
 
                 {% elif event.eventDescription == 'ALERTS_ADDED_AND_CLOSED' %}
+                    {% if event.alertsAddedFlags.length %}
+                        <div class="govuk-!-margin-bottom-1">
+                            Added:
+                        </div>
 
-                    Added: {{ event.alertDetails.alertsAdded | join(', ') }}
-                    <br>
-                    Closed: {{ event.alertDetails.alertsClosed | join(', ') }}
+                        {% for alert in event.alertsAddedFlags %}
+                            <div class="govuk-!-margin-bottom-1">
+                                {{ alertFlag({
+                                    alert: alert
+                                }) }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if event.alertsClosedFlags.length %}
+                        <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-1">
+                            Closed:
+                        </div>
 
+                        {% for alert in event.alertsClosedFlags %}
+                            <div class="govuk-!-margin-bottom-1">
+                                {{ alertFlag({
+                                    alert: alert
+                                }) }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                 {% else %}
                     {{ event.eventData or '' }}
                 {% endif %}
-
             {% endset %}
+
             {% set items = [
                 {
                     html: showProfileLink({
@@ -220,6 +252,7 @@
             {% if reviewed %}
                 {% set items = (items.push({ text: event.acknowledgedBy }), items) %}
             {% endif %}
+
             {% set items = (items.push({ html: actionsHtml, classes: 'govuk-!-text-align-right' }), items) %}
             {% if reviewed %}
                 {% set rows = (rows.push(items), rows) %}
@@ -305,7 +338,7 @@
         ({ text: "Alerts have been added and removed", classes: "govuk-tag--grey" }
             if event.eventDescription == 'ALERTS_ADDED_AND_CLOSED') or
 
-        ({ text: "Arrival or Return", classes: "govuk-tag--green" }
+        ({ text: "Arrival or return", classes: "govuk-tag--green" }
             if event.eventDescription == 'ARRIVAL_OR_RETURN'
             or 'prisoner.received' in event.eventType) or
 

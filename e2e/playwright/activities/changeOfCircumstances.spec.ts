@@ -28,7 +28,7 @@ const inmateDetails = [
 
 test.beforeEach(async ({ page }) => {
   await resetStubs()
-  await stubs.stubSignIn()
+  await stubs.stubSignIn('Reviewer one')
 
   await stubFor({
     request: {
@@ -51,7 +51,6 @@ test.beforeEach(async ({ page }) => {
   })
 
   await stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
-
   await signIn(page)
 })
 
@@ -65,12 +64,12 @@ test('a user can review changes in circumstances', async ({ page }) => {
     }),
   ).toBeVisible()
 
-  await expect(page.locator('.moj-pagination__results')).toHaveText(['3 total changes', '3 total changes'])
+  await expect(page.locator('.moj-pagination__results')).toHaveText(['4 total changes', '4 total changes'])
 
-  const bob = page.getByRole('row').filter({ hasText: 'Johnson, Joe' })
+  const NonAssociationEvent = page.getByRole('row').filter({ hasText: 'Non-association' })
 
-  await expect(bob).toContainText('12:17')
-  await expect(bob).toContainText('Non-association')
+  await expect(NonAssociationEvent).toContainText('12:17')
+  await expect(NonAssociationEvent).toContainText('Non-association')
 
   const terry = page.getByRole('row').filter({ hasText: 'Glasvern, Terry' })
 
@@ -82,6 +81,13 @@ test('a user can review changes in circumstances', async ({ page }) => {
 
   await expect(john).toContainText('15:20')
   await expect(john).toContainText('Unknown event')
+
+  const alertEvent = page.getByRole('row').filter({ hasText: 'Alert added' })
+
+  await expect(alertEvent).toContainText('16:30')
+  await expect(alertEvent).toContainText('ACCT open')
+
+  await expect(alertEvent.locator('.dps-alert-status--self-harm')).toBeVisible()
 })
 
 test('a user can switch to reviewed changes without selection controls', async ({ page }) => {
@@ -105,7 +111,7 @@ test('a user can switch to reviewed changes without selection controls', async (
         ...getEventsForReview,
         content: getEventsForReview.content.map(event => ({
           ...event,
-          acknowledgedBy: 'REVIEWER1',
+          acknowledgedBy: 'USER1',
           acknowledgedTime: '2023-05-16T16:00:00',
         })),
       },
@@ -129,7 +135,7 @@ test('a user can switch to reviewed changes without selection controls', async (
     }),
   ).toBeVisible()
 
-  await expect(page.locator('tbody')).toContainText('REVIEWER1')
+  await expect(page.locator('tbody')).toContainText('Reviewer one')
 
   await expect(page.locator('tbody input[type="checkbox"]')).toHaveCount(0)
 
@@ -140,7 +146,7 @@ test('a user can switch to reviewed changes without selection controls', async (
     })
     .click()
 
-  await expect(page.locator('tbody input[type="checkbox"]')).toHaveCount(3)
+  await expect(page.locator('tbody input[type="checkbox"]')).toHaveCount(4)
 })
 
 test('Continue from date selection opens the selected date and sortable changes table', async ({ page }) => {
@@ -164,6 +170,14 @@ test('Continue from date selection opens the selected date and sortable changes 
     }),
   ).toBeVisible()
 
+  const rows = page.locator('tbody tr')
+
+  // Initial sort: Time ascending
+  await expect(rows.nth(0)).toContainText('12:17')
+  await expect(rows.nth(1)).toContainText('14:00')
+  await expect(rows.nth(2)).toContainText('15:20')
+  await expect(rows.nth(3)).toContainText('16:30')
+
   const timeHeader = page.getByRole('columnheader', { name: 'Time' })
 
   await expect(timeHeader).toHaveAttribute('aria-sort', 'ascending')
@@ -172,15 +186,28 @@ test('Continue from date selection opens the selected date and sortable changes 
 
   await expect(timeHeader).toHaveAttribute('aria-sort', 'descending')
 
-  await expect(page.locator('tbody tr').first()).toContainText('15:20')
+  // Time descending
+  await expect(rows.nth(0)).toContainText('16:30')
+  await expect(rows.nth(1)).toContainText('15:20')
+  await expect(rows.nth(2)).toContainText('14:00')
+  await expect(rows.nth(3)).toContainText('12:17')
 
   await page.getByRole('columnheader', { name: 'Change', exact: true }).getByRole('button').click()
 
-  await expect(page.locator('tbody tr').first()).toContainText('Cell')
+  // Change ascending
+  await expect(rows.nth(0)).toContainText('Alert added')
+  await expect(rows.nth(1)).toContainText('Cell move')
+  await expect(rows.nth(2)).toContainText('Non-association')
+  await expect(rows.nth(3)).toContainText('Unknown event')
 
   await page.getByRole('columnheader', { name: 'Prisoner', exact: true }).getByRole('button').click()
 
-  await expect(page.locator('tbody tr').first()).toContainText('Armitage, John')
+  // Prisoner ascending (Armitage, Glasvern, Johnson, Johnson)
+  await expect(rows.nth(0)).toContainText('Armitage, John')
+  await expect(rows.nth(1)).toContainText('Glasvern, Terry')
+
+  await expect(rows.nth(2)).toContainText('Johnson, Joe')
+  await expect(rows.nth(3)).toContainText('Johnson, Joe')
 
   await expect(page.getByRole('columnheader', { name: 'Details' }).getByRole('button')).toHaveCount(0)
 
@@ -236,7 +263,7 @@ test('filters persist across tabs, and Apply and Clear retain the reviewed tab',
           {
             ...getEventsForReview.content[1],
             prisonerNumber: 'A1234AA',
-            acknowledgedBy: 'REVIEWER1',
+            acknowledgedBy: 'USER1',
           },
         ],
         totalElements: 1,
@@ -286,7 +313,7 @@ test('filters persist across tabs, and Apply and Clear retain the reviewed tab',
 
   await expect(page.getByLabel('Name or prison number')).toHaveValue('A1234AA')
   await expect(page.getByLabel('Cell moves', { exact: true })).toBeChecked()
-  await expect(page.locator('tbody')).toContainText('REVIEWER1')
+  await expect(page.locator('tbody')).toContainText('Reviewer one')
 
   await page.getByRole('button', { name: 'Apply filters', exact: true }).click()
 

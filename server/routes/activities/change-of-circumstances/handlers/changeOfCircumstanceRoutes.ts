@@ -1,4 +1,6 @@
 import { Request, Response } from 'express'
+
+import type { AlertFlagLabel } from '@ministryofjustice/hmpps-connect-dps-shared-items'
 import { getPagination, PaginationRequest } from '../../../../utils/paginationUtils'
 import ActivitiesService from '../../../../services/activitiesService'
 import ActivitiesOrchestratorService from '../../../../services/activitiesOrchestratorService'
@@ -6,6 +8,8 @@ import PrisonService from '../../../../services/prisonService'
 import { changeFilters, readFilters } from './changeFilters'
 import { convertToNumberArray, isPrisonerNumber } from '../../../../utils/utils'
 import { EventReviewDto, EventReviewSearchResultsDto } from '../../../../@types/activitiesOrchestratorAPI/types'
+import { getAlertFlagsFromCodes } from '../../../../utils/helpers/alertFlags'
+import UserService from '../../../../services/userService'
 
 type ChangeEventViewModel = EventReviewDto & {
   firstName: string
@@ -14,6 +18,8 @@ type ChangeEventViewModel = EventReviewDto & {
   prisonerStatus?: string
   prisonerPrisonCode?: string
   cellLocation: string
+  alertsAddedFlags: AlertFlagLabel[]
+  alertsClosedFlags: AlertFlagLabel[]
 }
 
 type QueryFilters = {
@@ -32,6 +38,7 @@ export default class ChangeOfCircumstanceRoutes {
     private readonly activitiesService: ActivitiesService,
     private readonly activitiesOrchestratorService: ActivitiesOrchestratorService,
     private readonly prisonService: PrisonService,
+    private readonly userService: UserService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -141,8 +148,18 @@ export default class ChangeOfCircumstanceRoutes {
 
     const prisonersByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
 
+    const acknowledgedByUsernames = [
+      ...new Set(searchResults.content.map(event => event.acknowledgedBy).filter(Boolean)),
+    ]
+
+    const userMap = await this.userService.getUserMap(acknowledgedByUsernames, user)
+
     const changeEvents: ChangeEventViewModel[] = searchResults.content.map(event => {
       const prisoner = prisonersByNumber.get(event.prisonerNumber)
+
+      const acknowledgedBy = event.acknowledgedBy
+        ? (userMap.get(event.acknowledgedBy)?.name ?? event.acknowledgedBy)
+        : undefined
 
       return {
         ...event,
@@ -152,6 +169,9 @@ export default class ChangeOfCircumstanceRoutes {
         prisonerStatus: prisoner?.status,
         prisonerPrisonCode: prisoner?.prisonId,
         cellLocation: prisoner?.cellLocation || '',
+        acknowledgedBy,
+        alertsAddedFlags: getAlertFlagsFromCodes(event.alertDetails?.alertsAdded ?? []),
+        alertsClosedFlags: getAlertFlagsFromCodes(event.alertDetails?.alertsClosed ?? []),
       }
     })
 
