@@ -5,6 +5,7 @@ const { clean } = require('esbuild-plugin-clean')
 const manifestPlugin = require('esbuild-plugin-manifest')
 const { globSync } = require('node:fs')
 const { buildNotificationPlugin } = require('./utils')
+const { accessibleAutocompletePlugin } = require('./accessible-autocomplete.plugin')
 
 /**
  * Copy additional assets into distribution
@@ -34,6 +35,7 @@ const getAssetsConfig = buildConfig => ({
   external: ['/assets/*', '/moj/assets/*'],
   bundle: true,
   plugins: [
+    accessibleAutocompletePlugin(),
     clean({
       patterns: globSync(buildConfig.assets.clear),
     }),

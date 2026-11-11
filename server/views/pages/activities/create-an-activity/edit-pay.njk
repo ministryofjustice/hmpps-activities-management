@@ -118,7 +118,7 @@
                     {% set isSinglePayRate = displayPays | length == 1 and displayPays[0].pays | length == 1 %}
                     {% set hasNoAllocations = not pay.allocationCount %}
 
-                    {% if (hasNoAllocations and not isOutsidePrisonPaid) or (isOutsidePrisonPaid and not isSinglePayRate) %}
+                    {% if (hasNoAllocations and not isOutsidePrisonPaid) or (hasNoAllocations and isOutsidePrisonPaid and not isSinglePayRate) %}
                         {% set cardItems = (cardItems.push(
                             {
                                 href: "../remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
