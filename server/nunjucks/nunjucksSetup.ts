@@ -122,6 +122,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
       'node_modules/govuk-frontend/dist',
       'node_modules/@ministryofjustice/frontend/',
       'node_modules/@ministryofjustice/hmpps-connect-dps-components/dist/assets/',
+      'node_modules/@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/',
     ],
     {
       autoescape: true,
