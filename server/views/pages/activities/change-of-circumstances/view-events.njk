@@ -117,7 +117,7 @@
                 {% if event.eventDescription in ['ALERT_ADDED', 'ALERT_CLOSED', 'ALERTS_ADDED_AND_CLOSED'] %}
                     <a
                         class="govuk-link govuk-link--no-visited-state"
-                        href="{{ prisonerUrl }}/prisoner/{{ event.prisonerNumber }}/alerts/active"
+                        href="{{ prisonerUrl }}/prisoner/{{ event.prisonerNumber }}/alerts/{{ 'inactive' if event.eventDescription == 'ALERT_CLOSED' else 'active' }}"
                     >
                         View alert details
                     </a>

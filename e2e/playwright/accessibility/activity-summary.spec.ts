@@ -11,7 +11,7 @@ const setup = () =>
     stubEndpoint('GET', '/attendances/MDI/suspended.*', []),
     stubEndpoint('GET', '/activity-categories.*', categories),
     stubEndpoint('POST', '/prisoner-search/prisoner-numbers', []),
-    stubEndpoint('GET', '/event-review/v2/prison/MDI.*', getEventsForReview),
+    stubEndpoint('GET', '/event-review/prison/MDI.*', getEventsForReview),
   ])
 accessibilityArea('activities/daily-attendance-summary', setup, { attendanceSummaryJourney: {} })
 accessibilityArea('activities/change-of-circumstances', setup)
