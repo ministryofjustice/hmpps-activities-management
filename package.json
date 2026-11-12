@@ -110,7 +110,7 @@
     "@types/sinon": "^22.0.2",
     "@types/superagent": "^8.1.11",
     "axe-core": "^4.14.0",
-    "better-npm-audit": "^3.13.1",
+    "better-npm-audit": "^4.2.1",
     "cheerio": "1.2.0",
     "concurrently": "10.0.7",
     "esbuild": "0.28.2",
