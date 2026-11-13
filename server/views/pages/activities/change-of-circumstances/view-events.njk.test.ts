@@ -28,6 +28,7 @@ const event = {
   cellLocation: 'A-1-001',
   eventType: 'prison-offender-events.prisoner.cell.move',
   eventData: 'Cell move',
+  eventDescription: 'CELL_MOVE',
   eventTime: '2023-05-16T08:32:00',
   acknowledgedBy: null,
   activeAllocations: ['Kitchen AM', 'Maths PM'],
