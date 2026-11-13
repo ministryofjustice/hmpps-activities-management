@@ -89,7 +89,7 @@
                         class="govuk-link govuk-link--no-visited-state"
                         href="/activities/prisoner-allocations/{{ event.prisonerNumber }}/non-associations"
                     >
-                        Non associations
+                        Non associations<span class="govuk-visually-hidden"> for {{ event | formatName(NameFormatStyle.firstLast) | forceescape }}</span>
                     </a><br>
                 {% endif %}
 
