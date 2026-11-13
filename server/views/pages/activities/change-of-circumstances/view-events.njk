@@ -119,7 +119,7 @@
                         class="govuk-link govuk-link--no-visited-state"
                         href="{{ prisonerUrl }}/prisoner/{{ event.prisonerNumber }}/alerts/{{ 'inactive' if event.eventDescription == 'ALERT_CLOSED' else 'active' }}"
                     >
-                        View alert details
+                        View alert details<span class="govuk-visually-hidden"> for {{ event | formatName(NameFormatStyle.firstLast) | forceescape }}</span>
                     </a>
                 {% endif %} 
             {% endset %}
