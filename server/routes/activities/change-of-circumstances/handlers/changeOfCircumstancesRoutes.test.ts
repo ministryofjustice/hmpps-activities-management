@@ -130,6 +130,8 @@ describe('Route Handlers - Changes in circumstances', () => {
           lastName: 'Bobson',
           middleNames: '',
           cellLocation: '1-12-123',
+          newLevelDisplay: '',
+          previousLevelDisplay: '',
           alertsAddedFlags: [],
           alertsClosedFlags: [],
         }

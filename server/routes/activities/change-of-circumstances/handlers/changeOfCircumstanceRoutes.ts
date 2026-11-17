@@ -158,6 +158,19 @@ export default class ChangeOfCircumstanceRoutes {
         ? (userMap.get(event.acknowledgedBy)?.name ?? event.acknowledgedBy)
         : undefined
 
+      const formatIncentiveLevel = (level?: string): string => {
+        switch (level) {
+          case 'BAS':
+            return 'Basic'
+          case 'STD':
+            return 'Standard'
+          case 'ENH':
+            return 'Enhanced'
+          default:
+            return level ?? ''
+        }
+      }
+
       return {
         ...event,
         firstName: prisoner?.firstName || '',
@@ -169,6 +182,8 @@ export default class ChangeOfCircumstanceRoutes {
         acknowledgedBy,
         alertsAddedFlags: getAlertFlagsFromCodes(event.alertDetails?.alertsAdded ?? []),
         alertsClosedFlags: getAlertFlagsFromCodes(event.alertDetails?.alertsClosed ?? []),
+        previousLevelDisplay: formatIncentiveLevel(event.incentiveDetails?.previousLevel),
+        newLevelDisplay: formatIncentiveLevel(event.incentiveDetails?.newLevel),
       }
     })
 
