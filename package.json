@@ -90,8 +90,8 @@
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^5.0.0",
     "@ministryofjustice/eslint-config-hmpps": "1.0.4",
-    "@playwright/test": "1.65.0",
-    "@tsconfig/node24": "24.0.5",
+    "@playwright/test": "1.65.1",
+    "@tsconfig/node24": "24.0.6",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-format": "^0.2.9",
     "@types/compression": "^1.8.1",
@@ -127,8 +127,8 @@
     "lint-staged": "^17.6.0",
     "nock": "^14.0.17",
     "openapi-typescript": "^7.13.0",
-    "playwright": "1.65.0",
-    "prettier": "3.9.10",
+    "playwright": "1.65.1",
+    "prettier": "3.10.1",
     "prettier-plugin-jinja-template": "2.2.0",
     "sinon": "^22.1.0",
     "supertest": "^7.3.2",
@@ -150,7 +150,7 @@
     "diff": "^9.0.0",
     "@actions/http-client": "^3.0.2",
     "undici": "^8.12.4",
-    "brace-expansion": "^5.0.12",
+    "brace-expansion": "^5.0.13",
     "qs": "^6.17.1"
   },
   "allowScripts": {
