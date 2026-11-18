@@ -43,7 +43,7 @@ describe('Views - Changes in circumstances', () => {
 
   it('renders the heading, selected date and introductory text', () => {
     const $ = cheerio.load(template.render(context))
-    expect($('h1').text()).toBe('Changes to review')
+    expect($('h1').text().trim()).toBe('Changes to review')
     expect($('h1').hasClass('govuk-heading-l')).toBe(true)
     expect($('.govuk-caption-m').first().text()).toBe('Review changes in circumstances')
     expect($('.govuk-caption-m').last().text()).toBe('Tuesday, 16 May 2023')

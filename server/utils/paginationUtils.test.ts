@@ -17,7 +17,7 @@ describe('Pagination tests', () => {
       { text: '10', href: 'http://localhost/?page=9', selected: false },
     ])
     expect(pagination.next).toEqual({ text: 'Next', href: 'http://localhost/?page=1' })
-    expect(pagination.previous).toEqual({ text: 'Previous', href: 'http://localhost/?page=0' })
+    expect(pagination.previous).toBeUndefined()
     expect(pagination.results).toEqual({ count: 110, from: 1, to: 10 })
   })
 
@@ -56,7 +56,7 @@ describe('Pagination tests', () => {
       { text: '19', href: 'http://localhost/?page=18', selected: false },
       { text: '20', href: 'http://localhost/?page=19', selected: true },
     ])
-    expect(pagination.next).toEqual({ text: 'Next', href: 'http://localhost/?page=19' })
+    expect(pagination.next).toBeUndefined()
     expect(pagination.previous).toEqual({ text: 'Previous', href: 'http://localhost/?page=18' })
     expect(pagination.results).toEqual({ count: 200, from: 191, to: 200 })
   })
@@ -76,7 +76,7 @@ describe('Pagination tests', () => {
       { text: '19', href: 'http://localhost/?page=18', selected: false },
       { text: '20', href: 'http://localhost/?page=19', selected: true },
     ])
-    expect(pagination.next).toEqual({ text: 'Next', href: 'http://localhost/?page=19' })
+    expect(pagination.next).toBeUndefined()
     expect(pagination.previous).toEqual({ text: 'Previous', href: 'http://localhost/?page=18' })
     expect(pagination.results).toEqual({ count: 198, from: 191, to: 198 })
   })
@@ -94,7 +94,7 @@ describe('Pagination tests', () => {
       { text: '7', href: 'http://localhost/?page=6', selected: false },
     ])
     expect(pagination.next).toEqual({ text: 'Next', href: 'http://localhost/?page=1' })
-    expect(pagination.previous).toEqual({ text: 'Previous', href: 'http://localhost/?page=0' })
+    expect(pagination.previous).toBeUndefined()
     expect(pagination.results).toEqual({ count: 70, from: 1, to: 10 })
   })
 

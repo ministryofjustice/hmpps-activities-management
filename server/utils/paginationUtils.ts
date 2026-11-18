@@ -97,12 +97,12 @@ export const getPagination = (args: PaginationRequest, url: URL): PaginationResp
   const pageList = (numberOfPages > 1 && allPages.slice(from, to)) || []
 
   const previousPage =
-    numberOfPages > 1
+    args.currentPage > 0
       ? ({ text: 'Previous', href: calculatePreviousUrl(args.currentPage, url) } as PageLink)
       : undefined
 
   const nextPage =
-    numberOfPages > 1
+    args.currentPage < numberOfPages - 1
       ? ({ text: 'Next', href: calculateNextUrl(args.currentPage, numberOfPages, url) } as PageLink)
       : undefined
 
