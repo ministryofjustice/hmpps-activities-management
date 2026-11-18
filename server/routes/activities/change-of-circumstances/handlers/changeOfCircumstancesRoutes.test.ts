@@ -93,6 +93,23 @@ describe('Route Handlers - Changes in circumstances', () => {
       acknowledgedBy: undefined,
       activeAllocations: [],
     },
+    {
+      eventReviewId: 4,
+      serviceIdentifier: null,
+      eventType: 'incentives.iep-review.updated',
+      eventTime: '2023-05-16T12:17:53',
+      prisonCode: 'MDI',
+      bookingId: 1,
+      prisonerNumber: 'A1234AA',
+      eventData: 'Some data',
+      acknowledgedTime: null,
+      acknowledgedBy: undefined,
+      activeAllocations: [],
+      incentiveDetails: {
+        previousLevel: 'STD',
+        newLevel: 'ENH1',
+      },
+    },
   ]
 
   const prisoners = [
@@ -130,8 +147,8 @@ describe('Route Handlers - Changes in circumstances', () => {
           lastName: 'Bobson',
           middleNames: '',
           cellLocation: '1-12-123',
-          newLevelDisplay: '',
-          previousLevelDisplay: '',
+          previousLevelDisplay: item.eventReviewId === 4 ? 'Standard' : '',
+          newLevelDisplay: item.eventReviewId === 4 ? 'ENH1' : '',
           alertsAddedFlags: [],
           alertsClosedFlags: [],
         }
@@ -151,6 +168,22 @@ describe('Route Handlers - Changes in circumstances', () => {
         clearFiltersHref: 'view-changes?date=2023-05-16',
       }
       expect(res.render).toHaveBeenCalledWith('pages/activities/change-of-circumstances/view-events', viewContext)
+    })
+
+    it('formats known incentive levels and falls back to unknown values', async () => {
+      activitiesOrchestratorService.getEventsForReview.mockResolvedValue(changeEvents)
+      prisonService.searchInmatesByPrisonerNumbers.mockResolvedValue(prisoners)
+
+      await handler.GET(req, res)
+
+      const renderContext = (res.render as jest.Mock).mock.calls[0][1]
+
+      expect(renderContext.changeEvents.find((event: { eventReviewId: number }) => event.eventReviewId === 4)).toEqual(
+        expect.objectContaining({
+          previousLevelDisplay: 'Standard',
+          newLevelDisplay: 'ENH1',
+        }),
+      )
     })
   })
 
