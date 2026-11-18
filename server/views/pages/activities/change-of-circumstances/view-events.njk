@@ -23,7 +23,11 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-three-quarters">
                 <span class="govuk-caption-m">Review changes in circumstances</span>
-                <h1 class="govuk-heading-l govuk-!-margin-bottom-1">Changes to review</h1>
+                <h1 class="govuk-heading-l govuk-!-margin-bottom-1">Changes to review
+                    {% if page > 0 %}
+                         <span class="govuk-visually-hidden">page {{ page + 1 }}</span>
+                    {% endif %}
+                </h1>
                 <span class="govuk-caption-m govuk-!-margin-bottom-6">{{ date | formatDate('EEEE, d MMMM yyyy') }}</span>
                 <p class="govuk-body">Review changes that may affect people’s allocations. Select ones you’ve reviewed, then mark them as reviewed to update the list.</p>
             </div>
@@ -84,33 +88,12 @@
                 {% endfor %}
             {% endset %}
             {% set actionsHtml %}
-                    {% if event.eventDescription == 'NON_ASSOCIATION' %}
+                {% if event.eventDescription == 'NON_ASSOCIATION' %}
                     <a
                         class="govuk-link govuk-link--no-visited-state"
                         href="/activities/prisoner-allocations/{{ event.prisonerNumber }}/non-associations"
                     >
-                        Non associations<span class="govuk-visually-hidden"> for {{ event | formatName(NameFormatStyle.firstLast) | forceescape }}</span>
-                    </a><br>
-                {% endif %}
-
-                {% if (
-                    event.eventDescription == 'ACTIVITY_SUSPENDED' or
-                    event.eventDescription == 'CELL_MOVE' or
-                    event.eventDescription == 'INCENTIVE_LEVEL_CHANGED' or
-                    event.eventDescription == 'ARRIVAL_OR_RETURN' or
-                    event.eventDescription == 'NON_ASSOCIATION' or
-                    event.eventDescription == 'ALERT_ADDED' or
-                    event.eventDescription == 'ALERT_CLOSED' or
-                    event.eventDescription == 'ALERTS_ADDED_AND_CLOSED'
-                ) and event.activeAllocations and event.activeAllocations.length %} 
-                    <a
-                        class="govuk-link govuk-link--no-visited-state"
-                        href="/activities/prisoner-allocations/{{ event.prisonerNumber }}"
-                    >
-                        Manage allocations
-                        <span class="govuk-visually-hidden">
-                            for {{ event | formatName(NameFormatStyle.firstLast) | forceescape }}
-                        </span>
+                        Non association<span class="govuk-visually-hidden"> for {{ event | formatName(NameFormatStyle.firstLast) | forceescape }}</span>
                     </a><br>
                 {% endif %}
 
@@ -120,10 +103,30 @@
                         href="{{ prisonerUrl }}/prisoner/{{ event.prisonerNumber }}/alerts/{{ 'inactive' if event.eventDescription == 'ALERT_CLOSED' else 'active' }}"
                     >
                         View alert details<span class="govuk-visually-hidden"> for {{ event | formatName(NameFormatStyle.firstLast) | forceescape }}</span>
-                    </a>
+                    </a><br>
                 {% endif %} 
-            {% endset %}
-            
+
+                {% if (
+                        event.eventDescription == 'ACTIVITY_SUSPENDED' or
+                        event.eventDescription == 'CELL_MOVE' or
+                        event.eventDescription == 'INCENTIVE_LEVEL_CHANGED' or
+                        event.eventDescription == 'ARRIVAL_OR_RETURN' or
+                        event.eventDescription == 'NON_ASSOCIATION' or
+                        event.eventDescription == 'ALERT_ADDED' or
+                        event.eventDescription == 'ALERT_CLOSED' or
+                        event.eventDescription == 'ALERTS_ADDED_AND_CLOSED'
+                    ) and event.activeAllocations and event.activeAllocations.length %} 
+                        <a
+                            class="govuk-link govuk-link--no-visited-state"
+                            href="/activities/prisoner-allocations/{{ event.prisonerNumber }}"
+                        >
+                            Manage allocations
+                            <span class="govuk-visually-hidden">
+                                for {{ event | formatName(NameFormatStyle.firstLast) | forceescape }}
+                            </span>
+                        </a>
+                {% endif %}
+            {% endset %}        
             {% set detailsText %}
                 {% if event.eventDescription in [
                     'ACTIVITY_ENDED',
@@ -165,16 +168,16 @@
                     {% if event.prisonerUpdatedDetails.newCell or event.prisonerUpdatedDetails.previousCell %}
                          New cell: {{ event.prisonerUpdatedDetails.newCell }}
                          <br>
-                         Previous Cell: {{ event.prisonerUpdatedDetails.previousCell }}
+                         Previous cell: {{ event.prisonerUpdatedDetails.previousCell }}
                      {% else %}
                          {{ event.eventData or '' }}
                      {% endif %}
 
                 {% elif event.eventDescription == 'INCENTIVE_LEVEL_CHANGED' %}
 
-                    Previous Level: {{ event.incentiveDetails.previousLevel }}
+                    New level: {{ event.newLevelDisplay }}
                     <br>
-                    New Level: {{ event.incentiveDetails.newLevel }}
+                    Previous level: {{ event.previousLevelDisplay }}
 
                 {% elif event.eventDescription == 'ALERT_ADDED' %}
                     {% for alert in event.alertsAddedFlags %}
@@ -222,6 +225,8 @@
                             </div>
                         {% endfor %}
                     {% endif %}
+                {% elif event.eventDescription == 'NON_ASSOCIATION' %}
+                    View non-association
                 {% else %}
                     {{ event.eventData or '' }}
                 {% endif %}
@@ -251,7 +256,7 @@
                 {% set items = (items.push({ text: event.acknowledgedBy }), items) %}
             {% endif %}
 
-            {% set items = (items.push({ html: actionsHtml, classes: 'govuk-!-text-align-right' }), items) %}
+            {% set items = (items.push({ html: actionsHtml, classes: 'govuk-!-text-align-right change-events__actions' }), items) %}
             {% if reviewed %}
                 {% set rows = (rows.push(items), rows) %}
             {% else %}
@@ -343,7 +348,7 @@
         ({ text: "Cell move", classes: "govuk-tag--light-blue" }
             if event.eventDescription == 'CELL_MOVE') or 
 
-        ({ text: "Incentive level changed", classes: "govuk-tag--yellow" }
+        ({ text: "Incentive level", classes: "govuk-tag--yellow" }
             if event.eventDescription == 'INCENTIVE_LEVEL_CHANGED'
             or 'iep-review' in event.eventType) or
 
