@@ -1,4 +1,5 @@
 @use 'sass:math';
+@use 'govuk-frontend/dist/govuk' as *;
 
 .form-spinner {
   display: flex;

@@ -1,17 +1,19 @@
+@use './summary-row-cells' as *;
+
 .movement-slip__summary__row-heading {
-  @extend .movement-slip__summary__row__key;
+  @include movement-slip-summary-row-key-cell;
   padding: 10px 0 0 1px;
 }
 
 .movement-slip__summary__row__key-override {
-  @extend .movement-slip__summary__row__key;
+  @include movement-slip-summary-row-key-cell;
   font-weight: normal;
   padding-top: 0;
   padding-bottom: 20px;
 }
 
 .movement-slip__summary__row__value--override {
-  @extend .movement-slip__summary__row__value;
+  @include movement-slip-summary-row-value-cell;
   padding-top: 0;
   padding-bottom: 5px;
 }

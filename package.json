@@ -20,6 +20,7 @@
     "security_audit": "better-npm-audit audit",
     "clean": "rm -rf dist node_modules",
     "rebuild": "npm run clean && npm i && npm run build",
+    "setup": "npm ci && hmpps-npm-script-run-allowlist",
     "deps:pull": "docker compose -f docker-compose-integration.yml pull",
     "deps:up": "docker compose -f docker-compose-integration.yml up -d",
     "deps:down": "docker compose -f docker-compose-integration.yml down --remove-orphans",

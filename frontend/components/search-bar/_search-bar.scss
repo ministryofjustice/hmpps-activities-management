@@ -1,3 +1,5 @@
+@use 'govuk-frontend/dist/govuk' as *;
+
 @include govuk-media-query($from: tablet) {
   .search-bar {
     display: flex;

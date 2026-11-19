@@ -1,3 +1,5 @@
+@use 'govuk-frontend/dist/govuk' as *;
+
 .search-input {
   $root: &;
   width: 100%;

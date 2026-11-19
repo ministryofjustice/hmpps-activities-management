@@ -1,3 +1,5 @@
+@use 'govuk-frontend/dist/govuk' as *;
+
 .change-filters {
   background: govuk-colour('black', $variant: 'tint-95');
   padding: govuk-spacing(3);

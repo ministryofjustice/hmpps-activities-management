@@ -1,3 +1,5 @@
+@use 'govuk-frontend/dist/govuk' as *;
+
 $button-shadow-size: 2px;
 $govuk-white-button-colour: govuk-colour("white");
 $govuk-white-button-hover-colour: govuk-colour('blue', $variant: 'shade-25');

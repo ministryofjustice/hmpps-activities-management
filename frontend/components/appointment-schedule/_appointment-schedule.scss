@@ -1,3 +1,5 @@
+@use 'govuk-frontend/dist/govuk' as *;
+
 .appointment-schedule{
   .govuk-summary-card__actions {
     align-content: space-between;
