@@ -1,3 +1,5 @@
+@use 'govuk-frontend/dist/govuk' as *;
+
 .mini-profile {
   @include govuk-responsive-padding(3);
   @include govuk-font($size: 19);

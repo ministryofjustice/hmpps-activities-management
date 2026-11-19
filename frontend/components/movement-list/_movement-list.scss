@@ -1,3 +1,5 @@
+@use 'govuk-frontend/dist/govuk' as *;
+
 .movement-list {
   .govuk-table__header {
     white-space: nowrap;
