@@ -1,0 +1,11 @@
+@mixin movement-slip-summary-row-key-cell {
+  display: table-cell;
+  width: 30%;
+  margin: 0;
+}
+
+@mixin movement-slip-summary-row-value-cell {
+  display: table-cell;
+  margin: 0;
+}
+

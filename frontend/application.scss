@@ -1,11 +1,13 @@
-@import '../node_modules/accessible-autocomplete/dist/accessible-autocomplete.min';
+@use '../node_modules/accessible-autocomplete/dist/accessible-autocomplete.min';
 
-@import './variables/variables';
+@use './variables/variables' as app-variables;
 
-@import "govuk-frontend/dist/govuk/index";
-@import "@ministryofjustice/frontend/moj/all";
-@import '@ministryofjustice/hmpps-connect-dps-components/dist/assets/footer';
-@import '@ministryofjustice/hmpps-connect-dps-components/dist/assets/header-bar';
-@import '@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/scss/all.css';
+@use 'govuk-frontend/dist/govuk' with (
+  $govuk-page-width: app-variables.$govuk-page-width,
+  $govuk-global-styles: app-variables.$govuk-global-styles
+);
+@use '@ministryofjustice/frontend/moj/all' as moj;
+@use '@ministryofjustice/hmpps-connect-dps-components/dist/assets/footer' as dps-footer;
+@use '@ministryofjustice/hmpps-connect-dps-components/dist/assets/header-bar' as dps-header-bar;
 
-@import './all';
+@use './all' as app-all;

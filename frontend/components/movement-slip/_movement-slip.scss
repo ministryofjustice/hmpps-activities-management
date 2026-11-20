@@ -1,3 +1,7 @@
+@use 'govuk-frontend/dist/govuk' as *;
+@use '@ministryofjustice/frontend/moj/settings/assets' as *;
+@use './summary-row-cells' as *;
+
 .separate-slip-print:not(:last-child){
   page-break-after: always;
 }

@@ -1,6 +1,7 @@
 /* ==========================================================================
    COMPONENTS / #CARD
    ========================================================================== */
+@use 'govuk-frontend/dist/govuk' as *;
 
 $card-border-width: 1px;
 $card-border-bottom-width: govuk-spacing(1);

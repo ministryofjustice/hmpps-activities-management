@@ -1,2 +1,3 @@
-@import './components/all';
-@import './utilities/all';
+@use './components/all' as components;
+@use './utilities/all' as utilities;
+

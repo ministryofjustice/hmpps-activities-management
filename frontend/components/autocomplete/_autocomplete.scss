@@ -1,6 +1,8 @@
+@use 'govuk-frontend/dist/govuk' as *;
+
 .autocomplete__wrapper {
   @include govuk-media-query($until: desktop) {
-    width: available;
+    width: 100%;
   }
 }
 .moj-filter {
@@ -10,7 +12,7 @@
 }
 .autocomplete {
   &__option {
-    font-family: Arial
+    font-family: Arial, sans-serif;
   }
 
   &__input {

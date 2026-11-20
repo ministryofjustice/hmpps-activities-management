@@ -1,3 +1,5 @@
+@use 'govuk-frontend/dist/govuk' as *;
+
 .sticky-select {
   .govuk-checkboxes__input,
   .govuk-radios__input {
