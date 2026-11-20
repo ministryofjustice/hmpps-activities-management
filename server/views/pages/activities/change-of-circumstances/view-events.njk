@@ -188,6 +188,12 @@
                         </div>
                     {% endfor %}
 
+                    {% for description in event.alertsAddedDescriptions %}
+                        <div class="govuk-!-margin-bottom-1">
+                            {{ description }}
+                        </div>
+                    {% endfor %}
+
                 {% elif event.eventDescription == 'ALERT_CLOSED' %}
 
                     {% for alert in event.alertsClosedFlags %}
@@ -198,8 +204,14 @@
                         </div>
                     {% endfor %}
 
+                    {% for description in event.alertsClosedDescriptions %}
+                        <div class="govuk-!-margin-bottom-1">
+                            {{ description }}
+                        </div>
+                    {% endfor %}
+
                 {% elif event.eventDescription == 'ALERTS_ADDED_AND_CLOSED' %}
-                    {% if event.alertsAddedFlags.length %}
+                    {% if event.alertsAddedFlags.length or event.alertsAddedDescriptions.length %}
                         <div class="govuk-!-margin-bottom-1">
                             Added:
                         </div>
@@ -211,8 +223,15 @@
                                 }) }}
                             </div>
                         {% endfor %}
+
+                        {% for description in event.alertsAddedDescriptions %}
+                            <div class="govuk-!-margin-bottom-1">
+                                {{ description }}
+                            </div>
+                        {% endfor %}
                     {% endif %}
-                    {% if event.alertsClosedFlags.length %}
+
+                    {% if event.alertsClosedFlags.length or event.alertsClosedDescriptions.length %}
                         <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-1">
                             Closed:
                         </div>
@@ -224,9 +243,15 @@
                                 }) }}
                             </div>
                         {% endfor %}
+
+                        {% for description in event.alertsClosedDescriptions %}
+                            <div class="govuk-!-margin-bottom-1">
+                                {{ description }}
+                            </div>
+                        {% endfor %}
                     {% endif %}
                 {% elif event.eventDescription == 'NON_ASSOCIATION' %}
-                    View non-association
+                    View prisoner’s non-associations for details
                 {% else %}
                     {{ event.eventData or '' }}
                 {% endif %}

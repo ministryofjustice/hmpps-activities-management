@@ -7,8 +7,9 @@ import PrisonService from '../../../../services/prisonService'
 import { changeFilters, readFilters } from './changeFilters'
 import { convertToNumberArray, isPrisonerNumber } from '../../../../utils/utils'
 import { EventReviewDto, EventReviewSearchResultsDto } from '../../../../@types/activitiesOrchestratorAPI/types'
-import { getAlertFlagsFromCodes } from '../../../../utils/helpers/alertFlags'
+import { getAlertDisplay } from '../../../../utils/helpers/changeOfCircumstancesAlertDisplay'
 import UserService from '../../../../services/userService'
+import AlertsService from '../../../../services/alertsService'
 
 type ChangeEventViewModel = EventReviewDto & {
   firstName: string
@@ -19,6 +20,8 @@ type ChangeEventViewModel = EventReviewDto & {
   cellLocation: string
   alertsAddedFlags: AlertFlagLabel[]
   alertsClosedFlags: AlertFlagLabel[]
+  alertsAddedDescriptions: string[]
+  alertsClosedDescriptions: string[]
 }
 
 type QueryFilters = {
@@ -38,6 +41,7 @@ export default class ChangeOfCircumstanceRoutes {
     private readonly activitiesOrchestratorService: ActivitiesOrchestratorService,
     private readonly prisonService: PrisonService,
     private readonly userService: UserService,
+    private readonly alertService: AlertsService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -151,6 +155,33 @@ export default class ChangeOfCircumstanceRoutes {
 
     const userMap = await this.userService.getUserMap(acknowledgedByUsernames, user)
 
+    const formatIncentiveLevel = (level?: string): string => {
+      switch (level) {
+        case 'BAS':
+          return 'Basic'
+        case 'STD':
+          return 'Standard'
+        case 'ENH':
+          return 'Enhanced'
+        default:
+          return level ?? ''
+      }
+    }
+
+    const allAlertCodes = [
+      ...new Set(
+        searchResults.content.flatMap(event => [
+          ...(event.alertDetails?.alertsAdded ?? []),
+          ...(event.alertDetails?.alertsClosed ?? []),
+        ]),
+      ),
+    ]
+
+    const alertDescriptionMap =
+      allAlertCodes.length > 0
+        ? await this.alertService.getAlertDescriptionMap(allAlertCodes)
+        : new Map<string, string>()
+
     const changeEvents: ChangeEventViewModel[] = searchResults.content.map(event => {
       const prisoner = prisonersByNumber.get(event.prisonerNumber)
 
@@ -158,18 +189,9 @@ export default class ChangeOfCircumstanceRoutes {
         ? (userMap.get(event.acknowledgedBy)?.name ?? event.acknowledgedBy)
         : undefined
 
-      const formatIncentiveLevel = (level?: string): string => {
-        switch (level) {
-          case 'BAS':
-            return 'Basic'
-          case 'STD':
-            return 'Standard'
-          case 'ENH':
-            return 'Enhanced'
-          default:
-            return level ?? ''
-        }
-      }
+      const addedAlerts = getAlertDisplay(event.alertDetails?.alertsAdded ?? [], alertDescriptionMap)
+
+      const closedAlerts = getAlertDisplay(event.alertDetails?.alertsClosed ?? [], alertDescriptionMap)
 
       return {
         ...event,
@@ -180,8 +202,10 @@ export default class ChangeOfCircumstanceRoutes {
         prisonerPrisonCode: prisoner?.prisonId,
         cellLocation: prisoner?.cellLocation || '',
         acknowledgedBy,
-        alertsAddedFlags: getAlertFlagsFromCodes(event.alertDetails?.alertsAdded ?? []),
-        alertsClosedFlags: getAlertFlagsFromCodes(event.alertDetails?.alertsClosed ?? []),
+        alertsAddedFlags: addedAlerts.flags,
+        alertsAddedDescriptions: addedAlerts.descriptions,
+        alertsClosedFlags: closedAlerts.flags,
+        alertsClosedDescriptions: closedAlerts.descriptions,
         previousLevelDisplay: formatIncentiveLevel(event.incentiveDetails?.previousLevel),
         newLevelDisplay: formatIncentiveLevel(event.incentiveDetails?.newLevel),
       }

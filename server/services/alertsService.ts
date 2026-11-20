@@ -96,6 +96,28 @@ export default class AlertsService {
       prisoners: prisonersWithAlerts,
     }
   }
+
+  async getAlertDescriptionMap(alertCodes: string[]): Promise<Map<string, string>> {
+    if (!alertCodes.length) {
+      return new Map()
+    }
+
+    const uniqueCodes = [...new Set(alertCodes)]
+
+    const entries = await Promise.all(
+      uniqueCodes.map(async code => {
+        try {
+          const alert = await this.alertsApiClient.getAlertCode(code)
+
+          return [code, alert.description] as const
+        } catch {
+          return [code, code] as const
+        }
+      }),
+    )
+
+    return new Map(entries)
+  }
 }
 
 export type PrisonerDetails = {
