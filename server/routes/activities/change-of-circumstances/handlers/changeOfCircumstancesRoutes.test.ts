@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import ActivitiesOrchestratorService from '../../../../services/activitiesOrchestratorService'
+import AlertsService from '../../../../services/alertsService'
 import PrisonService from '../../../../services/prisonService'
 import ChangeOfCircumstanceRoutes from './changeOfCircumstanceRoutes'
 import { changeFilters } from './changeFilters'
@@ -12,12 +13,14 @@ import UserService from '../../../../services/userService'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/activitiesOrchestratorService')
+jest.mock('../../../../services/alertsService')
 jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const activitiesOrchestratorService = new ActivitiesOrchestratorService(
   null,
 ) as jest.Mocked<ActivitiesOrchestratorService>
+const alertsService = new AlertsService(null) as jest.Mocked<AlertsService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const userService = new UserService(null) as jest.Mocked<UserService>
 
@@ -27,6 +30,7 @@ describe('Route Handlers - Changes in circumstances', () => {
     activitiesOrchestratorService,
     prisonService,
     userService,
+    alertsService,
   )
   let req: Request
   let res: Response
@@ -51,6 +55,8 @@ describe('Route Handlers - Changes in circumstances', () => {
       },
       originalUrl: 'http://localhost/',
     } as unknown as Request
+
+    alertsService.getAlertDescriptionMap.mockResolvedValue(new Map())
   })
 
   const content: EventReviewDto[] = [
@@ -150,7 +156,9 @@ describe('Route Handlers - Changes in circumstances', () => {
           previousLevelDisplay: item.eventReviewId === 4 ? 'Standard' : '',
           newLevelDisplay: item.eventReviewId === 4 ? 'ENH1' : '',
           alertsAddedFlags: [],
+          alertsAddedDescriptions: [],
           alertsClosedFlags: [],
+          alertsClosedDescriptions: [],
         }
       })
       const viewContext = {

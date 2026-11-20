@@ -9,6 +9,7 @@ export default function Index({
   activitiesOrchestratorService,
   prisonService,
   userService,
+  alertsService,
 }: Services): Router {
   const router = Router()
 
@@ -21,6 +22,7 @@ export default function Index({
     activitiesOrchestratorService,
     prisonService,
     userService,
+    alertsService,
   )
   const selectPeriodForChangesHandler = new SelectPeriodForChangesRoutes()
 
