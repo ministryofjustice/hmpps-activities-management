@@ -25,6 +25,27 @@ describe('Alerts service', () => {
   let maggieResult: PrisonerAlertDetails
   let daveResult: PrisonerAlertDetails
 
+  const buildAlertCode = (
+    code: string,
+    description: string,
+  ): {
+    alertTypeCode: string
+    code: string
+    description: string
+    listSequence: number
+    isActive: boolean
+    createdAt: string
+    createdBy: string
+  } => ({
+    alertTypeCode: 'R',
+    code,
+    description,
+    listSequence: 0,
+    isActive: true,
+    createdAt: '2024-01-01T00:00:00',
+    createdBy: 'TEST',
+  })
+
   beforeEach(() => {
     alertsApiClient = new AlertsApiClient(mockAuthenticationClient)
     alertsService = new AlertsService(alertsApiClient)
@@ -350,6 +371,63 @@ describe('Alerts service', () => {
       }
 
       expect(actualResults).toEqual(expectedResults)
+    })
+  })
+
+  describe('getAlertDescriptionMap', () => {
+    it('returns an empty map when no alert codes are supplied', async () => {
+      const result = await alertsService.getAlertDescriptionMap([])
+
+      expect(result).toEqual(new Map())
+      expect(alertsApiClient.getAlertCode).not.toHaveBeenCalled()
+    })
+
+    it('returns descriptions for alert codes', async () => {
+      when(alertsApiClient.getAlertCode)
+        .calledWith('ROTLS')
+        .mockResolvedValue(buildAlertCode('ROTLS', 'ROTL Suspension'))
+
+      when(alertsApiClient.getAlertCode).calledWith('XYZ').mockResolvedValue(buildAlertCode('XYZ', 'Some other alert'))
+
+      const result = await alertsService.getAlertDescriptionMap(['ROTLS', 'XYZ'])
+
+      expect(result).toEqual(
+        new Map([
+          ['ROTLS', 'ROTL Suspension'],
+          ['XYZ', 'Some other alert'],
+        ]),
+      )
+    })
+
+    it('falls back to the alert code when a 404 status is returned', async () => {
+      when(alertsApiClient.getAlertCode).calledWith('HISTORIC').mockRejectedValue({
+        status: 404,
+      })
+
+      const result = await alertsService.getAlertDescriptionMap(['HISTORIC'])
+
+      expect(result).toEqual(new Map([['HISTORIC', 'HISTORIC']]))
+    })
+
+    it('falls back to the alert code when a 404 responseStatus is returned', async () => {
+      when(alertsApiClient.getAlertCode).calledWith('HISTORIC').mockRejectedValue({
+        responseStatus: 404,
+      })
+
+      const result = await alertsService.getAlertDescriptionMap(['HISTORIC'])
+
+      expect(result).toEqual(new Map([['HISTORIC', 'HISTORIC']]))
+    })
+
+    it('rethrows non-404 errors', async () => {
+      const error = {
+        status: 500,
+        message: 'Alerts API unavailable',
+      }
+
+      when(alertsApiClient.getAlertCode).calledWith('ROTLS').mockRejectedValue(error)
+
+      await expect(alertsService.getAlertDescriptionMap(['ROTLS'])).rejects.toEqual(error)
     })
   })
 })
