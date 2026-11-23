@@ -1,5 +1,6 @@
 import { Alert } from '../@types/alertsAPI/types'
 import AlertsApiClient from '../data/alertsApiClient'
+import { errorHasStatus } from '../utils/helpers/errorHelpers'
 
 export default class AlertsService {
   constructor(private readonly alertsApiClient: AlertsApiClient) {}
@@ -95,6 +96,32 @@ export default class AlertsService {
       numPrisonersWithAlerts,
       prisoners: prisonersWithAlerts,
     }
+  }
+
+  async getAlertDescriptionMap(alertCodes: string[]): Promise<Map<string, string>> {
+    if (!alertCodes.length) {
+      return new Map()
+    }
+
+    const uniqueCodes = [...new Set(alertCodes)]
+
+    const entries = await Promise.all(
+      uniqueCodes.map(async code => {
+        try {
+          const alert = await this.alertsApiClient.getAlertCode(code)
+
+          return [code, alert.description] as const
+        } catch (error) {
+          if (errorHasStatus(error, 404)) {
+            return [code, code] as const
+          }
+
+          throw error
+        }
+      }),
+    )
+
+    return new Map(entries)
   }
 }
 

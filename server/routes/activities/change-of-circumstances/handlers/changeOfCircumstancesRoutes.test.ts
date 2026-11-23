@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import ActivitiesOrchestratorService from '../../../../services/activitiesOrchestratorService'
+import AlertsService from '../../../../services/alertsService'
 import PrisonService from '../../../../services/prisonService'
 import ChangeOfCircumstanceRoutes from './changeOfCircumstanceRoutes'
 import { changeFilters } from './changeFilters'
@@ -12,12 +13,14 @@ import UserService from '../../../../services/userService'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/activitiesOrchestratorService')
+jest.mock('../../../../services/alertsService')
 jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const activitiesOrchestratorService = new ActivitiesOrchestratorService(
   null,
 ) as jest.Mocked<ActivitiesOrchestratorService>
+const alertsService = new AlertsService(null) as jest.Mocked<AlertsService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const userService = new UserService(null) as jest.Mocked<UserService>
 
@@ -27,6 +30,7 @@ describe('Route Handlers - Changes in circumstances', () => {
     activitiesOrchestratorService,
     prisonService,
     userService,
+    alertsService,
   )
   let req: Request
   let res: Response
@@ -51,6 +55,8 @@ describe('Route Handlers - Changes in circumstances', () => {
       },
       originalUrl: 'http://localhost/',
     } as unknown as Request
+
+    alertsService.getAlertDescriptionMap.mockResolvedValue(new Map())
   })
 
   const content: EventReviewDto[] = [
@@ -112,6 +118,36 @@ describe('Route Handlers - Changes in circumstances', () => {
     },
   ]
 
+  const alertAddedEvent: EventReviewDto = {
+    ...content[0],
+    eventReviewId: 10,
+    eventDescription: 'ALERT_ADDED',
+    alertDetails: {
+      alertsAdded: ['HA', 'ROTLS'],
+      alertsClosed: [],
+    },
+  }
+
+  const alertClosedEvent: EventReviewDto = {
+    ...content[0],
+    eventReviewId: 11,
+    eventDescription: 'ALERT_CLOSED',
+    alertDetails: {
+      alertsAdded: [],
+      alertsClosed: ['HA', 'ROTLS'],
+    },
+  }
+
+  const alertsAddedAndClosedEvent: EventReviewDto = {
+    ...content[0],
+    eventReviewId: 12,
+    eventDescription: 'ALERTS_ADDED_AND_CLOSED',
+    alertDetails: {
+      alertsAdded: ['HA'],
+      alertsClosed: ['ROTLS'],
+    },
+  }
+
   const prisoners = [
     {
       prisonerNumber: 'A1234AA',
@@ -150,7 +186,9 @@ describe('Route Handlers - Changes in circumstances', () => {
           previousLevelDisplay: item.eventReviewId === 4 ? 'Standard' : '',
           newLevelDisplay: item.eventReviewId === 4 ? 'ENH1' : '',
           alertsAddedFlags: [],
+          alertsAddedDescriptions: [],
           alertsClosedFlags: [],
+          alertsClosedDescriptions: [],
         }
       })
       const viewContext = {
@@ -461,6 +499,83 @@ describe('Route Handlers - Changes in circumstances', () => {
         expect(query.has('page')).toBe(false)
       }
       expect(context.hasFilters).toBe(true)
+    })
+  })
+
+  const getRenderContext = () => (res.render as jest.Mock).mock.calls[0][1]
+
+  const renderAlertEvent = async (
+    event: EventReviewDto,
+    descriptions: [string, string][] = [['ROTLS', 'ROTL Suspension']],
+  ) => {
+    activitiesOrchestratorService.getEventsForReview.mockResolvedValue({
+      ...changeEvents,
+      content: [event],
+    })
+
+    alertsService.getAlertDescriptionMap.mockResolvedValue(new Map(descriptions))
+
+    await handler.GET(req, res)
+
+    return getRenderContext()
+  }
+
+  describe('alert display', () => {
+    beforeEach(() => {
+      prisonService.searchInmatesByPrisonerNumbers.mockResolvedValue(prisoners)
+    })
+
+    it('looks up all unique alert codes on the page', async () => {
+      activitiesOrchestratorService.getEventsForReview.mockResolvedValue({
+        ...changeEvents,
+        content: [alertAddedEvent, alertClosedEvent],
+      })
+
+      alertsService.getAlertDescriptionMap.mockResolvedValue(
+        new Map([
+          ['HA', 'ACCT open'],
+          ['ROTLS', 'ROTL Suspension'],
+        ]),
+      )
+
+      await handler.GET(req, res)
+
+      expect(alertsService.getAlertDescriptionMap).toHaveBeenCalledWith(['ROTLS'])
+    })
+
+    it('populates flags and descriptions for added alerts', async () => {
+      const context = await renderAlertEvent(alertAddedEvent)
+
+      expect(context.changeEvents[0]).toEqual(
+        expect.objectContaining({
+          alertsAddedDescriptions: ['ROTL Suspension'],
+        }),
+      )
+
+      expect(context.changeEvents[0].alertsAddedFlags).toHaveLength(1)
+    })
+
+    it('populates descriptions for closed alerts', async () => {
+      const context = await renderAlertEvent(alertClosedEvent)
+
+      expect(context.changeEvents[0]).toEqual(
+        expect.objectContaining({
+          alertsClosedDescriptions: ['ROTL Suspension'],
+        }),
+      )
+    })
+
+    it('populates added and closed alert displays', async () => {
+      const context = await renderAlertEvent(alertsAddedAndClosedEvent)
+
+      expect(context.changeEvents[0]).toEqual(
+        expect.objectContaining({
+          alertsAddedDescriptions: [],
+          alertsClosedDescriptions: ['ROTL Suspension'],
+        }),
+      )
+
+      expect(context.changeEvents[0].alertsAddedFlags).toHaveLength(1)
     })
   })
 
