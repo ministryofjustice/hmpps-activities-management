@@ -540,7 +540,7 @@ describe('Route Handlers - Changes in circumstances', () => {
 
       await handler.GET(req, res)
 
-      expect(alertsService.getAlertDescriptionMap).toHaveBeenCalledWith(['HA', 'ROTLS'])
+      expect(alertsService.getAlertDescriptionMap).toHaveBeenCalledWith(['ROTLS'])
     })
 
     it('populates flags and descriptions for added alerts', async () => {

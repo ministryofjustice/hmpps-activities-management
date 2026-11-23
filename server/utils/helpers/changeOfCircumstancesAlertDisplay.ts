@@ -7,14 +7,23 @@ export type AlertDisplay = {
   descriptions: string[]
 }
 
-export const getAlertDisplay = (alertCodes: string[], descriptionMap: Map<string, string>): AlertDisplay => {
+const getFlags = (alertCodes: string[]): AlertFlagLabel[] => {
   const alerts: BasicAlert[] = alertCodes.map(code => ({
     alertCode: code,
     alertType: '',
     active: true,
     expired: false,
   }))
-  const flags = getAlertFlagLabelsForAlerts(alerts)
+
+  return getAlertFlagLabelsForAlerts(alerts)
+}
+
+export const getFlaggedAlertCodes = (alertCodes: string[]): string[] => {
+  return getFlags(alertCodes).flatMap(flag => flag.alertCodes)
+}
+
+export const getAlertDisplay = (alertCodes: string[], descriptionMap: Map<string, string>): AlertDisplay => {
+  const flags = getFlags(alertCodes)
 
   const flaggedCodes = new Set(flags.flatMap(flag => flag.alertCodes))
 

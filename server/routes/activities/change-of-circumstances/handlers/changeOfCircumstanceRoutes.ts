@@ -7,7 +7,7 @@ import PrisonService from '../../../../services/prisonService'
 import { changeFilters, readFilters } from './changeFilters'
 import { convertToNumberArray, isPrisonerNumber } from '../../../../utils/utils'
 import { EventReviewDto, EventReviewSearchResultsDto } from '../../../../@types/activitiesOrchestratorAPI/types'
-import { getAlertDisplay } from '../../../../utils/helpers/changeOfCircumstancesAlertDisplay'
+import { getAlertDisplay, getFlaggedAlertCodes } from '../../../../utils/helpers/changeOfCircumstancesAlertDisplay'
 import UserService from '../../../../services/userService'
 import AlertsService from '../../../../services/alertsService'
 
@@ -177,9 +177,13 @@ export default class ChangeOfCircumstanceRoutes {
       ),
     ]
 
+    const flaggedAlertCodes = new Set(getFlaggedAlertCodes(allAlertCodes))
+
+    const alertCodesNeedingDescriptions = allAlertCodes.filter(code => !flaggedAlertCodes.has(code))
+
     const alertDescriptionMap =
-      allAlertCodes.length > 0
-        ? await this.alertService.getAlertDescriptionMap(allAlertCodes)
+      alertCodesNeedingDescriptions.length > 0
+        ? await this.alertService.getAlertDescriptionMap(alertCodesNeedingDescriptions)
         : new Map<string, string>()
 
     const changeEvents: ChangeEventViewModel[] = searchResults.content.map(event => {
