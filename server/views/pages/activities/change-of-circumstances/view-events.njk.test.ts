@@ -190,6 +190,117 @@ describe('Views - Changes in circumstances', () => {
         .get(),
     ).toEqual(['alerts', 'cell-moves'])
   })
+
+  describe('alert rendering', () => {
+    it('renders added alert descriptions when no DPS prominent alert flag exists', () => {
+      const $ = cheerio.load(
+        template.render({
+          ...context,
+          changeEvents: [
+            {
+              ...event,
+              eventDescription: 'ALERT_ADDED',
+              alertsAddedFlags: [],
+              alertsAddedDescriptions: ['ROTL Suspension'],
+            },
+          ],
+        }),
+      )
+
+      expect(normaliseText($('tbody').text())).toContain('ROTL Suspension')
+    })
+
+    it('renders closed alert descriptions when no DPS prominent alert flag exists', () => {
+      const $ = cheerio.load(
+        template.render({
+          ...context,
+          changeEvents: [
+            {
+              ...event,
+              eventDescription: 'ALERT_CLOSED',
+              alertsClosedFlags: [],
+              alertsClosedDescriptions: ['ROTL Suspension'],
+            },
+          ],
+        }),
+      )
+
+      expect(normaliseText($('tbody').text())).toContain('ROTL Suspension')
+    })
+
+    it('renders Added and Closed sections for mixed alert changes', () => {
+      const $ = cheerio.load(
+        template.render({
+          ...context,
+          changeEvents: [
+            {
+              ...event,
+              eventDescription: 'ALERTS_ADDED_AND_CLOSED',
+              alertsAddedFlags: [],
+              alertsAddedDescriptions: ['Added alert'],
+              alertsClosedFlags: [],
+              alertsClosedDescriptions: ['Closed alert'],
+            },
+          ],
+        }),
+      )
+
+      const tableText = normaliseText($('tbody').text())
+
+      expect(tableText).toContain('Added:')
+      expect(tableText).toContain('Added alert')
+      expect(tableText).toContain('Closed:')
+      expect(tableText).toContain('Closed alert')
+    })
+
+    it('renders a combination of DPS prominent alert flags and alert descriptions', () => {
+      const $ = cheerio.load(
+        template.render({
+          ...context,
+          changeEvents: [
+            {
+              ...event,
+              eventDescription: 'ALERTS_ADDED_AND_CLOSED',
+              alertsAddedFlags: [
+                {
+                  alertCodes: ['HA'],
+                  classes: 'dps-alert-status--self-harm',
+                  label: 'ACCT open',
+                },
+              ],
+              alertsAddedDescriptions: [],
+              alertsClosedFlags: [],
+              alertsClosedDescriptions: ['ROTL Suspension'],
+            },
+          ],
+        }),
+      )
+
+      const tableText = normaliseText($('tbody').text())
+
+      expect(tableText).toContain('ACCT open')
+      expect(tableText).toContain('ROTL Suspension')
+    })
+
+    it('renders alert descriptions as text rather than HTML', () => {
+      const $ = cheerio.load(
+        template.render({
+          ...context,
+          changeEvents: [
+            {
+              ...event,
+              eventDescription: 'ALERT_ADDED',
+              alertsAddedFlags: [],
+              alertsAddedDescriptions: ['<script>bad()</script>'],
+            },
+          ],
+        }),
+      )
+
+      expect($('tbody script')).toHaveLength(0)
+      expect($('tbody').text()).toContain('<script>bad()</script>')
+    })
+  })
   it.each([
     [50, 'Showing 1 to 25 of 50 total changes'],
     [3, '3 total changes'],
