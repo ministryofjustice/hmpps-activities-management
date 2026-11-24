@@ -64,7 +64,7 @@
     "class-validator": "^0.15.1",
     "compression": "^1.8.2",
     "connect-flash": "^0.1.1",
-    "connect-redis": "^10.0.0",
+    "connect-redis": "^11.0.0",
     "csrf-sync": "^4.2.1",
     "csv-parse": "^7.0.3",
     "date-fns": "^4.4.0",
