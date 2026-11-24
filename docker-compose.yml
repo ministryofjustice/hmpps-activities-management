@@ -1,6 +1,6 @@
 services:
   redis:
-    image: 'redis:8.10'
+    image: 'redis:8.12'
     networks:
       - hmpps
     container_name: redis
