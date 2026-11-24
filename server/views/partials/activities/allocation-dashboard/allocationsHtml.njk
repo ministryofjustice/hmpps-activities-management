@@ -5,7 +5,14 @@
             {% set removeEndDateHref = '/activities/allocations/edit/' + allocation.id + '/remove-end-date-option' %}
         
             {% set activityNameHtml%}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    <a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>
+                        {{ allocation.activitySummary }}
+                    <span class="govuk-visually-hidden">
+                        (opens {{ allocation.activitySummary }} in a new tab)
+                    </span>
+                    </a>
+                </p>
             {% endset %}
             {% set activityStartDateHtml%}
                 <p class="govuk-body govuk-!-margin-bottom-0">{{ allocation.startDate | formatDate('d MMMM yyyy') }}</p>
@@ -18,13 +25,19 @@
                 {% endif %}
             {% endset %}
             {% set suspensionHtml %}
-             <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocations/view/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state'>Edit or suspend allocation</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocations/view/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state'>
+                    Edit or suspend allocation <span class="govuk-visually-hidden"> to {{ allocation.activitySummary }}</span></a>
+                </p>
             {% endset %}
             {% set removeHtml %}
                 {% if allocation.endDate %}
-                    <p class="govuk-body govuk-!-margin-bottom-0"><a href={{ removeEndDateHref }} class='govuk-link govuk-link--no-visited-state'>Remove end date</a></p>
+                    <p class="govuk-body govuk-!-margin-bottom-0"><a href={{ removeEndDateHref }} class='govuk-link govuk-link--no-visited-state'>
+                        Remove end date <span class="govuk-visually-hidden"> for allocation to {{ allocation.activitySummary }}</span></a>
+                    </p>
                 {% else %}
-                    <p class="govuk-body govuk-!-margin-bottom-0"><a href={{ deallocationHref }} class='govuk-link govuk-link--no-visited-state'>Remove from activity</a></p>
+                    <p class="govuk-body govuk-!-margin-bottom-0"><a href={{ deallocationHref }} class='govuk-link govuk-link--no-visited-state'>
+                        Remove from activity <span class="govuk-visually-hidden">: {{ allocation.activitySummary }}</span></a>
+                    </p>
                 {% endif %}
             {% endset %}   
         {% if not allocation.plannedSuspension %}
@@ -60,22 +73,34 @@
 {% set suspendedAllocationRows = [] %}
     {% for allocation in allocationsData %}
         {% if allocation.plannedSuspension %}
+            {% set suspensionLinkHtml %}
+                <a
+                    class="govuk-link govuk-link--no-visited-state"
+                    href="/activities/suspensions/prisoner/{{ session.req.params.prisonerNumber }}/view-suspensions?allocationId={{ allocation.id }}"
+                    data-qa="end-suspension-{{ allocation.id }}"
+                >
+                    View or end suspension
+                    <span class="govuk-visually-hidden">
+                        from {{ allocation.activitySummary }}
+                    </span>
+                </a>
+            {% endset %}
             {% set suspendedAllocationRows = (suspendedAllocationRows.push([
-            {
-                html: '<a class=govuk-link--no-visited-state target=_blank href=/activities/allocation-dashboard/'+allocation.activityId+'>' +allocation.activitySummary+'</a>'
-            },
-            {
-                text: allocation.plannedSuspension.plannedStartDate | formatDate('d MMMM yyyy')
-            },
-            {
-                text:  allocation.plannedSuspension.plannedEndDate | subDays(1) | formatDate('d MMMM yyyy') if allocation.plannedSuspension.plannedEndDate != null else 'No end date set'
-            },
-            {
-                text: 'Yes' if allocation.plannedSuspension.paid else 'No'
-            },
-            {
-                html: '<a class=govuk-link--no-visited-state href=/activities/suspensions/prisoner/' + session.req.params.prisonerNumber + '/view-suspensions?allocationId=' + allocation.id +' data-qa="end-suspension-'+allocation.id+'">View or end suspension</a>'
-            }
+                {
+                    html: '<a class=govuk-link--no-visited-state target=_blank href=/activities/allocation-dashboard/'+allocation.activityId+'>' +allocation.activitySummary+'</a>'
+                },
+                {
+                    text: allocation.plannedSuspension.plannedStartDate | formatDate('d MMMM yyyy')
+                },
+                {
+                    text:  allocation.plannedSuspension.plannedEndDate | subDays(1) | formatDate('d MMMM yyyy') if allocation.plannedSuspension.plannedEndDate != null else 'No end date set'
+                },
+                {
+                    text: 'Yes' if allocation.plannedSuspension.paid else 'No'
+                },
+                {
+                    html: suspensionLinkHtml
+                }
             ]), suspendedAllocationRows) %}
         {% endif %}
     {% endfor %}
