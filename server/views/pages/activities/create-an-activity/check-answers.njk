@@ -33,7 +33,7 @@
                                 {
                                     href: "category?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change category"
+                                    visuallyHiddenText: "category"
                                 }
                             ]
                         } if not createJourney.outsideWork
@@ -50,7 +50,7 @@
                                 {
                                     href: "name?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change name"
+                                    visuallyHiddenText: "name"
                                 }
                             ]
                         }
@@ -67,7 +67,7 @@
                                 {
                                     href: "tier?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change tier"
+                                    visuallyHiddenText: "tier"
                                 }
                             ] if createJourney.category.code != 'SAA_NOT_IN_WORK'
                         }
@@ -84,7 +84,7 @@
                                 {
                                     href: "organiser?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change organiser"
+                                    visuallyHiddenText: "organiser"
                                 }
                             ]
                         }
@@ -104,7 +104,7 @@
                             items: [{
                                 href: "attendance-required?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "Change record attendance option"
+                                visuallyHiddenText: "record attendance option"
                             }] if not createJourney.paid
 
                         }
@@ -133,7 +133,7 @@
                                 {
                                     href: "risk-level?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change risk level"
+                                    visuallyHiddenText: "risk level"
                                 }
                             ]
                         }
@@ -150,7 +150,7 @@
                                 {
                                     href: "check-education-level?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change education levels"
+                                    visuallyHiddenText: "education levels"
                                 }
                             ]
                         }
@@ -184,7 +184,7 @@
                                 {
                                     href: ("check-pay" if createJourney.paid else "pay-option") + "?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change pay rates"
+                                    visuallyHiddenText: "pay rates"
                                 }
                             ]
                         }
@@ -206,7 +206,7 @@
                             {
                                 href: "start-date?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "change start date"
+                                visuallyHiddenText: "start date"
                             }
                         ]
                     }
@@ -223,7 +223,7 @@
                             {
                                 href: "remove-end-date" if createJourney.endDate else "end-date?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "change end date"
+                                visuallyHiddenText: "end date"
                             }
                         ]
                     }
@@ -240,7 +240,7 @@
                             {
                                 href: "schedule-frequency?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "change schedule frequency"
+                                visuallyHiddenText: "schedule frequency"
                             }
                         ]
                     }
@@ -257,7 +257,7 @@
                         items: [{
                             href: "days-and-times/" + week + "?preserveHistory=true",
                             text: "Change",
-                            visuallyHiddenText: "Change schedule"
+                            visuallyHiddenText: "schedule"
                         }]
                     }
                     }
@@ -272,7 +272,7 @@
                             items: [{
                                 href: "bank-holiday-option?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "Change bank holiday option"
+                                visuallyHiddenText: "bank holiday option"
                             }] if createJourney.hasAtLeastOneValidDay
                         }
                     }
@@ -299,7 +299,7 @@
                                     {
                                         href: "capacity?preserveHistory=true",
                                         text: "Change",
-                                        visuallyHiddenText: "change capacity"
+                                        visuallyHiddenText: "capacity"
                                     }
                                 ]
                             }
@@ -322,7 +322,7 @@
                                     {
                                         href: "location?preserveHistory=true",
                                         text: "Change",
-                                        visuallyHiddenText: "change location"
+                                        visuallyHiddenText: "location"
                                     }
                                 ]
                             }
@@ -339,7 +339,7 @@
                                     {
                                         href: "capacity?preserveHistory=true",
                                         text: "Change",
-                                        visuallyHiddenText: "change capacity"
+                                        visuallyHiddenText: "capacity"
                                     }
                                 ]
                             }

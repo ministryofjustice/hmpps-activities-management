@@ -30,6 +30,15 @@
         </ul>
     {% endset %}
 
+    {% set removeHtml %}
+      <a class="govuk-link" href="{{ removeLink }}">
+        Remove
+        <span class="govuk-visually-hidden">
+          {{ inmate.prisonerNumber }}
+        </span>
+      </a>
+    {% endset %}
+
     {% set rows = (rows.push([
       {
         html: showProfileLink({
@@ -61,7 +70,7 @@
         }
       },
       {
-        html: '<a class="govuk-link" href="'+ removeLink +'">Remove</a>'
+        html: removeHtml
       }
     ]), rows) %}
   {% endfor %}
