@@ -22,6 +22,8 @@ const getPrisonerExtraInformationTableCell = (prisonerNumber: string, cell: stri
 const getPrisonerExtraInformationTag = (prisonerNumber: string, cell: string) =>
   getPrisonerExtraInformationRow(prisonerNumber).find(`td strong[data-qa="${cell}"]`)
 
+const normalisedText = element => element.text().replace(/\s+/g, ' ').trim()
+
 describe('Views - Create Appointment Set - Add Extra Information - feature toggle off', () => {
   config.prisonerExtraInformationEnabled = false
 
@@ -47,21 +49,24 @@ describe('Views - Create Appointment Set - Add Extra Information - feature toggl
       {
         prisoner: {
           number: 'A1234AA',
-          name: 'John Smith',
+          firstName: 'John',
+          lastName: 'Smith',
         },
         extraInformation: 'Appointment extra information',
       },
       {
         prisoner: {
           number: 'Z4321YX',
-          name: 'Joe Bloggs',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
         },
         extraInformation: '',
       },
       {
         prisoner: {
           number: 'B2222BB',
-          name: 'Lee Jacobson',
+          firstName: 'Lee',
+          lastName: 'Jacobson',
         },
       },
     ]
@@ -81,14 +86,18 @@ describe('Views - Create Appointment Set - Add Extra Information - feature toggl
     expect(getPrisonerExtraInformationTableCell('A1234AA', 'extra-information-cell').text().trim()).toEqual(
       'Appointment extra information',
     )
-    expect(getPrisonerExtraInformationTableCell('A1234AA', 'actions-cell').text()).toEqual('Edit extra information')
+    expect(normalisedText(getPrisonerExtraInformationTableCell('A1234AA', 'actions-cell'))).toEqual(
+      'Edit extra information for John Smith',
+    )
 
     expect(getPrisonerExtraInformationTableCell('Z4321YX', 'extra-information-cell').text().trim()).toEqual('')
-    expect(getPrisonerExtraInformationTableCell('Z4321YX', 'actions-cell').text()).toEqual('Add extra information')
+    expect(normalisedText(getPrisonerExtraInformationTableCell('Z4321YX', 'actions-cell'))).toEqual(
+      'Add extra information for Joe Bloggs',
+    )
 
     expect(getPrisonerExtraInformationTableCell('B2222BB', 'extra-information-cell').text().trim()).toEqual('')
-    expect(getPrisonerExtraInformationTableCell('B2222BB', 'actions-cell').text().trim()).toEqual(
-      'Add extra information',
+    expect(normalisedText(getPrisonerExtraInformationTableCell('B2222BB', 'actions-cell'))).toEqual(
+      'Add extra information for Lee Jacobson',
     )
   })
 })
@@ -118,21 +127,24 @@ describe('Views - Create Appointment Set - Add Extra Information - feature toggl
       {
         prisoner: {
           number: 'A1234AA',
-          name: 'John Smith',
+          firstName: 'John',
+          lastName: 'Smith',
         },
         extraInformation: 'Extra information',
       },
       {
         prisoner: {
           number: 'Z4321YX',
-          name: 'Joe Bloggs',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
         },
         extraInformation: '',
       },
       {
         prisoner: {
           number: 'B2222BB',
-          name: 'Lee Jacobson',
+          firstName: 'Lee',
+          lastName: 'Jacobson',
         },
         prisonerExtraInformation: 'Prisoner extra information',
       },
@@ -153,18 +165,22 @@ describe('Views - Create Appointment Set - Add Extra Information - feature toggl
     expect(getPrisonerExtraInformationTag('A1234AA', 'extra-information-tag').text().trim()).toEqual(
       'Extra information',
     )
-    expect(getPrisonerExtraInformationTableCell('A1234AA', 'actions-cell').text()).toEqual('Edit extra information')
+
+    expect(normalisedText(getPrisonerExtraInformationTableCell('A1234AA', 'actions-cell'))).toEqual(
+      'Edit extra information for John Smith',
+    )
 
     expect(getPrisonerExtraInformationTableCell('Z4321YX', 'extra-information-cell').text().trim()).toEqual('')
-    expect(getPrisonerExtraInformationTableCell('Z4321YX', 'actions-cell').text().trim()).toEqual(
-      'Add extra information',
+    expect(normalisedText(getPrisonerExtraInformationTableCell('Z4321YX', 'actions-cell'))).toEqual(
+      'Add extra information for Joe Bloggs',
     )
 
     expect(getPrisonerExtraInformationTag('B2222BB', 'extra-information-tag').text().trim()).toEqual(
       'Extra information',
     )
-    expect(getPrisonerExtraInformationTableCell('B2222BB', 'actions-cell').text().trim()).toEqual(
-      'Edit extra information',
+
+    expect(normalisedText(getPrisonerExtraInformationTableCell('B2222BB', 'actions-cell'))).toEqual(
+      'Edit extra information for Lee Jacobson',
     )
   })
 })

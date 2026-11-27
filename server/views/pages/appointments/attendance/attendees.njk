@@ -56,7 +56,7 @@
         {% set linkText = "View" if isOlderThanSevenDays else "View or edit" %}
         <a href="attendees/{{ attendee.appointment.id }}/{{ attendee.prisoner.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-or-edit-{{ attendee.appointment.id }}-{{ attendee.prisoner.prisonerNumber }}">
             {{ linkText }}
-            <span class="govuk-visually-hidden">{{ linkText }} attendance for {{ attendeeRows[0].prisoner.firstName | toTitleCase }} {{ attendeeRows[0].prisoner.lastName | toTitleCase }}</span>
+            <span class="govuk-visually-hidden">attendance for {{ attendeeRows[0].prisoner.firstName | toTitleCase }} {{ attendeeRows[0].prisoner.lastName | toTitleCase }}</span>
         </a>
     {% endif %}
 {% endmacro %}
