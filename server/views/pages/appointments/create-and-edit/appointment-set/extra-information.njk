@@ -34,6 +34,16 @@
 
                 {% set prisonersList = [] %}
                 {% for appointment in appointments %}
+                    {% set extraInformationLinkHtml %}
+                        <a href="appointment-set-extra-information/{{ appointment.prisoner.number }}"
+                            class="govuk-link govuk-link--no-visited-state">
+                            {{ 'Edit' if (appointment.extraInformation or (prisonerExtraInformationEnabled and appointment.prisonerExtraInformation)) else 'Add' }}
+                            extra information
+                            <span class="govuk-visually-hidden">
+                            for {{ appointment.prisoner.firstName | toTitleCase }} {{ appointment.prisoner.lastName | toTitleCase }}
+                            </span>
+                        </a>
+                    {% endset %}
                     {% set prisonersList = (prisonersList.push([
                         {
                             html: showProfileLink({
@@ -54,7 +64,7 @@
                                 'data-qa': 'extra-information-cell'
                             }
                         }, {
-                            html: '<a href="appointment-set-extra-information/' + appointment.prisoner.number + '" class="govuk-link govuk-link--no-visited-state">' + ('Edit' if (appointment.extraInformation or (prisonerExtraInformationEnabled and appointment.prisonerExtraInformation)) else 'Add') + ' extra information</a>',
+                            html: extraInformationLinkHtml,
                             classes: 'govuk-!-text-align-right govuk-table__cell--vertical-align-top',
                             attributes: {
                                 'data-qa': 'actions-cell'

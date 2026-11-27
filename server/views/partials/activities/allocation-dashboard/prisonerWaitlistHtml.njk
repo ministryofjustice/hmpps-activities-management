@@ -5,7 +5,11 @@
 {% set approvedApplicationRows = [] %}
     {% for application in approvedApplications %}
             {% set activityNameHtml%}
-                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}
+                    <span class="govuk-visually-hidden">
+                        (opens {{ application.activity.activityName }} in a new tab)
+                    </span></a>
+                </p>
             {% endset %}
             {% set requestDateHtml%}
                  <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedDate | formatDate('d MMMM yyyy') }}</p>
@@ -14,13 +18,25 @@
                  <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</p>
             {% endset %}
             {% set viewWaitlistHtml %}
-                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></p>
+                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist
+                    <span class="govuk-visually-hidden">
+                        for {{ application.activity.activityName }}
+                    </span></a>
+                 </p>
             {% endset %}
             {% set viewEditHtml %}
-                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application</a></p>
+                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application
+                    <span class="govuk-visually-hidden">
+                        for {{ prisonerName }} to be allocated to {{ application.activity.activityName }}
+                    </span></a>
+                 </p>
             {% endset %}
             {% set allocateHtml %}
-                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocations/create/prisoner/{{ session.req.params.prisonerNumber }}?scheduleId={{ application.scheduleId }}' class='govuk-link govuk-link--no-visited-state'>Allocate</a></p>
+                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocations/create/prisoner/{{ session.req.params.prisonerNumber }}?scheduleId={{ application.scheduleId }}' class='govuk-link govuk-link--no-visited-state'>Allocate
+                    <span class="govuk-visually-hidden">
+                        {{ prisonerName }} to {{ application.activity.activityName }}
+                    </span></a>
+                 </p>
             {% endset %}
             {% set approvedApplicationRows = (approvedApplicationRows.push([
                     {
@@ -54,10 +70,14 @@
             ]), approvedApplicationRows) %}
     {% endfor %}
 
-{% set pendingApplicationRows = [] %}
+{% set pendingApplicationRows = [] %} 
     {% for application in pendingApplications %}
             {% set activityNameHtml%}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}
+                    <span class="govuk-visually-hidden">
+                        (opens {{ application.activity.activityName }} in a new tab)
+                    </span></a>
+                </p>
             {% endset %}
             {% set requestDateHtml%}
                 <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedDate | formatDate('d MMMM yyyy') }}</p>
@@ -66,10 +86,18 @@
                 <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</p>
             {% endset %}
             {% set viewWaitlistHtml %}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist
+                    <span class="govuk-visually-hidden">
+                        for {{ application.activity.activityName }}
+                    </span></a>
+                </p>
             {% endset %}
             {% set viewEditHtml %}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application
+                    <span class="govuk-visually-hidden">
+                        for {{ prisonerName }} to be allocated to {{ application.activity.activityName }}
+                    </span></a>
+                </p>
             {% endset %}
             {% set pendingApplicationRows = (pendingApplicationRows.push([
                     {
@@ -105,7 +133,11 @@
 {% set rejectedApplicationRows = [] %}
     {% for application in rejectedApplications %}
             {% set activityNameHtml%}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}
+                    <span class="govuk-visually-hidden">
+                        (opens {{ application.activity.activityName }} in a new tab)
+                    </span></a>
+                </p>
             {% endset %}
             {% set requestDateHtml%}
                 <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedDate | formatDate('d MMMM yyyy') }}</p>
@@ -114,10 +146,18 @@
                 <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</p>
             {% endset %}
             {% set viewWaitlistHtml %}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist
+                    <span class="govuk-visually-hidden">
+                        for {{ application.activity.activityName }}
+                    </span></a>
+                </p>
             {% endset %}
             {% set viewEditHtml %}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application
+                    <span class="govuk-visually-hidden">
+                        for {{ prisonerName }} to be allocated to {{ application.activity.activityName }}
+                    </span></a>
+                </p>
             {% endset %}
             {% set rejectedApplicationRows = (rejectedApplicationRows.push([
                     {
@@ -150,7 +190,11 @@
 {% set withdrawnApplicationRows = [] %}
     {% for application in withdrawnApplications %}
             {% set activityNameHtml%}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}
+                    <span class="govuk-visually-hidden">
+                        (opens {{ application.activity.activityName }} in a new tab)
+                    </span></a>
+                </p>
             {% endset %}
             {% set requestDateHtml%}
                 <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedDate | formatDate('d MMMM yyyy') }}</p>
@@ -159,10 +203,18 @@
                 <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</p>
             {% endset %}
             {% set viewWaitlistHtml %}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist
+                    <span class="govuk-visually-hidden">
+                        for {{ application.activity.activityName }}
+                    </span></a>
+                </p>
             {% endset %}
             {% set viewEditHtml %}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application
+                    <span class="govuk-visually-hidden">
+                        for {{ prisonerName }} to be allocated to {{ application.activity.activityName }}
+                    </span></a>
+                </p>
             {% endset %}
 
             {% set withdrawnApplicationRows = (withdrawnApplicationRows.push([

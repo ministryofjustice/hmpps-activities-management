@@ -140,7 +140,7 @@ test.describe('Create appointments', () => {
     await expectSummaryRow(page, 'Location', 'Chapel')
     await expectSummaryRow(page, 'Repeats', 'No')
 
-    await clickLink(page, 'Change change location')
+    await clickLink(page, 'Change location')
     await expectPage(page, 'Where will the appointment take place?', true)
     await continueTo(page, 'Check and confirm the appointment details')
     await expectSummaryRow(page, 'Location', 'Chapel')

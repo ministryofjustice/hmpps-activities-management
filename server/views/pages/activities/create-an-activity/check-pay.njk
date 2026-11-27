@@ -103,12 +103,12 @@
                                     {
                                         href: "pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + (("&" + preserveHistoryText) if preserveHistoryText),
                                         text: "Change",
-                                        visuallyHiddenText: "change pay rate"
+                                        visuallyHiddenText: pay.prisonPayBand.alias + " for " + incentiveLevelPay.incentiveLevel + " incentive level"
                                     },
                                     {
                                         href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + (("&" + preserveHistoryText) if preserveHistoryText),
                                         text: "Remove",
-                                        visuallyHiddenText: "remove pay rate"
+                                        visuallyHiddenText: pay.prisonPayBand.alias + " for " + incentiveLevelPay.incentiveLevel + " incentive level"
                                     }
                                 ]
                             }
@@ -139,12 +139,12 @@
                                 {
                                     href: "pay/flat?bandId=" + flatRate.prisonPayBand.id + (("&" + preserveHistoryText) if preserveHistoryText),
                                     text: "Change",
-                                    visuallyHiddenText: "change pay rate"
+                                    visuallyHiddenText: flatRate.prisonPayBand.alias + " flat rate for all incentive levels"
                                 },
                                 {
                                     href: "remove-flat-rate?bandId=" + flatRate.prisonPayBand.id + (("&" + preserveHistoryText) if preserveHistoryText),
                                     text: "Remove",
-                                    visuallyHiddenText: "remove flat rate"
+                                    visuallyHiddenText: flatRate.prisonPayBand.alias + " flat rate for all incentive levels"
                                 }
                             ]
                         }
